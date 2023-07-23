@@ -48,13 +48,13 @@ function Landing({ className }: DefaultProps) {
                     className="space-y-6 text-center"
                     variants={slideInItem}
                 >
-                    <motion.p
-                        className="text-3xl md:text-4xl font-bold flex gap-2 items-center"
+                    <motion.div
+                        className="text-3xl md:text-4xl font-bold flex flex-col md:flex-row gap-2 items-center"
                         variants={slideInItem}
                     >
                         <Icons.sparkles className="h-7 w-7" />
                         <p>Designer, Full-Stack Developer & Musician</p>
-                    </motion.p>
+                    </motion.div>
                     <motion.p
                         className="font-light text-base md:text-lg"
                         variants={slideInItem}

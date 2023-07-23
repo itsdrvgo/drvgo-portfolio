@@ -25,7 +25,7 @@ function SiteFooter({ className }: DefaultProps) {
 
             <div className="flex flex-col items-center justify-center gap-7">
                 <Image src={DRVGOLogo} alt="DRVGO" width={100} height={100} />
-                <p className="text-center">Learning, Coding & Bringing <br /> the best out of me.</p>
+                <p className="text-center w-60">Learning, Coding & Bringing the best out of me.</p>
                 <div className="flex gap-5">
                     <Link href={siteConfig.links.twitter} className="p-3 rounded-full items-center bg-background">
                         <Icons.twitter className="h-4 w-4" />
