@@ -2,26 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+@layer base {
+    :root {
+        --text: 216, 70%, 91%;
+
+        --background: 260, 4%, 7%;
+        --foreground: 210 40% 98%;
+
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
+
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
+
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+
+        --primary: 240, 30%, 15%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+
+        --secondary: 266, 4%, 20%;
+        --secondary-foreground: 210 40% 98%;
+
+        --accent: 212, 85%, 82%;
+        --accent-foreground: 210 40% 98%;
+
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 85.7% 97.3%;
+
+        --ring: 217.2 32.6% 17.5%;
+
+        --radius: 0.5rem;
+    }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+::-webkit-scrollbar {
+    width: 7px;
+    background-color: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background-color: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--primary));
 }
