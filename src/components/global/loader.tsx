@@ -1,11 +1,10 @@
-import { Icons } from "../icons/icons";
+import Image from "next/image";
+import DRVGOLogo from "@/public/DRVGO.svg";
 
 function Loader() {
     return (
-        <div className="h-screen bg-black w-full flex justify-center items-center">
-            <div className="flex flex-row gap-9 justify-center items-center">
-                <Icons.music className="text-white animate-bounce h-20 w-20" />
-            </div>
+        <div className="h-screen bg-background w-full flex justify-center items-center">
+            <Image src={DRVGOLogo} alt="DRVGO" width={200} height={200} className="animate-bounce" />
         </div>
     );
 };
