@@ -37,7 +37,7 @@ function Skills({ className }: DefaultProps) {
                     <p className="text-gray-400 text-sm md:text-base">I always try my best to keep myself updated with the latest technologies out there.</p>
                 </div>
 
-                <div className="border border-gray-600 rounded-md grid grid-cols-1 md:grid-cols-3 divide-y md:divide-x overflow-hidden">
+                <div className="border border-gray-600 rounded-md grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 divide-x-0 md:divide-x overflow-hidden">
                     <motion.div
                         className="flex flex-col items-center p-10 py-20 gap-10 text-center"
                         variants={fadeInContainer}

@@ -12,7 +12,7 @@ interface Project {
 
 export const projectsConfig: Project[] = [
     {
-        name: "Interactive Portfolio made using Next.JS v13 (App Router)",
+        name: "DRVGO Portfolio made using Next.JS v13 (App Router)",
         link: "https://github.com/itsdrvgo/drvgo-website",
         image: DRVGOSitePreview
     },
