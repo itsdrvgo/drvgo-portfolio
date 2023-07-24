@@ -1,18 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import { useSelectedLayoutSegment } from "next/navigation";
-import { DefaultProps, MainNavItem } from "@/src/types";
+import DRVGOLogo from "@/public/DRVGO.svg";
+import { MobileNav } from "@/src/components/global/mobile-nav";
+import { Icons } from "@/src/components/icons/icons";
 import { siteConfig } from "@/src/config/site";
 import { cn } from "@/src/lib/utils";
-import { Icons } from "@/src/components/icons/icons";
-import { MobileNav } from "@/src/components/global/mobile-nav";
-import { useState } from "react";
-import DRVGOLogo from "@/public/DRVGO.svg";
+import { DefaultProps, MainNavItem } from "@/src/types";
 import Image from "next/image";
+import Link from "next/link";
+import { useSelectedLayoutSegment } from "next/navigation";
+import { useState } from "react";
 
 interface MainNavProps extends DefaultProps {
-    items?: MainNavItem[]
+    items?: MainNavItem[];
 }
 
 function MainNav({ items, children, className }: MainNavProps) {
@@ -23,18 +23,18 @@ function MainNav({ items, children, className }: MainNavProps) {
         <div className={className}>
             <Link href="/" className="hidden items-center space-x-2 md:flex">
                 <Image src={DRVGOLogo} alt="DRVGO" width={30} height={30} />
-                <p className="hidden font-bold text-accent sm:inline-block text-xl">
+                <p className="hidden text-xl font-bold text-accent sm:inline-block">
                     {siteConfig.name}
                 </p>
             </Link>
             {items?.length ? (
-                <nav className="hidden gap-6 md:flex uppercase">
+                <nav className="hidden gap-6 uppercase md:flex">
                     {items?.map((item, index) => (
                         <Link
                             key={index}
                             href={item.disabled ? "#" : item.href}
                             className={cn(
-                                "flex items-center gap-1 text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm relative",
+                                "relative flex items-center gap-1 text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm",
                                 item.href.startsWith(`/${segment}`)
                                     ? "text-foreground"
                                     : "text-foreground/60",
@@ -42,10 +42,9 @@ function MainNav({ items, children, className }: MainNavProps) {
                             )}
                         >
                             <p>{item.title}</p>
-                            {item.title === "Blog"
-                                ? <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
-                                : null
-                            }
+                            {item.title === "Blog" ? (
+                                <span className="relative inline-flex h-2 w-2 rounded-full bg-sky-500"></span>
+                            ) : null}
                         </Link>
                     ))}
                 </nav>

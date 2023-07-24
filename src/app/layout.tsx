@@ -1,14 +1,15 @@
 import "./globals.css";
-import { Poppins } from "next/font/google";
-import { siteConfig } from "@/src/config/site";
 import { Toaster } from "@/src/components/ui/toaster";
-import { Metadata } from "next";
+import { siteConfig } from "@/src/config/site";
 import { Analytics } from "@vercel/analytics/react";
+import { Metadata } from "next";
+import { Poppins } from "next/font/google";
+import { cn } from "../lib/utils";
 
 const poppins = Poppins({
     subsets: ["latin"],
     weight: ["100", "200", "300", "400", "500", "600", "700"],
-    variable: "--font-poppins"
+    variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
         {
             name: siteConfig.name,
             url: siteConfig.url,
-        }
+        },
     ],
     creator: siteConfig.name,
     openGraph: {
@@ -38,18 +39,23 @@ export const metadata: Metadata = {
         shortcut: "/favicon-16x16.png",
         apple: "/apple-touch-icon.png",
     },
-    metadataBase: new URL(siteConfig.url)
+    metadataBase: new URL(siteConfig.url),
 };
 
 interface RootLayoutProps {
-    children: React.ReactNode
+    children: React.ReactNode;
 }
 
 function RootLayout({ children }: RootLayoutProps) {
     return (
         <html lang="en" suppressHydrationWarning>
             <head />
-            <body className={`${poppins.className} min-h-screen antialiased overflow-x-hidden scroll-smooth`}>
+            <body
+                className={cn(
+                    poppins.className,
+                    "min-h-screen overflow-x-hidden scroll-smooth antialiased"
+                )}
+            >
                 {children}
                 <Analytics />
                 <Toaster />

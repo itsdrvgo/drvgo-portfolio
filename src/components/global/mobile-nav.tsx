@@ -1,12 +1,12 @@
-import Link from "next/link";
-import { DefaultProps, MainNavItem } from "@/src/types";
 import { siteConfig } from "@/src/config/site";
-import { cn } from "@/src/lib/utils";
 import { useLockBody } from "@/src/hooks/use-lock-body";
+import { cn } from "@/src/lib/utils";
+import { DefaultProps, MainNavItem } from "@/src/types";
+import Link from "next/link";
 import { Icons } from "../icons/icons";
 
 interface MobileNavProps extends DefaultProps {
-    items: MainNavItem[]
+    items: MainNavItem[];
 }
 
 function MobileNav({ items, children }: MobileNavProps) {
@@ -29,15 +29,14 @@ function MobileNav({ items, children }: MobileNavProps) {
                             key={index}
                             href={item.disabled ? "#" : item.href}
                             className={cn(
-                                "flex w-full gap-1 items-center rounded-md p-2 text-sm font-medium hover:underline",
+                                "flex w-full items-center gap-1 rounded-md p-2 text-sm font-medium hover:underline",
                                 item.disabled && "cursor-not-allowed opacity-60"
                             )}
                         >
                             <p>{item.title}</p>
-                            {item.title === "Blog"
-                                ? <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
-                                : null
-                            }
+                            {item.title === "Blog" ? (
+                                <span className="relative inline-flex h-2 w-2 rounded-full bg-sky-500"></span>
+                            ) : null}
                         </Link>
                     ))}
                 </nav>

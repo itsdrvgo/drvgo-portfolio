@@ -1,25 +1,25 @@
 "use client";
 
 import { DefaultProps } from "@/src/types";
-import { Input } from "../ui/input";
+import { motion, Variants } from "framer-motion";
 import { Button } from "../ui/button";
-import { Variants, motion } from "framer-motion";
+import { Input } from "../ui/input";
 
 function Newsletter({ className }: DefaultProps) {
     const fadeInContainer: Variants = {
         hide: {
             opacity: 0,
-            y: 100
+            y: 100,
         },
         show: {
             opacity: 1,
             y: 0,
             transition: {
                 staggerChildren: 0.2,
-                duration: 0.5
-            }
-        }
-    }
+                duration: 0.5,
+            },
+        },
+    };
 
     return (
         <motion.section
@@ -31,27 +31,33 @@ function Newsletter({ className }: DefaultProps) {
             id="newsletter"
         >
             <motion.div
-                className="container flex flex-col gap-10 justify-center items-center max-w-[75rem]"
+                className="container flex max-w-[75rem] flex-col items-center justify-center gap-10"
                 variants={fadeInContainer}
             >
                 <div className="flex flex-col items-center gap-5 text-center">
-                    <p className="text-4xl md:text-5xl font-bold">Subscribe to Newsletter</p>
-                    <p className="text-gray-400 text-sm md:text-base">Subscribe to our Newsletter to receive updates about our latest projects.</p>
+                    <p className="text-4xl font-bold md:text-5xl">
+                        Subscribe to Newsletter
+                    </p>
+                    <p className="text-sm text-gray-400 md:text-base">
+                        Subscribe to our Newsletter to receive updates about our
+                        latest projects.
+                    </p>
                 </div>
 
                 <motion.div
-                    className="bg-secondary rounded-md space-y-3 p-5 md:p-10 w-full"
+                    className="w-full space-y-3 rounded-md bg-secondary p-5 md:p-10"
                     variants={fadeInContainer}
                 >
-                    <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-5">
+                    <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:gap-5">
                         <Input />
-                        <Button
-                            className="uppercase hover:bg-red-800 bg-red-900 text-white"
-                        >
+                        <Button className="bg-red-900 uppercase text-white hover:bg-red-800">
                             Subscribe
                         </Button>
                     </div>
-                    <p className="text-gray-400 text-xs md:text-sm">We&apos;ll be sending you updates about our latest projects, opportunities, and more.</p>
+                    <p className="text-xs text-gray-400 md:text-sm">
+                        We&apos;ll be sending you updates about our latest
+                        projects, opportunities, and more.
+                    </p>
                 </motion.div>
             </motion.div>
         </motion.section>

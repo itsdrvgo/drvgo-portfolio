@@ -11,17 +11,18 @@ export const env = createEnv({
         UPLOADTHING_SECRET: z.string(),
         UPLOADTHING_APP_ID: z.string(),
 
-        NODE_ENV: z.enum(["development", "test", "production"])
+        NODE_ENV: z.enum(["development", "test", "production"]),
     },
     client: {
         NEXT_PUBLIC_APP_URL: z.string(),
         NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string()
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string(),
     },
     runtimeEnv: {
         NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
         NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+        NEXT_PUBLIC_SUPABASE_ANON_KEY:
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 
         DATABASE_URL: process.env.DATABASE_URL,
         REDIS_URL: process.env.REDIS_URL,
@@ -31,6 +32,6 @@ export const env = createEnv({
         UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
         UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
 
-        NODE_ENV: process.env.NODE_ENV
-    }
+        NODE_ENV: process.env.NODE_ENV,
+    },
 });

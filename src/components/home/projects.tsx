@@ -1,27 +1,27 @@
 "use client";
 
-import { DefaultProps } from "@/src/types";
-import Link from "next/link";
-import { siteConfig } from "@/src/config/site";
-import Image from "next/image";
-import { Variants, motion } from "framer-motion";
 import { projectsConfig } from "@/src/config/projects";
+import { siteConfig } from "@/src/config/site";
+import { DefaultProps } from "@/src/types";
+import { motion, Variants } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
 
 function Projects({ className }: DefaultProps) {
     const fadeInContainer: Variants = {
         hide: {
             opacity: 0,
-            y: 100
+            y: 100,
         },
         show: {
             opacity: 1,
             y: 0,
             transition: {
                 staggerChildren: 0.2,
-                duration: 0.5
-            }
-        }
-    }
+                duration: 0.5,
+            },
+        },
+    };
 
     return (
         <motion.section
@@ -32,30 +32,50 @@ function Projects({ className }: DefaultProps) {
             viewport={{ once: true }}
         >
             <motion.div
-                className="container flex flex-col gap-20 justify-center items-center max-w-[75rem] p-0 mt-20 md:mt-0"
+                className="container mt-20 flex max-w-[75rem] flex-col items-center justify-center gap-20 p-0 md:mt-0"
                 variants={fadeInContainer}
             >
                 <div className="flex flex-col items-center gap-5 text-center">
-                    <p className="text-4xl md:text-5xl font-bold">My Recent Projects</p>
-                    <p className="text-gray-400 text-sm md:text-base">I love making personal & business projects frequently. Want to see more? <Link href={siteConfig.links.github} className="text-accent underline underline-offset-2">Click Here</Link>.</p>
+                    <p className="text-4xl font-bold md:text-5xl">
+                        My Recent Projects
+                    </p>
+                    <p className="text-sm text-gray-400 md:text-base">
+                        I love making personal & business projects frequently.
+                        Want to see more?{" "}
+                        <Link
+                            href={siteConfig.links.github}
+                            className="text-accent underline underline-offset-2"
+                        >
+                            Click Here
+                        </Link>
+                        .
+                    </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 justify-items-stretch gap-10 w-full">
+                <div className="grid w-full grid-cols-1 justify-items-stretch gap-10 md:grid-cols-3">
                     {projectsConfig.map((project, index) => (
                         <motion.div
                             className="aspect-video overflow-hidden rounded-md border border-gray-600"
                             variants={fadeInContainer}
                             key={index}
                         >
-                            <div className="bg-gradient-to-br from-zinc-900 to-slate-900 w-full h-full flex items-center justify-center group relative text-center">
-                                <Image src={project.image} alt="DRVGO" width={1000} height={1000} className="absolute opacity-100 group-hover:opacity-0 transition-all ease-in-out duration-300 object-contain" />
+                            <div className="group relative flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-900 to-slate-900 text-center">
+                                <Image
+                                    src={project.image}
+                                    alt="DRVGO"
+                                    width={1000}
+                                    height={1000}
+                                    className="absolute object-contain opacity-100 transition-all duration-300 ease-in-out group-hover:opacity-0"
+                                />
 
-                                <div className="absolute opacity-0 group-hover:opacity-100 scale-150 group-hover:scale-100 transition-all ease-in-out duration-300 px-10 flex flex-col justify-center gap-10">
-                                    <p className="font-semibold">{project.name}</p>
+                                <div className="absolute flex scale-150 flex-col justify-center gap-10 px-10 opacity-0 transition-all duration-300 ease-in-out group-hover:scale-100 group-hover:opacity-100">
+                                    <p className="font-semibold">
+                                        {project.name}
+                                    </p>
                                     <div className="flex items-center justify-center">
                                         <Link
                                             href={project.link}
-                                            className="bg-secondary hover:bg-zinc-800 p-3 flex items-center justify-center rounded-md text-sm font-medium transition-all ease-in-out"
+                                            className="flex items-center justify-center rounded-md bg-secondary p-3 text-sm font-medium transition-all ease-in-out hover:bg-zinc-800"
                                         >
                                             View Project
                                         </Link>

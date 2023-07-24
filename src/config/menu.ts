@@ -4,19 +4,19 @@ export const homeMenuConfig: MenuConfig = {
     mainNav: [
         {
             title: "About",
-            href: "/#about"
+            href: "/#about",
         },
         {
             title: "Courses",
-            href: "/courses"
+            href: "/courses",
         },
         {
             title: "Newsletter",
-            href: "/#newsletter"
+            href: "/#newsletter",
         },
         {
             title: "Blogs",
-            href: "/blogs"
-        }
-    ]
+            href: "/blogs",
+        },
+    ],
 };

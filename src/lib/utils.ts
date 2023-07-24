@@ -1,14 +1,15 @@
-import { type ClassValue, clsx } from "clsx";
+import { AxiosError } from "axios";
+import { clsx, type ClassValue } from "clsx";
 import { NextResponse } from "next/server";
 import { twMerge } from "tailwind-merge";
-import { AxiosError } from "axios";
 import { ZodError } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const wait = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
 export function formatDate(input: string | number): string {
     const date = new Date(input);
@@ -20,18 +21,21 @@ export function formatDate(input: string | number): string {
 }
 
 export function handleError(err: unknown) {
-    if (err instanceof ZodError) return NextResponse.json({
-        code: 422,
-        message: err.issues.map((x) => x.message).join(", ")
-    });
-    else if (err instanceof AxiosError) return NextResponse.json({
-        code: err.code,
-        message: err.message
-    });
-    else return NextResponse.json({
-        code: 500,
-        message: "Internal Server Error"
-    });
+    if (err instanceof ZodError)
+        return NextResponse.json({
+            code: 422,
+            message: err.issues.map((x) => x.message).join(", "),
+        });
+    else if (err instanceof AxiosError)
+        return NextResponse.json({
+            code: err.code,
+            message: err.message,
+        });
+    else
+        return NextResponse.json({
+            code: 500,
+            message: "Internal Server Error",
+        });
 }
 
 export function convertMstoTimeElapsed(input: number) {

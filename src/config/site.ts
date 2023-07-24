@@ -9,13 +9,13 @@ export const siteConfig = {
         "dragoluca",
         "sarthak kundu",
         "sarthak",
-        "itsdrvgo"
+        "itsdrvgo",
     ],
     links: {
         youtube: "https://youtube.com/@itsdrvgo",
         instagram: "https://instagram.com/itsdrvgo",
         twitter: "https://www.twitter.com/itsdrvgo",
         github: "https://www.github.com/itsdrvgo",
-        discord: "https://www.dsc.gg/drvgo"
-    }
+        discord: "https://www.dsc.gg/drvgo",
+    },
 };

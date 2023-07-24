@@ -1,11 +1,11 @@
-import { redirect } from "next/navigation";
-import LoginButton from "./login-button";
-import DropdownProfile from "./dropdown-profile";
 import { db } from "@/src/lib/drizzle";
 import { users } from "@/src/lib/drizzle/schema";
-import { eq } from "drizzle-orm";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import DropdownProfile from "./dropdown-profile";
+import LoginButton from "./login-button";
 
 async function Auth() {
     // const supabase = createServerComponentClient({ cookies });
@@ -17,7 +17,7 @@ async function Auth() {
     // if (!dbUser) redirect("/");
 
     return (
-        <LoginButton className="px-4 flex gap-2 items-center hover:bg-zinc-800" />
+        <LoginButton className="flex items-center gap-2 px-4 hover:bg-zinc-800" />
         // <DropdownProfile user={dbUser} />
     );
 }
