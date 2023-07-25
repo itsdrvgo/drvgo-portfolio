@@ -50,23 +50,20 @@ function DropdownProfile({ user, className }: CompProps) {
         <div className={className}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <div className="flex cursor-pointer items-center gap-4">
-                        <Avatar className="border-2 border-slate-700">
-                            <AvatarImage
-                                src={
-                                    user.icon ??
-                                    "https://cdn.discordapp.com/attachments/1091399104480944158/1124287608990736476/pexels-photo-2426085.webp"
-                                }
-                                alt="avatar"
-                            />
-                            <AvatarFallback>
-                                {(user.username ?? defaultUserName)
-                                    .charAt(0)
-                                    .toUpperCase()}
-                            </AvatarFallback>
-                        </Avatar>
-                        <p>Hi, {user.username ?? defaultUserName}</p>
-                    </div>
+                    <Avatar className="cursor-pointer border-2 border-slate-700">
+                        <AvatarImage
+                            src={
+                                user.icon ??
+                                "https://cdn.discordapp.com/attachments/1091399104480944158/1124287608990736476/pexels-photo-2426085.webp"
+                            }
+                            alt="avatar"
+                        />
+                        <AvatarFallback>
+                            {(user.username ?? defaultUserName)
+                                .charAt(0)
+                                .toUpperCase()}
+                        </AvatarFallback>
+                    </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
