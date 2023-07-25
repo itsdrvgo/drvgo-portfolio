@@ -4,6 +4,7 @@ import { siteConfig } from "@/src/config/site";
 import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import Provider from "../components/global/providers";
 import { cn } from "../lib/utils";
 
 const poppins = Poppins({
@@ -48,19 +49,21 @@ interface RootLayoutProps {
 
 function RootLayout({ children }: RootLayoutProps) {
     return (
-        <html lang="en" suppressHydrationWarning>
-            <head />
-            <body
-                className={cn(
-                    poppins.className,
-                    "min-h-screen overflow-x-hidden scroll-smooth antialiased"
-                )}
-            >
-                {children}
-                <Analytics />
-                <Toaster />
-            </body>
-        </html>
+        <Provider>
+            <html lang="en" suppressHydrationWarning>
+                <head />
+                <body
+                    className={cn(
+                        poppins.className,
+                        "min-h-screen overflow-x-hidden scroll-smooth antialiased"
+                    )}
+                >
+                    {children}
+                    <Analytics />
+                    <Toaster />
+                </body>
+            </html>
+        </Provider>
     );
 }
 

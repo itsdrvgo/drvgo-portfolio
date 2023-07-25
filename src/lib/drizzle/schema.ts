@@ -17,12 +17,12 @@ import { createInsertSchema } from "drizzle-zod";
 export const users = mysqlTable(
     "users",
     {
-        index: int("id").autoincrement().primaryKey(),
-        id: varchar("userId", { length: 255 }).notNull(),
+        index: int("index").autoincrement().primaryKey(),
+        id: varchar("id", { length: 255 }).notNull(),
         username: varchar("username", { length: 255 }),
         email: varchar("email", { length: 255 }).notNull(),
-        profile_image_url: varchar("imageUrl", { length: 255 }),
-        created_at: timestamp("createdAt", { mode: "string" })
+        icon: varchar("icon", { length: 255 }),
+        createdAt: timestamp("createdAt", { mode: "string" })
             .notNull()
             .defaultNow(),
         role: mysqlEnum("role", ["user", "moderator", "admin", "owner"])
@@ -31,7 +31,7 @@ export const users = mysqlTable(
     },
     (table) => {
         return {
-            userIdIdx: uniqueIndex("userId_Idx").on(table.id),
+            userIdIdx: uniqueIndex("id_Idx").on(table.id),
             emailIdx: uniqueIndex("email_Idx").on(table.email),
         };
     }

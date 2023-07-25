@@ -33,7 +33,7 @@ function About({ className }: DefaultProps) {
             id="about"
         >
             <motion.div
-                className="container grid max-w-[75rem] grid-cols-1 items-center gap-5 rounded-md bg-gradient-to-b from-transparent to-primary md:grid-cols-2 md:gap-24 md:bg-gradient-to-r"
+                className="container grid max-w-[75rem] grid-cols-1 items-center gap-5 rounded-md bg-gradient-to-b from-transparent to-secondary md:grid-cols-2 md:gap-24 md:bg-gradient-to-r"
                 variants={fadeInContainer}
             >
                 <div className="hidden items-center justify-center md:visible md:flex">

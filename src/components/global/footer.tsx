@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 function SiteFooter({ className }: DefaultProps) {
     return (
         <footer className={className}>
-            <div className="absolute top-0 mx-5 grid max-w-[75rem] -translate-y-1/2 grid-cols-1 items-center gap-5 rounded-md bg-accent px-8 py-5 text-center md:grid-cols-3 md:gap-10 md:px-16 md:py-10">
+            <div className="absolute top-0 mx-5 grid max-w-[75rem] -translate-y-1/2 grid-cols-1 items-center gap-5 rounded-md bg-accent-foreground px-8 py-5 text-center md:grid-cols-3 md:gap-10 md:px-16 md:py-10">
                 <p className="text-2xl font-bold text-background md:text-4xl">
                     Start a Project
                 </p>
@@ -69,7 +69,7 @@ function SiteFooter({ className }: DefaultProps) {
                     Copyright © 2023{" "}
                     <Link
                         href={siteConfig.url}
-                        className="text-accent underline underline-offset-2"
+                        className="font-semibold text-accent-foreground underline underline-offset-2"
                     >
                         DRVGO
                     </Link>

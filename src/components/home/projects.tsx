@@ -44,7 +44,7 @@ function Projects({ className }: DefaultProps) {
                         Want to see more?{" "}
                         <Link
                             href={siteConfig.links.github}
-                            className="text-accent underline underline-offset-2"
+                            className="text-accent-foreground underline underline-offset-2"
                         >
                             Click Here
                         </Link>
@@ -75,7 +75,7 @@ function Projects({ className }: DefaultProps) {
                                     <div className="flex items-center justify-center">
                                         <Link
                                             href={project.link}
-                                            className="flex items-center justify-center rounded-md bg-secondary p-3 text-sm font-medium transition-all ease-in-out hover:bg-zinc-800"
+                                            className="flex items-center justify-center rounded-md bg-accent p-3 text-sm font-medium transition-all ease-in-out hover:bg-zinc-800"
                                         >
                                             View Project
                                         </Link>

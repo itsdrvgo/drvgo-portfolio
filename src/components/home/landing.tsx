@@ -57,7 +57,7 @@ function Landing({ className }: DefaultProps) {
                         <p>Designer, Full-Stack Developer & Musician</p>
                     </motion.div>
                     <motion.p
-                        className="text-base font-light md:text-lg"
+                        className="text-base font-light text-gray-400 md:text-lg"
                         variants={slideInItem}
                     >
                         I design and code simple but beautiful things & I love
@@ -73,7 +73,7 @@ function Landing({ className }: DefaultProps) {
                 />
                 <Link
                     href={"/#about"}
-                    className="flex items-center justify-start gap-1 rounded-md border border-accent p-3 px-6 text-accent transition-all ease-in-out hover:bg-accent hover:text-background"
+                    className="flex items-center justify-start gap-1 rounded-md border border-accent p-3 px-6 text-accent-foreground transition-all ease-in-out hover:bg-accent"
                 >
                     <p className="cursor-pointer pl-1">Know More</p>
                     <Icons.arrowRight className="h-4 w-4 cursor-pointer" />

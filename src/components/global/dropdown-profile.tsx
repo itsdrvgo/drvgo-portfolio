@@ -10,6 +10,7 @@ import {
     DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { User } from "@/src/lib/drizzle/schema";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { usePathname, useRouter } from "next/navigation";
 import { HTMLAttributes } from "react";
 import { Icons } from "../icons/icons";
@@ -22,16 +23,26 @@ interface CompProps extends HTMLAttributes<HTMLElement> {
 
 function DropdownProfile({ user, className }: CompProps) {
     const router = useRouter();
-    const pathname = usePathname();
     const { toast } = useToast();
+    const supabase = createClientComponentClient();
 
-    if ((!user.username || !user.username.length) && pathname !== "/profile") {
+    const handleLogout = async () => {
+        const { error } = await supabase.auth.signOut();
+
+        if (error)
+            return toast({
+                title: "Oops!",
+                description: error.message,
+                variant: "destructive",
+            });
+
         toast({
-            description: "You must have a username in order to continue",
-            variant: "destructive",
+            description: "Have a good day, " + user.username + "!",
         });
-        router.push("/profile");
-    }
+
+        router.refresh();
+        router.push("/");
+    };
 
     const defaultUserName = "User";
 
@@ -42,7 +53,10 @@ function DropdownProfile({ user, className }: CompProps) {
                     <div className="flex cursor-pointer items-center gap-4">
                         <Avatar className="border-2 border-slate-700">
                             <AvatarImage
-                                src={user.profile_image_url!}
+                                src={
+                                    user.icon ??
+                                    "https://cdn.discordapp.com/attachments/1091399104480944158/1124287608990736476/pexels-photo-2426085.webp"
+                                }
                                 alt="avatar"
                             />
                             <AvatarFallback>
@@ -95,7 +109,7 @@ function DropdownProfile({ user, className }: CompProps) {
                     <DropdownMenuSeparator />
 
                     <DropdownMenuItem
-                        onClick={() => router.push("/signout")}
+                        onClick={handleLogout}
                         className="cursor-pointer"
                     >
                         <Icons.logout className="mr-2 h-4 w-4" />

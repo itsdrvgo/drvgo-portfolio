@@ -45,12 +45,12 @@ function Newsletter({ className }: DefaultProps) {
                 </div>
 
                 <motion.div
-                    className="w-full space-y-3 rounded-md bg-secondary p-5 md:p-10"
+                    className="w-full space-y-3 rounded-md bg-gradient-to-r from-accent via-card to-secondary p-5 md:p-10"
                     variants={fadeInContainer}
                 >
                     <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:gap-5">
                         <Input />
-                        <Button className="bg-red-900 uppercase text-white hover:bg-red-800">
+                        <Button variant={"destructive"} className="uppercase">
                             Subscribe
                         </Button>
                     </div>

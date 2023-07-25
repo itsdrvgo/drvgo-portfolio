@@ -1,9 +1,10 @@
+import DRVGOLogo from "@/public/DRVGO.svg";
 import { siteConfig } from "@/src/config/site";
 import { useLockBody } from "@/src/hooks/use-lock-body";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps, MainNavItem } from "@/src/types";
+import Image from "next/image";
 import Link from "next/link";
-import { Icons } from "../icons/icons";
 
 interface MobileNavProps extends DefaultProps {
     items: MainNavItem[];
@@ -20,7 +21,7 @@ function MobileNav({ items, children }: MobileNavProps) {
         >
             <div className="relative z-20 grid gap-6 rounded-md bg-black p-4 text-popover-foreground shadow-md">
                 <Link href="/" className="flex items-center space-x-2">
-                    <Icons.music />
+                    <Image src={DRVGOLogo} alt="DRVGO" width={30} height={30} />
                     <span className="font-bold">{siteConfig.name}</span>
                 </Link>
                 <nav className="grid grid-flow-row auto-rows-max text-sm">

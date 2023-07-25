@@ -4,36 +4,36 @@
 
 @layer base {
     :root {
-        --text: 216, 70%, 91%;
+        --text: hsl(216, 70%, 91%);
 
-        --background: 260, 4%, 7%;
-        --foreground: 210 40% 98%;
+        --background: hsl(240 3% 4%);
+        --foreground: hsl(213 31% 91%);
 
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
+        --muted: hsl(223 47% 11%);
+        --muted-foreground: hsl(215.4 16.3% 56.9%);
 
-        --popover: 222.2 84% 4.9%;
-        --popover-foreground: 210 40% 98%;
+        --accent: hsl(216 34% 17%);
+        --accent-foreground: hsl(212, 85%, 82%);
 
-        --card: 222.2 84% 4.9%;
-        --card-foreground: 210 40% 98%;
+        --popover: hsl(224 71% 4%);
+        --popover-foreground: hsl(215 20.2% 65.1%);
 
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
+        --border: hsl(216 34% 17%);
+        --input: hsl(216 34% 17%);
 
-        --primary: 240, 30%, 15%;
-        --primary-foreground: 222.2 47.4% 11.2%;
+        --card: hsl(240, 55%, 13%);
+        --card-foreground: hsl(213 31% 91%);
 
-        --secondary: 266, 4%, 20%;
-        --secondary-foreground: 210 40% 98%;
+        --primary: hsl(210 40% 98%);
+        --primary-foreground: hsl(222.2 47.4% 1.2%);
 
-        --accent: 212, 85%, 82%;
-        --accent-foreground: 210 40% 98%;
+        --secondary: hsl(222.2 47.4% 11.2%);
+        --secondary-foreground: hsl(210 40% 98%);
 
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 0 85.7% 97.3%;
+        --destructive: hsl(0 63% 31%);
+        --destructive-foreground: hsl(210 40% 98%);
 
-        --ring: 217.2 32.6% 17.5%;
+        --ring: hsl(216 34% 17%);
 
         --radius: 0.5rem;
     }

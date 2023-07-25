@@ -1,12 +1,20 @@
 "use client";
 
 import { DefaultProps } from "@/src/types";
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 
 function LoginButton({ className }: DefaultProps) {
+    const router = useRouter();
+
     return (
-        <Button variant={"secondary"} size={"sm"} className={className}>
-            <p className="text-text">Login</p>
+        <Button
+            variant={"default"}
+            size={"sm"}
+            className={className}
+            onClick={() => router.push("/signin")}
+        >
+            Login
         </Button>
     );
 }

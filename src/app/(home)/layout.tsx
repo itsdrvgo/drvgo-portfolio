@@ -24,7 +24,7 @@ function Layout({ children }: { children: ReactNode }) {
                 </div>
             </header>
             <main className="flex-1">{children}</main>
-            <SiteFooter className="relative flex w-full flex-col items-center justify-center space-y-20 bg-primary py-10" />
+            <SiteFooter className="relative flex w-full flex-col items-center justify-center space-y-20 bg-secondary py-10" />
         </div>
     );
 }

@@ -23,7 +23,7 @@ function MainNav({ items, children, className }: MainNavProps) {
         <div className={className}>
             <Link href="/" className="hidden items-center space-x-2 md:flex">
                 <Image src={DRVGOLogo} alt="DRVGO" width={30} height={30} />
-                <p className="hidden text-xl font-bold text-accent sm:inline-block">
+                <p className="hidden text-xl font-bold text-accent-foreground sm:inline-block">
                     {siteConfig.name}
                 </p>
             </Link>
@@ -34,7 +34,7 @@ function MainNav({ items, children, className }: MainNavProps) {
                             key={index}
                             href={item.disabled ? "#" : item.href}
                             className={cn(
-                                "relative flex items-center gap-1 text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm",
+                                "hover:text-foreground/80 relative flex items-center gap-1 text-lg font-medium transition-colors sm:text-sm",
                                 item.href.startsWith(`/${segment}`)
                                     ? "text-foreground"
                                     : "text-foreground/60",
@@ -53,7 +53,11 @@ function MainNav({ items, children, className }: MainNavProps) {
                 className="flex items-center space-x-2 md:hidden"
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
-                {showMobileMenu ? <Icons.close /> : <Icons.music />}
+                {showMobileMenu ? (
+                    <Icons.close />
+                ) : (
+                    <Image src={DRVGOLogo} alt="DRVGO" width={30} height={30} />
+                )}
                 <span className="font-bold">Menu</span>
             </button>
             {showMobileMenu && items && (
