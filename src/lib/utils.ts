@@ -21,6 +21,7 @@ export function formatDate(input: string | number): string {
 }
 
 export function handleError(err: unknown) {
+    console.log(err);
     if (err instanceof ZodError)
         return NextResponse.json({
             code: 422,

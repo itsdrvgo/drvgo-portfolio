@@ -1,10 +1,8 @@
 "use client";
 
 import { OAuthData } from "@/src/lib/validation/auth";
-import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
-import axios from "axios";
-import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { Icons } from "../icons/icons";
 import { useToast } from "../ui/use-toast";
@@ -22,11 +20,6 @@ const providers: OAuthProviders[] = [
         icon: "discord",
     },
     {
-        name: "Google",
-        code: "google",
-        icon: "google",
-    },
-    {
         name: "GitHub",
         code: "github",
         icon: "github",
@@ -36,47 +29,19 @@ const providers: OAuthProviders[] = [
 function OAuth({ className }: DefaultProps) {
     const { toast } = useToast();
 
-    const router = useRouter();
     const [isLoading, setLoading] = useState(false);
 
     const handleLogin = (code: OAuthData["code"]) => {
-        const data: OAuthData = {
-            code,
-        };
+        setLoading(true);
 
-        axios
-            .post<ResponseData>("/api/users/create/oauth", data)
-            .then(({ data: resData }) => {
+        signIn(code, { callbackUrl: "/profile" })
+            .then(() => {
                 setLoading(false);
-
-                switch (resData.code) {
-                    case 201:
-                        toast({
-                            description: "Welcome, " + resData.data + "!",
-                        });
-                        router.push("/");
-                        break;
-
-                    case 409:
-                        toast({
-                            title: "Oops!",
-                            description: resData.message,
-                            variant: "destructive",
-                        });
-                        router.push("/");
-                        break;
-
-                    default:
-                        toast({
-                            title: "Oops!",
-                            description: resData.message,
-                            variant: "destructive",
-                        });
-                        break;
-                }
             })
-            .catch(() => {
+            .catch((err) => {
                 setLoading(false);
+                console.log(err);
+
                 return toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
@@ -93,17 +58,11 @@ function OAuth({ className }: DefaultProps) {
                 return (
                     <button
                         key={index}
-                        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-gray-600 bg-background py-2 font-medium"
+                        className="flex w-full cursor-pointer items-center justify-center gap-[6px] rounded border border-gray-600 bg-background py-2 text-xs font-medium md:text-base"
                         onClick={() => handleLogin(provider.code)}
+                        disabled={isLoading}
                     >
-                        {isLoading ? (
-                            <Icons.spinner
-                                className="h-4 w-4 animate-spin"
-                                aria-hidden="true"
-                            />
-                        ) : (
-                            <Icon className="h-4 w-4" aria-hidden="true" />
-                        )}
+                        <Icon className="h-4 w-4" aria-hidden="true" />
                         {provider.name}
                     </button>
                 );

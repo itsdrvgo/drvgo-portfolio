@@ -1,3 +1,4 @@
+import "@uploadthing/react/styles.css";
 import "./globals.css";
 import { Toaster } from "@/src/components/ui/toaster";
 import { siteConfig } from "@/src/config/site";
@@ -6,6 +7,7 @@ import { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Provider from "../components/global/providers";
 import { cn } from "../lib/utils";
+import { RootLayoutProps } from "../types";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -34,6 +36,7 @@ export const metadata: Metadata = {
         title: siteConfig.name,
         description: siteConfig.description,
         siteName: siteConfig.name,
+        images: "/og.jpg",
     },
     icons: {
         icon: "/favicon.ico",
@@ -43,27 +46,21 @@ export const metadata: Metadata = {
     metadataBase: new URL(siteConfig.url),
 };
 
-interface RootLayoutProps {
-    children: React.ReactNode;
-}
-
 function RootLayout({ children }: RootLayoutProps) {
     return (
-        <Provider>
-            <html lang="en" suppressHydrationWarning>
-                <head />
-                <body
-                    className={cn(
-                        poppins.className,
-                        "min-h-screen overflow-x-hidden scroll-smooth antialiased"
-                    )}
-                >
-                    {children}
-                    <Analytics />
-                    <Toaster />
-                </body>
-            </html>
-        </Provider>
+        <html lang="en" suppressHydrationWarning>
+            <head />
+            <body
+                className={cn(
+                    poppins.className,
+                    "min-h-screen overflow-x-hidden scroll-smooth antialiased"
+                )}
+            >
+                <Provider>{children}</Provider>
+                <Analytics />
+                <Toaster />
+            </body>
+        </html>
     );
 }
 

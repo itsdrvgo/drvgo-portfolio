@@ -6,10 +6,10 @@ import Link from "next/link";
 
 function Page() {
     return (
-        <section className="flex min-h-[calc(100vh-12rem)] items-center justify-center">
-            <div className="max-w-[75rem] rounded-md bg-gradient-to-r from-transparent to-secondary p-5">
-                <div className="grid grid-cols-2 divide-x">
-                    <div className="flex items-center justify-center">
+        <section className="m-6 my-0 flex min-h-[calc(100vh-12rem)] items-center justify-center">
+            <div className="w-full max-w-[55rem] rounded-md bg-gradient-to-r from-transparent to-secondary p-2 md:p-5">
+                <div className="grid grid-cols-1 divide-x-0 md:grid-cols-2 md:divide-x md:divide-y-0">
+                    <div className="hidden items-center justify-center md:flex">
                         <Image
                             src={DRVGOLogo}
                             alt="DRVGO"
@@ -41,7 +41,7 @@ function Page() {
 
                         <SignUpForm />
 
-                        <div className="flex-1 text-sm text-muted-foreground">
+                        <div className="flex-1 text-xs text-muted-foreground md:text-sm">
                             Already have an account?{" "}
                             <Link
                                 aria-label="Sign in"

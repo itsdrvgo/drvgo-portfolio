@@ -1,5 +1,6 @@
 import DRVGOLogo from "@/public/DRVGO.svg";
 import { siteConfig } from "@/src/config/site";
+import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,7 +9,12 @@ import { Button } from "../ui/button";
 
 function SiteFooter({ className }: DefaultProps) {
     return (
-        <footer className={className}>
+        <footer
+            className={cn(
+                "relative flex w-full flex-col items-center justify-center space-y-20 border-t border-border bg-background py-10",
+                className
+            )}
+        >
             <div className="absolute top-0 mx-5 grid max-w-[75rem] -translate-y-1/2 grid-cols-1 items-center gap-5 rounded-md bg-accent-foreground px-8 py-5 text-center md:grid-cols-3 md:gap-10 md:px-16 md:py-10">
                 <p className="text-2xl font-bold text-background md:text-4xl">
                     Start a Project
@@ -36,31 +42,31 @@ function SiteFooter({ className }: DefaultProps) {
                 <div className="flex gap-5">
                     <Link
                         href={siteConfig.links.twitter}
-                        className="items-center rounded-full bg-background p-3"
+                        className="rounded-full bg-secondary p-3"
                     >
                         <Icons.twitter className="h-4 w-4" />
                     </Link>
                     <Link
                         href={siteConfig.links.youtube}
-                        className="rounded-full bg-background p-3"
+                        className="rounded-full bg-secondary p-3"
                     >
                         <Icons.youtube className="h-4 w-4" />
                     </Link>
                     <Link
                         href={siteConfig.links.github}
-                        className="rounded-full bg-background p-3"
+                        className="rounded-full bg-secondary p-3"
                     >
                         <Icons.github className="h-4 w-4" />
                     </Link>
                     <Link
                         href={siteConfig.links.discord}
-                        className="rounded-full bg-background p-3"
+                        className="rounded-full bg-secondary p-3"
                     >
                         <Icons.discord className="h-4 w-4" />
                     </Link>
                     <Link
                         href={siteConfig.links.instagram}
-                        className="rounded-full bg-background p-3"
+                        className="rounded-full bg-secondary p-3"
                     >
                         <Icons.instagram className="h-4 w-4" />
                     </Link>

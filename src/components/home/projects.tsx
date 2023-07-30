@@ -63,9 +63,9 @@ function Projects({ className }: DefaultProps) {
                                 <Image
                                     src={project.image}
                                     alt="DRVGO"
-                                    width={1000}
-                                    height={1000}
-                                    className="absolute object-contain opacity-100 transition-all duration-300 ease-in-out group-hover:opacity-0"
+                                    fill
+                                    style={{ objectFit: "cover" }}
+                                    className="absolute opacity-100 transition-all duration-300 ease-in-out group-hover:opacity-0"
                                 />
 
                                 <div className="absolute flex scale-150 flex-col justify-center gap-10 px-10 opacity-0 transition-all duration-300 ease-in-out group-hover:scale-100 group-hover:opacity-100">

@@ -24,3 +24,7 @@ export type MenuConfig = {
 };
 
 export type DefaultProps = HTMLAttributes<HTMLElement>;
+
+export interface RootLayoutProps {
+    children: React.ReactNode;
+}

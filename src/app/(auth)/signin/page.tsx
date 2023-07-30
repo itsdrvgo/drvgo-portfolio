@@ -6,10 +6,10 @@ import Link from "next/link";
 
 function Page() {
     return (
-        <section className="flex min-h-[calc(100vh-12rem)] items-center justify-center">
-            <div className="max-w-[75rem] rounded-md bg-gradient-to-r from-transparent to-secondary p-5">
-                <div className="grid grid-cols-2 divide-x">
-                    <div className="flex items-center justify-center">
+        <section className="m-6 my-0 flex min-h-[calc(100vh-12rem)] items-center justify-center">
+            <div className="w-full max-w-[55rem] rounded-md bg-gradient-to-r from-transparent to-secondary p-2 md:p-5">
+                <div className="grid grid-cols-1 divide-x-0 md:grid-cols-2 md:divide-x md:divide-y-0">
+                    <div className="hidden items-center justify-center md:flex">
                         <Image
                             src={DRVGOLogo}
                             alt="DRVGO"
@@ -26,7 +26,7 @@ function Page() {
                             </p>
                         </div>
 
-                        <OAuth className="flex flex-col gap-2" />
+                        <OAuth className="flex items-center justify-between gap-2" />
 
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
@@ -42,7 +42,7 @@ function Page() {
                         <SignInForm />
 
                         <div>
-                            <div className="flex-1 text-sm text-muted-foreground">
+                            <div className="flex-1 text-xs text-muted-foreground md:text-sm">
                                 Don&apos;t have an account?{" "}
                                 <Link
                                     aria-label="Sign up"
@@ -55,7 +55,7 @@ function Page() {
                             <Link
                                 aria-label="Reset password"
                                 href="/signin/reset-password"
-                                className="text-sm text-accent-foreground underline-offset-4 transition-colors hover:underline"
+                                className="text-xs text-accent-foreground underline-offset-4 transition-colors hover:underline md:text-sm"
                             >
                                 Reset password
                             </Link>

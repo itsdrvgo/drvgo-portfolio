@@ -103,7 +103,7 @@ function Skills({ className }: DefaultProps) {
                                 Frameworks & Libraries:
                             </p>
                             <p className="text-sm text-gray-400">
-                                React, Next.JS, ShadCN UI, Tailwind CSS
+                                React, Next.JS, ShadCN UI, Tailwind CSS, Sass
                             </p>
                         </div>
 
@@ -112,7 +112,7 @@ function Skills({ className }: DefaultProps) {
                                 Languages:
                             </p>
                             <p className="text-sm text-gray-400">
-                                HTML, CSS, Sass, JavaScript, TypeScript
+                                HTML, CSS, JavaScript, TypeScript, Node.JS
                             </p>
                         </div>
 

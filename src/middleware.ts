@@ -1,28 +1,88 @@
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { NextRequest, NextResponse } from "next/server";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+import { ipAddress } from "@vercel/edge";
+import { getToken } from "next-auth/jwt";
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest) {
-    const res = NextResponse.next();
-    const supabase = createMiddlewareClient({ req, res });
+const cache = new Map();
 
-    const {
-        data: { session },
-        error: sError,
-    } = await supabase.auth.getSession();
-    const {
-        data: { user },
-        error: uError,
-    } = await supabase.auth.getUser();
-    const url = new URL(req.nextUrl.origin);
+const globalRateLimiter = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(50, "60s"),
+    ephemeralCache: cache,
+    analytics: true,
+    timeout: 1000,
+});
 
-    return res;
-}
+const viewsRateLimiter = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.fixedWindow(5, "60s"),
+    ephemeralCache: cache,
+    analytics: true,
+    timeout: 1000,
+});
+
+export default withAuth(
+    async function middleware(req, evt) {
+        const token = await getToken({ req });
+        const isAuth = !!token;
+        if (!isAuth) return NextResponse.redirect(new URL("/", req.url));
+
+        const reqIp = ipAddress(req) ?? "127.0.0.1";
+
+        if (req.nextUrl.pathname === "/profile")
+            return NextResponse.redirect(new URL("/profile/settings", req.url));
+
+        if (req.nextUrl.pathname.startsWith("/api")) {
+            if (req.nextUrl.pathname.startsWith("/api/blogs/views")) {
+                const { success, pending, limit, reset, remaining } =
+                    await viewsRateLimiter.limit(reqIp);
+                evt.waitUntil(pending);
+
+                const res = success
+                    ? NextResponse.next()
+                    : NextResponse.json({
+                          code: 429,
+                          message: "Too many view requests",
+                      });
+
+                res.headers.set("X-RateLimit-Limit", limit.toString());
+                res.headers.set("X-RateLimit-Remaining", remaining.toString());
+                res.headers.set("X-RateLimit-Reset", reset.toString());
+                return res;
+            } else {
+                const { success, pending, limit, reset, remaining } =
+                    await globalRateLimiter.limit(reqIp);
+                evt.waitUntil(pending);
+
+                const res = success
+                    ? NextResponse.next()
+                    : NextResponse.json({
+                          code: 429,
+                          message: "Too many requests, go slow",
+                      });
+
+                res.headers.set("X-RateLimit-Limit", limit.toString());
+                res.headers.set("X-RateLimit-Remaining", remaining.toString());
+                res.headers.set("X-RateLimit-Reset", reset.toString());
+                return res;
+            }
+        }
+    },
+    {
+        pages: {
+            signIn: "/signin",
+            newUser: "/signup",
+        },
+    }
+);
 
 export const config = {
     matcher: [
-        "/",
-        "/signin",
-        "/signup",
-        "/((?!api|_next/static|_next/image|favicon.ico).*)",
+        "/((?!api|_next/static|_next/image|favicon.ico|api/auth|api/uploadthing|signin|signup).*)(.+)",
+        "/profile/:path*",
+        "/admin/:path*",
+        "/blogs/:path*",
     ],
 };

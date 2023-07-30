@@ -1,15 +1,15 @@
 import DRVGOLogo from "@/public/DRVGO.svg";
+import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ReactNode } from "react";
 
 export const metadata: Metadata = {
     title: "Sign In",
     description: "Sign in to your existing account",
 };
 
-function Layout({ children }: { children: ReactNode }) {
+function Layout({ children }: RootLayoutProps) {
     return (
         <div className="flex min-h-screen flex-col">
             <header className="sticky top-0 z-40 w-full bg-background">

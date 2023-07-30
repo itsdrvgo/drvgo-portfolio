@@ -59,6 +59,7 @@ import {
     Moon,
     MoreVertical,
     Music4,
+    PanelRight,
     PartyPopper,
     Pencil,
     Pizza,
@@ -174,6 +175,7 @@ export const Icons = {
     share: Share2,
     layers: Layers,
     code: Code,
+    sidePanel: PanelRight,
     discord: ({ ...props }: LucideProps) => (
         <svg
             aria-hidden="true"

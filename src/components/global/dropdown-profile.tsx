@@ -9,42 +9,38 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
+import { defaultUserPFP } from "@/src/config/const";
 import { User } from "@/src/lib/drizzle/schema";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { usePathname, useRouter } from "next/navigation";
-import { HTMLAttributes } from "react";
+import { DefaultProps } from "@/src/types";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Icons } from "../icons/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useToast } from "../ui/use-toast";
 
-interface CompProps extends HTMLAttributes<HTMLElement> {
+interface PageProps extends DefaultProps {
     user: User;
 }
 
-function DropdownProfile({ user, className }: CompProps) {
+function DropdownProfile({ user, className }: PageProps) {
     const router = useRouter();
     const { toast } = useToast();
-    const supabase = createClientComponentClient();
 
     const handleLogout = async () => {
-        const { error } = await supabase.auth.signOut();
+        signOut({ callbackUrl: "/" })
+            .then(() => {
+                router.refresh();
+            })
+            .catch((err) => {
+                console.log(err);
 
-        if (error)
-            return toast({
-                title: "Oops!",
-                description: error.message,
-                variant: "destructive",
+                toast({
+                    title: "Oops!",
+                    description: "Something went wrong, try again later",
+                    variant: "destructive",
+                });
             });
-
-        toast({
-            description: "Have a good day, " + user.username + "!",
-        });
-
-        router.refresh();
-        router.push("/");
     };
-
-    const defaultUserName = "User";
 
     return (
         <div className={className}>
@@ -52,21 +48,18 @@ function DropdownProfile({ user, className }: CompProps) {
                 <DropdownMenuTrigger asChild>
                     <Avatar className="cursor-pointer border-2 border-slate-700">
                         <AvatarImage
-                            src={
-                                user.icon ??
-                                "https://cdn.discordapp.com/attachments/1091399104480944158/1124287608990736476/pexels-photo-2426085.webp"
-                            }
+                            src={user.image ?? defaultUserPFP.src}
                             alt="avatar"
                         />
                         <AvatarFallback>
-                            {(user.username ?? defaultUserName)
-                                .charAt(0)
-                                .toUpperCase()}
+                            {(user.name ?? user.id).charAt(0).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuLabel className="truncate">
+                        @{user.id}
+                    </DropdownMenuLabel>
 
                     <DropdownMenuSeparator />
 

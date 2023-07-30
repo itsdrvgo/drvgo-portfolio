@@ -5,6 +5,7 @@ export const responseValidator = z.object({
         z.literal(200),
         z.literal(201),
         z.literal(202),
+        z.literal(204),
         z.literal(400),
         z.literal(401),
         z.literal(402),

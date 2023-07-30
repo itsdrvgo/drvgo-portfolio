@@ -39,7 +39,7 @@ function SignInForm() {
         setLoading(true);
 
         axios
-            .post<ResponseData>("/api/users/manage", data)
+            .post<ResponseData>("/api/users", JSON.stringify(data))
             .then(({ data: resData }) => {
                 setLoading(false);
 
@@ -71,8 +71,10 @@ function SignInForm() {
                         break;
                 }
             })
-            .catch(() => {
+            .catch((err) => {
                 setLoading(false);
+                console.log(err);
+
                 return toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
@@ -122,7 +124,7 @@ function SignInForm() {
                     )}
                 />
                 <Button
-                    disabled={isLoading}
+                    disabled={isLoading || true}
                     className="flex items-center gap-2 bg-white hover:bg-gray-200"
                 >
                     {isLoading ? (
