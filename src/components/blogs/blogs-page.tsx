@@ -1,7 +1,7 @@
 import { db } from "@/src/lib/drizzle";
-import { blogs } from "@/src/lib/drizzle/schema";
+import { blogs, comments } from "@/src/lib/drizzle/schema";
 import { DefaultProps } from "@/src/types";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { EmptyPlaceholder } from "../global/empty-placeholder";
 import { GoBackButton } from "../global/go-back-button";
 import BlogSearch from "./blog-search";
@@ -10,7 +10,12 @@ async function BlogsPage({ className }: DefaultProps) {
     const blogData = await db.query.blogs.findMany({
         with: {
             author: true,
-            comments: true,
+            comments: {
+                orderBy: [desc(comments.createdAt)],
+                with: {
+                    user: true,
+                },
+            },
             likes: true,
             views: true,
         },

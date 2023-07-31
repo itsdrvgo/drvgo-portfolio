@@ -1,9 +1,9 @@
 import { authOptions } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
-import { blogs, users } from "@/src/lib/drizzle/schema";
+import { blogs, comments, users } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import { blogCreateSchema } from "@/src/lib/validation/blogs";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -19,7 +19,12 @@ export async function GET() {
         const filteredBlogs = await db.query.blogs.findMany({
             with: {
                 author: true,
-                comments: true,
+                comments: {
+                    orderBy: [desc(comments.createdAt)],
+                    with: {
+                        user: true,
+                    },
+                },
                 likes: true,
                 views: true,
             },
