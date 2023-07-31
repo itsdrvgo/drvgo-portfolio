@@ -69,12 +69,12 @@ export default withAuth(
                 return res;
             }
         }
-    },
-    {
-        pages: {
-            signIn: "/signin",
-        },
     }
+    // {
+    //     pages: {
+    //         signIn: "/signin",
+    //     },
+    // }
 );
 
 export const config = {
