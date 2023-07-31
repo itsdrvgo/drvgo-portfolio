@@ -3,6 +3,9 @@ import { clsx, type ClassValue } from "clsx";
 import { NextResponse } from "next/server";
 import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
+import { roleHierarchy } from "../config/const";
+import { User } from "./drizzle/schema";
+import { UserUpdateData } from "./validation/auth";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -65,4 +68,51 @@ export function shortenNumber(num: number): string {
     }
     const formattedNum = num % 1 === 0 ? num.toFixed(0) : num.toFixed(1);
     return formattedNum + units[unitIndex];
+}
+
+export function checkRoleHierarchy(user: User, target: User) {
+    const userRoleIndex = roleHierarchy.indexOf(user.role);
+    const targetRoleIndex = roleHierarchy.indexOf(target.role);
+
+    if (userRoleIndex === -1 || targetRoleIndex === -1) {
+        return false;
+    }
+
+    if (user.role === "owner") {
+        if (target.role === "owner") return false;
+        return true;
+    }
+
+    return (
+        userRoleIndex > targetRoleIndex && userRoleIndex - targetRoleIndex > 1
+    );
+}
+
+export function manageRole(
+    role: User["role"],
+    action: string
+): UserUpdateData["role"] {
+    const roleIndex = roleHierarchy.indexOf(role);
+
+    if (roleIndex === -1) {
+        return undefined;
+    }
+
+    if (action === "promote") {
+        const nextRoleIndex = roleIndex + 1;
+        if (nextRoleIndex < roleHierarchy.length) {
+            return roleHierarchy[nextRoleIndex];
+        } else {
+            return undefined;
+        }
+    } else if (action === "demote") {
+        const prevRoleIndex = roleIndex - 1;
+        if (prevRoleIndex >= 0) {
+            return roleHierarchy[prevRoleIndex];
+        } else {
+            return undefined;
+        }
+    } else {
+        return undefined;
+    }
 }

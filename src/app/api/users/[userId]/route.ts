@@ -13,12 +13,36 @@ import { UserContext, userContextSchema } from "@/src/lib/validation/route";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+export async function GET(req: NextRequest, context: UserContext) {
+    try {
+        const { params } = userContextSchema.parse(context);
+
+        const existingUser = await db.query.users.findFirst({
+            where: eq(users.id, params.userId),
+        });
+
+        if (!existingUser)
+            return NextResponse.json({
+                code: 404,
+                message: "Account doesn't exist",
+            });
+
+        return NextResponse.json({
+            code: 200,
+            message: "Ok",
+            data: JSON.stringify(existingUser),
+        });
+    } catch (err) {
+        handleError(err);
+    }
+}
+
 export async function PATCH(req: NextRequest, context: UserContext) {
     const body = await req.json();
 
     try {
         const { params } = userContextSchema.parse(context);
-        const { username, email, icon } = userUpdateSchema.parse(body);
+        const { username, email, icon, role } = userUpdateSchema.parse(body);
 
         const existingUser = await db.query.users.findFirst({
             where: eq(users.id, params.userId),
@@ -45,6 +69,7 @@ export async function PATCH(req: NextRequest, context: UserContext) {
             email: email ?? existingUser.email,
             name: username ?? existingUser.name,
             image: icon ?? existingUser.image,
+            role: role ?? existingUser.role,
         });
 
         return NextResponse.json({

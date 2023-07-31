@@ -63,6 +63,7 @@ export const userUpdateSchema = z.object({
     email: checkEmailSchema.shape.email.optional(),
     username: checkUsernameSchema.shape.username.optional(),
     icon: checkIconSchema.shape.icon.optional(),
+    role: z.enum(["user", "moderator", "admin", "owner"]).optional(),
 });
 
 export const oauthSchema = z.object({
