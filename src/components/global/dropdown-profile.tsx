@@ -58,7 +58,7 @@ function DropdownProfile({ user, className }: PageProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48">
                     <DropdownMenuLabel className="truncate">
-                        @{user.id}
+                        @{user.name ?? user.id}
                     </DropdownMenuLabel>
 
                     <DropdownMenuSeparator />
