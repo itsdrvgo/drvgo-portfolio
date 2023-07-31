@@ -1,5 +1,5 @@
 import { EmptyPlaceholder } from "../components/global/empty-placeholder";
-import { GoHomeButton } from "../components/global/go-home-button";
+import { GoBackButton } from "../components/global/go-back-button";
 
 function Page() {
     return (
@@ -11,7 +11,7 @@ function Page() {
                     Either this page is under maintenance or the page does not
                     exist. Come back later.
                 </EmptyPlaceholder.Description>
-                <GoHomeButton />
+                <GoBackButton />
             </EmptyPlaceholder>
         </div>
     );
