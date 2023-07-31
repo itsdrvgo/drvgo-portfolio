@@ -5,7 +5,7 @@ import { Suspense } from "react";
 function Page() {
     return (
         <section className="m-5 my-10 flex">
-            <div className="container max-w-[75rem] space-y-8">
+            <div className="container max-w-[75rem] space-y-8 p-0">
                 <div className="space-y-3 text-center">
                     <p className="text-5xl font-bold">Blogs</p>
                     <p className="text-gray-500">

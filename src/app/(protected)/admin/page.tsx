@@ -5,7 +5,7 @@ import { Separator } from "@/src/components/ui/separator";
 function Page() {
     return (
         <section className="m-5 my-10 flex min-h-[calc(100vh-5rem)]">
-            <div className="container max-w-[75rem] space-y-24">
+            <div className="container max-w-[75rem] space-y-24 p-0">
                 <div className="space-y-16">
                     <div className="space-y-2 text-center">
                         <p className="text-4xl font-bold">Admin Panel</p>

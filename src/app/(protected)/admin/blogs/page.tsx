@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 function Page() {
     return (
         <section className="m-5 my-10 flex min-h-[calc(100vh-5rem)]">
-            <div className="container max-w-[75rem] space-y-10 md:space-y-16">
+            <div className="container max-w-[75rem] space-y-10 p-0 md:space-y-16">
                 <div className="flex flex-col items-center justify-between gap-8 text-center md:flex-row md:gap-0 md:text-left">
                     <div className="flex flex-col justify-center gap-2">
                         <p className="text-4xl font-bold">Blogs</p>
