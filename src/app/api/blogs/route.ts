@@ -16,10 +16,15 @@ export async function GET() {
                 message: "Unauthorized!",
             });
 
-        const filteredBlogs = await db
-            .select()
-            .from(blogs)
-            .where(eq(blogs.published, true));
+        const filteredBlogs = await db.query.blogs.findMany({
+            with: {
+                author: true,
+                comments: true,
+                likes: true,
+                views: true,
+            },
+            where: eq(blogs.published, true),
+        });
 
         return NextResponse.json({
             code: 200,

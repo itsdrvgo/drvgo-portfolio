@@ -2,7 +2,7 @@
 
 import { Comment, User } from "@/src/lib/drizzle/schema";
 import { ResponseData } from "@/src/lib/validation/response";
-import { DefaultProps } from "@/src/types";
+import { DefaultProps, ExtendedBlog } from "@/src/types";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Icons } from "../icons/icons";
@@ -16,14 +16,14 @@ import { useToast } from "../ui/use-toast";
 
 interface PageProps extends DefaultProps {
     user: User;
-    author: User;
+    blog: ExtendedBlog;
     params: {
         blogId: string;
     };
     comment: Comment;
 }
 
-function BlogCommentOperation({ user, author, params, comment }: PageProps) {
+function BlogCommentOperation({ user, blog, params, comment }: PageProps) {
     const { toast } = useToast();
     const router = useRouter();
 
@@ -71,7 +71,7 @@ function BlogCommentOperation({ user, author, params, comment }: PageProps) {
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            ) : user.id === author.id ? (
+            ) : user.id === comment.authorId ? (
                 <DropdownMenu>
                     <DropdownMenuTrigger className="rounded-md border border-border p-1">
                         <Icons.moreVert className="h-4 w-4" />

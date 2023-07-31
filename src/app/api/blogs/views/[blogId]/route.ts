@@ -1,9 +1,9 @@
 import { authOptions } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
-import { blogs, users } from "@/src/lib/drizzle/schema";
+import { users, views } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -27,16 +27,15 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                 message: "Unauthorized",
             });
 
-        await db
-            .update(blogs)
-            .set({
-                views: sql`${blogs.views} + 1`,
-            })
-            .where(eq(blogs.id, Number(params.blogId)));
+        const newView = await db.insert(views).values({
+            userId: user.id,
+            blogId: Number(params.blogId),
+        });
 
         return NextResponse.json({
             code: 200,
             message: "Ok",
+            data: JSON.stringify(newView.insertId),
         });
     } catch (err) {
         handleError(err);

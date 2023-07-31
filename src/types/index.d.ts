@@ -1,4 +1,5 @@
 import { HTMLAttributes } from "react";
+import { Blog, Comment, Like, User, View } from "../lib/drizzle/schema";
 
 export type NavItem = {
     title: string;
@@ -27,4 +28,15 @@ export type DefaultProps = HTMLAttributes<HTMLElement>;
 
 export interface RootLayoutProps {
     children: React.ReactNode;
+}
+
+export interface ExtendedComment extends Comment {
+    user: User;
+}
+
+export interface ExtendedBlog extends Blog {
+    likes: Like[];
+    views: View[];
+    comments: ExtendedComment[];
+    author: User;
 }

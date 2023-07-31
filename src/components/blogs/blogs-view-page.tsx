@@ -1,10 +1,10 @@
 import { defaultUserPFP } from "@/src/config/const";
 import { authOptions } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
-import { blogs, comments, likes, users } from "@/src/lib/drizzle/schema";
+import { blogs, comments, likes, User, users } from "@/src/lib/drizzle/schema";
 import { cn, formatDate, shortenNumber } from "@/src/lib/utils";
-import { DefaultProps } from "@/src/types";
-import { and, desc, eq } from "drizzle-orm";
+import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { desc, eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
@@ -28,42 +28,32 @@ interface PageProps extends DefaultProps {
 async function BlogViewPage({ params, className }: PageProps) {
     const session = await getServerSession(authOptions);
 
-    const blog = await db.query.blogs.findFirst({
-        where: eq(blogs.id, Number(params.blogId)),
-    });
+    const [blog, user] = await Promise.all([
+        db.query.blogs.findFirst({
+            with: {
+                author: true,
+                comments: {
+                    orderBy: [desc(comments.createdAt)],
+                    with: {
+                        user: true,
+                    },
+                },
+                likes: true,
+                views: true,
+            },
+            where: eq(blogs.id, Number(params.blogId)),
+        }),
+        db.query.users.findFirst({
+            where: eq(users.id, session?.user.id!),
+        }),
+    ]);
+
     if (!blog) notFound();
-
-    const postedComments = await db.query.comments.findMany({
-        where: eq(comments.blogId, Number(params.blogId)),
-        orderBy: [desc(comments.createdAt)],
-    });
-
-    const blogLikes = await db.query.likes.findMany({
-        where: eq(blogs.id, Number(params.blogId)),
-    });
-
-    const user = await db.query.users.findFirst({
-        where: eq(users.id, session?.user.id!),
-    });
     if (!user) redirect("/");
 
-    let author = await db.query.users.findFirst({
-        where: eq(users.id, blog.authorId),
-    });
-    if (!author) author = user;
-
-    const commentedUsers = await db.query.users.findMany({
-        with: {
-            comments: true,
-        },
-    });
-
-    const blogLiked = await db.query.likes.findFirst({
-        where: and(
-            eq(likes.blogId, Number(params.blogId)),
-            eq(likes.userId, user.id)
-        ),
-    });
+    const blogIsLiked = blog.likes.find((like) => like.userId === user.id)
+        ? true
+        : false;
 
     return (
         <div className={cn("space-y-3", className)}>
@@ -75,15 +65,17 @@ async function BlogViewPage({ params, className }: PageProps) {
                 <div className="flex items-center gap-3 text-xs md:text-sm">
                     <Avatar>
                         <AvatarImage
-                            src={author.image ?? defaultUserPFP.src}
-                            alt={author.name ?? author.id}
+                            src={blog.author.image ?? defaultUserPFP.src}
+                            alt={blog.author.name ?? blog.author.id}
                         />
                         <AvatarFallback>
-                            {(author.name ?? author.id).charAt(0).toUpperCase()}
+                            {(blog.author.name ?? blog.author.id)
+                                .charAt(0)
+                                .toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div>
-                        <p>@{author.name ?? author.id}</p>
+                        <p>@{blog.author.name ?? blog.author.id}</p>
                         <p className="text-gray-400">
                             Published on {formatDate(Date.now())}
                         </p>
@@ -142,11 +134,11 @@ async function BlogViewPage({ params, className }: PageProps) {
 
             <div className="flex w-full cursor-default items-center justify-between rounded-md bg-zinc-900 p-5 py-3 text-sm">
                 <div>
-                    <p>{shortenNumber(blog.likes)} Likes</p>
+                    <p>{shortenNumber(blog.likes.length)} Likes</p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <p>{shortenNumber(blog.commentsCount)} Comments</p>
-                    <p>{shortenNumber(blog.views)} Views</p>
+                    <p>{shortenNumber(blog.comments.length)} Comments</p>
+                    <p>{shortenNumber(blog.views.length)} Views</p>
                 </div>
             </div>
             <Separator className="w-full" />
@@ -154,11 +146,8 @@ async function BlogViewPage({ params, className }: PageProps) {
             <BlogViewOperations
                 params={params}
                 blog={blog}
-                comments={postedComments}
-                likes={blogLikes}
                 user={user}
-                users={commentedUsers}
-                like={blogLiked}
+                blogIsLiked={blogIsLiked}
                 className="space-y-3"
             />
         </div>

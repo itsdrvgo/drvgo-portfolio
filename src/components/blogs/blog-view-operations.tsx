@@ -2,16 +2,9 @@
 
 import { env } from "@/env.mjs";
 import { defaultUserPFP } from "@/src/config/const";
-import {
-    Blog,
-    Comment,
-    Like,
-    NewComment,
-    User,
-} from "@/src/lib/drizzle/schema";
-import { LikeUpdateData } from "@/src/lib/validation/blogs";
+import { NewComment, User } from "@/src/lib/drizzle/schema";
 import { ResponseData } from "@/src/lib/validation/response";
-import { DefaultProps } from "@/src/types";
+import { DefaultProps, ExtendedBlog } from "@/src/types";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,23 +18,17 @@ import BlogViewComments from "./blog-view-comments";
 
 interface PageProps extends DefaultProps {
     params: { blogId: string };
-    blog: Blog;
-    comments: Comment[];
-    likes: Like[];
+    blog: ExtendedBlog;
     user: User;
-    users: User[];
-    like: Like | undefined;
+    blogIsLiked: boolean;
 }
 
 function BlogViewOperations({
     className,
     params,
     blog,
-    comments,
-    likes,
     user,
-    users,
-    like,
+    blogIsLiked,
 }: PageProps) {
     const router = useRouter();
     const { toast } = useToast();
@@ -49,7 +36,7 @@ function BlogViewOperations({
     const [comment, setComment] = useState("");
     const [isActive, setIsActive] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
-    const [isLiked, setIsLiked] = useState(like ? true : false);
+    const [isLiked, setIsLiked] = useState(blogIsLiked);
 
     useEffect(() => {
         if (comment.length) setIsActive(true);
@@ -59,35 +46,49 @@ function BlogViewOperations({
     const handleLike = () => {
         setIsLiked(!isLiked);
 
-        const body: LikeUpdateData = {
-            userId: user.id,
-            isLiked,
-        };
+        isLiked
+            ? axios
+                  .delete<ResponseData>(`/api/blogs/likes/${blog.id}`)
+                  .then(({ data: resData }) => {
+                      if (resData.code !== 200)
+                          return toast({
+                              title: "Oops!",
+                              description: resData.message,
+                              variant: "destructive",
+                          });
 
-        axios
-            .patch<ResponseData>(
-                `/api/blogs/likes/${blog.id}`,
-                JSON.stringify(body)
-            )
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast({
-                        title: "Oops!",
-                        description: resData.message,
-                        variant: "destructive",
-                    });
+                      router.refresh();
+                  })
+                  .catch((err) => {
+                      console.log(err);
 
-                router.refresh();
-            })
-            .catch((err) => {
-                console.log(err);
+                      toast({
+                          title: "Oops!",
+                          description: "Internal Server Error, try again later",
+                          variant: "destructive",
+                      });
+                  })
+            : axios
+                  .patch<ResponseData>(`/api/blogs/likes/${blog.id}`)
+                  .then(({ data: resData }) => {
+                      if (resData.code !== 200)
+                          return toast({
+                              title: "Oops!",
+                              description: resData.message,
+                              variant: "destructive",
+                          });
 
-                toast({
-                    title: "Oops!",
-                    description: "Internal Server Error, try again later",
-                    variant: "destructive",
-                });
-            });
+                      router.refresh();
+                  })
+                  .catch((err) => {
+                      console.log(err);
+
+                      toast({
+                          title: "Oops!",
+                          description: "Internal Server Error, try again later",
+                          variant: "destructive",
+                      });
+                  });
     };
 
     const addComment = async () => {
@@ -223,8 +224,7 @@ function BlogViewOperations({
                 </div>
 
                 <BlogViewComments
-                    comments={comments}
-                    users={users}
+                    blog={blog}
                     className="space-y-6"
                     user={user}
                     params={params}

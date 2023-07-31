@@ -1,9 +1,8 @@
 "use client";
 
-import { Blog } from "@/src/lib/drizzle/schema";
 import { wait } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
-import { DefaultProps } from "@/src/types";
+import { DefaultProps, ExtendedBlog } from "@/src/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
@@ -16,7 +15,7 @@ import { Separator } from "../ui/separator";
 import BlogItem from "./blog-item";
 
 interface PageProps extends DefaultProps {
-    blogData: Blog[];
+    blogData: ExtendedBlog[];
 }
 
 const fetchBlogs = async (page: number) => {
@@ -24,7 +23,7 @@ const fetchBlogs = async (page: number) => {
     const {
         data: { data },
     } = await axios.get<ResponseData>("/api/blogs");
-    return (JSON.parse(data) as Blog[]).slice((page - 1) * 6, page * 6);
+    return (JSON.parse(data) as ExtendedBlog[]).slice((page - 1) * 6, page * 6);
 };
 
 function BlogSearch({ blogData }: PageProps) {
@@ -91,11 +90,11 @@ function BlogSearch({ blogData }: PageProps) {
                         );
                     })}
                     <div className="flex flex-col items-center justify-center gap-5">
-                        {!data?.pages[data?.pages.length - 1].length && (
+                        {!data?.pages[data?.pages.length - 1].length ? (
                             <p className="cursor-default text-sm text-red-600">
                                 Nothing more to show
                             </p>
-                        )}
+                        ) : null}
                         {blogData.length > 6 && (
                             <Button
                                 onClick={() => fetchNextPage()}

@@ -1,7 +1,7 @@
 import { defaultBlogThumbnail } from "@/src/config/const";
-import { Blog } from "@/src/lib/drizzle/schema";
 import { formatDate, shortenNumber } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
+import { ExtendedBlog } from "@/src/types";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,7 @@ import { Separator } from "../ui/separator";
 interface PageProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     blogId: number;
-    blogData: Blog[];
+    blogData: ExtendedBlog[];
 }
 
 function BlogItem({ blogId, blogData, ref }: PageProps) {
@@ -76,7 +76,7 @@ function BlogItem({ blogId, blogData, ref }: PageProps) {
                         onClick={() => handleViewUpdate(blogId)}
                     />
                     {shortenNumber(
-                        blogData.find((x) => x.id === blogId)?.likes!
+                        blogData.find((x) => x.id === blogId)?.likes.length!
                     )}
                 </div>
                 <button className="flex items-center justify-center gap-2">
@@ -85,13 +85,13 @@ function BlogItem({ blogId, blogData, ref }: PageProps) {
                         onClick={() => handleViewUpdate(blogId)}
                     />
                     {shortenNumber(
-                        blogData.find((x) => x.id === blogId)?.commentsCount!
+                        blogData.find((x) => x.id === blogId)?.comments.length!
                     )}
                 </button>
                 <div className="flex items-center justify-center gap-2">
                     <Icons.analytics className="h-4 w-4" />
                     {shortenNumber(
-                        blogData.find((x) => x.id === blogId)?.views!
+                        blogData.find((x) => x.id === blogId)?.views.length!
                     )}
                 </div>
             </div>

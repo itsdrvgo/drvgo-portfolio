@@ -102,9 +102,12 @@ export const blogs = mysqlTable("blogs", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
     authorId: varchar("authorId", { length: 255 }).notNull(),
-    likes: int("likes").default(0).notNull(),
-    views: int("views").default(0).notNull(),
-    commentsCount: int("commentsCount").default(0).notNull(),
+});
+
+export const views = mysqlTable("views", {
+    id: int("id").autoincrement().primaryKey(),
+    blogId: int("blogId").notNull(),
+    userId: varchar("userId", { length: 255 }).notNull(),
 });
 
 export const likes = mysqlTable("likes", {
@@ -124,6 +127,8 @@ export const comments = mysqlTable("comments", {
 // RELATIONS
 
 export const usersRelations = relations(users, ({ many }) => ({
+    views: many(views),
+    likes: many(likes),
     blogs: many(blogs),
     comments: many(comments),
     images: many(images),
@@ -143,12 +148,28 @@ export const blogsRelations = relations(blogs, ({ one, many }) => ({
     }),
     likes: many(likes),
     comments: many(comments),
+    views: many(views),
+}));
+
+export const viewRelations = relations(views, ({ one }) => ({
+    blog: one(blogs, {
+        fields: [views.blogId],
+        references: [blogs.id],
+    }),
+    user: one(users, {
+        fields: [views.userId],
+        references: [users.id],
+    }),
 }));
 
 export const likeRelations = relations(likes, ({ one }) => ({
     blog: one(blogs, {
         fields: [likes.blogId],
         references: [blogs.id],
+    }),
+    user: one(users, {
+        fields: [likes.userId],
+        references: [users.id],
     }),
 }));
 
@@ -158,7 +179,7 @@ export const commentsRelations = relations(comments, ({ one }) => ({
         references: [blogs.id],
     }),
     user: one(users, {
-        fields: [comments.blogId],
+        fields: [comments.authorId],
         references: [users.id],
     }),
 }));
@@ -171,6 +192,9 @@ export type NewUser = InferModel<typeof users, "insert">;
 export type Blog = InferModel<typeof blogs>;
 export type NewBlog = InferModel<typeof blogs, "insert">;
 
+export type View = InferModel<typeof views>;
+export type NewView = InferModel<typeof views, "insert">;
+
 export type Like = InferModel<typeof likes>;
 export type NewLike = InferModel<typeof likes, "insert">;
 
@@ -182,6 +206,8 @@ export type NewComment = InferModel<typeof comments, "insert">;
 export const insertUserSchema = createInsertSchema(users);
 
 export const insertBlogSchema = createInsertSchema(blogs);
+
+export const insertViewSchema = createInsertSchema(views);
 
 export const insertLikeSchema = createInsertSchema(likes);
 

@@ -1,14 +1,9 @@
 import { authOptions } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
-import {
-    blogs,
-    comments,
-    insertCommentSchema,
-    users,
-} from "@/src/lib/drizzle/schema";
+import { comments, insertCommentSchema, users } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -40,13 +35,6 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
             blogId: Number(params.blogId),
             content: content,
         });
-
-        await db
-            .update(blogs)
-            .set({
-                commentsCount: sql`${blogs.commentsCount} + 1`,
-            })
-            .where(eq(blogs.id, Number(params.blogId)));
 
         return NextResponse.json({
             code: 200,

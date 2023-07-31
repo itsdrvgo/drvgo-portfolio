@@ -7,10 +7,15 @@ import { GoBackButton } from "../global/go-back-button";
 import BlogSearch from "./blog-search";
 
 async function BlogsPage({ className }: DefaultProps) {
-    const blogData = await db
-        .select()
-        .from(blogs)
-        .where(eq(blogs.published, true));
+    const blogData = await db.query.blogs.findMany({
+        with: {
+            author: true,
+            comments: true,
+            likes: true,
+            views: true,
+        },
+        where: eq(blogs.published, true),
+    });
 
     return (
         <>

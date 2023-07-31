@@ -31,7 +31,6 @@ export const publishSchema = z.object({
 });
 
 export const likeUpdateSchema = z.object({
-    userId: z.string(),
     isLiked: z.boolean(),
 });
 

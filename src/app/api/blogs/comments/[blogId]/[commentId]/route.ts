@@ -34,13 +34,6 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
             .delete(comments)
             .where(eq(comments.id, Number(params.commentId)));
 
-        await db
-            .update(blogs)
-            .set({
-                commentsCount: sql`${blogs.commentsCount} - 1`,
-            })
-            .where(eq(blogs.id, Number(params.blogId)));
-
         return NextResponse.json({
             code: 200,
             message: "Ok",
