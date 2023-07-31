@@ -64,7 +64,7 @@ function BlogViewOperations({
 
                       toast({
                           title: "Oops!",
-                          description: "Internal Server Error, try again later",
+                          description: "Something went wrong, try again later",
                           variant: "destructive",
                       });
                   })
@@ -85,7 +85,7 @@ function BlogViewOperations({
 
                       toast({
                           title: "Oops!",
-                          description: "Internal Server Error, try again later",
+                          description: "Something went wrong, try again later",
                           variant: "destructive",
                       });
                   });
@@ -129,7 +129,7 @@ function BlogViewOperations({
 
                 toast({
                     title: "Oops!",
-                    description: "Internal Server Error, try again later",
+                    description: "Something went wrong, try again later",
                     variant: "destructive",
                 });
             });

@@ -74,7 +74,7 @@ function UsersOperation({ rowData }: PageProps) {
             .catch(() => {
                 toast({
                     title: "Oops!",
-                    description: "Internal Server Error, try again later",
+                    description: "Something went wrong, try again later",
                     variant: "destructive",
                 });
             });
@@ -134,7 +134,7 @@ function UsersOperation({ rowData }: PageProps) {
             .catch(() => {
                 toast({
                     title: "Oops!",
-                    description: "Internal Server Error, try again later",
+                    description: "Something went wrong, try again later",
                     variant: "destructive",
                 });
             });
