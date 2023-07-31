@@ -1,5 +1,6 @@
 "use client";
 
+import { env } from "@/env.mjs";
 import { User } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
@@ -33,46 +34,35 @@ function DeleteAccount({ user, className }: PageProps) {
 
     const [isLoading, setLoading] = useState(false);
 
-    const handleAccountDeletion = () => {
+    const handleAccountDeletion = async () => {
         setLoading(true);
 
-        signOut()
-            .then(() => {
-                axios
-                    .delete<ResponseData>(`/api/users/${user.id}`)
-                    .then(({ data: resData }) => {
-                        setLoading(false);
+        await signOut({ callbackUrl: env.NEXT_PUBLIC_APP_URL + "/" });
 
-                        switch (resData.code) {
-                            case 200:
-                                router.push("/");
-                                break;
+        axios
+            .delete<ResponseData>(`/api/users/${user.id}`)
+            .then(({ data: resData }) => {
+                setLoading(false);
 
-                            default:
-                                toast({
-                                    title: "Oops!",
-                                    description: resData.message,
-                                    variant: "destructive",
-                                });
-                                break;
-                        }
-                    })
-                    .catch((err) => {
-                        setLoading(false);
-                        console.log(err);
+                switch (resData.code) {
+                    case 200:
+                        router.push("/");
+                        break;
 
-                        return toast({
+                    default:
+                        toast({
                             title: "Oops!",
-                            description:
-                                "Something went wrong, try again later",
+                            description: resData.message,
                             variant: "destructive",
                         });
-                    });
+                        break;
+                }
             })
             .catch((err) => {
+                setLoading(false);
                 console.log(err);
 
-                toast({
+                return toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
                     variant: "destructive",
@@ -92,13 +82,19 @@ function DeleteAccount({ user, className }: PageProps) {
                     <Button
                         variant={"destructive"}
                         className="flex items-center gap-1"
+                        disabled={isLoading}
                     >
                         {isLoading ? (
-                            <Icons.spinner className="h-4 w-4 animate-spin" />
+                            <>
+                                <Icons.spinner className="h-4 w-4 animate-spin" />
+                                <p>Deleting Account</p>
+                            </>
                         ) : (
-                            <Icons.trash className="h-4 w-4" />
+                            <>
+                                <Icons.trash className="h-4 w-4" />
+                                <p>Delete Account</p>
+                            </>
                         )}
-                        <p>Delete Account</p>
                     </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>

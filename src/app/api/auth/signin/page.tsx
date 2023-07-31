@@ -2,17 +2,13 @@
 
 import { EmptyPlaceholder } from "@/src/components/global/empty-placeholder";
 import { Button } from "@/src/components/ui/button";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 
 function Page() {
     const router = useRouter();
     const { data: session } = useSession();
     if (session) redirect("/");
-
-    const login = () => {
-        signIn("discord", { callbackUrl: "/profile" });
-    };
 
     return (
         <div className="flex h-screen items-center justify-center bg-background p-5">

@@ -73,7 +73,6 @@ export default withAuth(
     {
         pages: {
             signIn: "/signin",
-            newUser: "/signup",
         },
     }
 );

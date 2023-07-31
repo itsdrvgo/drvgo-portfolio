@@ -15,9 +15,7 @@ async function Auth() {
         where: eq(users.id, session.user.id),
     });
     if (!dbUser)
-        return (
-            <LoginButton className="flex items-center gap-2 px-4 hover:bg-zinc-800" />
-        );
+        return <LoginButton className="flex items-center gap-2 px-4" />;
 
     return <DropdownProfile user={dbUser} />;
 }

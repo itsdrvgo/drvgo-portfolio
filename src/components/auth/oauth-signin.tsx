@@ -1,5 +1,6 @@
 "use client";
 
+import { env } from "@/env.mjs";
 import { OAuthData } from "@/src/lib/validation/auth";
 import { DefaultProps } from "@/src/types";
 import { signIn } from "next-auth/react";
@@ -34,7 +35,7 @@ function OAuth({ className }: DefaultProps) {
     const handleLogin = (code: OAuthData["code"]) => {
         setLoading(true);
 
-        signIn(code, { callbackUrl: "/profile" })
+        signIn(code, { callbackUrl: env.NEXT_PUBLIC_APP_URL + "/profile" })
             .then(() => {
                 setLoading(false);
             })
