@@ -16,8 +16,7 @@ function Page() {
                 <EmptyPlaceholder.Icon name="warning" />
                 <EmptyPlaceholder.Title>Invalid Session</EmptyPlaceholder.Title>
                 <EmptyPlaceholder.Description>
-                    No valid session was found, you must login in order to
-                    conitnue
+                    You must login in order to view the content of the page
                 </EmptyPlaceholder.Description>
                 <div className="flex items-center">
                     <Button

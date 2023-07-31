@@ -1,5 +1,6 @@
 import { Header } from "@/src/components/auth/header";
 import { DashFooter } from "@/src/components/global/dash-footer";
+import { EmptyPlaceholder } from "@/src/components/global/empty-placeholder";
 import { GoBackButton } from "@/src/components/global/go-back-button";
 import Navbar from "@/src/components/global/navbar";
 import { authOptions } from "@/src/lib/auth/auth";
@@ -30,16 +31,17 @@ async function Layout({ children }: RootLayoutProps) {
 
     if (user.role === "user")
         return (
-            <main className="flex-1">
-                <div className="container flex min-h-[calc(100vh-5rem)] max-w-[30rem] flex-col items-center justify-center gap-8 pb-8 pt-6 md:py-8">
-                    <Header
-                        title="Restricted Area"
-                        description="You do not have access to view the content of the page."
-                        size="sm"
-                        className="text-center"
-                    />
+            <main className="flex h-screen items-center justify-center bg-background p-5">
+                <EmptyPlaceholder>
+                    <EmptyPlaceholder.Icon name="warning" />
+                    <EmptyPlaceholder.Title>
+                        Restricted Area
+                    </EmptyPlaceholder.Title>
+                    <EmptyPlaceholder.Description>
+                        You do not have access to view the content of the page
+                    </EmptyPlaceholder.Description>
                     <GoBackButton />
-                </div>
+                </EmptyPlaceholder>
             </main>
         );
 
