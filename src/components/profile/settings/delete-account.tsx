@@ -47,7 +47,6 @@ function DeleteAccount({ user, className }: PageProps) {
                 switch (resData.code) {
                     case 200:
                         router.push("/");
-                        router.refresh();
                         toast({
                             description: "Account deleted",
                         });
