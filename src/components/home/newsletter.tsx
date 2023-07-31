@@ -31,7 +31,7 @@ function Newsletter({ className }: DefaultProps) {
             id="newsletter"
         >
             <motion.div
-                className="container flex max-w-[75rem] flex-col items-center justify-center gap-10"
+                className="container flex max-w-[75rem] flex-col items-center justify-center gap-10 p-0"
                 variants={fadeInContainer}
             >
                 <div className="flex flex-col items-center gap-5 text-center">
@@ -49,8 +49,12 @@ function Newsletter({ className }: DefaultProps) {
                     variants={fadeInContainer}
                 >
                     <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:gap-5">
-                        <Input />
-                        <Button variant={"destructive"} className="uppercase">
+                        <Input className="h-9" />
+                        <Button
+                            variant={"destructive"}
+                            className="uppercase"
+                            size={"sm"}
+                        >
                             Subscribe
                         </Button>
                     </div>
