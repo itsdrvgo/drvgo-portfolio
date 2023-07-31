@@ -69,7 +69,7 @@ function Projects({ className }: DefaultProps) {
                                 />
 
                                 <div className="absolute flex scale-150 flex-col justify-center gap-10 px-10 opacity-0 transition-all duration-300 ease-in-out group-hover:scale-100 group-hover:opacity-100">
-                                    <p className="font-semibold">
+                                    <p className="cursor-default font-semibold">
                                         {project.name}
                                     </p>
                                     <div className="flex items-center justify-center">
