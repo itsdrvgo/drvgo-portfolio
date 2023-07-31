@@ -1,4 +1,3 @@
-import { Header } from "@/src/components/auth/header";
 import { DashFooter } from "@/src/components/global/dash-footer";
 import { EmptyPlaceholder } from "@/src/components/global/empty-placeholder";
 import { GoBackButton } from "@/src/components/global/go-back-button";
