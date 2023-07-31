@@ -23,59 +23,52 @@ const viewsRateLimiter = new Ratelimit({
     timeout: 1000,
 });
 
-export default withAuth(
-    async function middleware(req, evt) {
-        const token = await getToken({ req });
-        const isAuth = !!token;
-        if (!isAuth) return NextResponse.redirect(new URL("/", req.url));
+export default withAuth(async function middleware(req, evt) {
+    const token = await getToken({ req });
+    const isAuth = !!token;
+    if (!isAuth) return NextResponse.redirect(new URL("/", req.url));
 
-        const reqIp = ipAddress(req) ?? "127.0.0.1";
+    const reqIp = ipAddress(req) ?? "127.0.0.1";
 
-        if (req.nextUrl.pathname === "/profile")
-            return NextResponse.redirect(new URL("/profile/settings", req.url));
+    if (req.nextUrl.pathname === "/profile")
+        return NextResponse.redirect(new URL("/profile/settings", req.url));
 
-        if (req.nextUrl.pathname.startsWith("/api")) {
-            if (req.nextUrl.pathname.startsWith("/api/blogs/views")) {
-                const { success, pending, limit, reset, remaining } =
-                    await viewsRateLimiter.limit(reqIp);
-                evt.waitUntil(pending);
+    if (req.nextUrl.pathname.startsWith("/api")) {
+        if (req.nextUrl.pathname.startsWith("/api/blogs/views")) {
+            const { success, pending, limit, reset, remaining } =
+                await viewsRateLimiter.limit(reqIp);
+            evt.waitUntil(pending);
 
-                const res = success
-                    ? NextResponse.next()
-                    : NextResponse.json({
-                          code: 429,
-                          message: "Too many view requests",
-                      });
+            const res = success
+                ? NextResponse.next()
+                : NextResponse.json({
+                      code: 429,
+                      message: "Too many view requests",
+                  });
 
-                res.headers.set("X-RateLimit-Limit", limit.toString());
-                res.headers.set("X-RateLimit-Remaining", remaining.toString());
-                res.headers.set("X-RateLimit-Reset", reset.toString());
-                return res;
-            } else {
-                const { success, pending, limit, reset, remaining } =
-                    await globalRateLimiter.limit(reqIp);
-                evt.waitUntil(pending);
+            res.headers.set("X-RateLimit-Limit", limit.toString());
+            res.headers.set("X-RateLimit-Remaining", remaining.toString());
+            res.headers.set("X-RateLimit-Reset", reset.toString());
+            return res;
+        } else {
+            const { success, pending, limit, reset, remaining } =
+                await globalRateLimiter.limit(reqIp);
+            evt.waitUntil(pending);
 
-                const res = success
-                    ? NextResponse.next()
-                    : NextResponse.json({
-                          code: 429,
-                          message: "Too many requests, go slow",
-                      });
+            const res = success
+                ? NextResponse.next()
+                : NextResponse.json({
+                      code: 429,
+                      message: "Too many requests, go slow",
+                  });
 
-                res.headers.set("X-RateLimit-Limit", limit.toString());
-                res.headers.set("X-RateLimit-Remaining", remaining.toString());
-                res.headers.set("X-RateLimit-Reset", reset.toString());
-                return res;
-            }
+            res.headers.set("X-RateLimit-Limit", limit.toString());
+            res.headers.set("X-RateLimit-Remaining", remaining.toString());
+            res.headers.set("X-RateLimit-Reset", reset.toString());
+            return res;
         }
     }
-    // {
-    //     pages: {
-    //         signIn: "/signin",
-    //     },
-    // }
-);
+});
 
 export const config = {
     matcher: [
