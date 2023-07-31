@@ -37,7 +37,7 @@ function DeleteAccount({ user, className }: PageProps) {
     const handleAccountDeletion = async () => {
         setLoading(true);
 
-        await signOut({ callbackUrl: env.NEXT_PUBLIC_APP_URL + "/" });
+        await signOut();
 
         axios
             .delete<ResponseData>(`/api/users/${user.id}`)
@@ -47,6 +47,11 @@ function DeleteAccount({ user, className }: PageProps) {
                 switch (resData.code) {
                     case 200:
                         router.push("/");
+                        router.refresh();
+                        toast({
+                            description: "Account deleted",
+                        });
+
                         break;
 
                     default:

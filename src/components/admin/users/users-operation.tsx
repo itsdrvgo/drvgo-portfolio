@@ -125,11 +125,11 @@ function UsersOperation({ rowData }: PageProps) {
                         variant: "destructive",
                     });
 
+                router.refresh();
+
                 toast({
                     description: "User role has been updated",
                 });
-
-                router.refresh();
             })
             .catch(() => {
                 toast({

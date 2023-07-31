@@ -65,12 +65,15 @@ export async function PATCH(req: NextRequest, context: UserContext) {
                 );
         }
 
-        await db.update(users).set({
-            email: email ?? existingUser.email,
-            name: username ?? existingUser.name,
-            image: icon ?? existingUser.image,
-            role: role ?? existingUser.role,
-        });
+        await db
+            .update(users)
+            .set({
+                email: email ?? existingUser.email,
+                name: username ?? existingUser.name,
+                image: icon ?? existingUser.image,
+                role: role ?? existingUser.role,
+            })
+            .where(eq(users.id, existingUser.id));
 
         return NextResponse.json({
             code: 200,
