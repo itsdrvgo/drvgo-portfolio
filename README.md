@@ -19,6 +19,7 @@ This repository houses the code for my personal portfolio, showcasing my journey
 -   [NextAuth.js](https://next-auth.js.org/): Facilitating authentication and user management.
 -   [Tanstack Query](https://tanstack.com/query/latest): Optimizing server-state synchronization and caching.
 -   [T3-Env](https://env.t3.gg/): Adding type-safe environment variables.
+-   [UploadThing](https://uploadthing.com/): Uploading and storing files, images of users.
 -   [Framer Motion](https://www.framer.com/motion/): Adding delightful animations to user interactions.
 -   [Drizzle](https://orm.drizzle.team/): TypeScript ORM for SQL.
 -   [Planetscale MySQL](https://planetscale.com/): Primary Database to save most of the user, blogs, etc. data.
