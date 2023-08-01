@@ -71,6 +71,11 @@ function SiteFooter({ className }: DefaultProps) {
                         <Icons.instagram className="h-4 w-4" />
                     </Link>
                 </div>
+                <div className="flex items-center gap-1 text-sm">
+                    <Link href={"/privacy"}>Privacy Policy</Link>
+                    <p>•</p>
+                    <Link href={"/tos"}>Terms of Services</Link>
+                </div>
                 <p className="text-sm">
                     Copyright © 2023{" "}
                     <Link

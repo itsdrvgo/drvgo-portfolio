@@ -1,13 +1,10 @@
-"use client";
-
 import { EmptyPlaceholder } from "@/src/components/global/empty-placeholder";
-import { Button } from "@/src/components/ui/button";
-import { useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import LoginButton from "@/src/components/global/nosession-login-button";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-function Page() {
-    const router = useRouter();
-    const { data: session } = useSession();
+async function Page() {
+    const session = await getServerSession();
     if (session) redirect("/");
 
     return (
@@ -19,14 +16,7 @@ function Page() {
                     You must login in order to view the content of the page
                 </EmptyPlaceholder.Description>
                 <div className="flex items-center">
-                    <Button
-                        aria-label="Login to continue"
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => router.push("/signin")}
-                    >
-                        Login
-                    </Button>
+                    <LoginButton />
                 </div>
             </EmptyPlaceholder>
         </div>
