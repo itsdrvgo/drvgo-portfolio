@@ -30,6 +30,12 @@ export const env = createEnv({
 
         POSTMARK_API_TOKEN: z.string(),
 
+        SMTP_USER: z.string().email(),
+        SMTP_PASSWORD: z.string(),
+        SMTP_HOST: z.string(),
+        SMTP_PORT: z.string(),
+        EMAIL_FROM: z.string(),
+
         NODE_ENV: z.enum(["development", "test", "production"]),
     },
     client: {
@@ -63,6 +69,12 @@ export const env = createEnv({
         FACEBOOK_CLIENT_SECRET: process.env.FACEBOOK_CLIENT_SECRET,
 
         POSTMARK_API_TOKEN: process.env.POSTMARK_API_TOKEN,
+
+        SMTP_USER: process.env.SMTP_USER,
+        SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+        SMTP_HOST: process.env.SMTP_HOST,
+        SMTP_PORT: process.env.SMTP_PORT,
+        EMAIL_FROM: process.env.EMAIL_FROM,
 
         NODE_ENV: process.env.NODE_ENV,
     },
