@@ -10,7 +10,6 @@ function SideBar({ className, children }: DefaultProps) {
     const router = useRouter();
 
     const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
-    const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
 
     return (
         <div
@@ -21,7 +20,7 @@ function SideBar({ className, children }: DefaultProps) {
         >
             <aside
                 className={cn(
-                    "flex flex-col gap-1 overflow-x-hidden text-sm transition-all ease-in-out",
+                    "flex flex-col items-start gap-1 overflow-x-hidden text-sm transition-all ease-in-out",
                     isSidebarOpen ? "w-52 translate-x-0" : "w-0 -translate-x-52"
                 )}
             >
