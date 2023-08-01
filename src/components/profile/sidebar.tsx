@@ -12,14 +12,10 @@ function SideBar({ className, children }: DefaultProps) {
     const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
     const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
 
-    const triggerSideBar = () => {
-        setSidebarOpen(!isSidebarOpen);
-    };
-
     return (
         <div
             className={cn(
-                "container flex gap-5 px-0 md:max-w-[80rem] md:px-8",
+                "flex w-full gap-0 px-0 md:max-w-[80rem] md:gap-5 md:px-8",
                 className
             )}
         >
