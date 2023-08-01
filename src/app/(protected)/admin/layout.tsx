@@ -2,13 +2,12 @@ import { DashFooter } from "@/src/components/global/dash-footer";
 import { EmptyPlaceholder } from "@/src/components/global/empty-placeholder";
 import { GoBackButton } from "@/src/components/global/go-back-button";
 import Navbar from "@/src/components/global/navbar";
-import { authOptions } from "@/src/lib/auth/auth";
+import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { users } from "@/src/lib/drizzle/schema";
 import { RootLayoutProps } from "@/src/types";
 import { eq } from "drizzle-orm";
 import { Metadata } from "next";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -20,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 async function Layout({ children }: RootLayoutProps) {
-    const session = await getServerSession(authOptions);
+    const session = await getAuthSession();
     if (!session) redirect("/signin");
 
     const user = await db.query.users.findFirst({

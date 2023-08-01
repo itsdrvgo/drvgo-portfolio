@@ -1,21 +1,38 @@
 import { env } from "@/env.mjs";
+import * as AuthSchema from "@/src/lib/drizzle/schema";
 import { eq } from "drizzle-orm";
-import { NextAuthOptions } from "next-auth";
+import { getServerSession, NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import GitHubProvider from "next-auth/providers/github";
-import { db } from "../drizzle";
+import { adapterDB, db } from "../drizzle";
+import { DrizzleAdapter } from "../drizzle/adapter";
+import {
+    pGetSessionAndUser,
+    pGetSessionByToken,
+    pGetUserByAccount,
+    pGetUserByEmail,
+    pGetUserById,
+    pGetVerificationTokenByToken,
+} from "../drizzle/prepared";
 import { users } from "../drizzle/schema";
-import { DrizzleAdapter } from "./adapter";
 
 export const authOptions: NextAuthOptions = {
-    adapter: DrizzleAdapter(db),
-    session: {
-        strategy: "jwt",
-        maxAge: 60 * 60 * 24 * 7,
-    },
-    pages: {
-        signIn: "/signin",
-    },
+    adapter: DrizzleAdapter(adapterDB, {
+        schemas: {
+            account: AuthSchema.accounts,
+            session: AuthSchema.sessions,
+            user: AuthSchema.users,
+            verificationToken: AuthSchema.verificationTokens,
+        },
+        prepared: {
+            getUserByEmail: pGetUserByEmail,
+            getUserById: pGetUserById,
+            getUserByAccount: pGetUserByAccount,
+            getSessionByToken: pGetSessionByToken,
+            getSessionAndUser: pGetSessionAndUser,
+            getVerificationTokenByToken: pGetVerificationTokenByToken,
+        },
+    }),
     providers: [
         GitHubProvider({
             clientId: env.GITHUB_CLIENT_ID,
@@ -26,8 +43,13 @@ export const authOptions: NextAuthOptions = {
             clientSecret: env.DISCORD_CLIENT_SECRET,
         }),
     ],
+    session: {
+        strategy: "jwt",
+        maxAge: 60 * 60 * 24 * 7,
+    },
+    secret: env.NEXTAUTH_SECRET,
     callbacks: {
-        async session({ token, session }) {
+        session: async ({ token, session }) => {
             if (token) {
                 session.user.id = token.id;
                 session.user.name = token.name;
@@ -37,24 +59,26 @@ export const authOptions: NextAuthOptions = {
 
             return session;
         },
-        async jwt({ token, user }) {
+        jwt: async ({ token, user }) => {
             const dbUser = await db.query.users.findFirst({
-                where: eq(users.email, token.email!),
+                where: eq(users.email, token.email),
             });
 
             if (!dbUser) {
                 if (user) {
-                    token.id = user?.id;
+                    token.id = user.id;
                 }
                 return token;
             }
 
             return {
                 id: dbUser.id,
-                name: dbUser.name,
+                name: dbUser.name || "",
                 email: dbUser.email,
                 picture: dbUser.image,
             };
         },
     },
 };
+
+export const getAuthSession = () => getServerSession(authOptions);

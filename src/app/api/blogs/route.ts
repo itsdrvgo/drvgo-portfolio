@@ -1,15 +1,14 @@
-import { authOptions } from "@/src/lib/auth/auth";
+import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { blogs, comments, users } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import { blogCreateSchema } from "@/src/lib/validation/blogs";
 import { desc, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await getAuthSession();
         if (!session)
             return NextResponse.json({
                 code: 403,
@@ -43,7 +42,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await getAuthSession();
         if (!session)
             return NextResponse.json({
                 code: 403,

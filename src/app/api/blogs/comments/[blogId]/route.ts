@@ -1,10 +1,9 @@
-import { authOptions } from "@/src/lib/auth/auth";
+import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { comments, insertCommentSchema, users } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { eq } from "drizzle-orm";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(req: NextRequest, context: BlogContext) {
@@ -14,7 +13,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
         const { authorId, content } = insertCommentSchema.parse(body);
         const { params } = blogContextSchema.parse(context);
 
-        const session = await getServerSession(authOptions);
+        const session = await getAuthSession();
         if (!session)
             return NextResponse.json({
                 code: 403,

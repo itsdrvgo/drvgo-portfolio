@@ -1,8 +1,7 @@
-import { authOptions } from "@/src/lib/auth/auth";
+import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { images, users } from "@/src/lib/drizzle/schema";
 import { and, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { utapi } from "uploadthing/server";
 
@@ -11,7 +10,7 @@ const f = createUploadthing();
 export const customFileRouter = {
     profilePicture: f({ image: { maxFileSize: "2MB", maxFileCount: 1 } })
         .middleware(async () => {
-            const session = await getServerSession(authOptions);
+            const session = await getAuthSession();
             if (!session) throw new Error("Unauthorized!");
 
             const user = await db.query.users.findFirst({
@@ -41,7 +40,7 @@ export const customFileRouter = {
         }),
     blogThumbnail: f({ image: { maxFileSize: "2MB", maxFileCount: 1 } })
         .middleware(async () => {
-            const session = await getServerSession(authOptions);
+            const session = await getAuthSession();
             if (!session) throw new Error("Unauthorized!");
 
             const user = await db.query.users.findFirst({

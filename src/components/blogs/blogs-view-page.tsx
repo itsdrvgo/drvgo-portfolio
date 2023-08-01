@@ -1,11 +1,10 @@
 import { defaultUserPFP } from "@/src/config/const";
-import { authOptions } from "@/src/lib/auth/auth";
+import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
-import { blogs, comments, likes, User, users } from "@/src/lib/drizzle/schema";
+import { blogs, comments, users } from "@/src/lib/drizzle/schema";
 import { cn, formatDate, shortenNumber } from "@/src/lib/utils";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
 import { desc, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -26,7 +25,7 @@ interface PageProps extends DefaultProps {
 }
 
 async function BlogViewPage({ params, className }: PageProps) {
-    const session = await getServerSession(authOptions);
+    const session = await getAuthSession();
 
     const [blog, user] = await Promise.all([
         db.query.blogs.findFirst({

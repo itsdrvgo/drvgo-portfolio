@@ -1,18 +1,20 @@
-import { User } from "next-auth";
-import { JWT } from "next-auth/jwt";
-
-type UserId = string;
+import type { Session, User } from "next-auth"; // eslint-disable-line
+import type { JWT } from "next-auth/jwt"; // eslint-disable-line
 
 declare module "next-auth/jwt" {
     interface JWT {
-        id: UserId;
+        id: string;
+        name: string;
+        email: string;
     }
 }
 
 declare module "next-auth" {
     interface Session {
         user: User & {
-            id: UserId;
+            id: string;
+            name: string;
+            email: string;
         };
     }
 }

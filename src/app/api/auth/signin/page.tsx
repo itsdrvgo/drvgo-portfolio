@@ -1,10 +1,10 @@
 import { EmptyPlaceholder } from "@/src/components/global/empty-placeholder";
 import LoginButton from "@/src/components/global/nosession-login-button";
-import { getServerSession } from "next-auth";
+import { getAuthSession } from "@/src/lib/auth/auth";
 import { redirect } from "next/navigation";
 
 async function Page() {
-    const session = await getServerSession();
+    const session = await getAuthSession();
     if (session) redirect("/");
 
     return (

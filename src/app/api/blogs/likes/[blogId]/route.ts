@@ -1,17 +1,16 @@
-import { authOptions } from "@/src/lib/auth/auth";
+import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { likes, users } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { and, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(req: NextRequest, context: BlogContext) {
     try {
         const { params } = blogContextSchema.parse(context);
 
-        const session = await getServerSession(authOptions);
+        const session = await getAuthSession();
         if (!session)
             return NextResponse.json({
                 code: 403,
@@ -46,7 +45,7 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
     try {
         const { params } = blogContextSchema.parse(context);
 
-        const session = await getServerSession(authOptions);
+        const session = await getAuthSession();
         if (!session)
             return NextResponse.json({
                 code: 403,

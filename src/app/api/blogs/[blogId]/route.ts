@@ -1,11 +1,10 @@
-import { authOptions } from "@/src/lib/auth/auth";
+import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { blogs } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import { postPatchSchema, publishSchema } from "@/src/lib/validation/blogs";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { and, eq } from "drizzle-orm";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(req: NextRequest, context: BlogContext) {
@@ -91,7 +90,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
 }
 
 async function verifyCurrentUserHasAccessToBlog(blogId: string) {
-    const session = await getServerSession(authOptions);
+    const session = await getAuthSession();
     if (!session) return false;
 
     const data = await db.query.blogs.findMany({
