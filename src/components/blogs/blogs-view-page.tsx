@@ -16,6 +16,12 @@ import remarkMath from "remark-math";
 import { Mdx } from "../md/mdx-comp";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "../ui/tooltip";
 import BlogViewOperations from "./blog-view-operations";
 
 interface PageProps extends DefaultProps {
@@ -73,11 +79,32 @@ async function BlogViewPage({ params, className }: PageProps) {
                                 .toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className="space-y-1">
                         <p>@{blog.author.name ?? blog.author.id}</p>
-                        <p className="text-gray-400">
-                            Published on {formatDate(Date.now())}
-                        </p>
+                        <div className="flex gap-1">
+                            <p className="text-gray-400">
+                                Published on{" "}
+                                {formatDate(blog.createdAt.toDateString())}
+                            </p>
+                            {blog.updatedAt ? (
+                                <TooltipProvider delayDuration={0}>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <p className="text-gray-400">
+                                                (Updated)
+                                            </p>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>
+                                                {formatDate(
+                                                    blog.updatedAt.toDateString()
+                                                )}
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            ) : null}
+                        </div>
                     </div>
                 </div>
                 <Image

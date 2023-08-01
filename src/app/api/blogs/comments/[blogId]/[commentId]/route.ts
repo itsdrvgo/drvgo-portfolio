@@ -6,7 +6,7 @@ import {
     CommentContext,
     commentContextSchema,
 } from "@/src/lib/validation/route";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(req: NextRequest, context: CommentContext) {

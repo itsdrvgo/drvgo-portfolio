@@ -1,4 +1,3 @@
-import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { blogs, users } from "@/src/lib/drizzle/schema";
 import { DefaultProps } from "@/src/types";
@@ -13,26 +12,17 @@ interface PageProps extends DefaultProps {
 }
 
 async function BlogEditPage({ params }: PageProps) {
-    const session = await getAuthSession();
-
     const blog = await db.query.blogs.findFirst({
         where: eq(blogs.id, Number(params.blogId)),
     });
     if (!blog) notFound();
 
-    const user = await db.query.users.findFirst({
-        where: eq(users.id, session?.user.id!),
-    });
-    if (!user) redirect("/");
-
-    let author = await db.query.users.findFirst({
+    const author = await db.query.users.findFirst({
         where: eq(users.id, blog.authorId),
     });
-    if (!author) author = user;
+    if (!author) redirect("/");
 
-    return (
-        <BlogWriteUp params={params} data={blog} user={user} author={author} />
-    );
+    return <BlogWriteUp params={params} data={blog} author={author} />;
 }
 
 export default BlogEditPage;

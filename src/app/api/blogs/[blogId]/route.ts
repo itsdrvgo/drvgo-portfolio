@@ -1,8 +1,12 @@
 import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
-import { blogs } from "@/src/lib/drizzle/schema";
+import { blogs, NewBlog } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
-import { postPatchSchema, publishSchema } from "@/src/lib/validation/blogs";
+import {
+    BlogPatchData,
+    postPatchSchema,
+    publishSchema,
+} from "@/src/lib/validation/blogs";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -43,6 +47,42 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
         switch (body.action) {
             case "edit": {
                 try {
+                    const blog = await db.query.blogs.findFirst({
+                        where: eq(blogs.id, Number(params.blogId)),
+                    });
+
+                    if (!blog)
+                        return NextResponse.json({
+                            code: 404,
+                            message: "Blog not found",
+                        });
+
+                    const updatedValues: NewBlog = {
+                        authorId: blog.authorId,
+                        title: body.title ?? "Untitled Blog",
+                        content: body.content,
+                        thumbnailUrl: body.thumbnailUrl,
+                    };
+
+                    if (
+                        blog.published &&
+                        (JSON.stringify(blog.content) !==
+                            JSON.stringify(body.content) ||
+                            (blog.title !== "Untitled Blog" &&
+                                JSON.stringify(blog.title) !==
+                                    JSON.stringify(body.title)) ||
+                            JSON.stringify(blog.thumbnailUrl) !==
+                                JSON.stringify(body.thumbnailUrl))
+                    ) {
+                        await db
+                            .update(blogs)
+                            .set({
+                                updatedAt: new Date(),
+                                ...updatedValues,
+                            })
+                            .where(eq(blogs.id, Number(params.blogId)));
+                    }
+
                     await db
                         .update(blogs)
                         .set({

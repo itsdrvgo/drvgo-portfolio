@@ -31,11 +31,10 @@ interface PageProps extends DefaultProps {
         blogId: string;
     };
     data: Blog;
-    user: User;
     author: User;
 }
 
-function BlogWriteUp({ data, user, author }: PageProps) {
+function BlogWriteUp({ data, author }: PageProps) {
     const router = useRouter();
     const { toast } = useToast();
 
