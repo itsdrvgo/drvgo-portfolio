@@ -20,6 +20,7 @@ async function BlogsPage({ className }: DefaultProps) {
             views: true,
         },
         where: eq(blogs.published, true),
+        orderBy: [desc(blogs.createdAt)],
     });
 
     return (

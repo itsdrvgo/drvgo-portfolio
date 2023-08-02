@@ -1,6 +1,7 @@
 import { db } from "@/src/lib/drizzle";
 import { blogs } from "@/src/lib/drizzle/schema";
 import { DefaultProps } from "@/src/types";
+import { desc } from "drizzle-orm";
 import { EmptyPlaceholder } from "../../global/empty-placeholder";
 import { Separator } from "../../ui/separator";
 import { BlogCreateButton } from "./blog-create-button";
@@ -8,7 +9,7 @@ import { BlogItem } from "./blog-item";
 import FAQAccordian from "./faq";
 
 async function BlogsPage({ className }: DefaultProps) {
-    const data = await db.select().from(blogs);
+    const data = await db.select().from(blogs).orderBy(desc(blogs.createdAt));
 
     return (
         <>
