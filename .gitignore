@@ -36,3 +36,7 @@ next-env.d.ts
 
 # assets
 /assets/
+
+# docker
+Dockerfile
+.dockerignore

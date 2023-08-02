@@ -20,7 +20,7 @@ const components: Partial<
     h2: ({ className, ...props }) => (
         <h2
             className={cn(
-                "mt-10 scroll-m-20 border-b pb-1 text-3xl font-semibold tracking-tight first:mt-0",
+                "mt-8 scroll-m-20 border-b pb-1 text-3xl font-semibold tracking-tight first:mt-0",
                 className
             )}
             {...props}
@@ -73,15 +73,15 @@ const components: Partial<
     ),
     p: ({ className, ...props }) => (
         <p
-            className={cn("leading-7 [&:not(:first-child)]:mt-6", className)}
+            className={cn("leading-7 [&:not(:first-child)]:mt-4", className)}
             {...props}
         />
     ),
     ul: ({ className, ...props }) => (
-        <ul className={cn("my-6 ml-6 list-disc", className)} {...props} />
+        <ul className={cn("my-2 ml-6 list-disc", className)} {...props} />
     ),
     ol: ({ className, ...props }) => (
-        <ol className={cn("my-6 ml-6 list-decimal", className)} {...props} />
+        <ol className={cn("my-2 ml-6 list-decimal", className)} {...props} />
     ),
     li: ({ className, ...props }) => (
         <li className={cn("mt-2", className)} {...props} />
@@ -89,7 +89,7 @@ const components: Partial<
     blockquote: ({ className, ...props }) => (
         <blockquote
             className={cn(
-                "mt-6 rounded border-l-2 border-white bg-gray-900 py-2 pl-6 italic [&>*]:text-muted-foreground",
+                "mt-4 rounded border-l-2 border-white bg-gray-900 px-6 py-2 italic [&>*]:text-muted-foreground",
                 className
             )}
             {...props}
@@ -140,7 +140,7 @@ const components: Partial<
     pre: ({ className, ...props }) => (
         <pre
             className={cn(
-                "mb-4 mt-6 overflow-x-auto rounded-lg border bg-black p-4",
+                "my-4 overflow-x-auto rounded-lg border bg-black p-4",
                 className
             )}
             {...props}
