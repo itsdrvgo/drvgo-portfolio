@@ -28,6 +28,7 @@ export async function GET() {
                 views: true,
             },
             where: eq(blogs.published, true),
+            orderBy: [desc(blogs.createdAt)],
         });
 
         return NextResponse.json({
