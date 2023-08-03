@@ -84,6 +84,5 @@ CREATE TABLE `verification_tokens` (
 CREATE TABLE `views` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`blogId` int NOT NULL,
-	`userId` varchar(255) NOT NULL,
 	CONSTRAINT `views_id` PRIMARY KEY(`id`)
 );

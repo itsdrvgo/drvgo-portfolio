@@ -1,7 +1,7 @@
 import { defaultUserPFP } from "@/src/config/const";
 import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
-import { blogs, comments, users } from "@/src/lib/drizzle/schema";
+import { blogs, comments, User, users } from "@/src/lib/drizzle/schema";
 import { cn, formatDate, shortenNumber } from "@/src/lib/utils";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
 import { desc, eq } from "drizzle-orm";
@@ -33,32 +33,41 @@ interface PageProps extends DefaultProps {
 async function BlogViewPage({ params, className }: PageProps) {
     const session = await getAuthSession();
 
-    const [blog, user] = await Promise.all([
-        db.query.blogs.findFirst({
-            with: {
-                author: true,
-                comments: {
-                    orderBy: [desc(comments.createdAt)],
-                    with: {
-                        user: true,
-                    },
+    const blog = await db.query.blogs.findFirst({
+        with: {
+            author: true,
+            comments: {
+                orderBy: [desc(comments.createdAt)],
+                with: {
+                    user: true,
                 },
-                likes: true,
-                views: true,
             },
-            where: eq(blogs.id, Number(params.blogId)),
-        }),
-        db.query.users.findFirst({
-            where: eq(users.id, session?.user.id!),
-        }),
-    ]);
+            likes: true,
+            views: true,
+        },
+        where: eq(blogs.id, Number(params.blogId)),
+    });
 
     if (!blog) notFound();
-    if (!user) redirect("/");
 
-    const blogIsLiked = blog.likes.find((like) => like.userId === user.id)
-        ? true
-        : false;
+    let user: User | null;
+    let blogIsLiked: boolean;
+
+    if (session) {
+        const dbUser = await db.query.users.findFirst({
+            where: eq(users.id, session?.user.id!),
+        });
+
+        if (!dbUser) redirect("/signin");
+        user = dbUser;
+
+        blogIsLiked = blog.likes.find((like) => like.userId === user?.id)
+            ? true
+            : false;
+    } else {
+        user = null;
+        blogIsLiked = false;
+    }
 
     return (
         <div className={cn("space-y-3", className)}>

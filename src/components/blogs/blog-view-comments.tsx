@@ -7,7 +7,7 @@ import BlogCommentOperation from "./blog-comment-operation";
 
 interface PageProps extends DefaultProps {
     blog: ExtendedBlog;
-    user: User;
+    user: User | null;
     params: {
         blogId: string;
     };
@@ -49,12 +49,14 @@ function BlogViewComments({ className, user, params, blog }: PageProps) {
                                     {comment.content}
                                 </p>
                             </div>
-                            <BlogCommentOperation
-                                user={user}
-                                params={params}
-                                comment={comment}
-                                blog={blog}
-                            />
+                            {user ? (
+                                <BlogCommentOperation
+                                    user={user}
+                                    params={params}
+                                    comment={comment}
+                                    blog={blog}
+                                />
+                            ) : null}
                         </>
                     </div>
                 );

@@ -13,14 +13,15 @@ import { Icons } from "../icons/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
+import { ToastAction } from "../ui/toast";
 import { useToast } from "../ui/use-toast";
 import BlogViewComments from "./blog-view-comments";
 
 interface PageProps extends DefaultProps {
     params: { blogId: string };
     blog: ExtendedBlog;
-    user: User;
-    blogIsLiked: boolean;
+    user: User | null;
+    blogIsLiked: boolean | false;
 }
 
 function BlogViewOperations({
@@ -44,6 +45,21 @@ function BlogViewOperations({
     }, [comment.length]);
 
     const handleLike = () => {
+        if (!user)
+            return toast({
+                title: "Oops!",
+                description: "You're not logged in",
+                variant: "destructive",
+                action: (
+                    <ToastAction
+                        className="border-white focus:ring-0 focus:ring-offset-0"
+                        altText="Login to continue"
+                        onClick={() => router.push("/signin")}
+                    >
+                        Login
+                    </ToastAction>
+                ),
+            });
         setIsLiked(!isLiked);
 
         isLiked
@@ -92,6 +108,13 @@ function BlogViewOperations({
     };
 
     const addComment = async () => {
+        if (!user)
+            return toast({
+                title: "Oops!",
+                description: "You're not logged in",
+                variant: "destructive",
+            });
+
         setIsActive(false);
         setIsPosting(true);
 
@@ -183,22 +206,40 @@ function BlogViewOperations({
                 <p className="text-2xl font-semibold md:text-3xl">Comments</p>
                 <div className="flex gap-4">
                     <Avatar className="h-8 w-8 md:h-10 md:w-10">
-                        <AvatarImage
-                            src={user.image ?? defaultUserPFP.src}
-                            alt={user.name ?? user.id}
-                        />
-                        <AvatarFallback>
-                            {(user.name ?? user.id).charAt(0).toUpperCase()}
-                        </AvatarFallback>
+                        {user ? (
+                            <>
+                                <AvatarImage
+                                    src={user.image ?? defaultUserPFP.src}
+                                    alt={user.name ?? user.id}
+                                />
+                                <AvatarFallback>
+                                    {(user.name ?? user.id)
+                                        .charAt(0)
+                                        .toUpperCase()}
+                                </AvatarFallback>
+                            </>
+                        ) : (
+                            <>
+                                <AvatarImage
+                                    src={defaultUserPFP.src}
+                                    alt={"User"}
+                                />
+                                <AvatarFallback>{"D"}</AvatarFallback>
+                            </>
+                        )}
                     </Avatar>
                     <div className="w-full space-y-2">
                         <p className="cursor-default text-sm md:text-base">
-                            @{user.name ?? user.id}
+                            {user ? <>@{user.name ?? user.id}</> : <>@user</>}
                         </p>
                         <TextareaAutosize
                             id="comment"
-                            disabled={isPosting}
-                            placeholder="Add a comment"
+                            disabled={isPosting || user ? false : true}
+                            placeholder={
+                                user
+                                    ? "Add a comment"
+                                    : "You need to login in order to comment"
+                            }
                             value={comment}
                             className="min-h-[100px] w-full resize-none overflow-hidden rounded-sm border border-gray-700 bg-zinc-950 px-3 py-2 text-sm focus:border-white md:text-base"
                             onChange={(e) => setComment(e.target.value)}

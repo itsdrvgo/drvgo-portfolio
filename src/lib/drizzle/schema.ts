@@ -6,7 +6,6 @@ import {
     longtext,
     mysqlEnum,
     mysqlTable,
-    primaryKey,
     text,
     timestamp,
     uniqueIndex,
@@ -108,7 +107,6 @@ export const blogs = mysqlTable("blogs", {
 export const views = mysqlTable("views", {
     id: int("id").autoincrement().primaryKey(),
     blogId: int("blogId").notNull(),
-    userId: varchar("userId", { length: 255 }).notNull(),
 });
 
 export const likes = mysqlTable("likes", {
@@ -128,7 +126,6 @@ export const comments = mysqlTable("comments", {
 // RELATIONS
 
 export const usersRelations = relations(users, ({ many }) => ({
-    views: many(views),
     likes: many(likes),
     blogs: many(blogs),
     comments: many(comments),
@@ -172,10 +169,6 @@ export const viewRelations = relations(views, ({ one }) => ({
     blog: one(blogs, {
         fields: [views.blogId],
         references: [blogs.id],
-    }),
-    user: one(users, {
-        fields: [views.userId],
-        references: [users.id],
     }),
 }));
 
