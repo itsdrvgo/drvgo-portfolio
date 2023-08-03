@@ -3,7 +3,7 @@ import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { blogs, comments, User, users } from "@/src/lib/drizzle/schema";
 import { cn, formatDate, shortenNumber } from "@/src/lib/utils";
-import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { DefaultProps } from "@/src/types";
 import { desc, eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";

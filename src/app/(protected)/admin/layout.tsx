@@ -25,7 +25,7 @@ async function Layout({ children }: RootLayoutProps) {
     const user = await db.query.users.findFirst({
         where: eq(users.id, session.user.id),
     });
-    if (!user) redirect("/");
+    if (!user) redirect("/signin");
 
     if (user.role === "user")
         return (

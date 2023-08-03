@@ -23,7 +23,7 @@ async function ProfilePage({ className }: DefaultProps) {
         where: eq(users.id, session.user.id),
     });
 
-    if (!user) return redirect("/");
+    if (!user) return redirect("/signin");
 
     return (
         <>

@@ -113,6 +113,15 @@ function BlogViewOperations({
                 title: "Oops!",
                 description: "You're not logged in",
                 variant: "destructive",
+                action: (
+                    <ToastAction
+                        className="border-white focus:ring-0 focus:ring-offset-0"
+                        altText="Login to continue"
+                        onClick={() => router.push("/signin")}
+                    >
+                        Login
+                    </ToastAction>
+                ),
             });
 
         setIsActive(false);
