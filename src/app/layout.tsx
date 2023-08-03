@@ -29,6 +29,7 @@ export const metadata: Metadata = {
         },
     ],
     creator: siteConfig.name,
+    themeColor: [{ color: "black" }],
     openGraph: {
         type: "website",
         locale: "en_US",
@@ -36,7 +37,13 @@ export const metadata: Metadata = {
         title: siteConfig.name,
         description: siteConfig.description,
         siteName: siteConfig.name,
-        images: "/og.jpg",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: siteConfig.name,
+        description: siteConfig.description,
+        images: [`${siteConfig.url}/og.jpg`],
+        creator: "@itsdrvgo",
     },
     icons: {
         icon: "/favicon.ico",
@@ -44,6 +51,7 @@ export const metadata: Metadata = {
         apple: "/apple-touch-icon.png",
     },
     metadataBase: new URL(siteConfig.url),
+    manifest: `${siteConfig.url}/site.webmanifest`,
 };
 
 function RootLayout({ children }: RootLayoutProps) {
