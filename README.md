@@ -1,6 +1,6 @@
 # **DRVGO Portfolio**
 
-![DRVGO Portfolio](/public/og.jpg)
+![DRVGO Portfolio](/public/og.png)
 
 Welcome to my DRVGO Portfolio repository! 🚀
 
