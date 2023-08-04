@@ -1,7 +1,9 @@
 import { homeMenuConfig } from "@/src/config/menu";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
+import { Suspense } from "react";
 import Auth from "./auth";
+import LoginButton from "./login-button";
 import { MainNav } from "./main-nav";
 
 function Navbar({ className }: DefaultProps) {
@@ -18,7 +20,13 @@ function Navbar({ className }: DefaultProps) {
                     className="flex gap-6 md:gap-10"
                 />
                 <nav>
-                    <Auth />
+                    <Suspense
+                        fallback={
+                            <LoginButton className="flex items-center gap-2 px-4" />
+                        }
+                    >
+                        <Auth />
+                    </Suspense>
                 </nav>
             </div>
         </header>
