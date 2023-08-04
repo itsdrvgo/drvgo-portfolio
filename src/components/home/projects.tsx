@@ -44,6 +44,7 @@ function Projects({ className }: DefaultProps) {
                         Want to see more?{" "}
                         <Link
                             href={siteConfig.links.github}
+                            target="_blank"
                             className="text-accent-foreground underline underline-offset-2"
                         >
                             Click Here
