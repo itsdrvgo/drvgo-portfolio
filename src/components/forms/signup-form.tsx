@@ -3,7 +3,7 @@
 import { env } from "@/env.mjs";
 import useAuthStore from "@/src/lib/store/auth";
 import { SignUpData, signupSchema } from "@/src/lib/validation/auth";
-import { useSignUp } from "@clerk/nextjs";
+import { isClerkAPIResponseError, useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -19,7 +19,6 @@ import {
     FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { ToastAction } from "../ui/toast";
 import { useToast } from "../ui/use-toast";
 
 function SignUpForm() {
@@ -68,19 +67,22 @@ function SignUpForm() {
                     "A sign up link has been sent to your email. Please check your inbox.",
             });
         } catch (err) {
-            toast({
-                description: "This email already exists, please sign in.",
-                action: (
-                    <ToastAction
-                        altText="Sign in"
-                        onClick={() => router.push("/signin")}
-                    >
-                        Sign In
-                    </ToastAction>
-                ),
-            });
-            console.error(err);
             setAuthLoading(false);
+
+            const unknownError = "Something went wrong, please try again.";
+
+            isClerkAPIResponseError(err)
+                ? toast({
+                      title: "Oops!",
+                      description: err.errors[0]?.longMessage ?? unknownError,
+                      variant: "destructive",
+                  })
+                : toast({
+                      title: "Oops!",
+                      description: unknownError,
+                      variant: "destructive",
+                  });
+
             return;
         }
 
@@ -139,6 +141,7 @@ function SignUpForm() {
                                 <Input
                                     placeholder="duckymomo60"
                                     disabled={isAuthLoading}
+                                    className="lowercase"
                                     {...field}
                                 />
                             </FormControl>

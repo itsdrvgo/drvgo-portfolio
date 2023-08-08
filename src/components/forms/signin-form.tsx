@@ -3,7 +3,7 @@
 import { env } from "@/env.mjs";
 import useAuthStore from "@/src/lib/store/auth";
 import { LoginData, loginSchema } from "@/src/lib/validation/auth";
-import { useSignIn } from "@clerk/nextjs";
+import { isClerkAPIResponseError, useSignIn } from "@clerk/nextjs";
 import { EmailLinkFactor, SignInResource } from "@clerk/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -61,11 +61,33 @@ function SignInForm() {
 
         try {
             si = await signIn.create({ identifier: data.email });
-        } catch (err) {
-            return toast({
+
+            toast({
                 description:
                     "A sign in link has been sent to your email. Please check your inbox.",
             });
+        } catch (err) {
+            setAuthLoading(false);
+
+            const unknownError = "Something went wrong, please try again.";
+
+            isClerkAPIResponseError(err)
+                ? toast({
+                      title: "Oops!",
+                      description: err.errors[0]?.longMessage ?? unknownError,
+                      variant: "destructive",
+                  })
+                : toast({
+                      title: "Oops!",
+                      description: unknownError,
+                      variant: "destructive",
+                  });
+
+            return;
+            // return toast({
+            //     description:
+            //         "A sign in link has been sent to your email. Please check your inbox.",
+            // });
         }
 
         const siFactor = si.supportedFirstFactors.find(
