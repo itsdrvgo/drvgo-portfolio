@@ -28,7 +28,7 @@ Here's a list of what has been done, and what's yet to be done.
 -   [x] Add Discord Authentication
 -   [x] Add GitHub Authentication
 -   [ ] Add Google Authentication
--   [ ] Email Magic Link Authentication
+-   [x] Email Magic Link Authentication
 
 ## Blogs
 
@@ -58,8 +58,7 @@ Here's a list of what has been done, and what's yet to be done.
 -   [x] Users Table
 -   [ ] Table compatiblity on Mobile Device
 -   [x] Role Manage
--   [ ] Ban Button
--   [x] ~~Delete Button~~
+-   [x] Delete Button
 
 ## Courses
 

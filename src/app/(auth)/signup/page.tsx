@@ -26,7 +26,7 @@ function Page() {
                             </p>
                         </div>
 
-                        <OAuth className="flex items-center justify-between gap-2" />
+                        <OAuth />
 
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">

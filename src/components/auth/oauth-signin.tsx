@@ -1,28 +1,31 @@
 "use client";
 
 import { env } from "@/env.mjs";
-import { OAuthData } from "@/src/lib/validation/auth";
+import useAuthStore from "@/src/lib/store/auth";
+import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
-import { signIn } from "next-auth/react";
+import { isClerkAPIResponseError, useSignIn } from "@clerk/nextjs";
+import { OAuthStrategy } from "@clerk/types";
 import { useState } from "react";
 import { Icons } from "../icons/icons";
+import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 
 interface OAuthProviders {
     name: string;
-    code: OAuthData["code"];
+    provider: OAuthStrategy;
     icon: keyof typeof Icons;
 }
 
 const providers: OAuthProviders[] = [
     {
         name: "Discord",
-        code: "discord",
+        provider: "oauth_discord",
         icon: "discord",
     },
     {
         name: "GitHub",
-        code: "github",
+        provider: "oauth_github",
         icon: "github",
     },
 ];
@@ -30,42 +33,71 @@ const providers: OAuthProviders[] = [
 function OAuth({ className }: DefaultProps) {
     const { toast } = useToast();
 
-    const [isLoading, setLoading] = useState(false);
+    const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
-    const handleLogin = (code: OAuthData["code"]) => {
-        setLoading(true);
+    const [isLoading, setLoading] = useState<OAuthStrategy | null>(null);
+    const { signIn, isLoaded: signInLoaded } = useSignIn();
 
-        signIn(code, { callbackUrl: env.NEXT_PUBLIC_APP_URL + "/profile" })
-            .then(() => {
-                setLoading(false);
-            })
-            .catch((err) => {
-                setLoading(false);
-                console.log(err);
+    if (!signInLoaded)
+        return (
+            <div>
+                <Icons.spinner className="h-6 w-6 animate-spin" />
+            </div>
+        );
 
-                return toast({
-                    title: "Oops!",
-                    description: "Something went wrong, try again later",
-                    variant: "destructive",
-                });
+    const handleLogin = async (provider: OAuthStrategy) => {
+        try {
+            setLoading(provider);
+            await signIn.authenticateWithRedirect({
+                strategy: provider,
+                redirectUrl: env.NEXT_PUBLIC_APP_URL + "/sso-callback",
+                redirectUrlComplete: env.NEXT_PUBLIC_APP_URL + "/profile",
             });
+        } catch (error) {
+            setLoading(null);
+            console.log(error);
+
+            const unknownError = "Something went wrong, please try again.";
+
+            isClerkAPIResponseError(error)
+                ? toast({
+                      title: "Oops!",
+                      description: error.errors[0]?.longMessage ?? unknownError,
+                      variant: "destructive",
+                  })
+                : toast({
+                      title: "Oops!",
+                      description: unknownError,
+                      variant: "destructive",
+                  });
+        }
     };
 
     return (
-        <div className={className}>
+        <div
+            className={cn("flex items-center justify-between gap-2", className)}
+        >
             {providers.map((provider, index) => {
                 const Icon = Icons[provider.icon];
 
                 return (
-                    <button
-                        key={index}
-                        className="flex w-full cursor-pointer items-center justify-center gap-[6px] rounded border border-gray-600 bg-background py-2 text-xs font-medium md:text-base"
-                        onClick={() => handleLogin(provider.code)}
-                        disabled={isLoading}
+                    <Button
+                        aria-label={`Sign in with ${provider.name}`}
+                        key={provider.provider}
+                        variant="outline"
+                        className="flex w-full items-center gap-2 bg-background"
+                        onClick={() => void handleLogin(provider.provider)}
+                        disabled={
+                            isAuthLoading || isLoading === provider.provider
+                        }
                     >
-                        <Icon className="h-4 w-4" aria-hidden="true" />
-                        {provider.name}
-                    </button>
+                        {isLoading === provider.provider ? (
+                            <Icons.spinner className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Icon className="h-4 w-4" aria-hidden="true" />
+                        )}
+                        <p>{provider.name}</p>
+                    </Button>
                 );
             })}
         </div>

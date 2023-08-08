@@ -16,7 +16,7 @@ This repository houses the code for my personal portfolio, showcasing my journey
 -   [ShadCN UI](https://ui.shadcn.com/): The best library of manipulate the UI.
 -   [Tailwind CSS](https://tailwindcss.com/): Designing responsive layouts with ease and speed.
 -   [Zod](https://zod.dev/): Implementing strong data validation for secure user interactions.
--   [NextAuth.js](https://next-auth.js.org/): Facilitating authentication and user management.
+-   [Clerk](https://clerk.com/): Facilitating authentication and user management.
 -   [Tanstack Query](https://tanstack.com/query/latest): Optimizing server-state synchronization and caching.
 -   [T3-Env](https://env.t3.gg/): Adding type-safe environment variables.
 -   [UploadThing](https://uploadthing.com/): Uploading and storing files, images of users.

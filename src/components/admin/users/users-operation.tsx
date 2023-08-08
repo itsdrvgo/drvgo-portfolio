@@ -6,12 +6,11 @@ import {
 } from "@/src/components/ui/dropdown-menu";
 import { useToast } from "@/src/components/ui/use-toast";
 import { User } from "@/src/lib/drizzle/schema";
-import { checkRoleHierarchy, manageRole } from "@/src/lib/utils";
-import { UserUpdateData } from "@/src/lib/validation/auth";
+import { checkRoleHierarchy, manageRole, wait } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
+import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 interface PageProps extends DefaultProps {
@@ -30,14 +29,14 @@ const fetchUser = async (userId: string) => {
 };
 
 function UsersOperation({ rowData }: PageProps) {
-    const { data: session } = useSession();
+    const { userId } = useAuth();
 
     const { toast } = useToast();
     const router = useRouter();
 
     const handleUserDelete = async () => {
         const [user, target] = await Promise.all([
-            fetchUser(session?.user.id!),
+            fetchUser(userId!),
             fetchUser(rowData.id),
         ]);
 
@@ -45,6 +44,13 @@ function UsersOperation({ rowData }: PageProps) {
             return toast({
                 title: "Oops!",
                 description: "User doesn't exist",
+                variant: "destructive",
+            });
+
+        if (user!.id === target.id)
+            return toast({
+                title: "Oops!",
+                description: "You cannot delete your own account",
                 variant: "destructive",
             });
 
@@ -56,8 +62,8 @@ function UsersOperation({ rowData }: PageProps) {
             });
 
         axios
-            .delete<ResponseData>(`/api/users/${rowData.id}`)
-            .then(({ data: resData }) => {
+            .delete<ResponseData>(`/api/users/${target.id}`)
+            .then(async ({ data: resData }) => {
                 if (resData.code !== 200)
                     return toast({
                         title: "Oops!",
@@ -69,9 +75,11 @@ function UsersOperation({ rowData }: PageProps) {
                     description: "User has been deleted",
                 });
 
+                await wait(500);
                 router.refresh();
             })
-            .catch(() => {
+            .catch((err) => {
+                console.log(err);
                 toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
@@ -82,7 +90,7 @@ function UsersOperation({ rowData }: PageProps) {
 
     const handleUserRole = async ({ action }: Action) => {
         const [user, target] = await Promise.all([
-            fetchUser(session?.user.id!),
+            fetchUser(userId!),
             fetchUser(rowData.id),
         ]);
 
@@ -108,16 +116,12 @@ function UsersOperation({ rowData }: PageProps) {
                 variant: "destructive",
             });
 
-        const body: UserUpdateData = {
-            role,
-        };
-
         axios
             .patch<ResponseData>(
-                `/api/users/${rowData.id}`,
-                JSON.stringify(body)
+                `/api/users/${target.id}`,
+                JSON.stringify({ role })
             )
-            .then(({ data: resData }) => {
+            .then(async ({ data: resData }) => {
                 if (resData.code !== 200)
                     return toast({
                         title: "Oops!",
@@ -125,13 +129,15 @@ function UsersOperation({ rowData }: PageProps) {
                         variant: "destructive",
                     });
 
-                router.refresh();
-
                 toast({
                     description: "User role has been updated",
                 });
+
+                await wait(500);
+                router.refresh();
             })
-            .catch(() => {
+            .catch((err) => {
+                console.log(err);
                 toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
@@ -185,7 +191,7 @@ function UsersOperation({ rowData }: PageProps) {
                     ) : null}
                 </>
             ) : null}
-            {rowData.id !== session?.user.id ? (
+            {rowData.id !== userId ? (
                 <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem

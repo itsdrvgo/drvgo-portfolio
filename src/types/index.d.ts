@@ -1,4 +1,6 @@
+import { IncomingHttpHeaders } from "http";
 import { HTMLAttributes } from "react";
+import { WebhookRequiredHeaders } from "svix";
 import { Blog, Comment, Like, User, View } from "../lib/drizzle/schema";
 
 export type NavItem = {
@@ -40,3 +42,5 @@ export interface ExtendedBlog extends Blog {
     comments: ExtendedComment[];
     author: User;
 }
+
+export type SvixHeaders = IncomingHttpHeaders & WebhookRequiredHeaders;

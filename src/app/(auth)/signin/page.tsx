@@ -26,7 +26,7 @@ function Page() {
                             </p>
                         </div>
 
-                        <OAuth className="flex items-center justify-between gap-2" />
+                        <OAuth />
 
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
@@ -41,23 +41,14 @@ function Page() {
 
                         <SignInForm />
 
-                        <div>
-                            <div className="flex-1 text-xs text-muted-foreground md:text-sm">
-                                Don&apos;t have an account?{" "}
-                                <Link
-                                    aria-label="Sign up"
-                                    href="/signup"
-                                    className="text-accent-foreground underline-offset-4 transition-colors hover:underline"
-                                >
-                                    Sign up
-                                </Link>
-                            </div>
+                        <div className="flex-1 text-xs text-muted-foreground md:text-sm">
+                            Don&apos;t have an account?{" "}
                             <Link
-                                aria-label="Reset password"
-                                href="/signin/reset-password"
-                                className="text-xs text-accent-foreground underline-offset-4 transition-colors hover:underline md:text-sm"
+                                aria-label="Sign up"
+                                href="/signup"
+                                className="text-accent-foreground underline-offset-4 transition-colors hover:underline"
                             >
-                                Reset password
+                                Sign up
                             </Link>
                         </div>
                     </div>

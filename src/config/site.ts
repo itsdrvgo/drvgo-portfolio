@@ -13,10 +13,10 @@ export const siteConfig = {
         "itsdrvgo",
     ],
     links: {
-        youtube: "https://youtube.com/@itsdrvgo",
+        youtube: "https://youtube.com/@itsdrvgodev",
         instagram: "https://instagram.com/itsdrvgo",
-        twitter: "https://www.twitter.com/itsdrvgo",
-        github: "https://www.github.com/itsdrvgo",
-        discord: "https://www.dsc.gg/drvgo",
+        twitter: "https://twitter.com/itsdrvgo",
+        github: "https://github.com/itsdrvgo",
+        discord: "https://dsc.gg/drvgo",
     },
 };

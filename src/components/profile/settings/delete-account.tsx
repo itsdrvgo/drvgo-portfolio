@@ -1,12 +1,10 @@
 "use client";
 
-import { env } from "@/env.mjs";
 import { User } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
 import axios from "axios";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Icons } from "../../icons/icons";
@@ -37,36 +35,26 @@ function DeleteAccount({ user, className }: PageProps) {
     const handleAccountDeletion = async () => {
         setLoading(true);
 
-        await signOut();
-
         axios
             .delete<ResponseData>(`/api/users/${user.id}`)
             .then(({ data: resData }) => {
                 setLoading(false);
+                if (resData.code !== 200) return;
+                toast({
+                    title: "Oops!",
+                    description: resData.message,
+                    variant: "destructive",
+                });
 
-                switch (resData.code) {
-                    case 200:
-                        router.push("/");
-                        toast({
-                            description: "Account deleted",
-                        });
-
-                        break;
-
-                    default:
-                        toast({
-                            title: "Oops!",
-                            description: resData.message,
-                            variant: "destructive",
-                        });
-                        break;
-                }
+                router.push("/");
+                toast({
+                    description: "Account deleted",
+                });
             })
             .catch((err) => {
                 setLoading(false);
                 console.log(err);
-
-                return toast({
+                toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
                     variant: "destructive",

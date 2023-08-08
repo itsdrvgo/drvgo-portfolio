@@ -2,6 +2,7 @@ import "@uploadthing/react/styles.css";
 import "./globals.css";
 import { Toaster } from "@/src/components/ui/toaster";
 import { siteConfig } from "@/src/config/site";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
 import { Poppins } from "next/font/google";
@@ -63,19 +64,21 @@ export const metadata: Metadata = {
 
 function RootLayout({ children }: RootLayoutProps) {
     return (
-        <html lang="en" suppressHydrationWarning>
-            <head />
-            <body
-                className={cn(
-                    poppins.className,
-                    "min-h-screen overflow-x-hidden scroll-smooth antialiased"
-                )}
-            >
-                <Provider>{children}</Provider>
-                <Analytics />
-                <Toaster />
-            </body>
-        </html>
+        <ClerkProvider>
+            <html lang="en" suppressHydrationWarning>
+                <head />
+                <body
+                    className={cn(
+                        poppins.className,
+                        "min-h-screen overflow-x-hidden scroll-smooth antialiased"
+                    )}
+                >
+                    <Provider>{children}</Provider>
+                    <Analytics />
+                    <Toaster />
+                </body>
+            </html>
+        </ClerkProvider>
     );
 }
 

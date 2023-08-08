@@ -1,9 +1,9 @@
 import { defaultUserPFP } from "@/src/config/const";
-import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { blogs, comments, User, users } from "@/src/lib/drizzle/schema";
 import { cn, formatDate, shortenNumber } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
+import { currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
@@ -31,7 +31,7 @@ interface PageProps extends DefaultProps {
 }
 
 async function BlogViewPage({ params, className }: PageProps) {
-    const session = await getAuthSession();
+    const authUser = await currentUser();
 
     const blog = await db.query.blogs.findFirst({
         with: {
@@ -53,9 +53,9 @@ async function BlogViewPage({ params, className }: PageProps) {
     let user: User | null;
     let blogIsLiked: boolean;
 
-    if (session) {
+    if (authUser) {
         const dbUser = await db.query.users.findFirst({
-            where: eq(users.id, session?.user.id!),
+            where: eq(users.id, authUser.id),
         });
 
         if (!dbUser) redirect("/signin");

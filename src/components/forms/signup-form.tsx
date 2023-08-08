@@ -1,9 +1,10 @@
 "use client";
 
+import { env } from "@/env.mjs";
+import useAuthStore from "@/src/lib/store/auth";
 import { SignUpData, signupSchema } from "@/src/lib/validation/auth";
-import { ResponseData } from "@/src/lib/validation/response";
+import { useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -18,71 +19,108 @@ import {
     FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { ToastAction } from "../ui/toast";
 import { useToast } from "../ui/use-toast";
-import { PasswordInput } from "./password-input";
 
 function SignUpForm() {
     const { toast } = useToast();
 
     const router = useRouter();
-    const [isLoading, setLoading] = useState(false);
+
+    const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+    const setAuthLoading = useAuthStore((state) => state.setAuthLoading);
+
+    const [expired, setExpired] = useState(false);
+    const [verified, setVerified] = useState(false);
+
+    const { signUp, isLoaded: signUpLoaded, setActive } = useSignUp();
 
     const form = useForm<SignUpData>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
             email: "",
-            password: "",
             username: "",
         },
     });
 
-    function onSubmit(data: SignUpData) {
-        setLoading(true);
+    if (!signUpLoaded)
+        return (
+            <div>
+                <Icons.spinner className="h-6 w-6 animate-spin" />
+            </div>
+        );
 
-        axios
-            .post<ResponseData>("/api/users/create", JSON.stringify(data))
-            .then(({ data: resData }) => {
-                setLoading(false);
+    const { startMagicLinkFlow } = signUp.createMagicLinkFlow();
 
-                switch (resData.code) {
-                    case 201:
-                        toast({
-                            title: "Welcome, " + data.username + "!",
-                            description:
-                                "Please verify your Email by clicking the link sent in your inbox",
-                            variant: "destructive",
-                        });
-                        router.push("/signin");
-                        break;
+    const onSubmit = async (data: SignUpData) => {
+        setAuthLoading(true);
+        setExpired(false);
+        setVerified(false);
 
-                    case 409:
-                        toast({
-                            title: "Oops!",
-                            description: resData.message,
-                            variant: "destructive",
-                        });
-                        router.push("/signin");
-                        break;
+        try {
+            await signUp.create({
+                username: data.username,
+                emailAddress: data.email,
+            });
 
-                    default:
-                        toast({
-                            title: "Oops!",
-                            description: resData.message,
-                            variant: "destructive",
-                        });
-                        break;
-                }
-            })
-            .catch((err) => {
-                setLoading(false);
-                console.log(err);
+            toast({
+                description:
+                    "A sign up link has been sent to your email. Please check your inbox.",
+            });
+        } catch (err) {
+            toast({
+                description: "This email already exists, please sign in.",
+                action: (
+                    <ToastAction
+                        altText="Sign in"
+                        onClick={() => router.push("/signin")}
+                    >
+                        Sign In
+                    </ToastAction>
+                ),
+            });
+            console.error(err);
+            setAuthLoading(false);
+            return;
+        }
 
-                return toast({
-                    title: "Oops!",
-                    description: "Something went wrong, try again later",
-                    variant: "destructive",
+        const su = await startMagicLinkFlow({
+            redirectUrl: env.NEXT_PUBLIC_APP_URL + "/verification",
+        });
+
+        const verification = su.verifications.emailAddress;
+
+        if (verification.verifiedFromTheSameClient()) {
+            setVerified(true);
+            return;
+        } else if (verification.status === "expired") setExpired(true);
+
+        if (su.status === "complete") {
+            setAuthLoading(false);
+            setActive({ session: su.createdSessionId }).then(() => {
+                router.push("/profile");
+                toast({
+                    description:
+                        "Welcome to DRVGO! You have successfully signed in. Please wait while we redirect you to your profile.",
                 });
             });
+            return;
+        }
+    };
+
+    if (expired) {
+        setAuthLoading(false);
+        router.push("/");
+        toast({
+            description: "Verification link expired, please try again.",
+        });
+    }
+    if (verified) {
+        setAuthLoading(false);
+        router.push("/profile");
+        toast({
+            description: "Welcome to DRVGO! You have successfully signed in.",
+        });
     }
 
     return (
@@ -100,7 +138,7 @@ function SignUpForm() {
                             <FormControl>
                                 <Input
                                     placeholder="duckymomo60"
-                                    disabled={isLoading}
+                                    disabled={isAuthLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -117,24 +155,7 @@ function SignUpForm() {
                             <FormControl>
                                 <Input
                                     placeholder="ryomensukuna@jjk.jp"
-                                    disabled={isLoading}
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <PasswordInput
-                                    placeholder="**********"
-                                    disabled={isLoading}
+                                    disabled={isAuthLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -143,10 +164,10 @@ function SignUpForm() {
                     )}
                 />
                 <Button
-                    disabled={isLoading || true}
+                    disabled={isAuthLoading}
                     className="flex items-center gap-2 bg-white hover:bg-gray-200"
                 >
-                    {isLoading ? (
+                    {isAuthLoading ? (
                         <>
                             <Icons.spinner
                                 className="h-4 w-4 animate-spin"

@@ -1,13 +1,9 @@
-import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { blogs, NewBlog } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
-import {
-    BlogPatchData,
-    postPatchSchema,
-    publishSchema,
-} from "@/src/lib/validation/blogs";
+import { postPatchSchema, publishSchema } from "@/src/lib/validation/blogs";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
+import { currentUser } from "@clerk/nextjs";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -130,12 +126,12 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
 }
 
 async function verifyCurrentUserHasAccessToBlog(blogId: string) {
-    const session = await getAuthSession();
-    if (!session) return false;
+    const authUser = await currentUser();
+    if (!authUser) return false;
 
     const data = await db.query.blogs.findMany({
         where: and(
-            eq(blogs.authorId, session.user.id),
+            eq(blogs.authorId, authUser.id),
             eq(blogs.id, Number(blogId))
         ),
     });

@@ -1,17 +1,17 @@
-import { getAuthSession } from "@/src/lib/auth/auth";
 import { db } from "@/src/lib/drizzle";
 import { users } from "@/src/lib/drizzle/schema";
+import { auth } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import DropdownProfile from "./dropdown-profile";
 import LoginButton from "./login-button";
 
 async function Auth() {
-    const session = await getAuthSession();
-    if (!session)
+    const { userId } = auth();
+    if (!userId)
         return <LoginButton className="flex items-center gap-2 px-4" />;
 
     const dbUser = await db.query.users.findFirst({
-        where: eq(users.id, session.user.id),
+        where: eq(users.id, userId),
     });
     if (!dbUser)
         return <LoginButton className="flex items-center gap-2 px-4" />;

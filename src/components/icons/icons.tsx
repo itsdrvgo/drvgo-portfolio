@@ -85,12 +85,14 @@ import {
     Youtube,
     Zap,
     type IconNode as LucideIcon,
+    Upload,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
 
 export const Icons = {
     gem: Gem,
+    upload: Upload,
     close: X,
     spinner: Loader2,
     chevronLeft: ChevronLeft,

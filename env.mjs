@@ -3,78 +3,37 @@ import { z } from "zod";
 
 export const env = createEnv({
     server: {
+        CLERK_SECRET_KEY: z.string(),
+        SVIX_SECRET: z.string(),
+
         DATABASE_URL: z.string().url(),
-        REDIS_URL: z.string().url(),
         UPSTASH_REDIS_REST_URL: z.string().url(),
         UPSTASH_REDIS_REST_TOKEN: z.string(),
 
-        API_SECRET: z.string(),
-
         UPLOADTHING_SECRET: z.string(),
         UPLOADTHING_APP_ID: z.string(),
-
-        NEXTAUTH_URL: z.string().url(),
-        NEXTAUTH_SECRET: z.string(),
-
-        DISCORD_CLIENT_ID: z.string(),
-        DISCORD_CLIENT_SECRET: z.string(),
-
-        GITHUB_CLIENT_ID: z.string(),
-        GITHUB_CLIENT_SECRET: z.string(),
-
-        GOOGLE_CLIENT_ID: z.string(),
-        GOOGLE_CLIENT_SECRET: z.string(),
-
-        FACEBOOK_CLIENT_ID: z.string(),
-        FACEBOOK_CLIENT_SECRET: z.string(),
-
-        POSTMARK_API_TOKEN: z.string(),
-
-        SMTP_USER: z.string().email(),
-        SMTP_PASSWORD: z.string(),
-        SMTP_HOST: z.string(),
-        SMTP_PORT: z.string(),
-        EMAIL_FROM: z.string(),
 
         NODE_ENV: z.enum(["development", "test", "production"]),
     },
     client: {
         NEXT_PUBLIC_APP_URL: z.string(),
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
     },
     runtimeEnv: {
+        CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+        SVIX_SECRET: process.env.SVIX_SECRET,
+
         NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+            process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 
         DATABASE_URL: process.env.DATABASE_URL,
         REDIS_URL: process.env.REDIS_URL,
         UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
         UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
-        API_SECRET: process.env.API_SECRET,
 
         UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
         UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
-
-        NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-
-        DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
-        DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
-
-        GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
-        GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
-
-        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-        GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-
-        FACEBOOK_CLIENT_ID: process.env.FACEBOOK_CLIENT_ID,
-        FACEBOOK_CLIENT_SECRET: process.env.FACEBOOK_CLIENT_SECRET,
-
-        POSTMARK_API_TOKEN: process.env.POSTMARK_API_TOKEN,
-
-        SMTP_USER: process.env.SMTP_USER,
-        SMTP_PASSWORD: process.env.SMTP_PASSWORD,
-        SMTP_HOST: process.env.SMTP_HOST,
-        SMTP_PORT: process.env.SMTP_PORT,
-        EMAIL_FROM: process.env.EMAIL_FROM,
 
         NODE_ENV: process.env.NODE_ENV,
     },

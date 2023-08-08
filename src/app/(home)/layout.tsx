@@ -1,5 +1,5 @@
 import { SiteFooter } from "@/src/components/global/footer";
-import Navbar from "@/src/components/global/navbar";
+import HomeNavbar from "@/src/components/global/home-navbar";
 import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 function Layout({ children }: RootLayoutProps) {
     return (
         <div className="flex min-h-screen flex-col">
-            <Navbar />
+            <HomeNavbar />
             <main className="flex-1">{children}</main>
             <SiteFooter />
         </div>

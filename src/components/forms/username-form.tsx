@@ -1,6 +1,7 @@
 "use client";
 
 import { User } from "@/src/lib/drizzle/schema";
+import { wait } from "@/src/lib/utils";
 import { UserUpdateData, userUpdateSchema } from "@/src/lib/validation/auth";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
@@ -38,42 +39,41 @@ function UsernameForm({ user }: PageProps) {
         },
     });
 
-    function onSubmit(data: UserUpdateData) {
+    const onSubmit = async (data: UserUpdateData) => {
         setLoading(true);
 
         axios
-            .patch<ResponseData>(`/api/users/${user.id}`, JSON.stringify(data))
-            .then(({ data: resData }) => {
+            .patch<ResponseData>(
+                `/api/users/${user.id}`,
+                JSON.stringify({
+                    username: data.username,
+                })
+            )
+            .then(async ({ data: resData }) => {
                 setLoading(false);
+                if (resData.code !== 200)
+                    return toast({
+                        title: "Oops!",
+                        description: resData.message,
+                        variant: "destructive",
+                    });
 
-                switch (resData.code) {
-                    case 200:
-                        toast({
-                            description: "Username updated",
-                        });
-                        router.refresh();
-                        break;
-
-                    default:
-                        toast({
-                            title: "Oops!",
-                            description: resData.message,
-                            variant: "destructive",
-                        });
-                        break;
-                }
+                toast({
+                    description: "Username updated",
+                });
+                await wait(500);
+                router.refresh();
             })
             .catch((err) => {
                 setLoading(false);
                 console.log(err);
-
-                return toast({
+                toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
                     variant: "destructive",
                 });
             });
-    }
+    };
 
     return (
         <Form {...form}>
@@ -90,7 +90,7 @@ function UsernameForm({ user }: PageProps) {
                                 <Input
                                     placeholder="duckymomo60"
                                     disabled={isLoading}
-                                    className="w-full md:w-2/5"
+                                    className="w-full lowercase md:w-2/5"
                                     {...field}
                                 />
                             </FormControl>

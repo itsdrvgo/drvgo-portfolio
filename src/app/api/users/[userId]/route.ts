@@ -1,27 +1,24 @@
 import { db } from "@/src/lib/drizzle";
-import {
-    accounts,
-    comments,
-    images,
-    likes,
-    sessions,
-    users,
-} from "@/src/lib/drizzle/schema";
+import { users } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import { userUpdateSchema } from "@/src/lib/validation/auth";
 import { UserContext, userContextSchema } from "@/src/lib/validation/route";
-import { and, eq } from "drizzle-orm";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, context: UserContext) {
     try {
         const { params } = userContextSchema.parse(context);
 
-        const existingUser = await db.query.users.findFirst({
-            where: eq(users.id, params.userId),
-        });
+        const [user, dbUser] = await Promise.all([
+            clerkClient.users.getUser(params.userId),
+            db.query.users.findFirst({
+                where: eq(users.id, params.userId),
+            }),
+        ]);
 
-        if (!existingUser)
+        if (!user || !dbUser)
             return NextResponse.json({
                 code: 404,
                 message: "Account doesn't exist",
@@ -30,7 +27,7 @@ export async function GET(req: NextRequest, context: UserContext) {
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(existingUser),
+            data: JSON.stringify(dbUser),
         });
     } catch (err) {
         handleError(err);
@@ -42,43 +39,51 @@ export async function PATCH(req: NextRequest, context: UserContext) {
 
     try {
         const { params } = userContextSchema.parse(context);
-        const { username, email, icon, role } = userUpdateSchema.parse(body);
 
-        const existingUser = await db.query.users.findFirst({
-            where: eq(users.id, params.userId),
-        });
+        const [authUser, targetUser, dbUser] = await Promise.all([
+            currentUser(),
+            clerkClient.users.getUser(params.userId),
+            db.query.users.findFirst({
+                where: eq(users.id, params.userId),
+            }),
+        ]);
 
-        if (!existingUser)
+        if (!authUser)
+            return NextResponse.json({
+                code: 401,
+                message: "Unauthorized",
+            });
+
+        if (!targetUser || !dbUser)
             return NextResponse.json({
                 code: 404,
                 message: "Account doesn't exist",
             });
 
-        if (existingUser.image) {
-            await db
-                .delete(images)
-                .where(
-                    and(
-                        eq(images.url, existingUser.image),
-                        eq(images.uploaderId, existingUser.id)
-                    )
-                );
+        const { role, username } = userUpdateSchema.parse(body);
+
+        if (username) {
+            const existingUsername = await db.query.users.findFirst({
+                where: eq(users.name, username),
+            });
+
+            if (existingUsername)
+                return NextResponse.json({
+                    code: 409,
+                    message: "Username already exists",
+                });
         }
 
-        await db
-            .update(users)
-            .set({
-                email: email ?? existingUser.email,
-                name: username ?? existingUser.name,
-                image: icon ?? existingUser.image,
-                role: role ?? existingUser.role,
-            })
-            .where(eq(users.id, existingUser.id));
+        await clerkClient.users.updateUser(targetUser.id, {
+            username: username || dbUser.name!,
+            privateMetadata: {
+                role: role || dbUser.role,
+            },
+        });
 
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: params.userId,
         });
     } catch (err) {
         handleError(err);
@@ -89,28 +94,28 @@ export async function DELETE(req: NextRequest, context: UserContext) {
     try {
         const { params } = userContextSchema.parse(context);
 
-        const existingUser = await db.query.users.findFirst({
-            where: eq(users.id, params.userId),
-        });
+        const [authUser, targetUser] = await Promise.all([
+            currentUser(),
+            clerkClient.users.getUser(params.userId),
+        ]);
 
-        if (!existingUser)
+        if (!authUser)
+            return NextResponse.json({
+                code: 401,
+                message: "Unauthorized",
+            });
+
+        if (!targetUser)
             return NextResponse.json({
                 code: 404,
                 message: "Account doesn't exist",
             });
 
-        await Promise.all([
-            db.delete(users).where(eq(users.id, params.userId)),
-            db.delete(accounts).where(eq(accounts.userId, params.userId)),
-            db.delete(sessions).where(eq(sessions.userId, params.userId)),
-            db.delete(comments).where(eq(comments.authorId, params.userId)),
-            db.delete(likes).where(eq(likes.userId, params.userId)),
-        ]);
+        await clerkClient.users.deleteUser(targetUser.id);
 
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: params.userId,
         });
     } catch (err) {
         handleError(err);

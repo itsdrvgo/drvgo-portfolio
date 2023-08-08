@@ -12,11 +12,11 @@ import {
 import { defaultUserPFP } from "@/src/config/const";
 import { User } from "@/src/lib/drizzle/schema";
 import { DefaultProps } from "@/src/types";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Icons } from "../icons/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useToast } from "../ui/use-toast";
+import { useClerk } from "@clerk/nextjs";
 
 interface PageProps extends DefaultProps {
     user: User;
@@ -26,10 +26,15 @@ function DropdownProfile({ user, className }: PageProps) {
     const router = useRouter();
     const { toast } = useToast();
 
+    const { signOut } = useClerk();
+
     const handleLogout = async () => {
-        signOut({ callbackUrl: "/" })
+        signOut()
             .then(() => {
-                router.refresh();
+                router.push("/");
+                toast({
+                    description: "See you soon!",
+                });
             })
             .catch((err) => {
                 console.log(err);

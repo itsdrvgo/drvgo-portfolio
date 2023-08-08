@@ -1,9 +1,11 @@
 "use client";
 
+import { env } from "@/env.mjs";
+import useAuthStore from "@/src/lib/store/auth";
 import { LoginData, loginSchema } from "@/src/lib/validation/auth";
-import { ResponseData } from "@/src/lib/validation/response";
+import { useSignIn } from "@clerk/nextjs";
+import { EmailLinkFactor, SignInResource } from "@clerk/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,68 +21,103 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { useToast } from "../ui/use-toast";
-import { PasswordInput } from "./password-input";
 
 function SignInForm() {
     const { toast } = useToast();
 
     const router = useRouter();
-    const [isLoading, setLoading] = useState(false);
+
+    const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+    const setAuthLoading = useAuthStore((state) => state.setAuthLoading);
+
+    const [expired, setExpired] = useState(false);
+    const [verified, setVerified] = useState(false);
+
+    const { signIn, isLoaded: signInLoaded, setActive } = useSignIn();
 
     const form = useForm<LoginData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: "",
-            password: "",
         },
     });
 
-    function onSubmit(data: LoginData) {
-        setLoading(true);
+    if (!signInLoaded)
+        return (
+            <div>
+                <Icons.spinner className="h-6 w-6 animate-spin" />
+            </div>
+        );
 
-        axios
-            .post<ResponseData>("/api/users", JSON.stringify(data))
-            .then(({ data: resData }) => {
-                setLoading(false);
+    const { startMagicLinkFlow, cancelMagicLinkFlow } =
+        signIn.createMagicLinkFlow();
 
-                switch (resData.code) {
-                    case 200:
-                        toast({
-                            description: "Welcome, " + resData.data + "!",
-                        });
+    const onSubmit = async (data: LoginData) => {
+        setAuthLoading(true);
+        setExpired(false);
+        setVerified(false);
 
-                        router.refresh();
-                        router.push("/");
-                        break;
+        let si: SignInResource;
 
-                    case 404:
-                        toast({
-                            title: "Oops!",
-                            description: resData.message,
-                            variant: "destructive",
-                        });
-                        router.push("/signup");
-                        break;
+        try {
+            si = await signIn.create({ identifier: data.email });
+        } catch (err) {
+            return toast({
+                description:
+                    "A sign in link has been sent to your email. Please check your inbox.",
+            });
+        }
 
-                    default:
-                        toast({
-                            title: "Oops!",
-                            description: resData.message,
-                            variant: "destructive",
-                        });
-                        break;
-                }
-            })
-            .catch((err) => {
-                setLoading(false);
-                console.log(err);
+        const siFactor = si.supportedFirstFactors.find(
+            (x) =>
+                x.strategy === "email_link" && x.safeIdentifier === data.email
+        ) as EmailLinkFactor | undefined;
 
-                return toast({
-                    title: "Oops!",
-                    description: "Something went wrong, try again later",
-                    variant: "destructive",
+        if (!siFactor || !siFactor.emailAddressId) {
+            return toast({
+                description:
+                    "A sign in link has been sent to your email. Please check your inbox.",
+            });
+        }
+
+        const res = await startMagicLinkFlow({
+            emailAddressId: siFactor.emailAddressId,
+            redirectUrl: env.NEXT_PUBLIC_APP_URL + "/verification",
+        });
+
+        const verification = res.firstFactorVerification;
+
+        if (verification.verifiedFromTheSameClient()) {
+            setVerified(true);
+            return;
+        } else if (verification.status === "expired") setExpired(true);
+
+        if (res.status === "complete") {
+            setAuthLoading(false);
+            setActive({ session: res.createdSessionId }).then(() => {
+                router.push("/profile");
+                toast({
+                    description:
+                        "Welcome to DRVGO! You have successfully signed in. Please wait while we redirect you to your profile.",
                 });
             });
+            return;
+        }
+    };
+
+    if (expired) {
+        setAuthLoading(false);
+        router.push("/");
+        toast({
+            description: "Verification link expired, please try again.",
+        });
+    }
+    if (verified) {
+        setAuthLoading(false);
+        router.push("/profile");
+        toast({
+            description: "Welcome to DRVGO! You have successfully signed in.",
+        });
     }
 
     return (
@@ -98,24 +135,7 @@ function SignInForm() {
                             <FormControl>
                                 <Input
                                     placeholder="ryomensukuna@jjk.jp"
-                                    disabled={isLoading}
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <PasswordInput
-                                    placeholder="**********"
-                                    disabled={isLoading}
+                                    disabled={isAuthLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -124,10 +144,10 @@ function SignInForm() {
                     )}
                 />
                 <Button
-                    disabled={isLoading || true}
+                    disabled={isAuthLoading}
                     className="flex items-center gap-2 bg-white hover:bg-gray-200"
                 >
-                    {isLoading ? (
+                    {isAuthLoading ? (
                         <>
                             <Icons.spinner
                                 className="h-4 w-4 animate-spin"

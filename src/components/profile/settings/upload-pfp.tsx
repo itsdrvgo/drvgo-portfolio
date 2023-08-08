@@ -2,11 +2,7 @@
 
 import { defaultUserPFP } from "@/src/config/const";
 import { User } from "@/src/lib/drizzle/schema";
-import { UserUpdateData } from "@/src/lib/validation/auth";
-import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
-import axios from "axios";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UploadButton } from "../../global/uploadthing";
 import { Icons } from "../../icons/icons";
@@ -20,50 +16,16 @@ interface PageProps extends DefaultProps {
 
 function UploadPFP({ user }: PageProps) {
     const { toast } = useToast();
-    const router = useRouter();
 
     const [isLoading, setLoading] = useState(false);
     const [iconURL, setIconURL] = useState(user.image ?? defaultUserPFP.src);
 
-    const handlePFPUpdate = () => {
-        setLoading(true);
-
-        const data: UserUpdateData = {
-            icon: iconURL!,
-        };
-
-        axios
-            .patch<ResponseData>(`/api/users/${user.id}`, JSON.stringify(data))
-            .then(({ data: resData }) => {
-                setLoading(false);
-
-                switch (resData.code) {
-                    case 200:
-                        toast({
-                            description: "Profile picture updated",
-                        });
-                        router.refresh();
-                        break;
-
-                    default:
-                        toast({
-                            title: "Oops!",
-                            description: resData.message,
-                            variant: "destructive",
-                        });
-                        break;
-                }
-            })
-            .catch((err) => {
-                setLoading(false);
-                console.log(err);
-
-                return toast({
-                    title: "Oops!",
-                    description: "Something went wrong, try again later",
-                    variant: "destructive",
-                });
-            });
+    const handlePFPUpdate = async () => {
+        toast({
+            title: "Oops!",
+            description: "Updating profile picture is not yet supported",
+            variant: "destructive",
+        });
     };
 
     return (
@@ -76,32 +38,23 @@ function UploadPFP({ user }: PageProps) {
                     </AvatarFallback>
                 </Avatar>
 
-                <div className="flex flex-col items-center justify-center gap-2">
-                    <p className="text-sm text-gray-400">Upload Icon</p>
-
-                    <UploadButton
-                        endpoint="profilePicture"
-                        onClientUploadComplete={(res) => {
-                            if (!res)
-                                return toast({
-                                    title: "Oops!",
-                                    description: "Error uploading your image",
-                                    variant: "destructive",
-                                });
-
-                            setIconURL(res[0].fileUrl);
-                            toast({
-                                description: "Upload complete",
-                            });
-                        }}
-                        onUploadError={(error) => {
+                <div className="flex h-48 w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed border-gray-500 p-5">
+                    <Button
+                        variant={"secondary"}
+                        className="flex items-center gap-2 border border-gray-500"
+                        onClick={() => {
                             toast({
                                 title: "Oops!",
-                                description: error.message,
+                                description:
+                                    "Updating profile picture is not yet supported",
                                 variant: "destructive",
                             });
                         }}
-                    />
+                    >
+                        <Icons.upload className="h-4 w-4" />
+                        <p>Upload Image</p>
+                    </Button>
+                    <p className="text-xs text-gray-600">(2 MB)</p>
                 </div>
             </div>
 
@@ -133,3 +86,30 @@ function UploadPFP({ user }: PageProps) {
 }
 
 export default UploadPFP;
+
+{
+    /* <UploadButton
+                        endpoint="profilePicture"
+                        onClientUploadComplete={(res) => {
+                            if (!res)
+                                return toast({
+                                    title: "Oops!",
+                                    description: "Error uploading your image",
+                                    variant: "destructive",
+                                });
+
+                            setIconURL(res[0].fileUrl);
+                            toast({
+                                description: "Upload complete",
+                            });
+                        }}
+                        onUploadError={(error) => {
+                            console.log(error);
+                            toast({
+                                title: "Oops!",
+                                description: error.message,
+                                variant: "destructive",
+                            });
+                        }}
+                    /> */
+}

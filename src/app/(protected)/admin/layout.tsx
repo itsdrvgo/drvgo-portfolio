@@ -1,14 +1,7 @@
 import { DashFooter } from "@/src/components/global/dash-footer";
-import { EmptyPlaceholder } from "@/src/components/global/empty-placeholder";
-import { GoBackButton } from "@/src/components/global/go-back-button";
 import Navbar from "@/src/components/global/navbar";
-import { getAuthSession } from "@/src/lib/auth/auth";
-import { db } from "@/src/lib/drizzle";
-import { users } from "@/src/lib/drizzle/schema";
 import { RootLayoutProps } from "@/src/types";
-import { eq } from "drizzle-orm";
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
     title: {
@@ -18,31 +11,7 @@ export const metadata: Metadata = {
     description: "Take administrative actions",
 };
 
-async function Layout({ children }: RootLayoutProps) {
-    const session = await getAuthSession();
-    if (!session) redirect("/signin");
-
-    const user = await db.query.users.findFirst({
-        where: eq(users.id, session.user.id),
-    });
-    if (!user) redirect("/signin");
-
-    if (user.role === "user")
-        return (
-            <main className="flex h-screen items-center justify-center bg-background p-5">
-                <EmptyPlaceholder>
-                    <EmptyPlaceholder.Icon name="warning" />
-                    <EmptyPlaceholder.Title>
-                        Restricted Area
-                    </EmptyPlaceholder.Title>
-                    <EmptyPlaceholder.Description>
-                        You do not have access to view the content of the page
-                    </EmptyPlaceholder.Description>
-                    <GoBackButton />
-                </EmptyPlaceholder>
-            </main>
-        );
-
+function Layout({ children }: RootLayoutProps) {
     return (
         <div className="flex min-h-screen flex-col">
             <Navbar />
