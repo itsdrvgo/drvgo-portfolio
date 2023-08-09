@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD CONSTRAINT `name_idx` UNIQUE(`name`);
