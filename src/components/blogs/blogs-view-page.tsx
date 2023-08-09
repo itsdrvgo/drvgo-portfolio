@@ -76,7 +76,7 @@ async function BlogViewPage({ params, className }: PageProps) {
                     {blog.title}
                 </p>
                 <Separator className="w-full" />
-                <div className="flex items-center gap-3 text-xs md:text-sm">
+                <div className="z-10 flex items-center gap-3 text-xs md:text-sm">
                     <Avatar>
                         <AvatarImage
                             src={blog.author.image ?? defaultUserPFP.src}

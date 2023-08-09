@@ -1,4 +1,5 @@
 import { env } from "@/env.mjs";
+import BlogNav from "@/src/components/blogs/blogs-nav";
 import BlogViewPage from "@/src/components/blogs/blogs-view-page";
 import BlogViewSkeleton from "@/src/components/skeletons/blog-view-skeleton";
 import { db } from "@/src/lib/drizzle";
@@ -53,8 +54,9 @@ export async function generateMetadata({
 function Page({ params }: PageProps) {
     return (
         <section className="m-5 my-10 flex min-h-[calc(100vh-5rem)]">
-            <div className="container max-w-[65rem] space-y-10 p-0 md:space-y-16">
+            <div className="container relative flex max-w-[65rem] flex-col gap-4 p-0">
                 <Suspense fallback={<BlogViewSkeleton />}>
+                    <BlogNav params={params} />
                     <BlogViewPage params={params} />
                 </Suspense>
             </div>

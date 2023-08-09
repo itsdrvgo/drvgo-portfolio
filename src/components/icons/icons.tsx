@@ -86,12 +86,14 @@ import {
     Zap,
     type IconNode as LucideIcon,
     Upload,
+    ArrowLeft,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
 
 export const Icons = {
     gem: Gem,
+    arrowLeft: ArrowLeft,
     upload: Upload,
     close: X,
     spinner: Loader2,

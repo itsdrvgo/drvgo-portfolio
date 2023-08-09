@@ -3,6 +3,10 @@ import { Skeleton } from "../ui/skeleton";
 function BlogViewSkeleton() {
     return (
         <div className="flex w-full flex-col gap-4">
+            <div className="flex items-center justify-between">
+                <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-10 w-36" />
+            </div>
             <Skeleton className="h-14 w-full" />
             <div className="flex items-center gap-3 text-xs md:text-sm">
                 <Skeleton className="h-10 w-10 rounded-full" />
