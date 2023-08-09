@@ -12,11 +12,11 @@ import {
 import { defaultUserPFP } from "@/src/config/const";
 import { User } from "@/src/lib/drizzle/schema";
 import { DefaultProps } from "@/src/types";
+import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Icons } from "../icons/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useToast } from "../ui/use-toast";
-import { useClerk } from "@clerk/nextjs";
 
 interface PageProps extends DefaultProps {
     user: User;
@@ -76,6 +76,7 @@ function DropdownProfile({ user, className }: PageProps) {
                             <Icons.user className="mr-2 h-4 w-4" />
                             <span>Profile</span>
                         </DropdownMenuItem>
+
                         <DropdownMenuItem
                             onSelect={() => router.push("/support")}
                             className="cursor-pointer"

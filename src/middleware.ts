@@ -33,6 +33,7 @@ export default authMiddleware({
         "/sso-callback(.*)",
         "/verification(.*)",
         "/api/uploadthing(.*)",
+        "/support(.*)",
     ],
     async afterAuth(auth, req, evt) {
         const url = new URL(req.nextUrl.origin);
@@ -47,7 +48,9 @@ export default authMiddleware({
                 url.pathname = "/profile";
 
                 return NextResponse.redirect(url);
-            } else return NextResponse.next();
+            } else if (req.nextUrl.pathname.startsWith("/support"))
+                return NextResponse.redirect("https://dsc.gg/drvgo");
+            else return NextResponse.next();
         }
 
         if (!auth.userId) {

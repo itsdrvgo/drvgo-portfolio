@@ -84,10 +84,6 @@ function SignInForm() {
                   });
 
             return;
-            // return toast({
-            //     description:
-            //         "A sign in link has been sent to your email. Please check your inbox.",
-            // });
         }
 
         const siFactor = si.supportedFirstFactors.find(
