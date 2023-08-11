@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
             content: body.content,
             thumbnailUrl: body.thumbnailUrl,
             authorId: authUser.id,
+            description: body.description ?? "No description",
         });
 
         return NextResponse.json({

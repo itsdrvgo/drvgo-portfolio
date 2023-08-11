@@ -29,7 +29,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface PageProps extends DefaultProps {
-    blog: Pick<Blog, "id" | "title" | "published" | "thumbnailUrl" | "content">;
+    blog: Pick<
+        Blog,
+        | "id"
+        | "title"
+        | "published"
+        | "thumbnailUrl"
+        | "content"
+        | "description"
+    >;
 }
 
 export function BlogOperations({ blog, className }: PageProps) {

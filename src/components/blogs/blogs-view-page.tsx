@@ -70,7 +70,7 @@ async function BlogViewPage({ params, className }: PageProps) {
     }
 
     return (
-        <div className={cn("space-y-3", className)}>
+        <article className={cn("space-y-3", className)}>
             <div className="flex w-full flex-col gap-4">
                 <p className="text-2xl font-bold md:text-5xl md:leading-tight">
                     {blog.title}
@@ -185,7 +185,7 @@ async function BlogViewPage({ params, className }: PageProps) {
                 blogIsLiked={blogIsLiked}
                 className="space-y-3"
             />
-        </div>
+        </article>
     );
 }
 

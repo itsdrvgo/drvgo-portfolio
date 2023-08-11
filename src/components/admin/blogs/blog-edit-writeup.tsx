@@ -42,6 +42,9 @@ function BlogWriteUp({ data, author }: PageProps) {
     const [previewEnabled, setPreviewEnable] = useState(false);
     const [blogTitle, setBlogTitle] = useState(data.title);
     const [blogContent, setBlogContent] = useState(data.content ?? "");
+    const [blogDescription, setBlogDescription] = useState(
+        data.description ?? ""
+    );
     const [thumbnailURL, setThumbnailURL] = useState(data.thumbnailUrl);
 
     const handleSave = () => {
@@ -52,6 +55,7 @@ function BlogWriteUp({ data, author }: PageProps) {
             title: blogTitle,
             content: blogContent,
             published: data.published,
+            description: blogDescription,
             action: "edit",
         };
 
@@ -172,11 +176,11 @@ function BlogWriteUp({ data, author }: PageProps) {
                 <div className="mx-auto flex w-full flex-col gap-4">
                     <Input
                         defaultValue={blogTitle}
-                        placeholder="Blog Title"
-                        className="h-auto rounded-sm border border-white bg-zinc-950 text-2xl font-bold md:text-5xl"
+                        placeholder="Enter blog title"
+                        className="h-auto rounded-sm border border-gray-500 bg-zinc-950 text-2xl font-bold md:text-5xl"
                         onChange={(e) => setBlogTitle(e.target.value)}
                     />
-                    <div className="flex h-auto flex-col items-center justify-center gap-4 rounded-sm border border-white bg-zinc-950 p-5 px-3 md:flex-row md:gap-20">
+                    <div className="flex h-auto flex-col items-center justify-center gap-4 rounded-sm border border-gray-500 bg-zinc-950 p-5 px-3 md:flex-row md:gap-20">
                         <div className="flex flex-col items-center justify-center gap-2">
                             <p className="text-lg font-semibold">
                                 Upload Thumbnail
@@ -192,7 +196,7 @@ function BlogWriteUp({ data, author }: PageProps) {
                                             variant: "destructive",
                                         });
 
-                                    setThumbnailURL(res[0].fileUrl);
+                                    setThumbnailURL(res[0].url);
                                     toast({
                                         description: "Upload complete",
                                     });
@@ -218,9 +222,18 @@ function BlogWriteUp({ data, author }: PageProps) {
                     </div>
                     <TextareaAutosize
                         autoFocus
+                        defaultValue={blogDescription}
+                        maxLength={150}
+                        minLength={3}
+                        placeholder="Enter the blog description in short"
+                        className="min-h-[100px] resize-none overflow-hidden rounded-sm border border-gray-500 bg-zinc-950 px-3 py-2 text-sm md:text-base"
+                        onChange={(e) => setBlogDescription(e.target.value)}
+                    />
+                    <TextareaAutosize
+                        autoFocus
                         defaultValue={blogContent}
-                        placeholder="Type here to write your blog"
-                        className="min-h-[300px] resize-none overflow-hidden rounded-sm border border-white bg-zinc-950 px-3 py-2 text-sm md:text-base"
+                        placeholder="Enter the blog content"
+                        className="min-h-[300px] resize-none overflow-hidden rounded-sm border border-gray-500 bg-zinc-950 px-3 py-2 text-sm md:text-base"
                         onChange={(e) => setBlogContent(e.target.value)}
                     />
                     <p className="text-sm text-gray-500">

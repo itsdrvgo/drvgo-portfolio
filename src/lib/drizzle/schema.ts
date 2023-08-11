@@ -1,4 +1,4 @@
-import { InferModel, relations } from "drizzle-orm";
+import { InferModel, relations, sql } from "drizzle-orm";
 import {
     boolean,
     int,
@@ -22,8 +22,13 @@ export const users = mysqlTable(
         email: varchar("email", { length: 191 }).notNull(),
         emailVerified: timestamp("email_verified"),
         image: varchar("image", { length: 191 }),
-        createdAt: timestamp("created_at").notNull().defaultNow(),
-        updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+        createdAt: timestamp("created_at")
+            .notNull()
+            .default(sql`current_timestamp()`),
+        updatedAt: timestamp("updated_at")
+            .notNull()
+            .default(sql`current_timestamp()`)
+            .onUpdateNow(),
         role: mysqlEnum("role", ["user", "moderator", "admin", "owner"])
             .default("user")
             .notNull(),
@@ -38,7 +43,9 @@ export const images = mysqlTable("images", {
     id: int("id").autoincrement().primaryKey(),
     key: varchar("key", { length: 255 }).notNull(),
     url: varchar("url", { length: 255 }).notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at")
+        .default(sql`current_timestamp()`)
+        .notNull(),
     uploaderId: varchar("uploaderId", { length: 255 }).notNull(),
 });
 
@@ -46,9 +53,12 @@ export const blogs = mysqlTable("blogs", {
     id: int("id").autoincrement().primaryKey(),
     title: varchar("title", { length: 255 }).notNull(),
     thumbnailUrl: varchar("thumbnailUrl", { length: 255 }),
+    description: varchar("description", { length: 150 }).notNull(),
     content: longtext("content"),
     published: boolean("published").default(false).notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at")
+        .default(sql`current_timestamp()`)
+        .notNull(),
     updatedAt: timestamp("updated_at"),
     authorId: varchar("authorId", { length: 255 }).notNull(),
 });
@@ -68,7 +78,9 @@ export const comments = mysqlTable("comments", {
     id: int("id").autoincrement().primaryKey(),
     blogId: int("blogId").notNull(),
     content: text("text").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at")
+        .default(sql`current_timestamp()`)
+        .notNull(),
     authorId: varchar("authorId", { length: 255 }).notNull(),
 });
 

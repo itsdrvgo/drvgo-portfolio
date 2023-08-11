@@ -10,7 +10,7 @@ interface PageProps extends DefaultProps {
     };
 }
 
-async function BlogNav({ className, params }: PageProps) {
+async function BlogNav({ params }: PageProps) {
     const allBlogs = await db.query.blogs.findMany({
         limit: 6,
         where: and(

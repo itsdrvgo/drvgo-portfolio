@@ -42,6 +42,8 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
 
         switch (body.action) {
             case "edit": {
+                console.log(body.description);
+
                 try {
                     const blog = await db.query.blogs.findFirst({
                         where: eq(blogs.id, Number(params.blogId)),
@@ -58,6 +60,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                         title: body.title ?? "Untitled Blog",
                         content: body.content,
                         thumbnailUrl: body.thumbnailUrl,
+                        description: body.description ?? "No description",
                     };
 
                     if (
@@ -68,7 +71,9 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                                 JSON.stringify(blog.title) !==
                                     JSON.stringify(body.title)) ||
                             JSON.stringify(blog.thumbnailUrl) !==
-                                JSON.stringify(body.thumbnailUrl))
+                                JSON.stringify(body.thumbnailUrl) ||
+                            JSON.stringify(blog.description) !==
+                                JSON.stringify(body.description))
                     ) {
                         await db
                             .update(blogs)
@@ -85,6 +90,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                             title: body.title,
                             content: body.content,
                             thumbnailUrl: body.thumbnailUrl,
+                            description: body.description,
                         })
                         .where(eq(blogs.id, Number(params.blogId)));
 
@@ -108,6 +114,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                             content: publishBody.content,
                             thumbnailUrl: publishBody.thumbnailUrl,
                             published: publishBody.published,
+                            description: publishBody.description,
                         })
                         .where(eq(blogs.id, Number(params.blogId)));
 

@@ -9,7 +9,13 @@ import { BlogOperations } from "./blog-item-operations";
 interface PageProps extends DefaultProps {
     blog: Pick<
         Blog,
-        "id" | "title" | "published" | "createdAt" | "thumbnailUrl" | "content"
+        | "id"
+        | "title"
+        | "published"
+        | "createdAt"
+        | "thumbnailUrl"
+        | "content"
+        | "description"
     >;
 }
 
@@ -49,6 +55,7 @@ export function BlogItem({ blog, className }: PageProps) {
                         published: blog.published,
                         thumbnailUrl: blog.thumbnailUrl,
                         content: blog.content,
+                        description: blog.description,
                     }}
                     className="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-muted"
                 />

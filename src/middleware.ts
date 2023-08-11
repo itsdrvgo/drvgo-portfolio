@@ -117,7 +117,14 @@ export default authMiddleware({
             }
         }
     },
-    ignoredRoutes: ["/api/auth", "/api/users", "/og.jpg", "/favicon.ico", "/"],
+    ignoredRoutes: [
+        "/api/auth",
+        "/api/users",
+        "/og.jpg",
+        "/og-blogs.png",
+        "/favicon.ico",
+        "/",
+    ],
 });
 
 export const config = {

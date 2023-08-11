@@ -72,10 +72,7 @@ function BlogNavItems({ className, data }: PageProps) {
                                 >
                                     <p className="text-sm">{blog.title}</p>
                                     <p className="text-xs text-gray-400">
-                                        {blog.content?.length! > 100
-                                            ? blog.content?.slice(0, 100) +
-                                              "..."
-                                            : blog.content}
+                                        {blog.description}
                                     </p>
                                     <div className="flex items-center gap-4 text-sm text-gray-500">
                                         <div className="flex items-center gap-1">

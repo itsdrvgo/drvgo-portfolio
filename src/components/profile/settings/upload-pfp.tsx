@@ -98,7 +98,7 @@ export default UploadPFP;
                                     variant: "destructive",
                                 });
 
-                            setIconURL(res[0].fileUrl);
+                            setIconURL(res[0].url);
                             toast({
                                 description: "Upload complete",
                             });
