@@ -46,12 +46,12 @@ function Landing({ className }: DefaultProps) {
                 variants={slideInItem}
             >
                 <motion.div
-                    className="space-y-14 text-center md:text-left"
+                    className="space-y-10 text-center md:text-left"
                     variants={slideInItem}
                 >
-                    <motion.div>
+                    <motion.div className="flex flex-col items-center gap-2 md:items-start">
                         <motion.p
-                            className="text-xl font-medium drop-shadow-lg md:text-2xl"
+                            className="ml-1 text-xl font-medium drop-shadow-lg md:text-2xl"
                             variants={slideInItem}
                         >
                             Welcome to
@@ -62,17 +62,25 @@ function Landing({ className }: DefaultProps) {
                         >
                             DRVGO
                         </motion.h1>
+                        <motion.div
+                            className="mt-2 flex gap-1"
+                            variants={slideInItem}
+                        >
+                            <motion.div className="ml-1 h-2 w-20 rounded-md bg-blue-600" />
+                            <motion.div className="ml-1 h-2 w-8 rounded-md bg-accent-foreground" />
+                            <motion.div className="ml-1 h-2 w-2 rounded-md bg-white" />
+                        </motion.div>
                     </motion.div>
 
-                    <motion.div className="flex flex-col items-center gap-4 md:items-start">
+                    <motion.div className="ml-1 flex flex-col items-center gap-4 md:items-start">
                         <motion.p
-                            className="flex flex-col items-center gap-2 text-2xl font-semibold drop-shadow-lg md:flex-row md:text-4xl"
+                            className="flex w-11/12 flex-col items-center gap-2 text-2xl font-semibold drop-shadow-lg md:flex-row md:text-4xl"
                             variants={slideInItem}
                         >
                             Designer, Full-Stack Developer & Musician
                         </motion.p>
                         <motion.p
-                            className="w-3/4 text-sm font-light text-gray-400 drop-shadow-lg md:text-base"
+                            className="w-3/5 text-sm font-light text-gray-400 drop-shadow-lg md:text-base"
                             variants={slideInItem}
                         >
                             I design and code simple but beautiful things & I
@@ -80,7 +88,7 @@ function Landing({ className }: DefaultProps) {
                         </motion.p>
                     </motion.div>
 
-                    <motion.div className="flex justify-center md:justify-start">
+                    <motion.div className="ml-1 flex justify-center md:justify-start">
                         <Link
                             href={"/#about"}
                             className="flex w-max items-center justify-start gap-1 rounded-md border border-gray-600 p-3 px-6 text-accent-foreground transition-all ease-in-out hover:bg-accent-foreground hover:text-black"
