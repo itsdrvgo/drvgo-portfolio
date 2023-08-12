@@ -5,7 +5,6 @@ import { DefaultProps } from "@/src/types";
 import Image from "next/image";
 import Link from "next/link";
 import { Icons } from "../icons/icons";
-import { Button } from "../ui/button";
 
 function SiteFooter({ className }: DefaultProps) {
     return (
@@ -24,13 +23,13 @@ function SiteFooter({ className }: DefaultProps) {
                     something unthinkable!
                 </p>
                 <div className="flex items-center justify-center md:justify-end">
-                    <Button
-                        variant={"secondary"}
-                        className="flex items-center gap-1 hover:bg-zinc-800"
+                    <Link
+                        href={"/support"}
+                        className="flex items-center gap-1 rounded-md bg-zinc-800 p-2 px-3 transition-all ease-in-out hover:bg-zinc-950"
                     >
                         <Icons.sparkles className="h-4 w-4" />
                         <p>Let&apos;s go</p>
-                    </Button>
+                    </Link>
                 </div>
             </div>
 
