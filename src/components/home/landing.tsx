@@ -42,42 +42,61 @@ function Landing({ className }: DefaultProps) {
             variants={fadeInContainer}
         >
             <motion.div
-                className="container flex max-w-[75rem] flex-col items-center justify-center gap-14"
+                className="container flex max-w-[75rem] flex-col-reverse items-center justify-between gap-10 px-2 md:flex-row"
                 variants={slideInItem}
             >
                 <motion.div
-                    className="space-y-6 text-center"
+                    className="space-y-14 text-center md:text-left"
                     variants={slideInItem}
                 >
-                    <motion.div
-                        className="flex flex-col items-center gap-2 text-3xl font-bold md:flex-row md:text-4xl"
-                        variants={slideInItem}
-                    >
-                        <Icons.sparkles className="h-7 w-7" />
-                        <p>Designer, Full-Stack Developer & Musician</p>
+                    <motion.div>
+                        <motion.p
+                            className="text-xl font-medium drop-shadow-lg md:text-2xl"
+                            variants={slideInItem}
+                        >
+                            Welcome to
+                        </motion.p>
+                        <motion.h1
+                            className="text-5xl font-bold drop-shadow-lg md:text-7xl"
+                            variants={slideInItem}
+                        >
+                            DRVGO
+                        </motion.h1>
                     </motion.div>
-                    <motion.p
-                        className="text-base font-light text-gray-400 md:text-lg"
-                        variants={slideInItem}
-                    >
-                        I design and code simple but beautiful things & I love
-                        what I do!
-                    </motion.p>
+
+                    <motion.div className="flex flex-col items-center gap-4 md:items-start">
+                        <motion.p
+                            className="flex flex-col items-center gap-2 text-2xl font-semibold drop-shadow-lg md:flex-row md:text-4xl"
+                            variants={slideInItem}
+                        >
+                            Designer, Full-Stack Developer & Musician
+                        </motion.p>
+                        <motion.p
+                            className="w-3/4 text-sm font-light text-gray-400 drop-shadow-lg md:text-base"
+                            variants={slideInItem}
+                        >
+                            I design and code simple but beautiful things & I
+                            love what I do!
+                        </motion.p>
+                    </motion.div>
+
+                    <motion.div className="flex justify-center md:justify-start">
+                        <Link
+                            href={"/#about"}
+                            className="flex w-max items-center justify-start gap-1 rounded-md border border-gray-600 p-3 px-6 text-accent-foreground transition-all ease-in-out hover:bg-accent-foreground hover:text-black"
+                        >
+                            <p className="cursor-pointer pl-1">Know More</p>
+                            <Icons.arrowRight className="h-4 w-4 cursor-pointer" />
+                        </Link>
+                    </motion.div>
                 </motion.div>
                 <Image
                     alt="DRVGO"
                     src={DRVGOLogo}
-                    height={300}
-                    width={300}
+                    height={500}
+                    width={500}
                     priority
                 />
-                <Link
-                    href={"/#about"}
-                    className="flex items-center justify-start gap-1 rounded-md border border-accent p-3 px-6 text-accent-foreground transition-all ease-in-out hover:bg-accent"
-                >
-                    <p className="cursor-pointer pl-1">Know More</p>
-                    <Icons.arrowRight className="h-4 w-4 cursor-pointer" />
-                </Link>
             </motion.div>
         </motion.section>
     );
