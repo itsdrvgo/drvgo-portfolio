@@ -4,8 +4,19 @@ import { DefaultProps } from "@/src/types";
 import { motion, Variants } from "framer-motion";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { useToast } from "../ui/use-toast";
 
 function Newsletter({ className }: DefaultProps) {
+    const { toast } = useToast();
+
+    const handleNewsLetter = () => {
+        toast({
+            title: "Oops!",
+            description: "This feature is not available yet!",
+            variant: "destructive",
+        });
+    };
+
     const fadeInContainer: Variants = {
         hide: {
             opacity: 0,
@@ -54,6 +65,7 @@ function Newsletter({ className }: DefaultProps) {
                             variant={"destructive"}
                             className="uppercase"
                             size={"sm"}
+                            onClick={handleNewsLetter}
                         >
                             Subscribe
                         </Button>
