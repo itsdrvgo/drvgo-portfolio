@@ -8,7 +8,7 @@ function Page() {
     return (
         <>
             <Landing className="m-5 flex min-h-[calc(100vh-5rem)] items-center" />
-            <About className="m-5 flex min-h-screen items-center justify-center" />
+            <About className="m-5 flex min-h-screen items-center justify-center pt-10 md:pt-0" />
             <Skills className="m-5 flex min-h-screen items-center justify-center" />
             <Projects className="m-5 flex min-h-screen items-center justify-center" />
             <Newsletter className="m-5 mb-40 flex items-center justify-center py-40" />
