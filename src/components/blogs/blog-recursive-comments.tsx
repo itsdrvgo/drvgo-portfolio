@@ -26,6 +26,7 @@ function RecursiveComment({
     isReply = false,
 }: PageProps) {
     const replies = allComments.filter((c) => c.parentId === comment.id);
+    const isLoved = comment.loves.find((love) => love.userId === user?.id);
 
     return (
         <div className="space-y-5">
@@ -80,6 +81,7 @@ function RecursiveComment({
                         params={params}
                         blog={blog}
                         comment={comment}
+                        commentLoved={!!isLoved}
                     />
                 </div>
                 {user ? (

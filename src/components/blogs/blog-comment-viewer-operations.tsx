@@ -22,6 +22,7 @@ interface PageProps extends DefaultProps {
         blogId: string;
     };
     comment: ExtendedComment;
+    commentLoved: boolean;
 }
 
 function BlogCommentViewerOperation({
@@ -29,6 +30,7 @@ function BlogCommentViewerOperation({
     blog,
     params,
     comment,
+    commentLoved,
 }: PageProps) {
     const { toast } = useToast();
     const router = useRouter();
@@ -37,7 +39,7 @@ function BlogCommentViewerOperation({
     const [reply, setReply] = useState("");
     const [isActive, setIsActive] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
-    const [isLoved, setIsLoved] = useState(false);
+    const [isLoved, setIsLoved] = useState(commentLoved);
 
     useEffect(() => {
         if (reply.length) setIsActive(true);
@@ -124,9 +126,7 @@ function BlogCommentViewerOperation({
 
         setIsLoved(!isLoved);
 
-        const isLiked = comment.loves.find((love) => love.userId === user.id);
-
-        !!isLiked
+        isLoved
             ? axios
                   .delete<ResponseData>(
                       `/api/blogs/comments/${blog.id}/${comment.id}/love`
