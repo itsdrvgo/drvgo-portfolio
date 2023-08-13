@@ -16,14 +16,13 @@ import { useToast } from "../ui/use-toast";
 
 interface PageProps extends DefaultProps {
     user: User;
-    blog: ExtendedBlog;
     params: {
         blogId: string;
     };
     comment: Comment;
 }
 
-function BlogCommentOperation({ user, blog, params, comment }: PageProps) {
+function BlogCommentOperation({ user, params, comment }: PageProps) {
     const { toast } = useToast();
     const router = useRouter();
 

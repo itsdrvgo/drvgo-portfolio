@@ -1,7 +1,14 @@
 import { IncomingHttpHeaders } from "http";
 import { HTMLAttributes } from "react";
 import { WebhookRequiredHeaders } from "svix";
-import { Blog, Comment, Like, User, View } from "../lib/drizzle/schema";
+import {
+    Blog,
+    Comment,
+    CommentLove,
+    Like,
+    User,
+    View,
+} from "../lib/drizzle/schema";
 
 export type NavItem = {
     title: string;
@@ -34,6 +41,7 @@ export interface RootLayoutProps {
 
 export interface ExtendedComment extends Comment {
     user: User;
+    loves: CommentLove[];
 }
 
 export interface ExtendedBlog extends Blog {

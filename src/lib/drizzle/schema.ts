@@ -76,12 +76,19 @@ export const likes = mysqlTable("likes", {
 
 export const comments = mysqlTable("comments", {
     id: int("id").autoincrement().primaryKey(),
+    parentId: int("parentId"),
     blogId: int("blogId").notNull(),
     content: text("text").notNull(),
     createdAt: timestamp("created_at")
         .default(sql`current_timestamp()`)
         .notNull(),
     authorId: varchar("authorId", { length: 255 }).notNull(),
+});
+
+export const commentLoves = mysqlTable("comment_loves", {
+    id: int("id").autoincrement().primaryKey(),
+    commentId: int("commentId").notNull(),
+    userId: varchar("userId", { length: 255 }).notNull(),
 });
 
 // RELATIONS
@@ -128,13 +135,25 @@ export const likeRelations = relations(likes, ({ one }) => ({
     }),
 }));
 
-export const commentsRelations = relations(comments, ({ one }) => ({
+export const commentsRelations = relations(comments, ({ one, many }) => ({
     blog: one(blogs, {
         fields: [comments.blogId],
         references: [blogs.id],
     }),
     user: one(users, {
         fields: [comments.authorId],
+        references: [users.id],
+    }),
+    loves: many(commentLoves),
+}));
+
+export const commentLovesRelations = relations(commentLoves, ({ one }) => ({
+    comment: one(comments, {
+        fields: [commentLoves.commentId],
+        references: [comments.id],
+    }),
+    user: one(users, {
+        fields: [commentLoves.userId],
         references: [users.id],
     }),
 }));
@@ -156,6 +175,9 @@ export type NewLike = InferModel<typeof likes, "insert">;
 export type Comment = InferModel<typeof comments>;
 export type NewComment = InferModel<typeof comments, "insert">;
 
+export type CommentLove = InferModel<typeof commentLoves>;
+export type NewCommentLove = InferModel<typeof commentLoves, "insert">;
+
 // ZOD SCHEMA
 
 export const insertUserSchema = createInsertSchema(users);
@@ -167,3 +189,5 @@ export const insertViewSchema = createInsertSchema(views);
 export const insertLikeSchema = createInsertSchema(likes);
 
 export const insertCommentSchema = createInsertSchema(comments);
+
+export const insertCommentLoveSchema = createInsertSchema(commentLoves);

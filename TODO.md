@@ -48,9 +48,10 @@ Here's a list of what has been done, and what's yet to be done.
 -   [x] Comments Counter
 -   [x] Deletable Comments
 -   [x] Public Blogs (To like or comment, authentication will be required)
--   [ ] Repliable Comments
--   [ ] Likable Comments
--   [ ] Lovable Comments (Only the owner can love the comment)
+-   [x] Repliable Comments
+-   [ ] ~~Likable Comments~~
+-   [ ] ~~Lovable Comments (Only the owner can love the comment)~~~~
+-   [x] Lovable Comments
 -   [ ] Pinnable Comments (Only one)
 
 ## Users

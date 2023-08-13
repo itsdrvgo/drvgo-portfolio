@@ -22,6 +22,7 @@ export async function GET() {
                     orderBy: [desc(comments.createdAt)],
                     with: {
                         user: true,
+                        loves: true,
                     },
                 },
                 likes: true,

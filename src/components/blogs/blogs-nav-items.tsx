@@ -62,34 +62,40 @@ function BlogNavItems({ className, data }: PageProps) {
                             className
                         )}
                     >
-                        {data
-                            .sort((a, b) => b.likes.length - a.likes.length)
-                            .map((blog) => (
-                                <div
-                                    key={blog.id}
-                                    className="cursor-pointer space-y-2 rounded-md p-4 transition-all ease-in-out hover:bg-gray-800"
-                                    onClick={() => handleRedirect(blog.id)}
-                                >
-                                    <p className="text-sm">{blog.title}</p>
-                                    <p className="text-xs text-gray-400">
-                                        {blog.description}
-                                    </p>
-                                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                                        <div className="flex items-center gap-1">
-                                            <Icons.thumbsup className="h-4 w-4" />
-                                            <p>{blog.likes.length}</p>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <Icons.comment className="h-4 w-4" />
-                                            <p>{blog.comments.length}</p>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <Icons.view className="h-4 w-4" />
-                                            <p>{blog.views.length}</p>
+                        {data.length ? (
+                            data
+                                .sort((a, b) => b.likes.length - a.likes.length)
+                                .map((blog) => (
+                                    <div
+                                        key={blog.id}
+                                        className="cursor-pointer space-y-2 rounded-md p-4 transition-all ease-in-out hover:bg-gray-800"
+                                        onClick={() => handleRedirect(blog.id)}
+                                    >
+                                        <p className="text-sm">{blog.title}</p>
+                                        <p className="text-xs text-gray-400">
+                                            {blog.description}
+                                        </p>
+                                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                                            <div className="flex items-center gap-1">
+                                                <Icons.thumbsup className="h-4 w-4" />
+                                                <p>{blog.likes.length}</p>
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <Icons.comment className="h-4 w-4" />
+                                                <p>{blog.comments.length}</p>
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <Icons.view className="h-4 w-4" />
+                                                <p>{blog.views.length}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                        ) : (
+                            <p className="p-1 text-sm text-gray-400">
+                                No blogs found
+                            </p>
+                        )}
                     </div>
                 </PopoverContent>
             </Popover>

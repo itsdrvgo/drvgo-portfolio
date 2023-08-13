@@ -22,6 +22,7 @@ async function BlogNav({ params }: PageProps) {
             comments: {
                 with: {
                     user: true,
+                    loves: true,
                 },
             },
             likes: true,

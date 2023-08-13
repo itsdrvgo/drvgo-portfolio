@@ -40,6 +40,7 @@ async function BlogViewPage({ params, className }: PageProps) {
                 orderBy: [desc(comments.createdAt)],
                 with: {
                     user: true,
+                    loves: true,
                 },
             },
             likes: true,
