@@ -1,8 +1,6 @@
 import { defaultBlogThumbnail } from "@/src/config/const";
 import { formatDate, shortenNumber } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
 import { ExtendedBlog } from "@/src/types";
-import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
@@ -18,21 +16,6 @@ interface PageProps
 function BlogItem({ blogId, blogData, ref }: PageProps) {
     const router = useRouter();
 
-    const handleViewUpdate = (blogId: number) => {
-        router.push(`/blogs/${blogId}`);
-
-        axios
-            .patch<ResponseData>(`/api/blogs/views/${blogId}`)
-            .then(({ data: resData }) => {
-                if (resData.code !== 200) return console.log(resData.message);
-                console.log("Updated view");
-            })
-            .catch((err) => {
-                console.log(err);
-                console.log("Couldn't update view");
-            });
-    };
-
     return (
         <div
             key={blogId}
@@ -43,7 +26,7 @@ function BlogItem({ blogId, blogData, ref }: PageProps) {
         >
             <div
                 className="cursor-pointer"
-                onClick={() => handleViewUpdate(blogId)}
+                onClick={() => router.push(`/blogs/${blogId}`)}
             >
                 <Image
                     src={
@@ -73,7 +56,7 @@ function BlogItem({ blogId, blogData, ref }: PageProps) {
                 <div className="flex items-center justify-center gap-2">
                     <Icons.heart
                         className="h-4 w-4 cursor-pointer"
-                        onClick={() => handleViewUpdate(blogId)}
+                        onClick={() => router.push(`/blogs/${blogId}`)}
                     />
                     {shortenNumber(
                         blogData.find((x) => x.id === blogId)?.likes.length!
@@ -82,7 +65,7 @@ function BlogItem({ blogId, blogData, ref }: PageProps) {
                 <button className="flex items-center justify-center gap-2">
                     <Icons.comment
                         className="h-4 w-4 cursor-pointer"
-                        onClick={() => handleViewUpdate(blogId)}
+                        onClick={() => router.push(`/blogs/${blogId}`)}
                     />
                     {shortenNumber(
                         blogData.find((x) => x.id === blogId)?.comments.length!

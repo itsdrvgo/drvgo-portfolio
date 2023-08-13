@@ -1,4 +1,4 @@
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { NextResponse } from "next/server";
 import { twMerge } from "tailwind-merge";
@@ -6,6 +6,7 @@ import { ZodError } from "zod";
 import { roleHierarchy } from "../config/const";
 import { User } from "./drizzle/schema";
 import { UserUpdateData } from "./validation/auth";
+import { ResponseData } from "./validation/response";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -115,4 +116,17 @@ export function manageRole(
     } else {
         return undefined;
     }
+}
+
+export function updateBlogViews(blogId: number) {
+    axios
+        .patch<ResponseData>(`/api/blogs/views/${blogId}`)
+        .then(({ data: resData }) => {
+            if (resData.code !== 200) return console.log(resData.message);
+            console.log("Updated view");
+        })
+        .catch((err) => {
+            console.log(err);
+            console.log("Couldn't update view");
+        });
 }

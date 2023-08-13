@@ -1,9 +1,7 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Icons } from "../icons/icons";
 import { Button } from "../ui/button";
@@ -16,21 +14,6 @@ interface PageProps extends DefaultProps {
 
 function BlogNavItems({ className, data }: PageProps) {
     const router = useRouter();
-
-    const handleRedirect = (blogId: number) => {
-        router.push(`/blogs/${blogId}`);
-
-        axios
-            .patch<ResponseData>(`/api/blogs/views/${blogId}`)
-            .then(({ data: resData }) => {
-                if (resData.code !== 200) return console.log(resData.message);
-                console.log("Updated view");
-            })
-            .catch((err) => {
-                console.log(err);
-                console.log("Couldn't update view");
-            });
-    };
 
     return (
         <div className="flex items-center justify-between">
@@ -69,7 +52,9 @@ function BlogNavItems({ className, data }: PageProps) {
                                     <div
                                         key={blog.id}
                                         className="cursor-pointer space-y-2 rounded-md p-4 transition-all ease-in-out hover:bg-gray-800"
-                                        onClick={() => handleRedirect(blog.id)}
+                                        onClick={() =>
+                                            router.push(`/blogs/${blog.id}`)
+                                        }
                                     >
                                         <p className="text-sm">{blog.title}</p>
                                         <p className="text-xs text-gray-400">

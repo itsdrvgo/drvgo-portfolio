@@ -3,6 +3,7 @@
 import { env } from "@/env.mjs";
 import { defaultUserPFP } from "@/src/config/const";
 import { NewComment, User } from "@/src/lib/drizzle/schema";
+import { updateBlogViews } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
 import axios from "axios";
@@ -38,6 +39,10 @@ function BlogViewOperations({
     const [isActive, setIsActive] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [isLiked, setIsLiked] = useState(blogIsLiked);
+
+    useEffect(() => {
+        updateBlogViews(blog.id);
+    }, [blog.id]);
 
     useEffect(() => {
         if (comment.length) setIsActive(true);

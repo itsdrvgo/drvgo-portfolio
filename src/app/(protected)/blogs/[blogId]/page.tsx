@@ -25,7 +25,6 @@ export async function generateMetadata({
         };
 
     const url = env.NEXT_PUBLIC_APP_URL;
-    const ogUrl = new URL(`${url}/blogs/${blog.id}`);
 
     return {
         title: blog.title,
