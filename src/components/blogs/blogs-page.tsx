@@ -14,6 +14,7 @@ async function BlogsPage({ className }: DefaultProps) {
                 orderBy: [desc(comments.createdAt)],
                 with: {
                     user: true,
+                    loves: true,
                 },
             },
             likes: true,
