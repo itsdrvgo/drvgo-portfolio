@@ -242,7 +242,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
                                 disabled={isPosting || user ? false : true}
                                 placeholder="Edit your comment here"
                                 value={commentText}
-                                className="min-h-[80px] w-full resize-none overflow-hidden rounded-sm border border-gray-700 bg-black px-3 py-2 text-sm focus:border-gray-900 md:text-base"
+                                className="min-h-[80px] w-full resize-none overflow-hidden rounded-sm border border-gray-700 bg-black px-3 py-2 text-sm outline-none transition-all ease-in-out focus:border-gray-500 md:text-base"
                                 onChange={(e) => setCommentText(e.target.value)}
                             />
                         </div>
