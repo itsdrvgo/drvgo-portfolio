@@ -83,6 +83,8 @@ export const comments = mysqlTable("comments", {
         .default(sql`current_timestamp()`)
         .notNull(),
     authorId: varchar("authorId", { length: 255 }).notNull(),
+    pinned: boolean("pinned").default(false).notNull(),
+    edited: boolean("edited").default(false).notNull(),
 });
 
 export const commentLoves = mysqlTable("comment_loves", {
