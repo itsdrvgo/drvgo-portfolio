@@ -1,7 +1,7 @@
 import { EmptyPlaceholder } from "../components/global/empty-placeholder";
 import { GoBackButton } from "../components/global/go-back-button";
 
-function Page() {
+function NotFound() {
     return (
         <div className="flex h-screen items-center justify-center bg-background p-5">
             <EmptyPlaceholder>
@@ -17,4 +17,4 @@ function Page() {
     );
 }
 
-export default Page;
+export default NotFound;
