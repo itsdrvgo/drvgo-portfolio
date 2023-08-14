@@ -76,6 +76,7 @@ function Projects({ className }: DefaultProps) {
                                     <div className="flex items-center justify-center">
                                         <Link
                                             href={project.link}
+                                            target="_blank"
                                             className="flex items-center justify-center rounded-md bg-accent p-3 text-sm font-medium transition-all ease-in-out hover:bg-zinc-800"
                                         >
                                             View Project
