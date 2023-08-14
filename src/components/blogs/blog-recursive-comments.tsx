@@ -2,6 +2,7 @@ import { defaultUserPFP } from "@/src/config/const";
 import { User } from "@/src/lib/drizzle/schema";
 import { cn, convertMstoTimeElapsed } from "@/src/lib/utils";
 import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
+import { Icons } from "../icons/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import BlogCommentOperation from "./blog-comment-operation";
 import BlogCommentViewerOperation from "./blog-comment-viewer-operations";
@@ -15,6 +16,7 @@ interface PageProps extends DefaultProps {
     comment: ExtendedComment;
     allComments: ExtendedComment[];
     isReply: boolean;
+    isPinned: boolean;
 }
 
 function RecursiveComment({
@@ -24,12 +26,14 @@ function RecursiveComment({
     blog,
     allComments,
     isReply = false,
+    isPinned = false,
+    className,
 }: PageProps) {
     const replies = allComments.filter((c) => c.parentId === comment.id);
     const isLoved = comment.loves.find((love) => love.userId === user?.id);
 
     return (
-        <div className="space-y-5">
+        <div className={cn("space-y-5", className)}>
             <div className={cn("flex items-start gap-4", isReply && "ml-12")}>
                 <Avatar
                     className={cn(
@@ -49,6 +53,12 @@ function RecursiveComment({
                     </AvatarFallback>
                 </Avatar>
                 <div className="w-full cursor-default space-y-2">
+                    {isPinned && (
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                            <Icons.pin className="h-4 w-4" />
+                            <p>Pinned by @{blog.author.name}</p>
+                        </div>
+                    )}
                     <div className="flex items-center gap-2">
                         <p
                             className={cn(
@@ -59,6 +69,9 @@ function RecursiveComment({
                         >
                             @{comment.user.name ?? comment.user.id}
                         </p>
+                        {comment.edited && (
+                            <p className="text-xs text-gray-400">(edited)</p>
+                        )}
                         <p className="text-xs text-gray-500">
                             {convertMstoTimeElapsed(
                                 comment.createdAt.getTime()
@@ -94,17 +107,23 @@ function RecursiveComment({
             </div>
             {replies.length > 0 && (
                 <div className="space-y-4">
-                    {replies.map((reply) => (
-                        <RecursiveComment
-                            key={reply.id}
-                            comment={reply}
-                            user={user}
-                            params={params}
-                            blog={blog}
-                            allComments={allComments}
-                            isReply={true}
-                        />
-                    ))}
+                    {replies
+                        .sort(
+                            (a, b) =>
+                                a.createdAt.getTime() - b.createdAt.getTime()
+                        )
+                        .map((reply) => (
+                            <RecursiveComment
+                                key={reply.id}
+                                comment={reply}
+                                user={user}
+                                params={params}
+                                blog={blog}
+                                allComments={allComments}
+                                isReply={true}
+                                isPinned={false}
+                            />
+                        ))}
                 </div>
             )}
         </div>

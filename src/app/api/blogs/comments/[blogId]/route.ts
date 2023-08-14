@@ -6,7 +6,7 @@ import { currentUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(req: NextRequest, context: BlogContext) {
+export async function POST(req: NextRequest, context: BlogContext) {
     const body = await req.json();
 
     try {

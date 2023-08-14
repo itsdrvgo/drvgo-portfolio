@@ -6,7 +6,7 @@ import {
     commentContextSchema,
 } from "@/src/lib/validation/route";
 import { currentUser } from "@clerk/nextjs";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, context: CommentContext) {
@@ -29,15 +29,18 @@ export async function POST(req: NextRequest, context: CommentContext) {
                 message: "Unauthorized",
             });
 
-        const newLove = await db.insert(commentLoves).values({
-            userId: user.id,
-            commentId: Number(params.commentId),
-        });
+        await db
+            .delete(commentLoves)
+            .where(
+                and(
+                    eq(commentLoves.commentId, Number(params.commentId)),
+                    eq(commentLoves.userId, user.id)
+                )
+            );
 
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(newLove.insertId),
         });
     } catch (err) {
         handleError(err);

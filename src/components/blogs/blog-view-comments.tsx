@@ -12,10 +12,25 @@ interface PageProps extends DefaultProps {
 
 function BlogViewComments({ className, user, params, blog }: PageProps) {
     const allComments = blog.comments;
-    const rootComments = allComments.filter((comment) => !comment.parentId);
+    const rootComments = allComments.filter(
+        (comment) => !comment.parentId && !comment.pinned
+    );
+    const pinnedComment = allComments.find((comment) => comment.pinned);
 
     return (
         <div className={className}>
+            {pinnedComment && (
+                <RecursiveComment
+                    key={pinnedComment.id}
+                    comment={pinnedComment}
+                    allComments={allComments}
+                    user={user}
+                    params={params}
+                    blog={blog}
+                    isReply={false}
+                    isPinned={true}
+                />
+            )}
             {rootComments.map((comment) => (
                 <RecursiveComment
                     key={comment.id}
@@ -25,6 +40,7 @@ function BlogViewComments({ className, user, params, blog }: PageProps) {
                     params={params}
                     blog={blog}
                     isReply={false}
+                    isPinned={false}
                 />
             ))}
         </div>

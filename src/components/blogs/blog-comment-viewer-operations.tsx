@@ -76,7 +76,9 @@ function BlogCommentViewerOperation({
 
         axios
             .post<ResponseData>(
-                `/api/blogs/comments/${params.blogId}/${comment.id}`,
+                `/api/blogs/comments/${params.blogId}/${
+                    comment.parentId === null ? comment.id : comment.parentId
+                }`,
                 JSON.stringify(body)
             )
             .then(({ data: resData }) => {
@@ -126,53 +128,30 @@ function BlogCommentViewerOperation({
 
         setIsLoved(!isLoved);
 
-        isLoved
-            ? axios
-                  .delete<ResponseData>(
-                      `/api/blogs/comments/${blog.id}/${comment.id}/love`
-                  )
-                  .then(({ data: resData }) => {
-                      if (resData.code !== 200)
-                          return toast({
-                              title: "Oops!",
-                              description: resData.message,
-                              variant: "destructive",
-                          });
+        axios
+            .post<ResponseData>(
+                `/api/blogs/comments/${blog.id}/${comment.id}/${
+                    isLoved ? "unlove" : "love"
+                }`
+            )
+            .then(({ data: resData }) => {
+                if (resData.code !== 200)
+                    return toast({
+                        title: "Oops!",
+                        description: resData.message,
+                        variant: "destructive",
+                    });
 
-                      router.refresh();
-                  })
-                  .catch((err) => {
-                      console.log(err);
-
-                      toast({
-                          title: "Oops!",
-                          description: "Something went wrong, try again later",
-                          variant: "destructive",
-                      });
-                  })
-            : axios
-                  .patch<ResponseData>(
-                      `/api/blogs/comments/${blog.id}/${comment.id}/love`
-                  )
-                  .then(({ data: resData }) => {
-                      if (resData.code !== 200)
-                          return toast({
-                              title: "Oops!",
-                              description: resData.message,
-                              variant: "destructive",
-                          });
-
-                      router.refresh();
-                  })
-                  .catch((err) => {
-                      console.log(err);
-
-                      toast({
-                          title: "Oops!",
-                          description: "Something went wrong, try again later",
-                          variant: "destructive",
-                      });
-                  });
+                router.refresh();
+            })
+            .catch((err) => {
+                console.log(err);
+                toast({
+                    title: "Oops!",
+                    description: "Something went wrong, try again later",
+                    variant: "destructive",
+                });
+            });
     };
 
     return (

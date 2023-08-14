@@ -90,7 +90,7 @@ function BlogViewOperations({
                       });
                   })
             : axios
-                  .patch<ResponseData>(`/api/blogs/likes/${blog.id}`)
+                  .post<ResponseData>(`/api/blogs/likes/${blog.id}`)
                   .then(({ data: resData }) => {
                       if (resData.code !== 200)
                           return toast({
@@ -139,7 +139,7 @@ function BlogViewOperations({
         };
 
         axios
-            .patch<ResponseData>(
+            .post<ResponseData>(
                 `/api/blogs/comments/${blog.id}`,
                 JSON.stringify(body)
             )

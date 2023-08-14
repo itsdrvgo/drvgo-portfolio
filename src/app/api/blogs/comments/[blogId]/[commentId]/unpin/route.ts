@@ -1,5 +1,5 @@
 import { db } from "@/src/lib/drizzle";
-import { commentLoves, users } from "@/src/lib/drizzle/schema";
+import { comments, users } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import {
     CommentContext,
@@ -29,15 +29,22 @@ export async function POST(req: NextRequest, context: CommentContext) {
                 message: "Unauthorized",
             });
 
-        const newLove = await db.insert(commentLoves).values({
-            userId: user.id,
-            commentId: Number(params.commentId),
-        });
+        if (!["owner", "admin"].includes(user.role))
+            return NextResponse.json({
+                code: 403,
+                message: "Unauthorized",
+            });
+
+        await db
+            .update(comments)
+            .set({
+                pinned: false,
+            })
+            .where(eq(comments.id, Number(params.commentId)));
 
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(newLove.insertId),
         });
     } catch (err) {
         handleError(err);
