@@ -1,6 +1,4 @@
-import CodingLaptop from "@/public/coding-laptop.jpg";
 import DRVGOSitePreview from "@/public/drvgo-website-preview.png";
-import EvoStack from "@/public/evo-stack.jpg";
 import Pattern from "@/public/pattern-wood.jpg";
 import XAROS from "@/public/xar-os.png";
 import { StaticImageData } from "next/image";
