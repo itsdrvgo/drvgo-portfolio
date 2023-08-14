@@ -37,38 +37,48 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
                 message: "Unauthorized",
             });
 
-        if (params.commentId === null) {
+        const comment = await db.query.comments.findFirst({
+            where: eq(comments.id, Number(params.commentId)),
+        });
+
+        if (!comment)
+            return NextResponse.json({
+                code: 404,
+                message: "Comment not found",
+            });
+
+        if (comment.parentId === null) {
             const [allReplies] = await Promise.all([
+                // Finding all the child/replies of the comment
                 db.query.comments.findMany({
                     where: eq(comments.parentId, Number(params.commentId)),
                 }),
+                // Deleting the root comment
                 db
                     .delete(comments)
+                    .where(eq(comments.id, Number(params.commentId))),
+                // Deleting all the replies
+                db
+                    .delete(comments)
+                    .where(eq(comments.parentId, Number(params.commentId))),
+                // Deleting all the comment loves of the root comment
+                db
+                    .delete(commentLoves)
                     .where(
-                        and(
-                            eq(comments.id, Number(params.commentId)),
-                            eq(comments.parentId, Number(params.commentId))
-                        )
+                        eq(commentLoves.commentId, Number(params.commentId))
                     ),
             ]);
 
             await Promise.all(
+                // Deleting all the comment loves of the replies
                 allReplies.map((reply) =>
                     db
                         .delete(commentLoves)
-                        .where(
-                            and(
-                                eq(commentLoves.commentId, reply.id),
-                                eq(
-                                    commentLoves.commentId,
-                                    Number(params.commentId)
-                                )
-                            )
-                        )
+                        .where(eq(commentLoves.commentId, reply.id))
                 )
             );
         } else {
-            await Promise.allSettled([
+            await Promise.all([
                 db
                     .delete(comments)
                     .where(eq(comments.id, Number(params.commentId))),
