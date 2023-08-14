@@ -23,14 +23,14 @@ export const projectsConfig: Project[] = [
         image: DRVGOSitePreview,
     },
     {
-        name: "EV0 Stack",
-        link: "https://github.com/DRVGO/create-ev0-app",
-        image: EvoStack,
+        name: "Coming Soon",
+        link: "/",
+        image: Pattern,
     },
     {
-        name: "Next.JS 13 Template (App Router)",
-        link: "https://github.com/itsdrvgo/nextjs-13-template",
-        image: CodingLaptop,
+        name: "Coming Soon",
+        link: "/",
+        image: Pattern,
     },
     {
         name: "Coming Soon",
