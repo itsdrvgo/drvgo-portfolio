@@ -3,6 +3,7 @@ import {
     AlertTriangle,
     ArrowBigDown,
     ArrowBigUp,
+    ArrowLeft,
     ArrowRight,
     Asterisk,
     BarChart,
@@ -62,6 +63,7 @@ import {
     PanelRight,
     PartyPopper,
     Pencil,
+    Pin,
     Pizza,
     Plus,
     RefreshCw,
@@ -77,6 +79,7 @@ import {
     Trophy,
     Twitter,
     Underline,
+    Upload,
     User,
     Users,
     Verified,
@@ -85,8 +88,6 @@ import {
     Youtube,
     Zap,
     type IconNode as LucideIcon,
-    Upload,
-    ArrowLeft,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -96,6 +97,7 @@ export const Icons = {
     arrowLeft: ArrowLeft,
     upload: Upload,
     close: X,
+    pin: Pin,
     spinner: Loader2,
     chevronLeft: ChevronLeft,
     chevronRight: ChevronRight,
