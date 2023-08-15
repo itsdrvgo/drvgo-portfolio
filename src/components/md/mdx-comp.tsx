@@ -43,7 +43,9 @@ const components: Partial<
                 }
                 className="flex items-center gap-3"
             >
-                <Icons.link className="h-5 w-5 text-gray-400" />
+                <div>
+                    <Icons.link className="h-5 w-5 text-gray-400" />
+                </div>
                 {props.children}
             </Link>
         </h2>

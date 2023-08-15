@@ -126,11 +126,12 @@ async function BlogViewPage({ params, className }: PageProps) {
                     className="h-full w-full rounded"
                 />
                 {blog.content?.split("\n").length! > 1 ? (
-                    <div className="flex cursor-default flex-col gap-3 rounded-md border border-gray-400 bg-stone-950 p-5">
-                        <p className="text-xl font-bold underline underline-offset-4">
+                    <div className="flex cursor-default flex-col gap-4 rounded-md border border-gray-400 bg-stone-950 p-5">
+                        <p className="text-lg font-bold underline underline-offset-4 md:text-xl">
                             Table of Contents
                         </p>
-                        <ol className="list-disc px-5 text-base">
+
+                        <ol className="list-disc space-y-1 px-5 text-sm md:text-base">
                             {blog.content?.split("\n").map((x, index) => {
                                 if (x.startsWith("## ")) {
                                     return (
