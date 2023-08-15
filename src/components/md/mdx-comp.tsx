@@ -1,9 +1,11 @@
 import { cn } from "@/src/lib/utils";
+import Link from "next/link";
 import { HTMLAttributes, ImgHTMLAttributes } from "react";
 import ReactMarkdown from "react-markdown";
 import { SpecialComponents } from "react-markdown/lib/ast-to-react";
 import { NormalComponents } from "react-markdown/lib/complex-types";
 import { ReactMarkdownOptions } from "react-markdown/lib/react-markdown";
+import { Icons } from "../icons/icons";
 
 const components: Partial<
     Omit<NormalComponents, keyof SpecialComponents> & SpecialComponents
@@ -17,23 +19,61 @@ const components: Partial<
             {...props}
         />
     ),
-    h2: ({ className, ...props }) => (
+    h2: ({ className, id, ...props }) => (
         <h2
             className={cn(
                 "mt-8 scroll-m-20 border-b pb-1 text-3xl font-semibold tracking-tight first:mt-0",
                 className
             )}
+            id={props.children
+                .toString()
+                .toLowerCase()
+                .replace(/\s/g, "-")
+                .replace(/:$/, "")}
             {...props}
-        />
+        >
+            <Link
+                href={
+                    "#" +
+                    props.children
+                        .toString()
+                        .toLowerCase()
+                        .replace(/\s/g, "-")
+                        .replace(/:$/, "")
+                }
+                className="flex items-center gap-3"
+            >
+                <Icons.link className="h-5 w-5 text-gray-400" />
+                {props.children}
+            </Link>
+        </h2>
     ),
-    h3: ({ className, ...props }) => (
+    h3: ({ className, id, ...props }) => (
         <h3
             className={cn(
                 "mt-8 scroll-m-20 text-2xl font-semibold tracking-tight",
                 className
             )}
+            id={props.children
+                .toString()
+                .toLowerCase()
+                .replace(/\s/g, "-")
+                .replace(/:$/, "")}
             {...props}
-        />
+        >
+            <Link
+                href={
+                    "#" +
+                    props.children
+                        .toString()
+                        .toLowerCase()
+                        .replace(/\s/g, "-")
+                        .replace(/:$/, "")
+                }
+            >
+                {props.children}
+            </Link>
+        </h3>
     ),
     h4: ({ className, ...props }) => (
         <h4

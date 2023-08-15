@@ -89,6 +89,7 @@ import {
     Youtube,
     Zap,
     type IconNode as LucideIcon,
+    Link,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -98,6 +99,7 @@ export const Icons = {
     arrowLeft: ArrowLeft,
     upload: Upload,
     close: X,
+    link: Link,
     pin: Pin,
     spinner: Loader2,
     chevronLeft: ChevronLeft,

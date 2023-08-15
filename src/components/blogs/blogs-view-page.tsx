@@ -6,6 +6,7 @@ import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeKatex from "rehype-katex";
@@ -124,6 +125,53 @@ async function BlogViewPage({ params, className }: PageProps) {
                     height={2000}
                     className="h-full w-full rounded"
                 />
+                {blog.content?.split("\n").length! > 1 ? (
+                    <div className="flex cursor-default flex-col gap-3 rounded-md border border-gray-400 bg-stone-950 p-5">
+                        <p className="text-xl font-bold underline underline-offset-4">
+                            Table of Contents
+                        </p>
+                        <ol className="list-disc px-5 text-base">
+                            {blog.content?.split("\n").map((x, index) => {
+                                if (x.startsWith("## ")) {
+                                    return (
+                                        <li key={index}>
+                                            <Link
+                                                href={`#${x
+                                                    .replace("## ", "")
+                                                    .replace(/:$/, "")
+                                                    .toLowerCase()
+                                                    .replace(/\s/g, "-")}`}
+                                                className="text-gray-300 transition-all ease-in-out hover:text-white"
+                                            >
+                                                {x
+                                                    .replace("## ", "")
+                                                    .replace(/:$/, "")}
+                                            </Link>
+                                        </li>
+                                    );
+                                } else if (x.startsWith("### ")) {
+                                    return (
+                                        <li key={index} className="ml-5">
+                                            <Link
+                                                href={`#${x
+                                                    .replace("### ", "")
+                                                    .replace(/:$/, "")
+                                                    .toLowerCase()
+                                                    .replace(/\s/g, "-")}`}
+                                                className="text-gray-400 transition-all ease-in-out hover:text-gray-300"
+                                            >
+                                                {x
+                                                    .replace("### ", "")
+                                                    .replace(/:$/, "")}
+                                            </Link>
+                                        </li>
+                                    );
+                                }
+                                return null;
+                            })}
+                        </ol>
+                    </div>
+                ) : null}
                 <Mdx
                     className="prose prose-lg max-w-full text-sm text-white md:text-base"
                     remarkPlugins={[remarkGfm, remarkMath]}
