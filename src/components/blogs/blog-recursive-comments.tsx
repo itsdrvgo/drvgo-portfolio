@@ -2,6 +2,7 @@ import { defaultUserPFP } from "@/src/config/const";
 import { User } from "@/src/lib/drizzle/schema";
 import { cn, convertMstoTimeElapsed } from "@/src/lib/utils";
 import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
+import { useState } from "react";
 import { Icons } from "../icons/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import BlogCommentOperation from "./blog-comment-operation";
@@ -29,6 +30,8 @@ function RecursiveComment({
     isPinned = false,
     className,
 }: PageProps) {
+    const [showReply, setShowReply] = useState(false);
+
     const replies = allComments.filter((c) => c.parentId === comment.id);
     const isLoved = comment.loves.find((love) => love.userId === user?.id);
 
@@ -96,6 +99,24 @@ function RecursiveComment({
                         comment={comment}
                         commentLoved={!!isLoved}
                     />
+
+                    {replies.length > 0 && (
+                        <button
+                            className="flex items-center gap-1 rounded-full p-2 px-3 text-sm text-accent-foreground transition-all ease-in-out hover:bg-gray-800"
+                            onClick={() => setShowReply(!showReply)}
+                        >
+                            <Icons.chevronDown
+                                className={cn(
+                                    "h-4 w-4 transition-all ease-in-out",
+                                    showReply && "rotate-180"
+                                )}
+                            />
+                            <p>
+                                {replies.length}{" "}
+                                {replies.length === 1 ? "reply" : "replies"}
+                            </p>
+                        </button>
+                    )}
                 </div>
                 {user ? (
                     <BlogCommentOperation
@@ -105,7 +126,7 @@ function RecursiveComment({
                     />
                 ) : null}
             </div>
-            {replies.length > 0 && (
+            {replies.length > 0 && showReply && (
                 <div className="space-y-4">
                     {replies
                         .sort(
