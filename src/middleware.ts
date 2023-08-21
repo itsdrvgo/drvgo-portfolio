@@ -40,8 +40,6 @@ export default authMiddleware({
         const url = new URL(req.nextUrl.origin);
         const identifier = auth.userId || req.ip || "127.0.0.1";
 
-        console.log(env.MAINTENANCE);
-
         if (
             env.MAINTENANCE === "0" &&
             req.nextUrl.pathname !== "/maintenance"
