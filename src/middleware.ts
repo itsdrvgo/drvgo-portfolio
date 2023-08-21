@@ -39,8 +39,10 @@ export default authMiddleware({
         const url = new URL(req.nextUrl.origin);
         const identifier = auth.userId || req.ip || "127.0.0.1";
 
-        url.pathname = "/maintenance";
-        return NextResponse.redirect(url);
+        if (req.nextUrl.pathname !== "/maintenance") {
+            url.pathname = "/maintenance";
+            return NextResponse.redirect(url);
+        }
 
         // if (auth.isPublicRoute) {
         //     if (
@@ -138,7 +140,6 @@ export default authMiddleware({
         "/og.jpg",
         "/og-blogs.png",
         "/favicon.ico",
-        "/",
     ],
 });
 
