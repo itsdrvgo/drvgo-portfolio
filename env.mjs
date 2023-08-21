@@ -13,6 +13,8 @@ export const env = createEnv({
         UPLOADTHING_SECRET: z.string(),
         UPLOADTHING_APP_ID: z.string(),
 
+        MAINTENANCE: z.string(),
+
         NODE_ENV: z.enum(["development", "test", "production"]),
     },
     client: {
@@ -34,6 +36,8 @@ export const env = createEnv({
 
         UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
         UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
+
+        MAINTENANCE: process.env.MAINTENANCE,
 
         NODE_ENV: process.env.NODE_ENV,
     },

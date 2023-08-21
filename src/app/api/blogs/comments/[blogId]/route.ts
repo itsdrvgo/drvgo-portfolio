@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, context: BlogContext) {
         const { params } = blogContextSchema.parse(context);
 
         const filteredComments = await db.query.comments.findMany({
-            where: eq(comments.blogId, Number(params.blogId)),
+            where: eq(comments.blogId, params.blogId),
             with: {
                 user: true,
                 loves: true,
@@ -40,7 +40,11 @@ export async function POST(req: NextRequest, context: BlogContext) {
     const body = await req.json();
 
     try {
-        const { authorId, content } = insertCommentSchema.parse(body);
+        const { authorId, content } = insertCommentSchema
+            .omit({
+                id: true,
+            })
+            .parse(body);
         const { params } = blogContextSchema.parse(context);
 
         const authUser = await currentUser();
@@ -60,9 +64,10 @@ export async function POST(req: NextRequest, context: BlogContext) {
             });
 
         const newComment = await db.insert(comments).values({
-            authorId: authorId,
-            blogId: Number(params.blogId),
-            content: content,
+            id: crypto.randomUUID(),
+            blogId: params.blogId,
+            authorId,
+            content,
         });
 
         return NextResponse.json({

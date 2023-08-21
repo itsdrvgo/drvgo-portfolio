@@ -132,7 +132,7 @@ function BlogViewOperations({
         setIsActive(false);
         setIsPosting(true);
 
-        const body: NewComment = {
+        const body: Omit<NewComment, "id"> = {
             authorId: user.id,
             blogId: blog.id,
             content: comment,
@@ -224,12 +224,10 @@ function BlogViewOperations({
                             <>
                                 <AvatarImage
                                     src={user.image ?? defaultUserPFP.src}
-                                    alt={user.name ?? user.id}
+                                    alt={user.username}
                                 />
                                 <AvatarFallback>
-                                    {(user.name ?? user.id)
-                                        .charAt(0)
-                                        .toUpperCase()}
+                                    {user.username[0].toUpperCase()}
                                 </AvatarFallback>
                             </>
                         ) : (
@@ -244,7 +242,7 @@ function BlogViewOperations({
                     </Avatar>
                     <div className="w-full space-y-2">
                         <p className="cursor-default text-sm md:text-base">
-                            {user ? <>@{user.name ?? user.id}</> : <>@user</>}
+                            {user ? <>@{user.username}</> : <>@user</>}
                         </p>
                         <TextareaAutosize
                             id="comment"

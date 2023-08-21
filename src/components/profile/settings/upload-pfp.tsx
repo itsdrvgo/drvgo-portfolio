@@ -30,15 +30,14 @@ function UploadPFP({ user }: PageProps) {
 
     return (
         <div className="space-y-10">
-            <div className="flex flex-col items-center gap-10 md:flex-row md:gap-20">
+            <div className="flex w-full flex-col items-center justify-center gap-7 rounded-md border border-dashed border-gray-500 p-12">
                 <Avatar className="h-36 w-36 border border-gray-700">
-                    <AvatarImage src={iconURL!} alt={user.name!} />
+                    <AvatarImage src={iconURL!} alt={user.username} />
                     <AvatarFallback>
-                        {user.name!.charAt(0).toUpperCase()}
+                        {user.username[0].toUpperCase()}
                     </AvatarFallback>
                 </Avatar>
-
-                <div className="flex h-48 w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed border-gray-500 p-5">
+                <div className="flex flex-col items-center justify-center gap-3">
                     <Button
                         variant={"secondary"}
                         className="flex items-center gap-2 border border-gray-500"

@@ -1,6 +1,6 @@
 "use client";
 
-import DRVGOLogo from "@/public/DRVGO.svg";
+import { DRVGOIcon } from "@/src/config/const";
 import { DefaultProps } from "@/src/types";
 import { motion, Variants } from "framer-motion";
 import Image from "next/image";
@@ -51,13 +51,13 @@ function Landing({ className }: DefaultProps) {
                 >
                     <motion.div className="flex flex-col items-center gap-2 md:items-start">
                         <motion.p
-                            className="ml-1 text-xl font-medium drop-shadow-lg md:text-2xl"
+                            className="ml-1 text-xl font-semibold drop-shadow-lg md:text-2xl"
                             variants={slideInItem}
                         >
                             Welcome to
                         </motion.p>
                         <motion.h1
-                            className="text-5xl font-bold drop-shadow-lg md:text-7xl"
+                            className="bg-gradient-to-r from-sky-300 to-blue-500 bg-clip-text text-5xl font-bold text-transparent drop-shadow-lg md:text-7xl"
                             variants={slideInItem}
                         >
                             DRVGO
@@ -100,7 +100,7 @@ function Landing({ className }: DefaultProps) {
                 </motion.div>
                 <Image
                     alt="DRVGO"
-                    src={DRVGOLogo}
+                    src={DRVGOIcon}
                     height={500}
                     width={500}
                     priority

@@ -6,7 +6,7 @@
     :root {
         --text: hsl(216, 70%, 91%);
 
-        --background: hsl(0, 0%, 0%);
+        --background: hsl(0, 0%, 6%);
         --foreground: hsl(213 31% 91%);
 
         --muted: hsl(223 47% 11%);
@@ -21,7 +21,7 @@
         --border: hsl(216 34% 17%);
         --input: hsl(216 34% 17%);
 
-        --card: hsl(240, 55%, 13%);
+        --card: hsl(249, 39%, 19%);
         --card-foreground: hsl(213 31% 91%);
 
         --primary: hsl(210 40% 98%);
@@ -45,18 +45,18 @@
     }
 
     body {
-        @apply bg-background text-foreground;
+        @apply bg-gradient-to-b from-black to-background text-foreground;
     }
 }
 
 ::-webkit-scrollbar {
     width: 7px;
-    background-color: var(--background);
+    background-color: black;
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 2px;
-    background-color: var(--accent-foreground);
+    background-color: white;
 }
 
 ::-webkit-scrollbar-thumb:hover {

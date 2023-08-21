@@ -107,7 +107,7 @@ const components: Partial<
     a: ({ className, ...props }) => (
         <a
             className={cn(
-                "font-medium underline underline-offset-4",
+                "font-semibold underline underline-offset-4",
                 className
             )}
             {...props}

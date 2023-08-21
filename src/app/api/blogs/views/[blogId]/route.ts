@@ -9,7 +9,8 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
         const { params } = blogContextSchema.parse(context);
 
         const newView = await db.insert(views).values({
-            blogId: Number(params.blogId),
+            id: crypto.randomUUID(),
+            blogId: params.blogId,
         });
 
         return NextResponse.json({

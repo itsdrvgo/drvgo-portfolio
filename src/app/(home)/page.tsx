@@ -3,15 +3,24 @@ import Landing from "@/src/components/home/landing";
 import Newsletter from "@/src/components/home/newsletter";
 import Projects from "@/src/components/home/projects";
 import Skills from "@/src/components/home/skills";
+import { Stripes } from "@/src/config/const";
+import Image from "next/image";
 
 function Page() {
     return (
         <>
-            <Landing className="m-5 flex min-h-[calc(100vh-5rem)] items-center" />
-            <About className="m-5 flex min-h-screen items-center justify-center pt-10 md:pt-0" />
-            <Skills className="m-5 flex min-h-screen items-center justify-center" />
-            <Projects className="m-5 flex min-h-screen items-center justify-center" />
-            <Newsletter className="m-5 mb-40 flex items-center justify-center py-40" />
+            <Image
+                src={Stripes}
+                alt="Stripes"
+                className="absolute left-0 top-0 -z-10 opacity-50"
+                fill
+                style={{ objectFit: "cover" }}
+            />
+            <Landing className="mb-20 flex min-h-[calc(100vh-6rem)] items-center p-5 md:mb-0" />
+            <About className="mb-20 flex min-h-screen items-center p-5 md:mb-0" />
+            <Skills className="mb-20 flex min-h-screen items-center p-5 md:mb-0" />
+            <Projects className="mb-20 flex min-h-screen items-center p-5 md:mb-0" />
+            <Newsletter className="mb-40 flex items-center justify-center p-5 py-40" />
         </>
     );
 }

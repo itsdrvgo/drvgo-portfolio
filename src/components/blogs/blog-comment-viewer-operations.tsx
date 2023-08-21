@@ -182,10 +182,10 @@ function BlogCommentViewerOperation({
                         <Avatar className="h-6 w-6 md:h-8 md:w-8">
                             <AvatarImage
                                 src={user.image ?? defaultUserPFP.src}
-                                alt={user.name ?? user.id}
+                                alt={user.username}
                             />
                             <AvatarFallback>
-                                {(user.name ?? user.id).charAt(0).toUpperCase()}
+                                {user.username[0].toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
                         <TextareaAutosize

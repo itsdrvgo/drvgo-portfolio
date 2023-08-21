@@ -13,7 +13,7 @@ interface PageProps extends DefaultProps {
 
 async function BlogEditPage({ params }: PageProps) {
     const blog = await db.query.blogs.findFirst({
-        where: eq(blogs.id, Number(params.blogId)),
+        where: eq(blogs.id, params.blogId),
     });
     if (!blog) notFound();
 

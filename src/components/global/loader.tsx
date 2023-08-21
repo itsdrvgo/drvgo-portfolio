@@ -1,11 +1,11 @@
-import DRVGOLogo from "@/public/DRVGO.svg";
+import { DRVGOIcon } from "@/src/config/const";
 import Image from "next/image";
 
 function Loader() {
     return (
-        <div className="flex h-screen w-full items-center justify-center bg-background">
+        <div className="flex h-screen w-full items-center justify-center">
             <Image
-                src={DRVGOLogo}
+                src={DRVGOIcon}
                 alt="DRVGO"
                 width={200}
                 height={200}

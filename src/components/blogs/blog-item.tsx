@@ -9,7 +9,7 @@ import { Separator } from "../ui/separator";
 
 interface PageProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-    blogId: number;
+    blogId: string;
     blogData: ExtendedBlog[];
 }
 

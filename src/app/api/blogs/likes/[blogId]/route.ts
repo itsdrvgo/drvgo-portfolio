@@ -27,8 +27,9 @@ export async function POST(req: NextRequest, context: BlogContext) {
             });
 
         const newLike = await db.insert(likes).values({
+            id: crypto.randomUUID(),
             userId: user.id,
-            blogId: Number(params.blogId),
+            blogId: params.blogId,
         });
 
         return NextResponse.json({
@@ -64,10 +65,7 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
         await db
             .delete(likes)
             .where(
-                and(
-                    eq(likes.userId, user.id),
-                    eq(likes.blogId, Number(params.blogId))
-                )
+                and(eq(likes.userId, user.id), eq(likes.blogId, params.blogId))
             );
 
         return NextResponse.json({

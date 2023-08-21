@@ -118,7 +118,7 @@ export function manageRole(
     }
 }
 
-export function updateBlogViews(blogId: number) {
+export function updateBlogViews(blogId: string) {
     axios
         .patch<ResponseData>(`/api/blogs/views/${blogId}`)
         .then(({ data: resData }) => {

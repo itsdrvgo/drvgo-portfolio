@@ -40,13 +40,13 @@ function Skills({ className }: DefaultProps) {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 divide-x-0 divide-y overflow-hidden rounded-md border border-gray-600 md:grid-cols-3 md:divide-x md:divide-y-0">
+                <div className="grid grid-cols-1 divide-x-0 divide-y overflow-hidden rounded-md border border-gray-600 backdrop-blur-sm md:grid-cols-3 md:divide-x md:divide-y-0">
                     <motion.div
                         className="flex flex-col items-center gap-10 p-10 py-20 text-center"
                         variants={fadeInContainer}
                     >
                         <div className="flex flex-col items-center justify-center gap-5">
-                            <div className="rounded-full bg-secondary p-4">
+                            <div className="rounded-full bg-card p-4">
                                 <Icons.layers className="h-8 w-8" />
                             </div>
                             <p className="text-xl font-semibold">Designer</p>
@@ -57,7 +57,7 @@ function Skills({ className }: DefaultProps) {
                         </div>
 
                         <div className="space-y-4">
-                            <p className="text-lg font-medium text-accent-foreground">
+                            <p className="text-lg font-semibold text-accent-foreground">
                                 Things I know:
                             </p>
                             <p className="text-sm text-gray-400">
@@ -66,7 +66,7 @@ function Skills({ className }: DefaultProps) {
                         </div>
 
                         <div className="space-y-4">
-                            <p className="text-lg font-medium text-accent-foreground">
+                            <p className="text-lg font-semibold text-accent-foreground">
                                 Tools:
                             </p>
                             <ul className="list-none text-sm text-gray-400">
@@ -86,7 +86,7 @@ function Skills({ className }: DefaultProps) {
                         variants={fadeInContainer}
                     >
                         <div className="flex flex-col items-center justify-center gap-5">
-                            <div className="rounded-full bg-secondary p-4">
+                            <div className="rounded-full bg-card p-4">
                                 <Icons.code className="h-8 w-8" />
                             </div>
                             <p className="text-xl font-semibold">
@@ -99,7 +99,7 @@ function Skills({ className }: DefaultProps) {
                         </div>
 
                         <div className="space-y-4">
-                            <p className="text-lg font-medium text-accent-foreground">
+                            <p className="text-lg font-semibold text-accent-foreground">
                                 Frameworks & Libraries:
                             </p>
                             <p className="text-sm text-gray-400">
@@ -108,7 +108,7 @@ function Skills({ className }: DefaultProps) {
                         </div>
 
                         <div className="space-y-4">
-                            <p className="text-lg font-medium text-accent-foreground">
+                            <p className="text-lg font-semibold text-accent-foreground">
                                 Languages:
                             </p>
                             <p className="text-sm text-gray-400">
@@ -117,7 +117,7 @@ function Skills({ className }: DefaultProps) {
                         </div>
 
                         <div className="space-y-4">
-                            <p className="text-lg font-medium text-accent-foreground">
+                            <p className="text-lg font-semibold text-accent-foreground">
                                 Back-End & Database:
                             </p>
                             <p className="text-sm text-gray-400">
@@ -132,7 +132,7 @@ function Skills({ className }: DefaultProps) {
                         variants={fadeInContainer}
                     >
                         <div className="flex flex-col items-center justify-center gap-5">
-                            <div className="rounded-full bg-secondary p-4">
+                            <div className="rounded-full bg-card p-4">
                                 <Icons.music className="h-8 w-8" />
                             </div>
                             <p className="text-xl font-semibold">Musician</p>
@@ -143,7 +143,7 @@ function Skills({ className }: DefaultProps) {
                         </div>
 
                         <div className="space-y-4">
-                            <p className="text-lg font-medium text-accent-foreground">
+                            <p className="text-lg font-semibold text-accent-foreground">
                                 Genres I like:
                             </p>
                             <p className="text-sm text-gray-400">
@@ -153,7 +153,7 @@ function Skills({ className }: DefaultProps) {
                         </div>
 
                         <div className="space-y-4">
-                            <p className="text-lg font-medium text-accent-foreground">
+                            <p className="text-lg font-semibold text-accent-foreground">
                                 Experiences:
                             </p>
                             <ul className="list-none text-sm text-gray-400">

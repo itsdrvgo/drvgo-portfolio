@@ -26,7 +26,7 @@ function AdminButtons({ className }: DefaultProps) {
                     fill
                     style={{ objectFit: "cover" }}
                 />
-                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 font-medium drop-shadow-xl">
+                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 font-semibold drop-shadow-xl">
                     <Icons.pencil />
                     <p>Blog Creation Tool</p>
                 </div>
@@ -44,7 +44,7 @@ function AdminButtons({ className }: DefaultProps) {
                     fill
                     style={{ objectFit: "cover" }}
                 />
-                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 font-medium drop-shadow-xl">
+                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 font-semibold drop-shadow-xl">
                     <Icons.bookopencheck />
                     <p>Course Creation Tool</p>
                 </div>
@@ -62,7 +62,7 @@ function AdminButtons({ className }: DefaultProps) {
                     fill
                     style={{ objectFit: "cover" }}
                 />
-                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 font-medium drop-shadow-xl">
+                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 font-semibold drop-shadow-xl">
                     <Icons.users />
                     <p>Users Panel</p>
                 </div>
@@ -80,7 +80,7 @@ function AdminButtons({ className }: DefaultProps) {
                     fill
                     style={{ objectFit: "cover" }}
                 />
-                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 font-medium drop-shadow-xl">
+                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 font-semibold drop-shadow-xl">
                     <Icons.globe />
                     <p>Auto Post Tool</p>
                 </div>

@@ -17,7 +17,7 @@ export async function generateMetadata({
     params,
 }: PageProps): Promise<Metadata> {
     const blog = await db.query.blogs.findFirst({
-        where: eq(blogs.id, Number(params.blogId)),
+        where: eq(blogs.id, params.blogId),
     });
     if (!blog)
         return {

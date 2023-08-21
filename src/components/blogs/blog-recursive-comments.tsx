@@ -47,19 +47,17 @@ function RecursiveComment({
                 >
                     <AvatarImage
                         src={comment.user.image ?? defaultUserPFP.src}
-                        alt={comment.user.name ?? comment.user.id}
+                        alt={comment.user.username}
                     />
                     <AvatarFallback>
-                        {(comment.user.name ?? comment.user.id)
-                            .charAt(0)
-                            .toUpperCase()}
+                        {comment.user.username.charAt(0).toUpperCase()}
                     </AvatarFallback>
                 </Avatar>
                 <div className="w-full cursor-default space-y-2">
                     {isPinned && (
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                             <Icons.pin className="h-4 w-4" />
-                            <p>Pinned by @{blog.author.name}</p>
+                            <p>Pinned by @{blog.author.username}</p>
                         </div>
                     )}
                     <div className="flex items-center gap-2">
@@ -70,7 +68,7 @@ function RecursiveComment({
                                     : "text-sm md:text-base"
                             )}
                         >
-                            @{comment.user.name ?? comment.user.id}
+                            @{comment.user.username}
                         </p>
                         {comment.edited && (
                             <p className="text-xs text-gray-400">(edited)</p>
@@ -85,9 +83,11 @@ function RecursiveComment({
                         {isReply && (
                             <span className="mr-1 rounded-sm bg-gray-800 p-[2px] px-1 text-sm text-gray-300">
                                 @
-                                {allComments.find(
-                                    (c) => c.id === comment.parentId
-                                )?.user.name ?? comment.user.id}
+                                {
+                                    allComments.find(
+                                        (c) => c.id === comment.parentId
+                                    )?.user.username
+                                }
                             </span>
                         )}
                         {comment.content}

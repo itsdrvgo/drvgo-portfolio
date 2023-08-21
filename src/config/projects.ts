@@ -1,7 +1,10 @@
-import DRVGOSitePreview from "@/public/drvgo-website-preview.png";
-import Pattern from "@/public/pattern-wood.jpg";
-import XAROS from "@/public/xar-os.png";
 import { StaticImageData } from "next/image";
+import {
+    DRVGOSitePreview,
+    EV0AppPreview,
+    Pattern,
+    XAROSPreview,
+} from "./const";
 
 interface Project {
     name: string;
@@ -11,19 +14,19 @@ interface Project {
 
 export const projectsConfig: Project[] = [
     {
+        name: "Create EV0 App (EV0 Stack)",
+        link: "https://github.com/itsdrvgo/create-ev0-app",
+        image: EV0AppPreview,
+    },
+    {
         name: "XAR OS (MacOS Clone made with Next.JS)",
         link: "https://github.com/itsdrvgo/xar-os",
-        image: XAROS,
+        image: XAROSPreview,
     },
     {
         name: "DRVGO Portfolio made using Next.JS v13 (App Router)",
         link: "https://github.com/itsdrvgo/drvgo-website",
         image: DRVGOSitePreview,
-    },
-    {
-        name: "Coming Soon",
-        link: "/",
-        image: Pattern,
     },
     {
         name: "Coming Soon",

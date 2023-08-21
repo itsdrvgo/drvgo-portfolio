@@ -13,10 +13,7 @@ interface PageProps extends DefaultProps {
 async function BlogNav({ params }: PageProps) {
     const allBlogs = await db.query.blogs.findMany({
         limit: 6,
-        where: and(
-            eq(blogs.published, true),
-            ne(blogs.id, Number(params.blogId))
-        ),
+        where: and(eq(blogs.published, true), ne(blogs.id, params.blogId)),
         with: {
             author: true,
             comments: {

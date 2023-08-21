@@ -35,7 +35,7 @@ function UsernameForm({ user }: PageProps) {
     const form = useForm<UserUpdateData>({
         resolver: zodResolver(userUpdateSchema),
         defaultValues: {
-            username: user.name!,
+            username: user.username,
         },
     });
 
@@ -101,7 +101,8 @@ function UsernameForm({ user }: PageProps) {
                 <div className="flex w-full items-center justify-center md:justify-start">
                     <Button
                         disabled={
-                            isLoading || form.getValues().username === user.name
+                            isLoading ||
+                            form.getValues().username === user.username
                         }
                         className="flex w-max items-center gap-2 bg-white hover:bg-gray-200"
                     >

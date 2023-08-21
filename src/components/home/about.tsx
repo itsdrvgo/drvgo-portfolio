@@ -1,6 +1,6 @@
 "use client";
 
-import DRVGOLogo from "@/public/DRVGO.svg";
+import { DRVGOIcon } from "@/src/config/const";
 import { DefaultProps } from "@/src/types";
 import { motion, Variants } from "framer-motion";
 import Image from "next/image";
@@ -33,11 +33,11 @@ function About({ className }: DefaultProps) {
             id="about"
         >
             <motion.div
-                className="container grid max-w-[75rem] grid-cols-1 items-center gap-5 rounded-md bg-gradient-to-b from-transparent to-secondary md:grid-cols-2 md:gap-24 md:bg-gradient-to-r"
+                className="container grid max-w-[75rem] grid-cols-1 items-center gap-5 rounded-md bg-gradient-to-b from-transparent to-card backdrop-blur-sm md:grid-cols-2 md:gap-24 md:bg-gradient-to-r"
                 variants={fadeInContainer}
             >
                 <div className="hidden items-center justify-center md:visible md:flex">
-                    <Image src={DRVGOLogo} alt="DRVGO" />
+                    <Image src={DRVGOIcon} alt="DRVGO" />
                 </div>
                 <Card className="order-1 border-none bg-transparent p-0 pb-5 md:pt-10">
                     <CardHeader className="p-2 md:p-6">

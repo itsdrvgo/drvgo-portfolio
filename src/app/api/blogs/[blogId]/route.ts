@@ -17,7 +17,7 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
                 message: "Unauthorized",
             });
 
-        await db.delete(blogs).where(eq(blogs.id, Number(params.blogId)));
+        await db.delete(blogs).where(eq(blogs.id, params.blogId));
         return NextResponse.json({
             code: 204,
             message: "Ok",
@@ -46,7 +46,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
 
                 try {
                     const blog = await db.query.blogs.findFirst({
-                        where: eq(blogs.id, Number(params.blogId)),
+                        where: eq(blogs.id, params.blogId),
                     });
 
                     if (!blog)
@@ -55,7 +55,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                             message: "Blog not found",
                         });
 
-                    const updatedValues: NewBlog = {
+                    const updatedValues: Omit<NewBlog, "id"> = {
                         authorId: blog.authorId,
                         title: body.title ?? "Untitled Blog",
                         content: body.content,
@@ -81,7 +81,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                                 updatedAt: new Date(),
                                 ...updatedValues,
                             })
-                            .where(eq(blogs.id, Number(params.blogId)));
+                            .where(eq(blogs.id, params.blogId));
                     }
 
                     await db
@@ -92,7 +92,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                             thumbnailUrl: body.thumbnailUrl,
                             description: body.description,
                         })
-                        .where(eq(blogs.id, Number(params.blogId)));
+                        .where(eq(blogs.id, params.blogId));
 
                     return NextResponse.json({
                         code: 200,
@@ -116,7 +116,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                             published: publishBody.published,
                             description: publishBody.description,
                         })
-                        .where(eq(blogs.id, Number(params.blogId)));
+                        .where(eq(blogs.id, params.blogId));
 
                     return NextResponse.json({
                         code: 200,
@@ -137,10 +137,7 @@ async function verifyCurrentUserHasAccessToBlog(blogId: string) {
     if (!authUser) return false;
 
     const data = await db.query.blogs.findMany({
-        where: and(
-            eq(blogs.authorId, authUser.id),
-            eq(blogs.id, Number(blogId))
-        ),
+        where: and(eq(blogs.authorId, authUser.id), eq(blogs.id, blogId)),
     });
 
     return data.length > 0;

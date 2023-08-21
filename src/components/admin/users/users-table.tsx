@@ -65,9 +65,9 @@ export const columns: ColumnDef<User>[] = [
         cell: ({ row }) => <div>{row.getValue("id")}</div>,
     },
     {
-        accessorKey: "name",
+        accessorKey: "username",
         header: "Username",
-        cell: ({ row }) => <div>{row.getValue("name")}</div>,
+        cell: ({ row }) => <div>{row.getValue("username")}</div>,
     },
     {
         accessorKey: "email",
@@ -197,7 +197,7 @@ function UserTable({ className, data }: PageProps) {
                                 return (
                                     <DropdownMenuCheckboxItem
                                         key={column.id}
-                                        className="capitalize"
+                                        className="cursor-pointer uppercase"
                                         checked={column.getIsVisible()}
                                         onCheckedChange={(value) =>
                                             column.toggleVisibility(!!value)

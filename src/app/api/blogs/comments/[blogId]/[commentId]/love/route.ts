@@ -30,8 +30,9 @@ export async function POST(req: NextRequest, context: CommentContext) {
             });
 
         const newLove = await db.insert(commentLoves).values({
+            id: crypto.randomUUID(),
             userId: user.id,
-            commentId: Number(params.commentId),
+            commentId: params.commentId,
         });
 
         return NextResponse.json({

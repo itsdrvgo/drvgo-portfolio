@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
                     userWebhookSchema.parse(data);
 
                 await db.insert(users).values({
-                    name: username,
+                    username,
                     id,
                     image: profile_image_url,
                     email: email_addresses[0].email_address,
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
                 .set({
                     email:
                         email_addresses[0].email_address ?? existingUser.email,
-                    name: username ?? existingUser.name,
+                    username: username ?? existingUser.username,
                     image: profile_image_url ?? existingUser.image,
                     role: private_metadata.role ?? existingUser.role,
                 })

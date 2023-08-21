@@ -33,7 +33,7 @@ export async function POST(req: NextRequest, context: CommentContext) {
             .delete(commentLoves)
             .where(
                 and(
-                    eq(commentLoves.commentId, Number(params.commentId)),
+                    eq(commentLoves.commentId, params.commentId),
                     eq(commentLoves.userId, user.id)
                 )
             );

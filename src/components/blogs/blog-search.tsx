@@ -28,7 +28,7 @@ const fetchBlogs = async (page: number) => {
 
 function BlogSearch({ blogData }: PageProps) {
     const [searchText, setSearchText] = useState("");
-    const [matchingIds, setMatchingIds] = useState<number[]>([]);
+    const [matchingIds, setMatchingIds] = useState<string[]>([]);
 
     const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
         ["blogs_query"],

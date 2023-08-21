@@ -1,4 +1,4 @@
-import DRVGOLogo from "@/public/DRVGO.svg";
+import { DRVGOIcon, Stripes } from "@/src/config/const";
 import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -11,12 +11,12 @@ export const metadata: Metadata = {
 
 function Layout({ children }: RootLayoutProps) {
     return (
-        <div className="flex min-h-screen flex-col">
-            <header className="sticky top-0 z-40 w-full bg-background">
+        <div className="relative flex min-h-screen flex-col">
+            <header className="sticky top-0 z-40 w-full">
                 <div className="container flex items-center justify-center py-6">
                     <Link href={"/"}>
                         <Image
-                            src={DRVGOLogo}
+                            src={DRVGOIcon}
                             alt="DRVGO"
                             height={110}
                             width={110}
@@ -24,7 +24,16 @@ function Layout({ children }: RootLayoutProps) {
                     </Link>
                 </div>
             </header>
-            <main className="flex-1">{children}</main>
+            <main className="flex-1">
+                <Image
+                    src={Stripes}
+                    alt="Stripes"
+                    className="absolute left-0 top-0 -z-10 opacity-50"
+                    fill
+                    style={{ objectFit: "cover" }}
+                />
+                {children}
+            </main>
         </div>
     );
 }

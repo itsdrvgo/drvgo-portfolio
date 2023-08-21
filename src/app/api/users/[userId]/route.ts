@@ -3,7 +3,7 @@ import { users } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import { userUpdateSchema } from "@/src/lib/validation/auth";
 import { UserContext, userContextSchema } from "@/src/lib/validation/route";
-import { auth, clerkClient, currentUser } from "@clerk/nextjs";
+import { clerkClient, currentUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -64,7 +64,7 @@ export async function PATCH(req: NextRequest, context: UserContext) {
 
         if (username) {
             const existingUsername = await db.query.users.findFirst({
-                where: eq(users.name, username),
+                where: eq(users.username, username),
             });
 
             if (existingUsername)
@@ -75,7 +75,7 @@ export async function PATCH(req: NextRequest, context: UserContext) {
         }
 
         await clerkClient.users.updateUser(targetUser.id, {
-            username: username || dbUser.name!,
+            username: username || dbUser.username,
             privateMetadata: {
                 role: role || dbUser.role,
             },

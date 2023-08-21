@@ -33,7 +33,7 @@ function BlogNavItems({ className, data }: PageProps) {
                 </PopoverTrigger>
 
                 <PopoverContent className="ml-2">
-                    <h2 className="p-2 font-medium uppercase">
+                    <h2 className="p-2 font-semibold uppercase">
                         People Also Like
                     </h2>
 

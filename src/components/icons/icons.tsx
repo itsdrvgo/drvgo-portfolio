@@ -90,15 +90,23 @@ import {
     Zap,
     type IconNode as LucideIcon,
     Link,
+    UserPlus,
+    Search,
+    UserCheck,
+    Bell,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
 
 export const Icons = {
     gem: Gem,
+    search: Search,
+    notification: Bell,
     arrowLeft: ArrowLeft,
     upload: Upload,
     close: X,
+    userAdd: UserPlus,
+    userCheck: UserCheck,
     link: Link,
     pin: Pin,
     spinner: Loader2,

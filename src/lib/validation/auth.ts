@@ -10,11 +10,12 @@ export const checkUsernameSchema = z.object({
     username: z
         .string()
         .min(3, "Username must be at least 3 characters long")
+        .max(20, "Username must be at most 20 characters long")
         .regex(/^\S*$/, "Username must not contain spaces"),
 });
 
-export const checkIconSchema = z.object({
-    icon: z.string().url(),
+export const checkImageSchema = z.object({
+    image: z.string().url(),
 });
 
 // SCHEMAS
@@ -31,8 +32,8 @@ export const signupSchema = z.object({
 export const userUpdateSchema = z.object({
     email: checkEmailSchema.shape.email.optional(),
     username: checkUsernameSchema.shape.username.optional(),
-    icon: checkIconSchema.shape.icon.optional(),
-    role: z.enum(["user", "moderator", "admin", "owner"]).optional(),
+    image: checkImageSchema.shape.image.optional(),
+    role: z.enum(["user", "guest", "moderator", "admin", "owner"]).optional(),
 });
 
 // TYPES

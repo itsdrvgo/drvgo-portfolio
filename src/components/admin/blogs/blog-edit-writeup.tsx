@@ -101,16 +101,14 @@ function BlogWriteUp({ data, author }: PageProps) {
                         <Avatar>
                             <AvatarImage
                                 src={author.image ?? defaultUserPFP.src}
-                                alt={author.name ?? author.id}
+                                alt={author.username}
                             />
                             <AvatarFallback>
-                                {(author.name ?? author.id)
-                                    .charAt(0)
-                                    .toUpperCase()}
+                                {author.username[0].toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
                         <div>
-                            <p>@{author.name ?? author.id}</p>
+                            <p>@{author.username}</p>
                             <p className="text-gray-400">
                                 Published on {formatDate(Date.now())}
                             </p>

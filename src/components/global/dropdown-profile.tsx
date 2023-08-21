@@ -57,24 +57,24 @@ function DropdownProfile({ user, className }: PageProps) {
                             alt="avatar"
                         />
                         <AvatarFallback>
-                            {(user.name ?? user.id).charAt(0).toUpperCase()}
+                            {user.username[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48">
                     <DropdownMenuLabel className="truncate">
-                        @{user.name ?? user.id}
+                        @{user.username}
                     </DropdownMenuLabel>
 
                     <DropdownMenuSeparator />
 
                     <DropdownMenuGroup>
                         <DropdownMenuItem
-                            onSelect={() => router.push("/profile")}
+                            onSelect={() => router.push("/messages")}
                             className="cursor-pointer"
                         >
-                            <Icons.user className="mr-2 h-4 w-4" />
-                            <span>Profile</span>
+                            <Icons.comment className="mr-2 h-4 w-4" />
+                            <span>Messages</span>
                         </DropdownMenuItem>
 
                         <DropdownMenuItem
@@ -83,6 +83,34 @@ function DropdownProfile({ user, className }: PageProps) {
                         >
                             <Icons.gem className="mr-2 h-4 w-4" />
                             <span>Support</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
+
+                    <DropdownMenuSeparator />
+
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem
+                            onSelect={() => router.push("/profile/settings")}
+                            className="cursor-pointer"
+                        >
+                            <Icons.settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                            onSelect={() => router.push("/notifications")}
+                            className="cursor-pointer"
+                        >
+                            <Icons.notification className="mr-2 h-4 w-4" />
+                            <span>Notifications</span>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                            onSelect={() => router.push("/profile/billing")}
+                            className="cursor-pointer"
+                        >
+                            <Icons.billing className="mr-2 h-4 w-4" />
+                            <span>Billing</span>
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
 

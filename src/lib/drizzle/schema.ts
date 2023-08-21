@@ -1,6 +1,7 @@
 import { InferModel, relations, sql } from "drizzle-orm";
 import {
     boolean,
+    index,
     int,
     longtext,
     mysqlEnum,
@@ -18,9 +19,8 @@ export const users = mysqlTable(
     "users",
     {
         id: varchar("id", { length: 191 }).notNull().primaryKey(),
-        name: varchar("name", { length: 191 }),
-        email: varchar("email", { length: 191 }).notNull(),
-        emailVerified: timestamp("email_verified"),
+        username: varchar("username", { length: 191 }).unique().notNull(),
+        email: varchar("email", { length: 191 }).notNull().unique(),
         image: varchar("image", { length: 191 }),
         createdAt: timestamp("created_at")
             .notNull()
@@ -29,30 +29,42 @@ export const users = mysqlTable(
             .notNull()
             .default(sql`current_timestamp()`)
             .onUpdateNow(),
-        role: mysqlEnum("role", ["user", "moderator", "admin", "owner"])
+        role: mysqlEnum("role", [
+            "user",
+            "guest",
+            "moderator",
+            "admin",
+            "owner",
+        ])
             .default("user")
             .notNull(),
     },
     (user) => ({
         emailIndex: uniqueIndex("email_idx").on(user.email),
-        nameIndex: uniqueIndex("name_idx").on(user.name),
+        usernameIndex: uniqueIndex("name_idx").on(user.username),
     })
 );
 
-export const images = mysqlTable("images", {
-    id: int("id").autoincrement().primaryKey(),
-    key: varchar("key", { length: 255 }).notNull(),
-    url: varchar("url", { length: 255 }).notNull(),
-    createdAt: timestamp("created_at")
-        .default(sql`current_timestamp()`)
-        .notNull(),
-    uploaderId: varchar("uploaderId", { length: 255 }).notNull(),
-});
+export const images = mysqlTable(
+    "images",
+    {
+        key: varchar("key", { length: 191 }).notNull().primaryKey(),
+        url: varchar("url", { length: 191 }).notNull(),
+        uploaderId: varchar("uploaderId", { length: 191 }).notNull(),
+        createdAt: timestamp("created_at")
+            .default(sql`current_timestamp()`)
+            .notNull(),
+        type: mysqlEnum("type", ["avatar", "blog", "other"]),
+    },
+    (image) => ({
+        uploaderIdIndex: uniqueIndex("uploader_id_idx").on(image.uploaderId),
+    })
+);
 
 export const blogs = mysqlTable("blogs", {
-    id: int("id").autoincrement().primaryKey(),
-    title: varchar("title", { length: 255 }).notNull(),
-    thumbnailUrl: varchar("thumbnailUrl", { length: 255 }),
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    title: varchar("title", { length: 191 }).notNull(),
+    thumbnailUrl: varchar("thumbnailUrl", { length: 191 }),
     description: varchar("description", { length: 150 }).notNull(),
     content: longtext("content"),
     published: boolean("published").default(false).notNull(),
@@ -60,37 +72,43 @@ export const blogs = mysqlTable("blogs", {
         .default(sql`current_timestamp()`)
         .notNull(),
     updatedAt: timestamp("updated_at"),
-    authorId: varchar("authorId", { length: 255 }).notNull(),
+    authorId: varchar("authorId", { length: 191 }).notNull(),
 });
 
 export const views = mysqlTable("views", {
-    id: int("id").autoincrement().primaryKey(),
-    blogId: int("blogId").notNull(),
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    blogId: varchar("blogId", { length: 191 }).notNull(),
 });
 
 export const likes = mysqlTable("likes", {
-    id: int("id").autoincrement().primaryKey(),
-    blogId: int("blogId").notNull(),
-    userId: varchar("userId", { length: 255 }).notNull(),
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    blogId: varchar("blogId", { length: 191 }).notNull(),
+    userId: varchar("userId", { length: 191 }).notNull(),
 });
 
-export const comments = mysqlTable("comments", {
-    id: int("id").autoincrement().primaryKey(),
-    parentId: int("parentId"),
-    blogId: int("blogId").notNull(),
-    content: text("text").notNull(),
-    createdAt: timestamp("created_at")
-        .default(sql`current_timestamp()`)
-        .notNull(),
-    authorId: varchar("authorId", { length: 255 }).notNull(),
-    pinned: boolean("pinned").default(false).notNull(),
-    edited: boolean("edited").default(false).notNull(),
-});
+export const comments = mysqlTable(
+    "comments",
+    {
+        id: varchar("id", { length: 191 }).notNull().primaryKey(),
+        parentId: varchar("parentId", { length: 191 }),
+        blogId: varchar("blogId", { length: 191 }).notNull(),
+        content: text("text").notNull(),
+        createdAt: timestamp("created_at")
+            .default(sql`current_timestamp()`)
+            .notNull(),
+        authorId: varchar("authorId", { length: 191 }).notNull(),
+        pinned: boolean("pinned").default(false).notNull(),
+        edited: boolean("edited").default(false).notNull(),
+    },
+    (comment) => ({
+        blogIdIndex: index("blog_id_idx").on(comment.blogId),
+    })
+);
 
 export const commentLoves = mysqlTable("comment_loves", {
-    id: int("id").autoincrement().primaryKey(),
-    commentId: int("commentId").notNull(),
-    userId: varchar("userId", { length: 255 }).notNull(),
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    commentId: varchar("commentId", { length: 191 }).notNull(),
+    userId: varchar("userId", { length: 191 }).notNull(),
 });
 
 // RELATIONS

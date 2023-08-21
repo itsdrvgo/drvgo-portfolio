@@ -1,8 +1,8 @@
 "use client";
 
-import DRVGOLogo from "@/public/DRVGO.svg";
 import { MobileNav } from "@/src/components/global/mobile-nav";
 import { Icons } from "@/src/components/icons/icons";
+import { DRVGOIcon } from "@/src/config/const";
 import { siteConfig } from "@/src/config/site";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps, MainNavItem } from "@/src/types";
@@ -22,7 +22,7 @@ function MainNav({ items, children, className }: MainNavProps) {
     return (
         <div className={className}>
             <Link href="/" className="hidden items-center space-x-2 md:flex">
-                <Image src={DRVGOLogo} alt="DRVGO" width={30} height={30} />
+                <Image src={DRVGOIcon} alt="DRVGO" width={30} height={30} />
                 <p className="hidden text-xl font-bold text-accent-foreground sm:inline-block">
                     {siteConfig.name}
                 </p>
@@ -34,7 +34,7 @@ function MainNav({ items, children, className }: MainNavProps) {
                             key={index}
                             href={item.disabled ? "#" : item.href}
                             className={cn(
-                                "hover:text-foreground/80 relative flex items-center gap-1 text-lg font-medium transition-colors sm:text-sm",
+                                "hover:text-foreground/80 relative flex items-center gap-1 text-lg font-semibold transition-colors sm:text-sm",
                                 item.href.startsWith(`/${segment}`)
                                     ? "text-foreground"
                                     : "text-foreground/60",
@@ -56,7 +56,7 @@ function MainNav({ items, children, className }: MainNavProps) {
                 {showMobileMenu ? (
                     <Icons.close />
                 ) : (
-                    <Image src={DRVGOLogo} alt="DRVGO" width={30} height={30} />
+                    <Image src={DRVGOIcon} alt="DRVGO" width={30} height={30} />
                 )}
                 <span className="font-bold">Menu</span>
             </button>

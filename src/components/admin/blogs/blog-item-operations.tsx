@@ -20,6 +20,7 @@ import {
 } from "@/src/components/ui/dropdown-menu";
 import { useToast } from "@/src/components/ui/use-toast";
 import { Blog } from "@/src/lib/drizzle/schema";
+import { wait } from "@/src/lib/utils";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
@@ -49,8 +50,11 @@ export function BlogOperations({ blog, className }: PageProps) {
     const [showPublishAlert, setShowPublishAlert] = useState<boolean>(false);
     const [isPublishLoading, setIsPublishLoading] = useState<boolean>(false);
 
-    const deleteBlog = () => {
-        setIsPublishLoading(true);
+    const deleteBlog = async () => {
+        setIsDeleteLoading(true);
+        toast({
+            description: "Deleting blog...",
+        });
 
         axios
             .delete<ResponseData>(`/api/blogs/${blog.id}`)
@@ -86,6 +90,11 @@ export function BlogOperations({ blog, className }: PageProps) {
 
     const publishBlog = () => {
         setIsPublishLoading(true);
+        toast({
+            description: blog.published
+                ? "Unpublishing blog..."
+                : "Publishing blog...",
+        });
 
         const body: BlogPatchData = {
             ...blog,

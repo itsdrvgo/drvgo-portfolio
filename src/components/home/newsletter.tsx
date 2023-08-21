@@ -56,7 +56,7 @@ function Newsletter({ className }: DefaultProps) {
                 </div>
 
                 <motion.div
-                    className="w-full space-y-3 rounded-md bg-gradient-to-r from-accent via-card to-secondary p-5 md:p-10"
+                    className="w-full space-y-3 rounded-md bg-gradient-to-r from-accent via-card to-card p-5 md:p-10"
                     variants={fadeInContainer}
                 >
                     <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:gap-5">

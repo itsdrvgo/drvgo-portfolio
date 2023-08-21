@@ -47,7 +47,7 @@ async function BlogViewPage({ params, className }: PageProps) {
             likes: true,
             views: true,
         },
-        where: eq(blogs.id, Number(params.blogId)),
+        where: eq(blogs.id, params.blogId),
     });
 
     if (!blog) notFound();
@@ -82,16 +82,14 @@ async function BlogViewPage({ params, className }: PageProps) {
                     <Avatar>
                         <AvatarImage
                             src={blog.author.image ?? defaultUserPFP.src}
-                            alt={blog.author.name ?? blog.author.id}
+                            alt={blog.author.username}
                         />
                         <AvatarFallback>
-                            {(blog.author.name ?? blog.author.id)
-                                .charAt(0)
-                                .toUpperCase()}
+                            {blog.author.username[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="space-y-1">
-                        <p>@{blog.author.name ?? blog.author.id}</p>
+                        <p>@{blog.author.username}</p>
                         <div className="flex gap-1">
                             <p className="text-gray-400">
                                 Published on{" "}

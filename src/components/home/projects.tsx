@@ -6,6 +6,7 @@ import { DefaultProps } from "@/src/types";
 import { motion, Variants } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "../ui/button";
 
 function Projects({ className }: DefaultProps) {
     const fadeInContainer: Variants = {
@@ -60,7 +61,7 @@ function Projects({ className }: DefaultProps) {
                             variants={fadeInContainer}
                             key={index}
                         >
-                            <div className="group relative flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-900 to-slate-900 text-center">
+                            <div className="group relative flex h-full w-full items-center justify-center overflow-hidden bg-gradient-to-br from-zinc-900 to-slate-900 text-center">
                                 <Image
                                     src={project.image}
                                     alt="DRVGO"
@@ -77,7 +78,7 @@ function Projects({ className }: DefaultProps) {
                                         <Link
                                             href={project.link}
                                             target="_blank"
-                                            className="flex items-center justify-center rounded-md bg-accent p-3 text-sm font-medium transition-all ease-in-out hover:bg-zinc-800"
+                                            className="flex items-center justify-center rounded-md border border-gray-700 bg-secondary p-2 px-3 text-sm font-semibold transition-all ease-in-out hover:bg-gray-800"
                                         >
                                             View Project
                                         </Link>

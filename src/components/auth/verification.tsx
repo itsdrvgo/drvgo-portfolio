@@ -4,9 +4,9 @@ import { env } from "@/env.mjs";
 import { isMagicLinkError, MagicLinkErrorCode, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Header } from "../global/header";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
-import { Header } from "./header";
 
 function Verification() {
     const { toast } = useToast();
@@ -71,7 +71,7 @@ function Verification() {
     }
 
     return (
-        <div className="w-full space-y-5 rounded-md border border-white bg-secondary p-6 md:p-10">
+        <div className="w-full space-y-5 rounded-md border border-white bg-card p-6 md:p-10">
             <Header
                 title="Verification"
                 description={

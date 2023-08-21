@@ -63,7 +63,10 @@ export async function POST(req: NextRequest) {
         const json = await req.json();
         const body = blogCreateSchema.parse(json);
 
-        const newBlog = await db.insert(blogs).values({
+        const blogId = crypto.randomUUID();
+
+        await db.insert(blogs).values({
+            id: blogId,
             title: body.title,
             content: body.content,
             thumbnailUrl: body.thumbnailUrl,
@@ -74,7 +77,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(newBlog.insertId),
+            data: JSON.stringify(blogId),
         });
     } catch (err) {
         handleError(err);

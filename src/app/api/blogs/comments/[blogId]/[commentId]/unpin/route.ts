@@ -40,7 +40,7 @@ export async function POST(req: NextRequest, context: CommentContext) {
             .set({
                 pinned: false,
             })
-            .where(eq(comments.id, Number(params.commentId)));
+            .where(eq(comments.id, params.commentId));
 
         return NextResponse.json({
             code: 200,

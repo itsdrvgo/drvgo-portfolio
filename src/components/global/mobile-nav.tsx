@@ -1,4 +1,4 @@
-import DRVGOLogo from "@/public/DRVGO.svg";
+import { DRVGOIcon } from "@/src/config/const";
 import { siteConfig } from "@/src/config/site";
 import { useLockBody } from "@/src/hooks/use-lock-body";
 import { cn } from "@/src/lib/utils";
@@ -21,7 +21,7 @@ function MobileNav({ items, children }: MobileNavProps) {
         >
             <div className="relative z-20 grid gap-6 rounded-md bg-black p-4 text-popover-foreground shadow-md">
                 <Link href="/" className="flex items-center space-x-2">
-                    <Image src={DRVGOLogo} alt="DRVGO" width={30} height={30} />
+                    <Image src={DRVGOIcon} alt="DRVGO" width={30} height={30} />
                     <span className="font-bold">{siteConfig.name}</span>
                 </Link>
                 <nav className="grid grid-flow-row auto-rows-max text-sm">
@@ -30,7 +30,7 @@ function MobileNav({ items, children }: MobileNavProps) {
                             key={index}
                             href={item.disabled ? "#" : item.href}
                             className={cn(
-                                "flex w-full items-center gap-1 rounded-md p-2 text-sm font-medium hover:underline",
+                                "flex w-full items-center gap-1 rounded-md p-2 text-sm font-semibold hover:underline",
                                 item.disabled && "cursor-not-allowed opacity-60"
                             )}
                         >

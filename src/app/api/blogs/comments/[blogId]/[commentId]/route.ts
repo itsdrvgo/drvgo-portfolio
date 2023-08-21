@@ -38,7 +38,7 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
             });
 
         const comment = await db.query.comments.findFirst({
-            where: eq(comments.id, Number(params.commentId)),
+            where: eq(comments.id, params.commentId),
         });
 
         if (!comment)
@@ -51,22 +51,18 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
             const [allReplies] = await Promise.all([
                 // Finding all the child/replies of the comment
                 db.query.comments.findMany({
-                    where: eq(comments.parentId, Number(params.commentId)),
+                    where: eq(comments.parentId, params.commentId),
                 }),
                 // Deleting the root comment
-                db
-                    .delete(comments)
-                    .where(eq(comments.id, Number(params.commentId))),
+                db.delete(comments).where(eq(comments.id, params.commentId)),
                 // Deleting all the replies
                 db
                     .delete(comments)
-                    .where(eq(comments.parentId, Number(params.commentId))),
+                    .where(eq(comments.parentId, params.commentId)),
                 // Deleting all the comment loves of the root comment
                 db
                     .delete(commentLoves)
-                    .where(
-                        eq(commentLoves.commentId, Number(params.commentId))
-                    ),
+                    .where(eq(commentLoves.commentId, params.commentId)),
             ]);
 
             await Promise.all(
@@ -79,16 +75,10 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
             );
         } else {
             await Promise.all([
-                db
-                    .delete(comments)
-                    .where(eq(comments.id, Number(params.commentId))),
+                db.delete(comments).where(eq(comments.id, params.commentId)),
                 db
                     .delete(commentLoves)
-                    .where(
-                        and(
-                            eq(commentLoves.commentId, Number(params.commentId))
-                        )
-                    ),
+                    .where(and(eq(commentLoves.commentId, params.commentId))),
             ]);
         }
 
@@ -125,10 +115,11 @@ export async function POST(req: NextRequest, context: CommentContext) {
             });
 
         const newComment = await db.insert(comments).values({
+            id: crypto.randomUUID(),
             authorId: user.id,
-            blogId: Number(params.blogId),
+            blogId: params.blogId,
             content,
-            parentId: Number(params.commentId),
+            parentId: params.commentId,
         });
 
         return NextResponse.json({
@@ -167,7 +158,7 @@ export async function PATCH(req: NextRequest, context: CommentContext) {
         await db
             .update(comments)
             .set({ content, edited: true })
-            .where(eq(comments.id, Number(params.commentId)));
+            .where(eq(comments.id, params.commentId));
 
         return NextResponse.json({
             code: 200,

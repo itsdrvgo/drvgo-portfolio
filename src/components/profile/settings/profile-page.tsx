@@ -22,12 +22,11 @@ async function ProfilePage({ className }: DefaultProps) {
     const user = await db.query.users.findFirst({
         where: eq(users.id, sessionUser.id),
     });
-
     if (!user) return redirect("/signin");
 
     return (
         <>
-            <Card className="bg-background">
+            <Card className="bg-transparent">
                 <CardHeader>
                     <CardTitle className="text-xl md:text-2xl">
                         Profile Picture
@@ -41,13 +40,14 @@ async function ProfilePage({ className }: DefaultProps) {
                 </CardContent>
             </Card>
 
-            <Card className="bg-background">
+            <Card className="bg-transparent">
                 <CardHeader>
                     <CardTitle className="text-xl md:text-2xl">
                         Username
                     </CardTitle>
                     <CardDescription className="text-xs md:text-sm">
-                        Update your username or display name
+                        Update your username. This is the name that will be used
+                        to identify you on the site.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -55,7 +55,7 @@ async function ProfilePage({ className }: DefaultProps) {
                 </CardContent>
             </Card>
 
-            <Card className="bg-background">
+            <Card className="bg-transparent">
                 <CardHeader>
                     <CardTitle className="text-xl md:text-2xl">
                         Danger Zone
