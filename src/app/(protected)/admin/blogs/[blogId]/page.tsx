@@ -14,7 +14,7 @@ interface PageProps {
 
 function Page({ params }: PageProps) {
     return (
-        <section className="m-5 my-10 flex min-h-[calc(100vh-5rem)]">
+        <section className="my-10 flex p-5">
             <div className="container max-w-[65rem] space-y-10 p-0 md:space-y-16">
                 <Suspense fallback={<BlogViewSkeleton />}>
                     <BlogEditPage params={params} />
