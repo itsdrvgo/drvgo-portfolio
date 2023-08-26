@@ -3,7 +3,7 @@
 import { env } from "@/env.mjs";
 import { defaultUserPFP } from "@/src/config/const";
 import { NewComment, User } from "@/src/lib/drizzle/schema";
-import { updateBlogViews } from "@/src/lib/utils";
+import { cn, shortenNumber, updateBlogViews } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
 import axios from "axios";
@@ -173,24 +173,29 @@ function BlogViewOperations({
     };
 
     return (
-        <div className={className}>
-            <div className="grid w-full cursor-default grid-cols-3 justify-items-stretch gap-3 p-2 text-sm text-gray-400">
+        <>
+            <div
+                className={
+                    "sticky bottom-10 flex items-center gap-4 rounded-full border border-border bg-white/5 p-3 px-5 backdrop-blur-sm"
+                }
+            >
                 <button
                     className="flex items-center justify-center gap-2"
                     onClick={handleLike}
                 >
-                    {isLiked ? (
-                        <>
-                            <Icons.heart className="h-4 w-4 fill-gray-400" />
-                            Liked
-                        </>
-                    ) : (
-                        <>
-                            <Icons.heart className="h-4 w-4" />
-                            Like
-                        </>
-                    )}
+                    <Icons.heart
+                        className={cn(
+                            "h-4 w-4 transition-all ease-in-out",
+                            isLiked
+                                ? "fill-red-500 text-red-500"
+                                : "fill-transparent text-gray-500"
+                        )}
+                    />
+                    {shortenNumber(blog.likes.length)}
                 </button>
+
+                <Separator orientation="vertical" className="h-6 bg-gray-500" />
+
                 <button
                     className="flex cursor-pointer items-center justify-center gap-2"
                     onClick={() =>
@@ -198,8 +203,18 @@ function BlogViewOperations({
                     }
                 >
                     <Icons.comment className="h-4 w-4" />
-                    Comment
+                    {shortenNumber(blog.comments.length)}
                 </button>
+
+                <Separator orientation="vertical" className="h-6 bg-gray-500" />
+
+                <div className="flex cursor-pointer items-center justify-center gap-2">
+                    <Icons.analytics className="h-4 w-4" />
+                    {shortenNumber(blog.views.length)}
+                </div>
+
+                <Separator orientation="vertical" className="h-6 bg-gray-500" />
+
                 <button
                     className="flex cursor-pointer items-center justify-center gap-2"
                     onClick={() => {
@@ -215,7 +230,7 @@ function BlogViewOperations({
                     Share
                 </button>
             </div>
-            <Separator />
+
             <div className="w-full space-y-6 pt-5">
                 <p className="text-2xl font-semibold md:text-3xl">Comments</p>
                 <div className="flex gap-4">
@@ -283,7 +298,7 @@ function BlogViewOperations({
                     params={params}
                 />
             </div>
-        </div>
+        </>
     );
 }
 

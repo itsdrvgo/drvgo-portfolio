@@ -72,7 +72,12 @@ async function BlogViewPage({ params, className }: PageProps) {
     }
 
     return (
-        <article className={cn("space-y-3", className)}>
+        <article
+            className={cn(
+                "relative flex flex-col items-center gap-3",
+                className
+            )}
+        >
             <div className="flex w-full flex-col gap-4">
                 <p className="text-2xl font-bold md:text-5xl md:leading-tight">
                     {blog.title}
@@ -215,7 +220,7 @@ async function BlogViewPage({ params, className }: PageProps) {
                 </Mdx>
             </div>
 
-            <div className="flex w-full cursor-default items-center justify-between rounded-md bg-zinc-900 p-5 py-3 text-sm">
+            {/* <div className="flex w-full cursor-default items-center justify-between rounded-md bg-zinc-900 p-5 py-3 text-sm">
                 <div>
                     <p>{shortenNumber(blog.likes.length)} Likes</p>
                 </div>
@@ -223,7 +228,7 @@ async function BlogViewPage({ params, className }: PageProps) {
                     <p>{shortenNumber(blog.comments.length)} Comments</p>
                     <p>{shortenNumber(blog.views.length)} Views</p>
                 </div>
-            </div>
+            </div> */}
             <Separator className="w-full" />
 
             <BlogViewOperations
@@ -231,7 +236,6 @@ async function BlogViewPage({ params, className }: PageProps) {
                 blog={blog}
                 user={user}
                 blogIsLiked={blogIsLiked}
-                className="space-y-3"
             />
         </article>
     );
