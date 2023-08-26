@@ -117,8 +117,8 @@ dependencies:
     specifier: 18.2.7
     version: 18.2.7
   '@uploadthing/react':
-    specifier: ^5.2.1
-    version: 5.2.1(react-dropzone@14.2.3)(react@18.2.0)(uploadthing@5.3.2)(zod@3.21.4)
+    specifier: ^5.3.0
+    version: 5.3.0(react-dropzone@14.2.3)(react@18.2.0)(uploadthing@5.3.3)(zod@3.21.4)
   '@upstash/ratelimit':
     specifier: ^0.4.3
     version: 0.4.3(encoding@0.1.13)
@@ -188,6 +188,9 @@ dependencies:
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
+  react-dropzone:
+    specifier: ^14.2.3
+    version: 14.2.3(react@18.2.0)
   react-hook-form:
     specifier: ^7.45.4
     version: 7.45.4(react@18.2.0)
@@ -237,8 +240,8 @@ dependencies:
     specifier: ^4.7.1
     version: 4.7.1
   uploadthing:
-    specifier: ^5.3.2
-    version: 5.3.2(zod@3.21.4)
+    specifier: ^5.3.3
+    version: 5.3.3(zod@3.21.4)
   vercel:
     specifier: ^31.2.3
     version: 31.2.3(encoding@0.1.13)
@@ -1302,14 +1305,14 @@ packages:
     dependencies:
       asn1js: 3.0.5
       pvtsutils: 1.3.3
-      tslib: 2.4.1
+      tslib: 2.6.1
     dev: false
 
   /@peculiar/json-schema@1.1.12:
     resolution: {integrity: sha512-coUfuoMeIB7B8/NMekxaDzLhaYmp0HZNPEjYRm9goRou8UZIC3z21s0sL9AWoCw4EG876QyO3kYrc61WNF9B/w==}
     engines: {node: '>=8.0.0'}
     dependencies:
-      tslib: 2.4.1
+      tslib: 2.6.1
     dev: false
 
   /@peculiar/webcrypto@1.4.1:
@@ -1319,7 +1322,7 @@ packages:
       '@peculiar/asn1-schema': 2.3.6
       '@peculiar/json-schema': 1.1.12
       pvtsutils: 1.3.3
-      tslib: 2.4.1
+      tslib: 2.6.1
       webcrypto-core: 1.7.7
     dev: false
 
@@ -3214,8 +3217,8 @@ packages:
     resolution: {integrity: sha512-nRcdyM622+GYT9SdaJIVLknqoc8i7krItinfuBPtvmPc+UNGDJ+pMkr4AatYp88cEc4iYtPlN8flJvZ3dNtgrg==}
     dev: false
 
-  /@uploadthing/react@5.2.1(react-dropzone@14.2.3)(react@18.2.0)(uploadthing@5.3.2)(zod@3.21.4):
-    resolution: {integrity: sha512-fYvNpX4V7YLqzs6sK43zWlVYiS7OrpCU+6O3is2bVPRWvfanBlLGnl7cEl1GuQD7g07GKQVBDhVeLjX7H3zvsg==}
+  /@uploadthing/react@5.3.0(react-dropzone@14.2.3)(react@18.2.0)(uploadthing@5.3.3)(zod@3.21.4):
+    resolution: {integrity: sha512-B/LowwhOgcU/VBdxueF6dzHFoXNt4oLKDp6GOjMpHATHzWQ+eOlWM32f7NOpgQ0i5/vJPpilZ46OazccnEam6g==}
     peerDependencies:
       react: ^17.0.2 || ^18.0.0
       react-dropzone: ^14.2.3
@@ -3224,7 +3227,8 @@ packages:
       '@uploadthing/shared': 5.2.0(@uploadthing/mime-types@0.2.0)(zod@3.21.4)
       react: 18.2.0
       react-dropzone: 14.2.3(react@18.2.0)
-      uploadthing: 5.3.2(zod@3.21.4)
+      tailwind-merge: 1.14.0
+      uploadthing: 5.3.3(zod@3.21.4)
     transitivePeerDependencies:
       - '@uploadthing/mime-types'
       - zod
@@ -3616,7 +3620,7 @@ packages:
     dependencies:
       pvtsutils: 1.3.3
       pvutils: 1.1.3
-      tslib: 2.4.1
+      tslib: 2.6.1
     dev: false
 
   /ast-types-flow@0.0.7:
@@ -4159,7 +4163,7 @@ packages:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
     dependencies:
       no-case: 3.0.4
-      tslib: 2.4.1
+      tslib: 2.6.1
     dev: false
 
   /dotenv@16.3.1:
@@ -5948,7 +5952,7 @@ packages:
   /lower-case@2.0.2:
     resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
     dependencies:
-      tslib: 2.4.1
+      tslib: 2.6.1
     dev: false
 
   /lru-cache@5.1.1:
@@ -6574,7 +6578,7 @@ packages:
     resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==}
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.4.1
+      tslib: 2.6.1
     dev: false
 
   /node-abi@3.45.0:
@@ -7551,7 +7555,7 @@ packages:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.4.1
+      tslib: 2.6.1
     dev: false
 
   /snakecase-keys@3.2.1:
@@ -8192,8 +8196,8 @@ packages:
       escalade: 3.1.1
       picocolors: 1.0.0
 
-  /uploadthing@5.3.2(zod@3.21.4):
-    resolution: {integrity: sha512-XwSrLhklZr60j2rP4BYuFtGvRtootyddNCnxQHD1BtSuhvZXXP7+cOQYcVDC96hswyT5WJRVKWQZIIcwdWa1QA==}
+  /uploadthing@5.3.3(zod@3.21.4):
+    resolution: {integrity: sha512-tYg44gX7+4Tf5UBZTS0Cjx44l6DBI4kaPdFDH2jUuxDp1CyTxUBUaFNvsA1AqhxQsxi3ZR+pGD917tn6kbPp/w==}
     dependencies:
       '@uploadthing/mime-types': 0.2.0
       '@uploadthing/shared': 5.2.0(@uploadthing/mime-types@0.2.0)(zod@3.21.4)
@@ -8380,7 +8384,7 @@ packages:
       '@peculiar/json-schema': 1.1.12
       asn1js: 3.0.5
       pvtsutils: 1.3.3
-      tslib: 2.4.1
+      tslib: 2.6.1
     dev: false
 
   /webidl-conversions@3.0.1:
