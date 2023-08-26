@@ -124,9 +124,9 @@ async function BlogViewPage({ params, className }: PageProps) {
                 <Image
                     src={blog.thumbnailUrl!}
                     alt="thumbnail"
-                    width={2000}
-                    height={2000}
-                    className="h-full w-full rounded"
+                    width={1920}
+                    height={1080}
+                    className="rounded object-cover"
                 />
                 {blog.content?.split("\n").length! > 1 ? (
                     <div className="flex cursor-default flex-col gap-4 rounded-md border border-gray-400 bg-stone-950 p-5">
