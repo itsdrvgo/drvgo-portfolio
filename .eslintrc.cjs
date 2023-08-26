@@ -13,7 +13,7 @@ const config = {
     settings: {
         tailwindcss: {
             callees: ["cn"],
-            config: "./tailwind.config.js",
+            config: "./tailwind.config.ts",
         },
         next: {
             rootDir: ["./src/"],
