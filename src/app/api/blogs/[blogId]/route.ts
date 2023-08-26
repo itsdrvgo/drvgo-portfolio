@@ -42,8 +42,6 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
 
         switch (body.action) {
             case "edit": {
-                console.log(body.description);
-
                 try {
                     const blog = await db.query.blogs.findFirst({
                         where: eq(blogs.id, params.blogId),
