@@ -90,6 +90,54 @@ export async function PATCH(req: NextRequest, context: UserContext) {
     }
 }
 
+export async function PUT(req: NextRequest, context: UserContext) {
+    return NextResponse.json({
+        code: 501,
+        message: "Feature not implemented yet",
+    });
+
+    // const body = await req.json();
+
+    // try {
+    //     const authUser = await currentUser();
+
+    //     if (!authUser)
+    //         return NextResponse.json({
+    //             code: 401,
+    //             message: "Unauthorized",
+    //         });
+
+    //     const byteCharacters = atob(body.image);
+    //     const byteArrays: Uint8Array[] = [];
+
+    //     for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+    //         const slice = byteCharacters.slice(offset, offset + 512);
+
+    //         const byteNumbers = new Array(slice.length);
+    //         for (let i = 0; i < slice.length; i++) {
+    //             byteNumbers[i] = slice.charCodeAt(i);
+    //         }
+
+    //         const byteArray = new Uint8Array(byteNumbers);
+    //         byteArrays.push(byteArray);
+    //     }
+
+    //     const blob = new Blob(byteArrays, { type: "image/jpeg" });
+
+    //     const formdata = new FormData();
+    //     formdata.append("file", blob, "profile-image.jpg");
+
+    //     await clerkClient.users.updateUserProfileImage(authUser.id, formdata);
+
+    //     return NextResponse.json({
+    //         code: 200,
+    //         message: "Ok",
+    //     });
+    // } catch (err) {
+    //     handleError(err);
+    // }
+}
+
 export async function DELETE(req: NextRequest, context: UserContext) {
     try {
         const { params } = userContextSchema.parse(context);
