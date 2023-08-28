@@ -14,10 +14,6 @@ export const checkUsernameSchema = z.object({
         .regex(/^\S*$/, "Username must not contain spaces"),
 });
 
-export const checkImageSchema = z.object({
-    image: z.string().url(),
-});
-
 // SCHEMAS
 
 export const loginSchema = z.object({
@@ -32,7 +28,6 @@ export const signupSchema = z.object({
 export const userUpdateSchema = z.object({
     email: checkEmailSchema.shape.email.optional(),
     username: checkUsernameSchema.shape.username.optional(),
-    image: checkImageSchema.shape.image.optional(),
     role: z.enum(["user", "guest", "moderator", "admin", "owner"]).optional(),
 });
 
