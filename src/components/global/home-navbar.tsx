@@ -18,7 +18,7 @@ function HomeNavbar({ className }: DefaultProps) {
                     className="flex gap-6 md:gap-10"
                 />
                 <nav>
-                    <LoginButton className="flex items-center gap-2 px-4" />
+                    <LoginButton />
                 </nav>
             </div>
         </header>

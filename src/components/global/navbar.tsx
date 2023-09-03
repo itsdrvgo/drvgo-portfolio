@@ -42,11 +42,7 @@ function Navbar({ className }: DefaultProps) {
                         <NotificationBar />
                     </Suspense>
 
-                    <Suspense
-                        fallback={
-                            <LoginButton className="flex items-center gap-2 px-4" />
-                        }
-                    >
+                    <Suspense fallback={<LoginButton />}>
                         <Auth />
                     </Suspense>
                 </nav>
