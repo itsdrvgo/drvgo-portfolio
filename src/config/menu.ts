@@ -19,4 +19,30 @@ export const homeMenuConfig: MenuConfig = {
             href: "/blogs",
         },
     ],
+    subNav: [
+        {
+            title: "Change Log",
+            href: "/changelog",
+        },
+        {
+            title: "Contact Us",
+            href: "/contact",
+        },
+        {
+            title: "FAQ",
+            href: "/faq",
+        },
+        {
+            title: "Report a Bug",
+            href: "/bug",
+        },
+        {
+            title: "Privacy Policy",
+            href: "/privacy",
+        },
+        {
+            title: "Terms of Service",
+            href: "/tos",
+        },
+    ],
 };

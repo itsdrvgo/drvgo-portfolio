@@ -131,6 +131,15 @@ export const commentLoves = mysqlTable("comment_loves", {
     userId: varchar("userId", { length: 191 }).notNull(),
 });
 
+export const changeLogs = mysqlTable("change_logs", {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    version: varchar("version", { length: 191 }).notNull(),
+    patch: json("patch").notNull(),
+    createdAt: timestamp("created_at")
+        .default(sql`current_timestamp()`)
+        .notNull(),
+});
+
 // RELATIONS
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -229,6 +238,12 @@ export type NewComment = InferModel<typeof comments, "insert">;
 export type CommentLove = InferModel<typeof commentLoves>;
 export type NewCommentLove = InferModel<typeof commentLoves, "insert">;
 
+export type Image = InferModel<typeof images>;
+export type NewImage = InferModel<typeof images, "insert">;
+
+export type ChangeLog = InferModel<typeof changeLogs>;
+export type NewChangeLog = InferModel<typeof changeLogs, "insert">;
+
 // ZOD SCHEMA
 
 export const insertUserSchema = createInsertSchema(users);
@@ -244,3 +259,7 @@ export const insertLikeSchema = createInsertSchema(likes);
 export const insertCommentSchema = createInsertSchema(comments);
 
 export const insertCommentLoveSchema = createInsertSchema(commentLoves);
+
+export const insertImageSchema = createInsertSchema(images);
+
+export const insertChangeLogSchema = createInsertSchema(changeLogs);

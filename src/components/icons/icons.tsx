@@ -69,6 +69,7 @@ import {
     Pin,
     Pizza,
     Plus,
+    Podcast,
     RefreshCw,
     Search,
     Send,
@@ -90,16 +91,17 @@ import {
     Users,
     Verified,
     Vote,
+    Wrench,
     X,
     Youtube,
     Zap,
     type IconNode as LucideIcon,
-    Wrench,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
 
 export const Icons = {
+    podcast: Podcast,
     gem: Gem,
     wrench: Wrench,
     search: Search,

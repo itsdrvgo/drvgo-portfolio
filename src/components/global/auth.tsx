@@ -7,14 +7,12 @@ import LoginButton from "./login-button";
 
 async function Auth() {
     const { userId } = auth();
-    if (!userId)
-        return <LoginButton className="flex items-center gap-2 px-4" />;
+    if (!userId) return <LoginButton />;
 
     const dbUser = await db.query.users.findFirst({
         where: eq(users.id, userId),
     });
-    if (!dbUser)
-        return <LoginButton className="flex items-center gap-2 px-4" />;
+    if (!dbUser) return <LoginButton />;
 
     return <DropdownProfile user={dbUser} />;
 }
