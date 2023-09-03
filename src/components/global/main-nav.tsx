@@ -5,19 +5,20 @@ import { Icons } from "@/src/components/icons/icons";
 import { DRVGOIcon } from "@/src/config/const";
 import { siteConfig } from "@/src/config/site";
 import { cn } from "@/src/lib/utils";
-import { DefaultProps, MainNavItem } from "@/src/types";
+import { DefaultProps, MenuConfig } from "@/src/types";
 import Image from "next/image";
 import Link from "next/link";
-import { useSelectedLayoutSegment } from "next/navigation";
 import { useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Separator } from "../ui/separator";
 
 interface MainNavProps extends DefaultProps {
-    items?: MainNavItem[];
+    items: MenuConfig;
 }
 
 function MainNav({ items, children, className }: MainNavProps) {
-    const segment = useSelectedLayoutSegment();
     const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [isHovering, setIsHovering] = useState(false);
 
     return (
         <div className={className}>
@@ -27,28 +28,88 @@ function MainNav({ items, children, className }: MainNavProps) {
                     {siteConfig.name}
                 </p>
             </Link>
-            {items?.length ? (
-                <nav className="hidden gap-6 uppercase md:flex">
-                    {items?.map((item, index) => (
+
+            {items.mainNav.length ? (
+                <nav className="hidden cursor-pointer gap-6 uppercase md:flex">
+                    {items.mainNav.map((item, index) => (
                         <Link
                             key={index}
                             href={item.disabled ? "#" : item.href}
                             className={cn(
-                                "hover:text-foreground/80 relative flex items-center gap-1 text-lg font-semibold transition-colors sm:text-sm",
-                                item.href.startsWith(`/${segment}`)
-                                    ? "text-foreground"
-                                    : "text-foreground/60",
+                                "relative flex items-center gap-1 text-lg font-semibold text-foreground transition-colors hover:text-gray-300 sm:text-sm",
                                 item.disabled && "cursor-not-allowed opacity-80"
                             )}
                         >
                             <p>{item.title}</p>
-                            {item.title === "Blog" ? (
-                                <span className="relative inline-flex h-2 w-2 rounded-full bg-sky-500"></span>
-                            ) : null}
                         </Link>
                     ))}
+
+                    <Popover open={isHovering}>
+                        <PopoverTrigger asChild>
+                            <div
+                                className="group flex items-center gap-1 text-lg font-semibold text-foreground transition-colors hover:text-gray-300 sm:text-sm"
+                                onMouseEnter={() => setIsHovering(true)}
+                                onMouseLeave={() => setIsHovering(false)}
+                            >
+                                <p>More</p>
+                                <Icons.chevronDown className="h-4 w-4 transition-all ease-in-out group-hover:rotate-180" />
+                            </div>
+                        </PopoverTrigger>
+                        <PopoverContent
+                            sideOffset={0}
+                            className="w-40 bg-white/10 backdrop-blur-sm"
+                            onMouseEnter={() => setIsHovering(true)}
+                            onMouseLeave={() => setIsHovering(false)}
+                        >
+                            <div className="flex flex-col gap-2 text-sm">
+                                {items.subNav
+                                    .filter(
+                                        (item) =>
+                                            !["/privacy", "/tos"].includes(
+                                                item.href
+                                            )
+                                    )
+                                    .map((item, index) => (
+                                        <Link
+                                            key={index}
+                                            href={
+                                                item.disabled ? "#" : item.href
+                                            }
+                                            className={cn(
+                                                "flex items-center gap-1 rounded-sm p-1 px-2 text-lg font-semibold text-foreground transition-colors ease-in-out hover:bg-accent-foreground hover:text-background hover:backdrop-blur-sm sm:text-sm",
+                                                item.disabled &&
+                                                    "cursor-not-allowed opacity-80"
+                                            )}
+                                        >
+                                            <p>{item.title}</p>
+                                        </Link>
+                                    ))}
+                                <Separator />
+                                {items.subNav
+                                    .filter((item) =>
+                                        ["/privacy", "/tos"].includes(item.href)
+                                    )
+                                    .map((item, index) => (
+                                        <Link
+                                            key={index}
+                                            href={
+                                                item.disabled ? "#" : item.href
+                                            }
+                                            className={cn(
+                                                "flex items-center gap-1 rounded-sm p-1 px-2 text-lg font-semibold text-foreground transition-colors ease-in-out hover:bg-accent-foreground hover:text-background hover:backdrop-blur-sm sm:text-sm",
+                                                item.disabled &&
+                                                    "cursor-not-allowed opacity-80"
+                                            )}
+                                        >
+                                            <p>{item.title}</p>
+                                        </Link>
+                                    ))}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 </nav>
             ) : null}
+
             <button
                 className="flex items-center space-x-2 md:hidden"
                 onClick={() => setShowMobileMenu(!showMobileMenu)}

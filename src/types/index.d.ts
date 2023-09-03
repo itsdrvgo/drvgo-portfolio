@@ -30,7 +30,8 @@ export type SiteConfig = {
 };
 
 export type MenuConfig = {
-    mainNav: MainNavItem[];
+    mainNav: NavItem[];
+    subNav: NavItem[];
 };
 
 export type DefaultProps = HTMLAttributes<HTMLElement>;

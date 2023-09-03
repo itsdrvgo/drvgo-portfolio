@@ -14,7 +14,7 @@ function HomeNavbar({ className }: DefaultProps) {
         >
             <div className="container flex h-20 items-center justify-between py-6">
                 <MainNav
-                    items={homeMenuConfig.mainNav}
+                    items={homeMenuConfig}
                     className="flex gap-6 md:gap-10"
                 />
                 <nav>
