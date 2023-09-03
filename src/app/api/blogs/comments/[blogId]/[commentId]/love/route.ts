@@ -29,8 +29,10 @@ export async function POST(req: NextRequest, context: CommentContext) {
                 message: "Unauthorized",
             });
 
-        const newLove = await db.insert(commentLoves).values({
-            id: crypto.randomUUID(),
+        const loveId = crypto.randomUUID();
+
+        await db.insert(commentLoves).values({
+            id: loveId,
             userId: user.id,
             commentId: params.commentId,
         });
@@ -38,7 +40,7 @@ export async function POST(req: NextRequest, context: CommentContext) {
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(newLove.insertId),
+            data: JSON.stringify(loveId),
         });
     } catch (err) {
         handleError(err);

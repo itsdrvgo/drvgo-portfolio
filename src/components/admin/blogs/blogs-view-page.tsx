@@ -9,7 +9,21 @@ import { BlogItem } from "./blog-item";
 import FAQAccordian from "./faq";
 
 async function BlogsPage({ className }: DefaultProps) {
-    const data = await db.select().from(blogs).orderBy(desc(blogs.createdAt));
+    const data = await db.query.blogs.findMany({
+        orderBy: [desc(blogs.createdAt)],
+        with: {
+            author: true,
+            likes: true,
+            views: true,
+            comments: {
+                with: {
+                    blog: true,
+                    loves: true,
+                    user: true,
+                },
+            },
+        },
+    });
 
     return (
         <>

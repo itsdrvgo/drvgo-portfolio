@@ -7,6 +7,30 @@ import { currentUser } from "@clerk/nextjs";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+export async function GET(req: NextRequest, context: BlogContext) {
+    try {
+        const { params } = blogContextSchema.parse(context);
+
+        const blog = await db.query.blogs.findFirst({
+            where: eq(blogs.id, params.blogId),
+        });
+
+        if (!blog)
+            return NextResponse.json({
+                code: 404,
+                message: "Blog not found",
+            });
+
+        return NextResponse.json({
+            code: 200,
+            message: "Ok",
+            data: JSON.stringify(blog),
+        });
+    } catch (err) {
+        handleError(err);
+    }
+}
+
 export async function DELETE(req: NextRequest, context: BlogContext) {
     try {
         const { params } = blogContextSchema.parse(context);

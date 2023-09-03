@@ -1,8 +1,9 @@
+import { Notification as TypedNotification } from "@/src/types/notification";
 import { InferModel, relations, sql } from "drizzle-orm";
 import {
     boolean,
     index,
-    int,
+    json,
     longtext,
     mysqlEnum,
     mysqlTable,
@@ -42,6 +43,25 @@ export const users = mysqlTable(
     (user) => ({
         emailIndex: uniqueIndex("email_idx").on(user.email),
         usernameIndex: uniqueIndex("name_idx").on(user.username),
+    })
+);
+
+export const notifications = mysqlTable(
+    "notifications",
+    {
+        id: varchar("id", { length: 191 }).notNull().primaryKey(),
+        userId: varchar("userId", { length: 191 }).notNull(),
+        title: varchar("title", { length: 191 }).notNull(),
+        content: varchar("content", { length: 191 }).notNull(),
+        notifierId: varchar("notifierId", { length: 191 }).notNull(),
+        read: boolean("read").default(false).notNull(),
+        props: json("props").$type<TypedNotification["props"]>().notNull(),
+        createdAt: timestamp("created_at")
+            .default(sql`current_timestamp()`)
+            .notNull(),
+    },
+    (notification) => ({
+        userIdIndex: index("user_id_idx").on(notification.userId),
     })
 );
 
@@ -118,6 +138,14 @@ export const usersRelations = relations(users, ({ many }) => ({
     blogs: many(blogs),
     comments: many(comments),
     images: many(images),
+    notifications: many(notifications),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+    user: one(users, {
+        fields: [notifications.userId],
+        references: [users.id],
+    }),
 }));
 
 export const imageRelations = relations(images, ({ one }) => ({
@@ -183,6 +211,9 @@ export const commentLovesRelations = relations(commentLoves, ({ one }) => ({
 export type User = InferModel<typeof users>;
 export type NewUser = InferModel<typeof users, "insert">;
 
+export type Notification = InferModel<typeof notifications>;
+export type NewNotification = InferModel<typeof notifications, "insert">;
+
 export type Blog = InferModel<typeof blogs>;
 export type NewBlog = InferModel<typeof blogs, "insert">;
 
@@ -201,6 +232,8 @@ export type NewCommentLove = InferModel<typeof commentLoves, "insert">;
 // ZOD SCHEMA
 
 export const insertUserSchema = createInsertSchema(users);
+
+export const insertNotificationSchema = createInsertSchema(notifications);
 
 export const insertBlogSchema = createInsertSchema(blogs);
 

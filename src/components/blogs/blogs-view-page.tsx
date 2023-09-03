@@ -1,7 +1,7 @@
 import { defaultUserPFP } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import { blogs, comments, User, users } from "@/src/lib/drizzle/schema";
-import { cn, formatDate, shortenNumber } from "@/src/lib/utils";
+import { cn, formatDate } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
@@ -42,6 +42,7 @@ async function BlogViewPage({ params, className }: PageProps) {
                 with: {
                     user: true,
                     loves: true,
+                    blog: true,
                 },
             },
             likes: true,
@@ -220,15 +221,6 @@ async function BlogViewPage({ params, className }: PageProps) {
                 </Mdx>
             </div>
 
-            {/* <div className="flex w-full cursor-default items-center justify-between rounded-md bg-zinc-900 p-5 py-3 text-sm">
-                <div>
-                    <p>{shortenNumber(blog.likes.length)} Likes</p>
-                </div>
-                <div className="flex items-center gap-4">
-                    <p>{shortenNumber(blog.comments.length)} Comments</p>
-                    <p>{shortenNumber(blog.views.length)} Views</p>
-                </div>
-            </div> */}
             <Separator className="w-full" />
 
             <BlogViewOperations

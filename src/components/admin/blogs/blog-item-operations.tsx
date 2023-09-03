@@ -19,26 +19,17 @@ import {
     DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { useToast } from "@/src/components/ui/use-toast";
-import { Blog } from "@/src/lib/drizzle/schema";
-import { wait } from "@/src/lib/utils";
+import { addNotification } from "@/src/lib/utils";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
-import { DefaultProps } from "@/src/types";
+import { DefaultProps, ExtendedBlog } from "@/src/types";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface PageProps extends DefaultProps {
-    blog: Pick<
-        Blog,
-        | "id"
-        | "title"
-        | "published"
-        | "thumbnailUrl"
-        | "content"
-        | "description"
-    >;
+    blog: ExtendedBlog;
 }
 
 export function BlogOperations({ blog, className }: PageProps) {
@@ -119,6 +110,18 @@ export function BlogOperations({ blog, className }: PageProps) {
                     description: blog.published
                         ? "Blog has been unpublished"
                         : "Blog has been published",
+                });
+
+                addNotification({
+                    notifierId: blog.authorId,
+                    title: "New Blog",
+                    content: `@${blog.author.username} published a new blog`,
+                    props: {
+                        type: "newBlog",
+                        blogId: blog.id,
+                        blogThumbnailUrl: blog.thumbnailUrl!,
+                        blogTitle: blog.title,
+                    },
                 });
 
                 router.refresh();

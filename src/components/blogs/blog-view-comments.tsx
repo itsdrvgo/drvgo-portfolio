@@ -29,6 +29,7 @@ function BlogViewComments({ className, user, params, blog }: PageProps) {
                     blog={blog}
                     isReply={false}
                     isPinned={true}
+                    id={pinnedComment.id}
                 />
             )}
             {rootComments.map((comment) => (
@@ -41,6 +42,7 @@ function BlogViewComments({ className, user, params, blog }: PageProps) {
                     blog={blog}
                     isReply={false}
                     isPinned={false}
+                    id={comment.id}
                 />
             ))}
         </div>

@@ -3,7 +3,12 @@
 import { env } from "@/env.mjs";
 import { defaultUserPFP } from "@/src/config/const";
 import { NewComment, User } from "@/src/lib/drizzle/schema";
-import { cn, shortenNumber, updateBlogViews } from "@/src/lib/utils";
+import {
+    addNotification,
+    cn,
+    shortenNumber,
+    updateBlogViews,
+} from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
 import axios from "axios";
@@ -42,7 +47,8 @@ function BlogViewOperations({
 
     useEffect(() => {
         updateBlogViews(blog.id);
-    }, [blog.id]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         if (comment.length) setIsActive(true);
@@ -67,49 +73,64 @@ function BlogViewOperations({
             });
         setIsLiked(!isLiked);
 
-        isLiked
-            ? axios
-                  .delete<ResponseData>(`/api/blogs/likes/${blog.id}`)
-                  .then(({ data: resData }) => {
-                      if (resData.code !== 200)
-                          return toast({
-                              title: "Oops!",
-                              description: resData.message,
-                              variant: "destructive",
-                          });
+        if (isLiked) {
+            axios
+                .delete<ResponseData>(`/api/blogs/likes/${blog.id}`)
+                .then(({ data: resData }) => {
+                    if (resData.code !== 200)
+                        return toast({
+                            title: "Oops!",
+                            description: resData.message,
+                            variant: "destructive",
+                        });
 
-                      router.refresh();
-                  })
-                  .catch((err) => {
-                      console.log(err);
+                    router.refresh();
+                })
+                .catch((err) => {
+                    console.log(err);
 
-                      toast({
-                          title: "Oops!",
-                          description: "Something went wrong, try again later",
-                          variant: "destructive",
-                      });
-                  })
-            : axios
-                  .post<ResponseData>(`/api/blogs/likes/${blog.id}`)
-                  .then(({ data: resData }) => {
-                      if (resData.code !== 200)
-                          return toast({
-                              title: "Oops!",
-                              description: resData.message,
-                              variant: "destructive",
-                          });
+                    toast({
+                        title: "Oops!",
+                        description: "Something went wrong, try again later",
+                        variant: "destructive",
+                    });
+                });
+        } else {
+            axios
+                .post<ResponseData>(`/api/blogs/likes/${blog.id}`)
+                .then(({ data: resData }) => {
+                    if (resData.code !== 200)
+                        return toast({
+                            title: "Oops!",
+                            description: resData.message,
+                            variant: "destructive",
+                        });
 
-                      router.refresh();
-                  })
-                  .catch((err) => {
-                      console.log(err);
+                    router.refresh();
+                })
+                .catch((err) => {
+                    console.log(err);
 
-                      toast({
-                          title: "Oops!",
-                          description: "Something went wrong, try again later",
-                          variant: "destructive",
-                      });
-                  });
+                    toast({
+                        title: "Oops!",
+                        description: "Something went wrong, try again later",
+                        variant: "destructive",
+                    });
+                });
+
+            addNotification({
+                userId: blog.authorId,
+                content: `@${user.username} liked your blog`,
+                title: "New like",
+                notifierId: user.id,
+                props: {
+                    type: "blogLike",
+                    blogId: blog.id,
+                    blogThumbnailUrl: blog.thumbnailUrl!,
+                    blogTitle: blog.title,
+                },
+            });
+        }
     };
 
     const addComment = async () => {
@@ -158,6 +179,22 @@ function BlogViewOperations({
                     description: "Comment published",
                 });
 
+                const commentId = JSON.parse(resData.data) as string;
+
+                addNotification({
+                    userId: blog.authorId,
+                    content: `@${user.username} commented on your blog`,
+                    title: "New comment",
+                    notifierId: user.id,
+                    props: {
+                        type: "blogComment",
+                        blogId: blog.id,
+                        blogThumbnailUrl: blog.thumbnailUrl!,
+                        commentContent: comment,
+                        commentId,
+                    },
+                });
+
                 router.refresh();
             })
             .catch((err) => {
@@ -175,9 +212,10 @@ function BlogViewOperations({
     return (
         <>
             <div
-                className={
-                    "sticky bottom-10 flex items-center gap-4 rounded-full border border-border bg-white/5 p-3 px-5 backdrop-blur-sm"
-                }
+                className={cn(
+                    "sticky bottom-10 flex items-center gap-4 rounded-full border border-border bg-white/5 p-3 px-5 backdrop-blur-sm",
+                    className
+                )}
             >
                 <button
                     className="flex items-center justify-center gap-2"

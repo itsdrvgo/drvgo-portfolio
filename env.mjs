@@ -3,6 +3,8 @@ import { z } from "zod";
 
 export const env = createEnv({
     server: {
+        BASE_URL: z.string().url(),
+
         CLERK_SECRET_KEY: z.string(),
         SVIX_SECRET: z.string(),
 
@@ -20,6 +22,8 @@ export const env = createEnv({
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
     },
     runtimeEnv: {
+        BASE_URL: process.env.BASE_URL,
+
         CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
         SVIX_SECRET: process.env.SVIX_SECRET,
 

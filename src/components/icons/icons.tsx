@@ -94,12 +94,14 @@ import {
     Youtube,
     Zap,
     type IconNode as LucideIcon,
+    Wrench,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
 
 export const Icons = {
     gem: Gem,
+    wrench: Wrench,
     search: Search,
     notification: Bell,
     arrowLeft: ArrowLeft,
