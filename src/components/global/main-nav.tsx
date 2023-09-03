@@ -47,21 +47,26 @@ function MainNav({ items, children, className }: MainNavProps) {
                     <Popover open={isHovering}>
                         <PopoverTrigger asChild>
                             <div
-                                className="group flex items-center gap-1 text-lg font-semibold text-foreground transition-colors hover:text-gray-300 sm:text-sm"
+                                className="flex items-center gap-1 text-lg font-semibold text-foreground transition-colors hover:text-gray-300 sm:text-sm"
                                 onMouseEnter={() => setIsHovering(true)}
                                 onMouseLeave={() => setIsHovering(false)}
                             >
                                 <p>More</p>
-                                <Icons.chevronDown className="h-4 w-4 transition-all ease-in-out group-hover:rotate-180" />
+                                <Icons.chevronDown
+                                    className={cn(
+                                        "h-4 w-4 transition-all ease-in-out",
+                                        isHovering && "rotate-180"
+                                    )}
+                                />
                             </div>
                         </PopoverTrigger>
                         <PopoverContent
                             sideOffset={0}
-                            className="w-40 bg-white/10 backdrop-blur-sm"
+                            className="w-40 rounded-sm bg-white/10 p-2 backdrop-blur-sm"
                             onMouseEnter={() => setIsHovering(true)}
                             onMouseLeave={() => setIsHovering(false)}
                         >
-                            <div className="flex flex-col gap-2 text-sm">
+                            <div className="flex flex-col gap-1 text-sm">
                                 {items.subNav
                                     .filter(
                                         (item) =>

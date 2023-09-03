@@ -60,7 +60,7 @@ function MobileNav({ items, children }: MobileNavProps) {
                         </PopoverTrigger>
                         <PopoverContent
                             sideOffset={0}
-                            className="w-52 bg-background"
+                            className="w-52 rounded-sm bg-background p-2"
                         >
                             <div className="flex flex-col gap-1 text-sm">
                                 {items.subNav
