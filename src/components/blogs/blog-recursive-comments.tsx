@@ -2,7 +2,8 @@ import { defaultUserPFP } from "@/src/config/const";
 import { User } from "@/src/lib/drizzle/schema";
 import { cn, convertMstoTimeElapsed } from "@/src/lib/utils";
 import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Icons } from "../icons/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import BlogCommentOperation from "./blog-comment-operation";
@@ -29,14 +30,44 @@ function RecursiveComment({
     isReply = false,
     isPinned = false,
     className,
+    id,
 }: PageProps) {
     const [showReply, setShowReply] = useState(false);
+    const [isHighlighted, setIsHighlighted] = useState(false);
+
+    const searchParams = useSearchParams();
+    const commentId = searchParams.get("commentId");
+
+    useEffect(() => {
+        if (commentId && commentId === comment.id && !isHighlighted) {
+            setIsHighlighted(true);
+
+            setTimeout(() => {
+                document
+                    .getElementById(commentId)
+                    ?.scrollIntoView({ behavior: "smooth" });
+
+                setTimeout(() => {
+                    setIsHighlighted(false);
+                }, 3000);
+            }, 1000);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [commentId, comment.id]);
 
     const replies = allComments.filter((c) => c.parentId === comment.id);
     const isLoved = comment.loves.find((love) => love.userId === user?.id);
 
     return (
-        <div className={cn("space-y-5", className)}>
+        <div
+            className={cn(
+                "space-y-5 transition-all ease-in-out",
+                className,
+                isHighlighted &&
+                    "rounded-md border border-accent-foreground bg-gray-800 p-2"
+            )}
+            id={id}
+        >
             <div className={cn("flex items-start gap-4", isReply && "ml-12")}>
                 <Avatar
                     className={cn(

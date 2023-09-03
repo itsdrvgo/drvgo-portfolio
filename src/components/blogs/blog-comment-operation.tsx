@@ -1,6 +1,7 @@
 "use client";
 
 import { NewComment, User } from "@/src/lib/drizzle/schema";
+import { addNotification } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, ExtendedComment } from "@/src/types";
 import axios from "axios";
@@ -107,6 +108,23 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
                 toast({
                     description: `Comment ${isPinned ? "unpinned" : "pinned"}`,
                 });
+
+                if (!isPinned) {
+                    addNotification({
+                        userId: comment.authorId,
+                        notifierId: user.id,
+                        title: "Comment Pinned",
+                        content: `Your comment on '${comment.blog.title}' has been pinned`,
+                        props: {
+                            type: "blogCommentPin",
+                            blogId: comment.blogId,
+                            commentId: comment.id,
+                            blogThumbnailUrl: comment.blog.thumbnailUrl!,
+                            commentContent: comment.content,
+                        },
+                    });
+                }
+
                 router.refresh();
             })
             .catch((err) => {

@@ -1,22 +1,12 @@
 import { defaultBlogThumbnail } from "@/src/config/const";
-import { Blog } from "@/src/lib/drizzle/schema";
 import { cn, formatDate } from "@/src/lib/utils";
-import { DefaultProps } from "@/src/types";
+import { DefaultProps, ExtendedBlog } from "@/src/types";
 import Image from "next/image";
 import Link from "next/link";
 import { BlogOperations } from "./blog-item-operations";
 
 interface PageProps extends DefaultProps {
-    blog: Pick<
-        Blog,
-        | "id"
-        | "title"
-        | "published"
-        | "createdAt"
-        | "thumbnailUrl"
-        | "content"
-        | "description"
-    >;
+    blog: ExtendedBlog;
 }
 
 export function BlogItem({ blog, className }: PageProps) {
@@ -49,14 +39,7 @@ export function BlogItem({ blog, className }: PageProps) {
                     </div>
                 </div>
                 <BlogOperations
-                    blog={{
-                        id: blog.id,
-                        title: blog.title,
-                        published: blog.published,
-                        thumbnailUrl: blog.thumbnailUrl,
-                        content: blog.content,
-                        description: blog.description,
-                    }}
+                    blog={blog}
                     className="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-muted"
                 />
             </div>

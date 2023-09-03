@@ -20,6 +20,7 @@ async function BlogNav({ params }: PageProps) {
                 with: {
                     user: true,
                     loves: true,
+                    blog: true,
                 },
             },
             likes: true,

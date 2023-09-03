@@ -31,8 +31,16 @@ export const usernameContextSchema = z.object({
     }),
 });
 
+export const notificationContextSchema = z.object({
+    params: z.object({
+        userId: z.string(),
+        notificationId: z.string(),
+    }),
+});
+
 export type UserContext = z.infer<typeof userContextSchema>;
 export type AccountContext = z.infer<typeof accountsContextSchema>;
 export type BlogContext = z.infer<typeof blogContextSchema>;
 export type CommentContext = z.infer<typeof commentContextSchema>;
 export type UsernameContext = z.infer<typeof usernameContextSchema>;
+export type NotificationContext = z.infer<typeof notificationContextSchema>;

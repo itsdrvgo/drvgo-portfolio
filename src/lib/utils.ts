@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
 import { roleHierarchy } from "../config/const";
-import { User } from "./drizzle/schema";
+import { Notification } from "../types/notification";
+import { Blog, User } from "./drizzle/schema";
 import { UserUpdateData } from "./validation/auth";
 import { ResponseData } from "./validation/response";
 
@@ -129,4 +130,80 @@ export function updateBlogViews(blogId: string) {
             console.log(err);
             console.log("Couldn't update view");
         });
+}
+
+export async function addNotification(
+    notification: Omit<Notification, "id" | "read" | "createdAt">
+) {
+    try {
+        let url: string;
+
+        if (notification.userId)
+            url = `/api/users/${notification.userId}/notifications`;
+        else url = `/api/notifications`;
+
+        const { data } = await axios.post<ResponseData>(
+            url,
+            JSON.stringify(notification)
+        );
+
+        if (data.code !== 201) {
+            console.log(data.message);
+            return false;
+        }
+
+        console.log("Added notification");
+        return true;
+    } catch (err) {
+        console.log(err);
+        console.log("Couldn't add notification");
+        return false;
+    }
+}
+
+export async function markNotificationAsRead({
+    userId,
+    notificationId,
+}: {
+    userId: string;
+    notificationId?: string;
+}) {
+    try {
+        let url: string;
+
+        if (notificationId)
+            url = `/api/users/${userId}/notifications/${notificationId}`;
+        else url = `/api/users/${userId}/notifications`;
+
+        const { data } = await axios.patch<ResponseData>(url);
+
+        if (data.code !== 200) {
+            console.log(data.message);
+            return false;
+        }
+
+        console.log("Marked notification as read");
+        return true;
+    } catch (err) {
+        console.log(err);
+        console.log("Couldn't mark notification as read");
+        return false;
+    }
+}
+
+export async function getBlog(blogId: string) {
+    try {
+        const { data } = await axios.get<ResponseData>(`/api/blogs/${blogId}`);
+
+        if (data.code !== 200) {
+            console.log(data.message);
+            return null;
+        }
+
+        return data.data as Blog;
+    } catch (err) {
+        console.log(err);
+        console.log("Couldn't get blog");
+        return null;
+    }
 }

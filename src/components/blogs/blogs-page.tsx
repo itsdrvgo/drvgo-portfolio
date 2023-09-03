@@ -15,6 +15,7 @@ async function BlogsPage({ className }: DefaultProps) {
                 with: {
                     user: true,
                     loves: true,
+                    blog: true,
                 },
             },
             likes: true,

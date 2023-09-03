@@ -63,8 +63,10 @@ export async function POST(req: NextRequest, context: BlogContext) {
                 message: "Unauthorized",
             });
 
-        const newComment = await db.insert(comments).values({
-            id: crypto.randomUUID(),
+        const commentId = crypto.randomUUID();
+
+        await db.insert(comments).values({
+            id: commentId,
             blogId: params.blogId,
             authorId,
             content,
@@ -73,7 +75,7 @@ export async function POST(req: NextRequest, context: BlogContext) {
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(newComment.insertId),
+            data: JSON.stringify(commentId),
         });
     } catch (err) {
         handleError(err);

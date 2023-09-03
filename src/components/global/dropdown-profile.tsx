@@ -98,11 +98,11 @@ function DropdownProfile({ user, className }: PageProps) {
                         </DropdownMenuItem>
 
                         <DropdownMenuItem
-                            onSelect={() => router.push("/notifications")}
+                            onSelect={() => router.push("/profile/preferences")}
                             className="cursor-pointer"
                         >
-                            <Icons.notification className="mr-2 h-4 w-4" />
-                            <span>Notifications</span>
+                            <Icons.wrench className="mr-2 h-4 w-4" />
+                            <span>Preferences</span>
                         </DropdownMenuItem>
 
                         <DropdownMenuItem

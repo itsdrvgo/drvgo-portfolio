@@ -42,6 +42,7 @@ export interface RootLayoutProps {
 export interface ExtendedComment extends Comment {
     user: User;
     loves: CommentLove[];
+    blog: Blog;
 }
 
 export interface ExtendedBlog extends Blog {

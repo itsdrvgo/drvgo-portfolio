@@ -2,7 +2,7 @@
 
 import { defaultUserPFP } from "@/src/config/const";
 import { NewComment, User } from "@/src/lib/drizzle/schema";
-import { cn } from "@/src/lib/utils";
+import { addNotification, cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
 import axios from "axios";
@@ -89,10 +89,29 @@ function BlogCommentViewerOperation({
                         variant: "destructive",
                     });
 
-                router.refresh();
                 toast({
                     description: "Reply added",
                 });
+
+                const replyId = JSON.parse(resData.data) as string;
+
+                addNotification({
+                    userId: comment.authorId,
+                    notifierId: user?.id!,
+                    title: "Comment replied",
+                    content: `@${user?.username} replied to your comment`,
+                    props: {
+                        type: "blogCommentReply",
+                        blogId: blog.id,
+                        commentId: comment.id,
+                        blogThumbnailUrl: blog.thumbnailUrl!,
+                        commentContent: comment.content,
+                        replyContent: reply,
+                        replyId,
+                    },
+                });
+
+                router.refresh();
             })
             .catch((err) => {
                 console.log(err);
@@ -141,6 +160,22 @@ function BlogCommentViewerOperation({
                         description: resData.message,
                         variant: "destructive",
                     });
+
+                if (!isLoved) {
+                    addNotification({
+                        userId: comment.authorId,
+                        notifierId: user.id,
+                        title: "Comment loved",
+                        content: `@${user.username} loved your comment`,
+                        props: {
+                            type: "blogCommentLove",
+                            blogId: blog.id,
+                            commentId: comment.id,
+                            blogThumbnailUrl: blog.thumbnailUrl!,
+                            commentContent: comment.content,
+                        },
+                    });
+                }
 
                 router.refresh();
             })
