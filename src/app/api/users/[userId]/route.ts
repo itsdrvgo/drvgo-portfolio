@@ -35,9 +35,9 @@ export async function GET(req: NextRequest, context: UserContext) {
 }
 
 export async function PATCH(req: NextRequest, context: UserContext) {
-    const body = await req.json();
-
     try {
+        const body = await req.json();
+
         const { params } = userContextSchema.parse(context);
 
         const [authUser, targetUser, dbUser] = await Promise.all([
@@ -96,9 +96,9 @@ export async function PUT(req: NextRequest, context: UserContext) {
         message: "Feature not implemented yet",
     });
 
-    // const body = await req.json();
-
     // try {
+    //     const body = await req.json();
+
     //     const authUser = await currentUser();
 
     //     if (!authUser)

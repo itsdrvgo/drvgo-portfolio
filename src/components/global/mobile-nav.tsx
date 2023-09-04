@@ -21,10 +21,10 @@ function MobileNav({ items, children }: MobileNavProps) {
     return (
         <div
             className={cn(
-                "fixed inset-0 top-14 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 shadow-md animate-in slide-in-from-left-80 md:hidden"
+                "fixed inset-0 top-16 z-50 grid h-[calc(100vh-4rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 shadow-md animate-in slide-in-from-left-80 md:hidden"
             )}
         >
-            <div className="relative z-20 grid gap-6 rounded-md bg-background p-4 text-popover-foreground shadow-md">
+            <div className="relative z-20 grid gap-6 rounded-md border border-border bg-background p-4 text-popover-foreground shadow-md">
                 <Link href="/" className="flex items-center space-x-2">
                     <Image src={DRVGOIcon} alt="DRVGO" width={30} height={30} />
                     <span className="font-bold">{siteConfig.name}</span>

@@ -3,6 +3,7 @@ import { InferModel, relations, sql } from "drizzle-orm";
 import {
     boolean,
     index,
+    int,
     json,
     longtext,
     mysqlEnum,
@@ -131,10 +132,13 @@ export const commentLoves = mysqlTable("comment_loves", {
     userId: varchar("userId", { length: 191 }).notNull(),
 });
 
-export const changeLogs = mysqlTable("change_logs", {
+export const patches = mysqlTable("patches", {
     id: varchar("id", { length: 191 }).notNull().primaryKey(),
-    version: varchar("version", { length: 191 }).notNull(),
-    patch: json("patch").notNull(),
+    major: int("major").notNull(),
+    minor: int("minor").notNull(),
+    patch: int("patch").notNull(),
+    description: longtext("description"),
+    published: boolean("published").default(false).notNull(),
     createdAt: timestamp("created_at")
         .default(sql`current_timestamp()`)
         .notNull(),
@@ -241,8 +245,8 @@ export type NewCommentLove = InferModel<typeof commentLoves, "insert">;
 export type Image = InferModel<typeof images>;
 export type NewImage = InferModel<typeof images, "insert">;
 
-export type ChangeLog = InferModel<typeof changeLogs>;
-export type NewChangeLog = InferModel<typeof changeLogs, "insert">;
+export type Patch = InferModel<typeof patches>;
+export type NewPatch = InferModel<typeof patches, "insert">;
 
 // ZOD SCHEMA
 
@@ -262,4 +266,4 @@ export const insertCommentLoveSchema = createInsertSchema(commentLoves);
 
 export const insertImageSchema = createInsertSchema(images);
 
-export const insertChangeLogSchema = createInsertSchema(changeLogs);
+export const insertPatchSchema = createInsertSchema(patches);

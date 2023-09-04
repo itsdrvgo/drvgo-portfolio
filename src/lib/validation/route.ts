@@ -38,9 +38,16 @@ export const notificationContextSchema = z.object({
     }),
 });
 
+export const patchContextSchema = z.object({
+    params: z.object({
+        patchId: z.string(),
+    }),
+});
+
 export type UserContext = z.infer<typeof userContextSchema>;
 export type AccountContext = z.infer<typeof accountsContextSchema>;
 export type BlogContext = z.infer<typeof blogContextSchema>;
 export type CommentContext = z.infer<typeof commentContextSchema>;
 export type UsernameContext = z.infer<typeof usernameContextSchema>;
 export type NotificationContext = z.infer<typeof notificationContextSchema>;
+export type PatchContext = z.infer<typeof patchContextSchema>;

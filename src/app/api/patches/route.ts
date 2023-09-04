@@ -1,7 +1,11 @@
 import { db } from "@/src/lib/drizzle";
-import { blogs, comments, users } from "@/src/lib/drizzle/schema";
+import {
+    insertPatchSchema,
+    NewPatch,
+    patches,
+    users,
+} from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
-import { blogCreateSchema } from "@/src/lib/validation/blogs";
 import { currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -15,27 +19,12 @@ export async function GET() {
                 message: "Unauthorized!",
             });
 
-        const filteredBlogs = await db.query.blogs.findMany({
-            with: {
-                author: true,
-                comments: {
-                    orderBy: [desc(comments.createdAt)],
-                    with: {
-                        user: true,
-                        loves: true,
-                    },
-                },
-                likes: true,
-                views: true,
-            },
-            where: eq(blogs.published, true),
-            orderBy: [desc(blogs.createdAt)],
-        });
+        const data = await db.query.patches.findMany();
 
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(filteredBlogs),
+            data: JSON.stringify(data),
         });
     } catch (err) {
         handleError(err);
@@ -62,24 +51,50 @@ export async function POST(req: NextRequest) {
                 message: "Unauthorized",
             });
 
-        const { title, content, description, thumbnailUrl } =
-            blogCreateSchema.parse(body);
+        const { description, major, minor, patch } = insertPatchSchema
+            .omit({
+                id: true,
+            })
+            .parse(body);
 
-        const blogId = crypto.randomUUID();
+        let data: Omit<NewPatch, "id">;
 
-        await db.insert(blogs).values({
-            id: blogId,
-            title: title,
-            content: content,
-            thumbnailUrl: thumbnailUrl,
-            authorId: authUser.id,
-            description: description ?? "No description",
+        const latestPatch = await db
+            .select()
+            .from(patches)
+            .orderBy(
+                desc(patches.major),
+                desc(patches.minor),
+                desc(patches.patch)
+            )
+            .limit(1);
+
+        if (latestPatch.length === 0)
+            data = {
+                major,
+                minor,
+                patch,
+                description,
+            };
+        else
+            data = {
+                major: latestPatch[0].major,
+                minor: latestPatch[0].minor,
+                patch: latestPatch[0].patch + 1,
+                description: latestPatch[0].description,
+            };
+
+        const patchId = crypto.randomUUID();
+
+        await db.insert(patches).values({
+            id: patchId,
+            ...data,
         });
 
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(blogId),
+            data: JSON.stringify(patchId),
         });
     } catch (err) {
         handleError(err);

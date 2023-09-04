@@ -19,20 +19,21 @@ import {
     DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { useToast } from "@/src/components/ui/use-toast";
+import { Patch } from "@/src/lib/drizzle/schema";
 import { addNotification } from "@/src/lib/utils";
-import { BlogPatchData } from "@/src/lib/validation/blogs";
+import { PatchPatchData } from "@/src/lib/validation/patches";
 import { ResponseData } from "@/src/lib/validation/response";
-import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { DefaultProps } from "@/src/types";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface PageProps extends DefaultProps {
-    blog: ExtendedBlog;
+    patch: Patch;
 }
 
-function BlogOperations({ blog, className }: PageProps) {
+function PatchOperations({ patch, className }: PageProps) {
     const router = useRouter();
     const { toast } = useToast();
 
@@ -41,14 +42,14 @@ function BlogOperations({ blog, className }: PageProps) {
     const [showPublishAlert, setShowPublishAlert] = useState<boolean>(false);
     const [isPublishLoading, setIsPublishLoading] = useState<boolean>(false);
 
-    const deleteBlog = async () => {
+    const deletePatch = async () => {
         setIsDeleteLoading(true);
         toast({
-            description: "Deleting blog...",
+            description: "Deleting patch...",
         });
 
         axios
-            .delete<ResponseData>(`/api/blogs/${blog.id}`)
+            .delete<ResponseData>(`/api/patches/${patch.id}`)
             .then(({ data: resData }) => {
                 setIsDeleteLoading(false);
                 setShowDeleteAlert(false);
@@ -61,7 +62,7 @@ function BlogOperations({ blog, className }: PageProps) {
                     });
 
                 toast({
-                    description: "Blog has been deleted",
+                    description: "Patch has been deleted",
                 });
 
                 router.refresh();
@@ -73,28 +74,34 @@ function BlogOperations({ blog, className }: PageProps) {
 
                 toast({
                     title: "Oops!",
-                    description: "Blog was not deleted, try again later",
+                    description: "Patch was not deleted, try again later",
                     variant: "destructive",
                 });
             });
     };
 
-    const publishBlog = () => {
+    const publishPatch = () => {
         setIsPublishLoading(true);
         toast({
-            description: blog.published
-                ? "Unpublishing blog..."
-                : "Publishing blog...",
+            description: patch.published
+                ? "Unpublishing patch..."
+                : "Publishing patch...",
         });
 
-        const body: BlogPatchData = {
-            ...blog,
-            published: !blog.published,
+        const body: PatchPatchData = {
+            description: patch.description ?? "",
+            major: patch.major,
+            minor: patch.minor,
+            patch: patch.patch,
+            published: !patch.published,
             action: "publish",
         };
 
         axios
-            .patch<ResponseData>(`/api/blogs/${blog.id}`, JSON.stringify(body))
+            .patch<ResponseData>(
+                `/api/patches/${patch.id}`,
+                JSON.stringify(body)
+            )
             .then(({ data: resData }) => {
                 setIsPublishLoading(false);
                 setShowPublishAlert(false);
@@ -107,21 +114,9 @@ function BlogOperations({ blog, className }: PageProps) {
                     });
 
                 toast({
-                    description: blog.published
-                        ? "Blog has been unpublished"
-                        : "Blog has been published",
-                });
-
-                addNotification({
-                    notifierId: blog.authorId,
-                    title: "New Blog",
-                    content: `@${blog.author.username} published a new blog`,
-                    props: {
-                        type: "newBlog",
-                        blogId: blog.id,
-                        blogThumbnailUrl: blog.thumbnailUrl!,
-                        blogTitle: blog.title,
-                    },
+                    description: patch.published
+                        ? "Patch has been unpublished"
+                        : "Patch has been published",
                 });
 
                 router.refresh();
@@ -133,9 +128,9 @@ function BlogOperations({ blog, className }: PageProps) {
 
                 toast({
                     title: "Oops!",
-                    description: blog.published
-                        ? "Error unpublishing the blog, try again later"
-                        : "Blog was not published, try again later",
+                    description: patch.published
+                        ? "Error unpublishing the patch, try again later"
+                        : "patch was not published, try again later",
                     variant: "destructive",
                 });
             });
@@ -151,7 +146,7 @@ function BlogOperations({ blog, className }: PageProps) {
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem>
                         <Link
-                            href={`/admin/blogs/${blog.id}`}
+                            href={`/admin/patches/${patch.id}`}
                             className="flex w-full"
                         >
                             Edit
@@ -161,7 +156,7 @@ function BlogOperations({ blog, className }: PageProps) {
                         className="flex cursor-pointer items-center"
                         onSelect={() => setShowPublishAlert(true)}
                     >
-                        {blog.published ? "Unpublish" : "Publish"}
+                        {patch.published ? "Unpublish" : "Publish"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -179,7 +174,7 @@ function BlogOperations({ blog, className }: PageProps) {
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
-                            Are you sure you want to delete this blog?
+                            Are you sure you want to delete this patch?
                         </AlertDialogTitle>
                         <AlertDialogDescription>
                             This action cannot be undone.
@@ -187,7 +182,7 @@ function BlogOperations({ blog, className }: PageProps) {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={deleteBlog}>
+                        <AlertDialogAction onClick={deletePatch}>
                             {isDeleteLoading ? (
                                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                             ) : (
@@ -205,19 +200,19 @@ function BlogOperations({ blog, className }: PageProps) {
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
-                            {blog.published
-                                ? "Are you sure you want to unpublish this blog?"
-                                : "Are you sure you want to publish this blog?"}
+                            {patch.published
+                                ? "Are you sure you want to unpublish this patch?"
+                                : "Are you sure you want to publish this patch?"}
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                            {blog.published
-                                ? "People will not be able to see this blog anymore."
-                                : "You still will be able to update this blog anytime you want."}
+                            {patch.published
+                                ? "People will not be able to see this patch anymore."
+                                : "You still will be able to update this patch anytime you want."}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={publishBlog}>
+                        <AlertDialogAction onClick={publishPatch}>
                             {isPublishLoading ? (
                                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                             ) : (
@@ -225,7 +220,7 @@ function BlogOperations({ blog, className }: PageProps) {
                             )}
                             <span>
                                 {" "}
-                                {blog.published
+                                {patch.published
                                     ? "Unpublish it!"
                                     : "Publish it!"}
                             </span>
@@ -237,4 +232,4 @@ function BlogOperations({ blog, className }: PageProps) {
     );
 }
 
-export default BlogOperations;
+export default PatchOperations;

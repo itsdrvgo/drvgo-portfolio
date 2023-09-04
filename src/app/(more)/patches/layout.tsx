@@ -4,7 +4,7 @@ import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Change Logs",
+    title: "Patch Notes",
     description: "See what's new in the latest version of DRVGO",
 };
 

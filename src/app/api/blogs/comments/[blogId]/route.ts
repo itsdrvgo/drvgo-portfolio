@@ -37,9 +37,9 @@ export async function GET(req: NextRequest, context: BlogContext) {
 }
 
 export async function POST(req: NextRequest, context: BlogContext) {
-    const body = await req.json();
-
     try {
+        const body = await req.json();
+
         const { authorId, content } = insertCommentSchema
             .omit({
                 id: true,

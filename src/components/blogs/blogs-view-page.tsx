@@ -80,7 +80,7 @@ async function BlogViewPage({ params, className }: PageProps) {
             )}
         >
             <div className="flex w-full flex-col gap-4">
-                <p className="text-2xl font-bold md:text-5xl md:leading-tight">
+                <p className="text-xl font-bold md:text-5xl md:leading-tight">
                     {blog.title}
                 </p>
                 <Separator className="w-full" />
@@ -99,7 +99,7 @@ async function BlogViewPage({ params, className }: PageProps) {
                         <div className="flex gap-1">
                             <p className="text-gray-400">
                                 Published on{" "}
-                                {formatDate(blog.createdAt.toDateString())}
+                                {formatDate(blog.createdAt.getTime())}
                             </p>
                             {blog.updatedAt ? (
                                 <TooltipProvider delayDuration={0}>
@@ -112,7 +112,7 @@ async function BlogViewPage({ params, className }: PageProps) {
                                         <TooltipContent>
                                             <p>
                                                 {formatDate(
-                                                    blog.updatedAt.toDateString()
+                                                    blog.updatedAt.getTime()
                                                 )}
                                             </p>
                                         </TooltipContent>

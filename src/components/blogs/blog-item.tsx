@@ -47,7 +47,7 @@ function BlogItem({ blogId, blogData, ref }: PageProps) {
                         {formatDate(
                             blogData
                                 .find((x) => x.id === blogId)
-                                ?.createdAt.toDateString()!
+                                ?.createdAt.getTime()!
                         )}
                     </p>
                 </div>

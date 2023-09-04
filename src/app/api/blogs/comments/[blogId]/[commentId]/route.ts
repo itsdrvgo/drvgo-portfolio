@@ -92,9 +92,9 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
 }
 
 export async function POST(req: NextRequest, context: CommentContext) {
-    const body = await req.json();
-
     try {
+        const body = await req.json();
+
         const { params } = commentContextSchema.parse(context);
         const { content } = replySchema.parse(body);
 
@@ -135,9 +135,9 @@ export async function POST(req: NextRequest, context: CommentContext) {
 }
 
 export async function PATCH(req: NextRequest, context: CommentContext) {
-    const body = await req.json();
-
     try {
+        const body = await req.json();
+
         const { params } = commentContextSchema.parse(context);
         const { content } = commentEditSchema.parse(body);
 

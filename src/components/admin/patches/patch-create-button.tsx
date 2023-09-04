@@ -1,6 +1,6 @@
 "use client";
 
-import { NewBlog } from "@/src/lib/drizzle/schema";
+import { NewPatch } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import axios from "axios";
@@ -10,20 +10,23 @@ import { Icons } from "../../icons/icons";
 import { ButtonProps, buttonVariants } from "../../ui/button";
 import { useToast } from "../../ui/use-toast";
 
-function BlogCreateButton({ className, variant, ...props }: ButtonProps) {
+function PatchCreateButton({ className, variant, ...props }: ButtonProps) {
     const router = useRouter();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const handleBlogCreate = async () => {
+    const handleLogCreate = async () => {
         setIsLoading(true);
 
-        const data: Pick<NewBlog, "title"> = {
-            title: "Untitled Blog",
+        const data: Omit<NewPatch, "id"> = {
+            major: 0,
+            minor: 0,
+            patch: 0,
+            description: "New patch",
         };
 
         axios
-            .post<ResponseData>("/api/blogs", JSON.stringify(data))
+            .post<ResponseData>("/api/patches", JSON.stringify(data))
             .then(({ data: resData }) => {
                 setIsLoading(false);
                 if (resData.code !== 200)
@@ -33,8 +36,8 @@ function BlogCreateButton({ className, variant, ...props }: ButtonProps) {
                         variant: "destructive",
                     });
 
-                const blogId = JSON.parse(resData.data);
-                router.push(`/admin/blogs/${blogId}`);
+                const patchId = JSON.parse(resData.data);
+                router.push(`/admin/patches/${patchId}`);
             })
             .catch((err) => {
                 console.log(err);
@@ -50,7 +53,7 @@ function BlogCreateButton({ className, variant, ...props }: ButtonProps) {
 
     return (
         <button
-            onClick={handleBlogCreate}
+            onClick={handleLogCreate}
             className={cn(
                 buttonVariants({ variant }),
                 { "cursor-not-allowed opacity-60": isLoading },
@@ -64,9 +67,9 @@ function BlogCreateButton({ className, variant, ...props }: ButtonProps) {
             ) : (
                 <Icons.add className="mr-2 h-4 w-4" />
             )}
-            New Blog
+            New Patch
         </button>
     );
 }
 
-export default BlogCreateButton;
+export default PatchCreateButton;

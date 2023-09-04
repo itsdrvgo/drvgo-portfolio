@@ -10,9 +10,9 @@ import { eq, lt } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, context: UserContext) {
-    const body = await req.json();
-
     try {
+        const body = await req.json();
+
         const { params } = userContextSchema.parse(context);
 
         const { content, title, notifierId, props } = insertNotificationSchema

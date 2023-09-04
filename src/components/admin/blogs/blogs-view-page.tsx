@@ -4,8 +4,8 @@ import { DefaultProps } from "@/src/types";
 import { desc } from "drizzle-orm";
 import { EmptyPlaceholder } from "../../global/empty-placeholder";
 import { Separator } from "../../ui/separator";
-import { BlogCreateButton } from "./blog-create-button";
-import { BlogItem } from "./blog-item";
+import BlogCreateButton from "./blog-create-button";
+import BlogItem from "./blog-item";
 import FAQAccordian from "./faq";
 
 async function BlogsPage({ className }: DefaultProps) {
