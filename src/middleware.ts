@@ -24,6 +24,7 @@ const viewsRateLimiter = new Ratelimit({
 export default authMiddleware({
     publicRoutes: [
         "/blogs(.*)",
+        "/patches(.*)",
         "/courses(.*)",
         "/terms(.*)",
         "/privacy(.*)",
