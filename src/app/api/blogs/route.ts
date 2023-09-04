@@ -1,20 +1,12 @@
 import { db } from "@/src/lib/drizzle";
-import { blogs, comments, users } from "@/src/lib/drizzle/schema";
-import { handleError } from "@/src/lib/utils";
+import { blogs, comments } from "@/src/lib/drizzle/schema";
+import { getAuthorizedUser, handleError } from "@/src/lib/utils";
 import { blogCreateSchema } from "@/src/lib/validation/blogs";
-import { currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
     try {
-        const authUser = await currentUser();
-        if (!authUser)
-            return NextResponse.json({
-                code: 403,
-                message: "Unauthorized!",
-            });
-
         const filteredBlogs = await db.query.blogs.findMany({
             with: {
                 author: true,
@@ -46,20 +38,11 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
-        const authUser = await currentUser();
-        if (!authUser)
+        const user = await getAuthorizedUser();
+        if (!user)
             return NextResponse.json({
                 code: 403,
                 message: "Unauthorized!",
-            });
-
-        const dbUser = await db.query.users.findFirst({
-            where: eq(users.id, authUser.id),
-        });
-        if (!dbUser || ["user", "moderator"].includes(dbUser.role))
-            return NextResponse.json({
-                code: 403,
-                message: "Unauthorized",
             });
 
         const { title, content, description, thumbnailUrl } =
@@ -72,7 +55,7 @@ export async function POST(req: NextRequest) {
             title: title,
             content: content,
             thumbnailUrl: thumbnailUrl,
-            authorId: authUser.id,
+            authorId: user.id,
             description: description ?? "No description",
         });
 

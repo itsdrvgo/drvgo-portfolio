@@ -1,3 +1,5 @@
+import { currentUser } from "@clerk/nextjs";
+import { User } from "@clerk/nextjs/dist/types/server";
 import axios, { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { NextResponse } from "next/server";
@@ -5,7 +7,7 @@ import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
 import { roleHierarchy } from "../config/const";
 import { Notification } from "../types/notification";
-import { Blog, User } from "./drizzle/schema";
+import { Blog } from "./drizzle/schema";
 import { UserUpdateData } from "./validation/auth";
 import { ResponseData } from "./validation/response";
 
@@ -73,15 +75,15 @@ export function shortenNumber(num: number): string {
 }
 
 export function checkRoleHierarchy(user: User, target: User) {
-    const userRoleIndex = roleHierarchy.indexOf(user.role);
-    const targetRoleIndex = roleHierarchy.indexOf(target.role);
+    const userRoleIndex = roleHierarchy.indexOf(user.privateMetadata.role);
+    const targetRoleIndex = roleHierarchy.indexOf(target.privateMetadata.role);
 
     if (userRoleIndex === -1 || targetRoleIndex === -1) {
         return false;
     }
 
-    if (user.role === "owner") {
-        if (target.role === "owner") return false;
+    if (user.privateMetadata.role === "owner") {
+        if (target.privateMetadata.role === "owner") return false;
         return true;
     }
 
@@ -91,7 +93,7 @@ export function checkRoleHierarchy(user: User, target: User) {
 }
 
 export function manageRole(
-    role: User["role"],
+    role: User["privateMetadata"]["role"],
     action: string
 ): UserUpdateData["role"] {
     const roleIndex = roleHierarchy.indexOf(role);
@@ -206,4 +208,12 @@ export async function getBlog(blogId: string) {
         console.log("Couldn't get blog");
         return null;
     }
+}
+
+export async function getAuthorizedUser() {
+    const user = await currentUser();
+
+    if (!user || !["owner", "admin"].includes(user.privateMetadata.role))
+        return null;
+    return user;
 }

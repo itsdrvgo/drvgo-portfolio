@@ -1,13 +1,14 @@
 import { defaultUserPFP } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
-import { blogs, comments, User, users } from "@/src/lib/drizzle/schema";
+import { blogs, comments } from "@/src/lib/drizzle/schema";
 import { cn, formatDate } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
+import { User } from "@clerk/nextjs/dist/types/server";
 import { desc, eq } from "drizzle-orm";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeKatex from "rehype-katex";
 import rehypePrettyCode from "rehype-pretty-code";
@@ -32,7 +33,7 @@ interface PageProps extends DefaultProps {
 }
 
 async function BlogViewPage({ params, className }: PageProps) {
-    const authUser = await currentUser();
+    const user = await currentUser();
 
     const blog = await db.query.blogs.findFirst({
         with: {
@@ -53,24 +54,11 @@ async function BlogViewPage({ params, className }: PageProps) {
 
     if (!blog) notFound();
 
-    let user: User | null;
-    let blogIsLiked: boolean;
-
-    if (authUser) {
-        const dbUser = await db.query.users.findFirst({
-            where: eq(users.id, authUser.id),
-        });
-
-        if (!dbUser) redirect("/signin");
-        user = dbUser;
-
-        blogIsLiked = blog.likes.find((like) => like.userId === user?.id)
+    const blogIsLiked = user
+        ? blog.likes.find((like) => like.userId === user.id)
             ? true
-            : false;
-    } else {
-        user = null;
-        blogIsLiked = false;
-    }
+            : false
+        : false;
 
     return (
         <article

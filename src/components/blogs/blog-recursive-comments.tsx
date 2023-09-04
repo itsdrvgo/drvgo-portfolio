@@ -1,7 +1,7 @@
 import { defaultUserPFP } from "@/src/config/const";
-import { User } from "@/src/lib/drizzle/schema";
 import { cn, convertMstoTimeElapsed } from "@/src/lib/utils";
 import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
+import { User } from "@clerk/nextjs/dist/types/server";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Icons } from "../icons/icons";

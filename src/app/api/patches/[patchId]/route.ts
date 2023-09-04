@@ -141,9 +141,7 @@ async function verifyCurrentUserHasAccessToPatch() {
     const authUser = await currentUser();
     if (
         !authUser ||
-        !["owner", "admin"].includes(
-            authUser.privateMetadata.role as User["role"]
-        )
+        !["owner", "admin"].includes(authUser.privateMetadata.role)
     )
         return false;
     else return true;

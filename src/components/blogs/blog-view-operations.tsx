@@ -2,7 +2,7 @@
 
 import { env } from "@/env.mjs";
 import { defaultUserPFP } from "@/src/config/const";
-import { NewComment, User } from "@/src/lib/drizzle/schema";
+import { NewComment } from "@/src/lib/drizzle/schema";
 import {
     addNotification,
     cn,
@@ -11,6 +11,7 @@ import {
 } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { User } from "@clerk/nextjs/dist/types/server";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -276,11 +277,11 @@ function BlogViewOperations({
                         {user ? (
                             <>
                                 <AvatarImage
-                                    src={user.image ?? defaultUserPFP.src}
-                                    alt={user.username}
+                                    src={user.imageUrl ?? defaultUserPFP.src}
+                                    alt={user.username!}
                                 />
                                 <AvatarFallback>
-                                    {user.username[0].toUpperCase()}
+                                    {user.username![0].toUpperCase()}
                                 </AvatarFallback>
                             </>
                         ) : (

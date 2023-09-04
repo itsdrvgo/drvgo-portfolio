@@ -4,7 +4,7 @@ import {
     notifications,
     users,
 } from "@/src/lib/drizzle/schema";
-import { handleError } from "@/src/lib/utils";
+import { getAuthorizedUser, handleError } from "@/src/lib/utils";
 import { Notification } from "@/src/types/notification";
 import { ne } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -12,6 +12,13 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
+
+        const user = await getAuthorizedUser();
+        if (!user)
+            return NextResponse.json({
+                code: 403,
+                message: "Unauthorized",
+            });
 
         const { content, notifierId, props, title } = insertNotificationSchema
             .omit({
@@ -21,11 +28,11 @@ export async function POST(req: NextRequest) {
             })
             .parse(body);
 
-        const allUsers = await db.query.users.findMany({
+        const data = await db.query.users.findMany({
             where: ne(users.id, notifierId),
         });
 
-        const notificationsToInsert = allUsers.map((user) => ({
+        const notificationsToInsert = data.map((user) => ({
             id: crypto.randomUUID(),
             userId: user.id,
             content,

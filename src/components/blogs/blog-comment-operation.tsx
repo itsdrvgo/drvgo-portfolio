@@ -1,9 +1,10 @@
 "use client";
 
-import { NewComment, User } from "@/src/lib/drizzle/schema";
+import { NewComment } from "@/src/lib/drizzle/schema";
 import { addNotification } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, ExtendedComment } from "@/src/types";
+import { User } from "@clerk/nextjs/dist/types/server";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -180,7 +181,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialog>
-                {["admin", "owner"].includes(user.role) ? (
+                {["admin", "owner"].includes(user.privateMetadata.role) ? (
                     <DropdownMenu>
                         <DropdownMenuTrigger className="rounded-md border border-border p-1">
                             <Icons.moreVert className="h-4 w-4" />

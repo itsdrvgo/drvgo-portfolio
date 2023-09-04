@@ -1,24 +1,11 @@
 import { db } from "@/src/lib/drizzle";
-import {
-    insertPatchSchema,
-    NewPatch,
-    patches,
-    users,
-} from "@/src/lib/drizzle/schema";
-import { handleError } from "@/src/lib/utils";
-import { currentUser } from "@clerk/nextjs";
-import { desc, eq } from "drizzle-orm";
+import { insertPatchSchema, NewPatch, patches } from "@/src/lib/drizzle/schema";
+import { getAuthorizedUser, handleError } from "@/src/lib/utils";
+import { desc } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
     try {
-        const authUser = await currentUser();
-        if (!authUser)
-            return NextResponse.json({
-                code: 403,
-                message: "Unauthorized!",
-            });
-
         const data = await db.query.patches.findMany();
 
         return NextResponse.json({
@@ -35,17 +22,8 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
-        const authUser = await currentUser();
-        if (!authUser)
-            return NextResponse.json({
-                code: 403,
-                message: "Unauthorized!",
-            });
-
-        const dbUser = await db.query.users.findFirst({
-            where: eq(users.id, authUser.id),
-        });
-        if (!dbUser || ["user", "moderator"].includes(dbUser.role))
+        const user = await getAuthorizedUser();
+        if (!user)
             return NextResponse.json({
                 code: 403,
                 message: "Unauthorized",

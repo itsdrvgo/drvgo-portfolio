@@ -5,23 +5,15 @@ import {
     CardHeader,
     CardTitle,
 } from "@/src/components/ui/card";
-import { db } from "@/src/lib/drizzle";
-import { users } from "@/src/lib/drizzle/schema";
 import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { UsernameForm } from "../../forms/username-form";
 import DeleteAccount from "./delete-account";
 import UploadPFP from "./upload-pfp";
 
 async function ProfilePage({ className }: DefaultProps) {
-    const sessionUser = await currentUser();
-    if (!sessionUser) return redirect("/signin");
-
-    const user = await db.query.users.findFirst({
-        where: eq(users.id, sessionUser.id),
-    });
+    const user = await currentUser();
     if (!user) return redirect("/signin");
 
     return (

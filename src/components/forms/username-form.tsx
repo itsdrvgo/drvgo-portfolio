@@ -1,10 +1,10 @@
 "use client";
 
-import { User } from "@/src/lib/drizzle/schema";
 import { wait } from "@/src/lib/utils";
 import { UserUpdateData, userUpdateSchema } from "@/src/lib/validation/auth";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
+import { User } from "@clerk/nextjs/dist/types/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -35,7 +35,7 @@ function UsernameForm({ user }: PageProps) {
     const form = useForm<UserUpdateData>({
         resolver: zodResolver(userUpdateSchema),
         defaultValues: {
-            username: user.username,
+            username: user.username!,
         },
     });
 
