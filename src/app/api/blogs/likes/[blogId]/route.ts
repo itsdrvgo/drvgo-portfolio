@@ -1,8 +1,7 @@
 import { db } from "@/src/lib/drizzle";
-import { likes, users } from "@/src/lib/drizzle/schema";
-import { handleError } from "@/src/lib/utils";
+import { likes } from "@/src/lib/drizzle/schema";
+import { getAuthorizedUser, handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
-import { currentUser } from "@clerk/nextjs";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -10,16 +9,7 @@ export async function POST(req: NextRequest, context: BlogContext) {
     try {
         const { params } = blogContextSchema.parse(context);
 
-        const authUser = await currentUser();
-        if (!authUser)
-            return NextResponse.json({
-                code: 403,
-                message: "Unauthorized!",
-            });
-
-        const user = await db.query.users.findFirst({
-            where: eq(users.id, authUser.id),
-        });
+        const user = await getAuthorizedUser();
         if (!user)
             return NextResponse.json({
                 code: 403,
@@ -46,16 +36,7 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
     try {
         const { params } = blogContextSchema.parse(context);
 
-        const authUser = await currentUser();
-        if (!authUser)
-            return NextResponse.json({
-                code: 403,
-                message: "Unauthorized!",
-            });
-
-        const user = await db.query.users.findFirst({
-            where: eq(users.id, authUser.id),
-        });
+        const user = await getAuthorizedUser();
         if (!user)
             return NextResponse.json({
                 code: 403,

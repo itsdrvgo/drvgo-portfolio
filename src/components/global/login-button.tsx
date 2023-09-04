@@ -11,7 +11,7 @@ function LoginButton({ className }: DefaultProps) {
     return (
         <button
             className={cn(
-                "group flex h-9 items-center gap-2 rounded-md border border-border bg-accent-foreground px-3 py-2 font-semibold text-background",
+                "group flex h-9 items-center gap-2 rounded-md bg-accent-foreground px-3 py-2 text-sm font-semibold text-background",
                 className
             )}
             onClick={() => router.push("/signin")}

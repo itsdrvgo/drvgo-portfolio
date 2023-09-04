@@ -89,7 +89,7 @@ function MainNav({ items, children, className }: MainNavProps) {
                                             <p>{item.title}</p>
                                         </Link>
                                     ))}
-                                <Separator />
+                                <Separator className="bg-gray-700" />
                                 {items.subNav
                                     .filter((item) =>
                                         ["/privacy", "/tos"].includes(item.href)

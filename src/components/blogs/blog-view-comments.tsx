@@ -1,5 +1,5 @@
-import { User } from "@/src/lib/drizzle/schema";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { User } from "@clerk/nextjs/dist/types/server";
 import RecursiveComment from "./blog-recursive-comments";
 
 interface PageProps extends DefaultProps {

@@ -1,5 +1,6 @@
 "use client";
 
+import { NewBlog } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import axios from "axios";
@@ -9,13 +10,7 @@ import { Icons } from "../../icons/icons";
 import { ButtonProps, buttonVariants } from "../../ui/button";
 import { useToast } from "../../ui/use-toast";
 
-interface PostCreateButtonProps extends ButtonProps {}
-
-export function BlogCreateButton({
-    className,
-    variant,
-    ...props
-}: PostCreateButtonProps) {
+function BlogCreateButton({ className, variant, ...props }: ButtonProps) {
     const router = useRouter();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -23,16 +18,12 @@ export function BlogCreateButton({
     const handleBlogCreate = async () => {
         setIsLoading(true);
 
-        const data = {
+        const data: Pick<NewBlog, "title"> = {
             title: "Untitled Blog",
         };
 
         axios
-            .post<ResponseData>("/api/blogs", JSON.stringify(data), {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
+            .post<ResponseData>("/api/blogs", JSON.stringify(data))
             .then(({ data: resData }) => {
                 setIsLoading(false);
                 if (resData.code !== 200)
@@ -43,9 +34,17 @@ export function BlogCreateButton({
                     });
 
                 const blogId = JSON.parse(resData.data);
-
-                router.refresh();
                 router.push(`/admin/blogs/${blogId}`);
+            })
+            .catch((err) => {
+                console.log(err);
+
+                setIsLoading(false);
+                toast({
+                    title: "Oops!",
+                    description: "Something went wrong, try again later",
+                    variant: "destructive",
+                });
             });
     };
 
@@ -69,3 +68,5 @@ export function BlogCreateButton({
         </button>
     );
 }
+
+export default BlogCreateButton;

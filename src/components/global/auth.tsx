@@ -1,20 +1,12 @@
-import { db } from "@/src/lib/drizzle";
-import { users } from "@/src/lib/drizzle/schema";
-import { auth } from "@clerk/nextjs";
-import { eq } from "drizzle-orm";
+import { currentUser } from "@clerk/nextjs";
 import DropdownProfile from "./dropdown-profile";
 import LoginButton from "./login-button";
 
 async function Auth() {
-    const { userId } = auth();
-    if (!userId) return <LoginButton />;
+    const user = await currentUser();
+    if (!user) return <LoginButton />;
 
-    const dbUser = await db.query.users.findFirst({
-        where: eq(users.id, userId),
-    });
-    if (!dbUser) return <LoginButton />;
-
-    return <DropdownProfile user={dbUser} />;
+    return <DropdownProfile user={user} />;
 }
 
 export default Auth;

@@ -5,11 +5,11 @@ import {
     DropdownMenuSeparator,
 } from "@/src/components/ui/dropdown-menu";
 import { useToast } from "@/src/components/ui/use-toast";
-import { User } from "@/src/lib/drizzle/schema";
 import { checkRoleHierarchy, manageRole, wait } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
 import { useAuth } from "@clerk/nextjs";
+import { User } from "@clerk/nextjs/dist/types/server";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -40,21 +40,21 @@ function UsersOperation({ rowData }: PageProps) {
             fetchUser(rowData.id),
         ]);
 
-        if (!target)
+        if (!target || !user)
             return toast({
                 title: "Oops!",
                 description: "User doesn't exist",
                 variant: "destructive",
             });
 
-        if (user!.id === target.id)
+        if (user.id === target.id)
             return toast({
                 title: "Oops!",
                 description: "You cannot delete your own account",
                 variant: "destructive",
             });
 
-        if (!checkRoleHierarchy(user!, target))
+        if (!checkRoleHierarchy(user, target))
             return toast({
                 title: "Oops!",
                 description: "You don't have permission to execute this action",
@@ -94,21 +94,21 @@ function UsersOperation({ rowData }: PageProps) {
             fetchUser(rowData.id),
         ]);
 
-        if (!target)
+        if (!target || !user)
             return toast({
                 title: "Oops!",
                 description: "User doesn't exist",
                 variant: "destructive",
             });
 
-        if (!checkRoleHierarchy(user!, target))
+        if (!checkRoleHierarchy(user, target))
             return toast({
                 title: "Oops!",
                 description: "You don't have permission to execute this action",
                 variant: "destructive",
             });
 
-        const role = manageRole(target.role, action);
+        const role = manageRole(target.privateMetadata.role, action);
         if (!role)
             return toast({
                 title: "Oops!",
@@ -148,10 +148,10 @@ function UsersOperation({ rowData }: PageProps) {
 
     return (
         <>
-            {rowData.role !== "owner" ? (
+            {rowData.privateMetadata.role !== "owner" ? (
                 <>
                     <DropdownMenuSeparator />
-                    {rowData.role === "user" ? (
+                    {rowData.privateMetadata.role === "user" ? (
                         <DropdownMenuItem
                             className="cursor-pointer"
                             onSelect={() =>
@@ -160,7 +160,7 @@ function UsersOperation({ rowData }: PageProps) {
                         >
                             Promote
                         </DropdownMenuItem>
-                    ) : rowData.role === "moderator" ? (
+                    ) : rowData.privateMetadata.role === "moderator" ? (
                         <>
                             <DropdownMenuItem
                                 className="cursor-pointer"
@@ -179,7 +179,7 @@ function UsersOperation({ rowData }: PageProps) {
                                 Demote
                             </DropdownMenuItem>
                         </>
-                    ) : rowData.role === "admin" ? (
+                    ) : rowData.privateMetadata.role === "admin" ? (
                         <DropdownMenuItem
                             className="cursor-pointer"
                             onSelect={() =>

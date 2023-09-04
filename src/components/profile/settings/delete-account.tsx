@@ -1,9 +1,9 @@
 "use client";
 
-import { User } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
+import { User } from "@clerk/nextjs/dist/types/server";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

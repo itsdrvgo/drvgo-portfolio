@@ -1,4 +1,4 @@
-import { BlogCreateButton } from "@/src/components/admin/blogs/blog-create-button";
+import BlogCreateButton from "@/src/components/admin/blogs/blog-create-button";
 import BlogsPage from "@/src/components/admin/blogs/blogs-view-page";
 import BlogEditSkeleton from "@/src/components/skeletons/admin-blog-edit-skeleton";
 import { Metadata } from "next";

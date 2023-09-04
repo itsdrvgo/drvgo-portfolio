@@ -11,23 +11,18 @@ export async function GET(req: NextRequest, context: UserContext) {
     try {
         const { params } = userContextSchema.parse(context);
 
-        const [user, dbUser] = await Promise.all([
-            clerkClient.users.getUser(params.userId),
-            db.query.users.findFirst({
-                where: eq(users.id, params.userId),
-            }),
-        ]);
-
-        if (!user || !dbUser)
+        const user = await clerkClient.users.getUser(params.userId);
+        if (!user)
             return NextResponse.json({
                 code: 404,
                 message: "Account doesn't exist",
+                data: JSON.stringify(null),
             });
 
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(dbUser),
+            data: JSON.stringify(user),
         });
     } catch (err) {
         handleError(err);
@@ -35,26 +30,23 @@ export async function GET(req: NextRequest, context: UserContext) {
 }
 
 export async function PATCH(req: NextRequest, context: UserContext) {
-    const body = await req.json();
-
     try {
+        const body = await req.json();
+
         const { params } = userContextSchema.parse(context);
 
-        const [authUser, targetUser, dbUser] = await Promise.all([
+        const [user, target] = await Promise.all([
             currentUser(),
             clerkClient.users.getUser(params.userId),
-            db.query.users.findFirst({
-                where: eq(users.id, params.userId),
-            }),
         ]);
 
-        if (!authUser)
+        if (!user)
             return NextResponse.json({
                 code: 401,
                 message: "Unauthorized",
             });
 
-        if (!targetUser || !dbUser)
+        if (!target)
             return NextResponse.json({
                 code: 404,
                 message: "Account doesn't exist",
@@ -74,10 +66,10 @@ export async function PATCH(req: NextRequest, context: UserContext) {
                 });
         }
 
-        await clerkClient.users.updateUser(targetUser.id, {
-            username: username || dbUser.username,
+        await clerkClient.users.updateUser(target.id, {
+            username: username || user.username!,
             privateMetadata: {
-                role: role || dbUser.role,
+                role: role || user.privateMetadata.role,
             },
         });
 
@@ -96,9 +88,9 @@ export async function PUT(req: NextRequest, context: UserContext) {
         message: "Feature not implemented yet",
     });
 
-    // const body = await req.json();
-
     // try {
+    //     const body = await req.json();
+
     //     const authUser = await currentUser();
 
     //     if (!authUser)

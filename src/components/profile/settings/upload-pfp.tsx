@@ -1,7 +1,6 @@
 "use client";
 
 import { defaultUserPFP } from "@/src/config/const";
-import { User } from "@/src/lib/drizzle/schema";
 import { DefaultProps } from "@/src/types";
 import { useRef, useState } from "react";
 import Cropper, { ReactCropperElement } from "react-cropper";
@@ -23,6 +22,7 @@ import { useToast } from "../../ui/use-toast";
 import "cropperjs/dist/cropper.css";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
+import { User } from "@clerk/nextjs/dist/types/server";
 import axios from "axios";
 
 interface PageProps extends DefaultProps {
@@ -34,7 +34,7 @@ function UploadPFP({ user }: PageProps) {
 
     const cropperRef = useRef<ReactCropperElement>(null);
     const [isLoading, setLoading] = useState(false);
-    const [iconURL, setIconURL] = useState(user.image ?? defaultUserPFP.src);
+    const [iconURL, setIconURL] = useState(user.imageUrl ?? defaultUserPFP.src);
     const [open, setOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(iconURL);
     const [isDragActive, setIsDragActive] = useState(false);
@@ -125,9 +125,9 @@ function UploadPFP({ user }: PageProps) {
                         )}
                     >
                         <Avatar className="h-36 w-36 border border-gray-700">
-                            <AvatarImage src={iconURL} alt={user.username} />
+                            <AvatarImage src={iconURL} alt={user.username!} />
                             <AvatarFallback>
-                                {user.username[0].toUpperCase()}
+                                {user.username![0].toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
 
@@ -168,7 +168,7 @@ function UploadPFP({ user }: PageProps) {
                     <AlertDialogFooter>
                         <AlertDialogCancel
                             onClick={() =>
-                                setIconURL(user.image ?? defaultUserPFP.src)
+                                setIconURL(user.imageUrl ?? defaultUserPFP.src)
                             }
                         >
                             Cancel
@@ -182,7 +182,7 @@ function UploadPFP({ user }: PageProps) {
                 <Button
                     disabled={
                         isLoading ||
-                        iconURL === user.image ||
+                        iconURL === user.imageUrl ||
                         iconURL === defaultUserPFP.src
                     }
                     className="flex w-max items-center gap-2 bg-white hover:bg-gray-200"

@@ -21,8 +21,8 @@ export const homeMenuConfig: MenuConfig = {
     ],
     subNav: [
         {
-            title: "Change Log",
-            href: "/changelog",
+            title: "Patch Notes",
+            href: "/patches",
         },
         {
             title: "Contact Us",

@@ -13,7 +13,7 @@
         "db:studio": "drizzle-kit studio"
     },
     "dependencies": {
-        "@clerk/nextjs": "^4.23.3",
+        "@clerk/nextjs": "^4.23.4",
         "@clerk/types": "^3.50.0",
         "@hookform/resolvers": "^3.2.0",
         "@planetscale/database": "^1.11.0",

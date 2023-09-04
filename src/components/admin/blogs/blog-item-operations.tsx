@@ -32,7 +32,7 @@ interface PageProps extends DefaultProps {
     blog: ExtendedBlog;
 }
 
-export function BlogOperations({ blog, className }: PageProps) {
+function BlogOperations({ blog, className }: PageProps) {
     const router = useRouter();
     const { toast } = useToast();
 
@@ -236,3 +236,5 @@ export function BlogOperations({ blog, className }: PageProps) {
         </>
     );
 }
+
+export default BlogOperations;

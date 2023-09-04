@@ -10,9 +10,9 @@ import {
     DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { defaultUserPFP } from "@/src/config/const";
-import { User } from "@/src/lib/drizzle/schema";
 import { DefaultProps } from "@/src/types";
 import { useClerk } from "@clerk/nextjs";
+import { User } from "@clerk/nextjs/dist/types/server";
 import { useRouter } from "next/navigation";
 import { Icons } from "../icons/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -53,11 +53,11 @@ function DropdownProfile({ user, className }: PageProps) {
                 <DropdownMenuTrigger asChild>
                     <Avatar className="cursor-pointer border-2 border-slate-700">
                         <AvatarImage
-                            src={user.image ?? defaultUserPFP.src}
+                            src={user.imageUrl ?? defaultUserPFP.src}
                             alt="avatar"
                         />
                         <AvatarFallback>
-                            {user.username[0].toUpperCase()}
+                            {user.username![0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                 </DropdownMenuTrigger>
@@ -114,7 +114,7 @@ function DropdownProfile({ user, className }: PageProps) {
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
 
-                    {user.role !== "user" && (
+                    {user.privateMetadata.role !== "user" && (
                         <>
                             <DropdownMenuSeparator />
 

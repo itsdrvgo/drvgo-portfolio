@@ -3,13 +3,13 @@ import { cn, formatDate } from "@/src/lib/utils";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
 import Image from "next/image";
 import Link from "next/link";
-import { BlogOperations } from "./blog-item-operations";
+import BlogOperations from "./blog-item-operations";
 
 interface PageProps extends DefaultProps {
     blog: ExtendedBlog;
 }
 
-export function BlogItem({ blog, className }: PageProps) {
+function BlogItem({ blog, className }: PageProps) {
     return (
         <div
             className={cn(
@@ -34,7 +34,7 @@ export function BlogItem({ blog, className }: PageProps) {
                     </Link>
                     <div>
                         <p className="text-sm text-muted-foreground">
-                            {formatDate(blog.createdAt.toDateString())}
+                            {formatDate(blog.createdAt.getTime())}
                         </p>
                     </div>
                 </div>
@@ -46,3 +46,5 @@ export function BlogItem({ blog, className }: PageProps) {
         </div>
     );
 }
+
+export default BlogItem;

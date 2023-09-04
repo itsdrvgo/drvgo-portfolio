@@ -2,7 +2,6 @@ import { authMiddleware, clerkClient } from "@clerk/nextjs";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { NextResponse } from "next/server";
-import { User } from "./lib/drizzle/schema";
 
 const cache = new Map();
 
@@ -64,7 +63,7 @@ export default authMiddleware({
         if (!user.privateMetadata.role) {
             await clerkClient.users.updateUserMetadata(auth.userId, {
                 privateMetadata: {
-                    role: "user" satisfies User["role"],
+                    role: "user",
                 },
             });
         }

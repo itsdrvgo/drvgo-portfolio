@@ -53,6 +53,8 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
 
 export async function PATCH(req: NextRequest, context: BlogContext) {
     try {
+        const json = await req.json();
+
         const { params } = blogContextSchema.parse(context);
 
         if (!(await verifyCurrentUserHasAccessToBlog(params.blogId)))
@@ -61,7 +63,6 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                 message: "Unauthorized",
             });
 
-        const json = await req.json();
         const body = postPatchSchema.parse(json);
 
         switch (body.action) {
