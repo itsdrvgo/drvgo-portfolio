@@ -10,16 +10,16 @@ import {
     DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { defaultUserPFP } from "@/src/config/const";
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { useClerk } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/dist/types/server";
 import { useRouter } from "next/navigation";
 import { Icons } from "../icons/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useToast } from "../ui/use-toast";
 
 interface PageProps extends DefaultProps {
-    user: User;
+    user: ClerkUser;
 }
 
 function DropdownProfile({ user, className }: PageProps) {

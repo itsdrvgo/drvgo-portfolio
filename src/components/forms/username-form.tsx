@@ -3,8 +3,8 @@
 import { wait } from "@/src/lib/utils";
 import { UserUpdateData, userUpdateSchema } from "@/src/lib/validation/auth";
 import { ResponseData } from "@/src/lib/validation/response";
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
-import { User } from "@clerk/nextjs/dist/types/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ import { Input } from "../ui/input";
 import { useToast } from "../ui/use-toast";
 
 interface PageProps extends DefaultProps {
-    user: User;
+    user: ClerkUser;
 }
 
 function UsernameForm({ user }: PageProps) {

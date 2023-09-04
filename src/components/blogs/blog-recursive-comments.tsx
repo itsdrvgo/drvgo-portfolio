@@ -1,7 +1,7 @@
 import { defaultUserPFP } from "@/src/config/const";
 import { cn, convertMstoTimeElapsed } from "@/src/lib/utils";
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
-import { User } from "@clerk/nextjs/dist/types/server";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Icons } from "../icons/icons";
@@ -11,7 +11,7 @@ import BlogCommentViewerOperation from "./blog-comment-viewer-operations";
 
 interface PageProps extends DefaultProps {
     blog: ExtendedBlog;
-    user: User | null;
+    user: ClerkUser | null;
     params: {
         blogId: string;
     };

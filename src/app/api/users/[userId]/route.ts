@@ -11,7 +11,9 @@ export async function GET(req: NextRequest, context: UserContext) {
     try {
         const { params } = userContextSchema.parse(context);
 
-        const user = await clerkClient.users.getUser(params.userId);
+        const user = await db.query.users.findFirst({
+            where: eq(users.id, params.userId),
+        });
         if (!user)
             return NextResponse.json({
                 code: 404,
@@ -67,9 +69,9 @@ export async function PATCH(req: NextRequest, context: UserContext) {
         }
 
         await clerkClient.users.updateUser(target.id, {
-            username: username || user.username!,
+            username: username || target.username!,
             privateMetadata: {
-                role: role || user.privateMetadata.role,
+                role: role || target.privateMetadata.role,
             },
         });
 

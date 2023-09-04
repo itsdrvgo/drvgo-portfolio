@@ -5,11 +5,11 @@ import {
     DropdownMenuSeparator,
 } from "@/src/components/ui/dropdown-menu";
 import { useToast } from "@/src/components/ui/use-toast";
+import { User } from "@/src/lib/drizzle/schema";
 import { checkRoleHierarchy, manageRole, wait } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
 import { useAuth } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/dist/types/server";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -54,7 +54,7 @@ function UsersOperation({ rowData }: PageProps) {
                 variant: "destructive",
             });
 
-        if (!checkRoleHierarchy(user, target))
+        if (!checkRoleHierarchy(user.role, target.role))
             return toast({
                 title: "Oops!",
                 description: "You don't have permission to execute this action",
@@ -101,14 +101,14 @@ function UsersOperation({ rowData }: PageProps) {
                 variant: "destructive",
             });
 
-        if (!checkRoleHierarchy(user, target))
+        if (!checkRoleHierarchy(user.role, target.role))
             return toast({
                 title: "Oops!",
                 description: "You don't have permission to execute this action",
                 variant: "destructive",
             });
 
-        const role = manageRole(target.privateMetadata.role, action);
+        const role = manageRole(target.role, action);
         if (!role)
             return toast({
                 title: "Oops!",
@@ -148,10 +148,10 @@ function UsersOperation({ rowData }: PageProps) {
 
     return (
         <>
-            {rowData.privateMetadata.role !== "owner" ? (
+            {rowData.role !== "owner" ? (
                 <>
                     <DropdownMenuSeparator />
-                    {rowData.privateMetadata.role === "user" ? (
+                    {rowData.role === "user" ? (
                         <DropdownMenuItem
                             className="cursor-pointer"
                             onSelect={() =>
@@ -160,7 +160,7 @@ function UsersOperation({ rowData }: PageProps) {
                         >
                             Promote
                         </DropdownMenuItem>
-                    ) : rowData.privateMetadata.role === "moderator" ? (
+                    ) : rowData.role === "guest" ? (
                         <>
                             <DropdownMenuItem
                                 className="cursor-pointer"
@@ -179,7 +179,26 @@ function UsersOperation({ rowData }: PageProps) {
                                 Demote
                             </DropdownMenuItem>
                         </>
-                    ) : rowData.privateMetadata.role === "admin" ? (
+                    ) : rowData.role === "moderator" ? (
+                        <>
+                            <DropdownMenuItem
+                                className="cursor-pointer"
+                                onSelect={() =>
+                                    handleUserRole({ action: "promote" })
+                                }
+                            >
+                                Promote
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                className="cursor-pointer"
+                                onSelect={() =>
+                                    handleUserRole({ action: "demote" })
+                                }
+                            >
+                                Demote
+                            </DropdownMenuItem>
+                        </>
+                    ) : rowData.role === "admin" ? (
                         <DropdownMenuItem
                             className="cursor-pointer"
                             onSelect={() =>

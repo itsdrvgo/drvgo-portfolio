@@ -2,9 +2,9 @@ import { defaultUserPFP } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import { blogs, comments } from "@/src/lib/drizzle/schema";
 import { cn, formatDate } from "@/src/lib/utils";
+import { userSchema } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/dist/types/server";
 import { desc, eq } from "drizzle-orm";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,6 +53,8 @@ async function BlogViewPage({ params, className }: PageProps) {
     });
 
     if (!blog) notFound();
+
+    const userData = user ? userSchema.parse(user) : null;
 
     const blogIsLiked = user
         ? blog.likes.find((like) => like.userId === user.id)
@@ -214,7 +216,7 @@ async function BlogViewPage({ params, className }: PageProps) {
             <BlogViewOperations
                 params={params}
                 blog={blog}
-                user={user}
+                user={userData}
                 blogIsLiked={blogIsLiked}
             />
         </article>

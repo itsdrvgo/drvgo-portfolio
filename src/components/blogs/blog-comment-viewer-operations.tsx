@@ -4,8 +4,8 @@ import { defaultUserPFP } from "@/src/config/const";
 import { NewComment } from "@/src/lib/drizzle/schema";
 import { addNotification, cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
-import { User } from "@clerk/nextjs/dist/types/server";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,7 +17,7 @@ import { ToastAction } from "../ui/toast";
 import { useToast } from "../ui/use-toast";
 
 interface PageProps extends DefaultProps {
-    user: User | null;
+    user: ClerkUser | null;
     blog: ExtendedBlog;
     params: {
         blogId: string;

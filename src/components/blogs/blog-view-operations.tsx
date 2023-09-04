@@ -10,8 +10,8 @@ import {
     updateBlogViews,
 } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
-import { User } from "@clerk/nextjs/dist/types/server";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -27,7 +27,7 @@ import BlogViewComments from "./blog-view-comments";
 interface PageProps extends DefaultProps {
     params: { blogId: string };
     blog: ExtendedBlog;
-    user: User | null;
+    user: ClerkUser | null;
     blogIsLiked: boolean | false;
 }
 

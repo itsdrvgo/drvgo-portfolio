@@ -2,8 +2,8 @@
 
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
-import { User } from "@clerk/nextjs/dist/types/server";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -23,7 +23,7 @@ import { Button } from "../../ui/button";
 import { useToast } from "../../ui/use-toast";
 
 interface PageProps extends DefaultProps {
-    user: User;
+    user: ClerkUser;
 }
 
 function DeleteAccount({ user, className }: PageProps) {

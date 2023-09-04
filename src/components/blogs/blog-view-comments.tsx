@@ -1,10 +1,10 @@
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
-import { User } from "@clerk/nextjs/dist/types/server";
 import RecursiveComment from "./blog-recursive-comments";
 
 interface PageProps extends DefaultProps {
     blog: ExtendedBlog;
-    user: User | null;
+    user: ClerkUser | null;
     params: {
         blogId: string;
     };

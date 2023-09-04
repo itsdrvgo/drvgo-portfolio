@@ -3,8 +3,8 @@
 import { NewComment } from "@/src/lib/drizzle/schema";
 import { addNotification } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
-import { User } from "@clerk/nextjs/dist/types/server";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -40,7 +40,7 @@ import {
 import { useToast } from "../ui/use-toast";
 
 interface PageProps extends DefaultProps {
-    user: User;
+    user: ClerkUser;
     params: {
         blogId: string;
     };

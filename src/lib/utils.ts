@@ -1,5 +1,4 @@
 import { currentUser } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/dist/types/server";
 import axios, { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { NextResponse } from "next/server";
@@ -10,6 +9,7 @@ import { Notification } from "../types/notification";
 import { Blog } from "./drizzle/schema";
 import { UserUpdateData } from "./validation/auth";
 import { ResponseData } from "./validation/response";
+import { ClerkUser } from "./validation/user";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -74,16 +74,19 @@ export function shortenNumber(num: number): string {
     return formattedNum + units[unitIndex];
 }
 
-export function checkRoleHierarchy(user: User, target: User) {
-    const userRoleIndex = roleHierarchy.indexOf(user.privateMetadata.role);
-    const targetRoleIndex = roleHierarchy.indexOf(target.privateMetadata.role);
+export function checkRoleHierarchy(
+    userRole: ClerkUser["privateMetadata"]["role"],
+    targetRole: ClerkUser["privateMetadata"]["role"]
+) {
+    const userRoleIndex = roleHierarchy.indexOf(userRole);
+    const targetRoleIndex = roleHierarchy.indexOf(targetRole);
 
     if (userRoleIndex === -1 || targetRoleIndex === -1) {
         return false;
     }
 
-    if (user.privateMetadata.role === "owner") {
-        if (target.privateMetadata.role === "owner") return false;
+    if (userRole === "owner") {
+        if (targetRole === "owner") return false;
         return true;
     }
 
@@ -93,7 +96,7 @@ export function checkRoleHierarchy(user: User, target: User) {
 }
 
 export function manageRole(
-    role: User["privateMetadata"]["role"],
+    role: ClerkUser["privateMetadata"]["role"],
     action: string
 ): UserUpdateData["role"] {
     const roleIndex = roleHierarchy.indexOf(role);
