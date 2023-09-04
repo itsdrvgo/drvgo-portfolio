@@ -5,6 +5,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/src/components/ui/card";
+import { userSchema } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
@@ -15,6 +16,8 @@ import UploadPFP from "./upload-pfp";
 async function ProfilePage({ className }: DefaultProps) {
     const user = await currentUser();
     if (!user) return redirect("/signin");
+
+    const userData = userSchema.parse(user);
 
     return (
         <>
@@ -28,7 +31,7 @@ async function ProfilePage({ className }: DefaultProps) {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <UploadPFP user={user} />
+                    <UploadPFP user={userData} />
                 </CardContent>
             </Card>
 
@@ -43,7 +46,7 @@ async function ProfilePage({ className }: DefaultProps) {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <UsernameForm user={user} />
+                    <UsernameForm user={userData} />
                 </CardContent>
             </Card>
 
@@ -57,7 +60,7 @@ async function ProfilePage({ className }: DefaultProps) {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <DeleteAccount user={user} />
+                    <DeleteAccount user={userData} />
                 </CardContent>
             </Card>
         </>

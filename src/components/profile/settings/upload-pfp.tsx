@@ -22,11 +22,11 @@ import { useToast } from "../../ui/use-toast";
 import "cropperjs/dist/cropper.css";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
-import { User } from "@clerk/nextjs/dist/types/server";
+import { ClerkUser } from "@/src/lib/validation/user";
 import axios from "axios";
 
 interface PageProps extends DefaultProps {
-    user: User;
+    user: ClerkUser;
 }
 
 function UploadPFP({ user }: PageProps) {

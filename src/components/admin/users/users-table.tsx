@@ -19,8 +19,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/src/components/ui/table";
+import { User } from "@/src/lib/drizzle/schema";
 import { DefaultProps } from "@/src/types";
-import { User } from "@clerk/nextjs/dist/types/server";
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -122,9 +122,7 @@ export const columns: ColumnDef<User>[] = [
                         <DropdownMenuItem
                             className="cursor-pointer"
                             onClick={() =>
-                                navigator.clipboard.writeText(
-                                    rowData.emailAddresses[0].emailAddress
-                                )
+                                navigator.clipboard.writeText(rowData.email)
                             }
                         >
                             Copy Email ID
