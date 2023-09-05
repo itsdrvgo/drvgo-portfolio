@@ -1,15 +1,13 @@
-import { userSchema } from "@/src/lib/validation/user";
-import { currentUser } from "@clerk/nextjs";
+import { ClerkUser } from "@/src/lib/validation/user";
+import { DefaultProps } from "@/src/types";
 import DropdownProfile from "./dropdown-profile";
-import LoginButton from "./login-button";
 
-async function Auth() {
-    const user = await currentUser();
-    if (!user) return <LoginButton />;
+interface PageProps extends DefaultProps {
+    user: ClerkUser;
+}
 
-    const userData = userSchema.parse(user);
-
-    return <DropdownProfile user={userData} />;
+function Auth({ user }: PageProps) {
+    return <DropdownProfile user={user} />;
 }
 
 export default Auth;
