@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 };
 
 function Layout({ children }: RootLayoutProps) {
-    return { children };
+    return <>{children}</>;
 }
 
 export default Layout;
