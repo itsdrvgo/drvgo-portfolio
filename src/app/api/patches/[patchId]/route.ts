@@ -120,6 +120,7 @@ export async function PATCH(req: NextRequest, context: PatchContext) {
                             minor,
                             patch,
                             published,
+                            createdAt: new Date(),
                         })
                         .where(eq(patches.id, params.patchId));
 

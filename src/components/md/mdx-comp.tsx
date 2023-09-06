@@ -10,6 +10,7 @@ import { ReactMarkdownOptions } from "react-markdown/lib/react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
+import CopyButton from "../global/copy-button";
 import { Icons } from "../icons/icons";
 
 const components: Partial<
@@ -187,7 +188,7 @@ const components: Partial<
     pre: ({ className, ...props }) => (
         <pre
             className={cn(
-                "bg-code my-4 overflow-x-auto rounded-lg border p-4",
+                "my-4 overflow-x-auto rounded-lg border bg-code p-4",
                 className
             )}
             {...props}
@@ -218,16 +219,7 @@ const components: Partial<
                     {String(children).replace(/\n$/, "")}
                 </SyntaxHighlighter>
 
-                <button
-                    className="absolute right-2 top-2 rounded-md border border-gray-600 p-2 text-gray-500"
-                    onClick={() => {
-                        navigator.clipboard.writeText(
-                            String(children).replace(/\n$/, "")
-                        );
-                    }}
-                >
-                    <Icons.copy className="h-4 w-4" />
-                </button>
+                <CopyButton item={String(children).replace(/\n$/, "")} />
             </div>
         ) : (
             <code
