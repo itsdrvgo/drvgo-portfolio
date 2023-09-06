@@ -12,12 +12,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeKatex from "rehype-katex";
-import rehypePrettyCode from "rehype-pretty-code";
-import rehypeSlug from "rehype-slug";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
 import { UploadButton, UploadDropzone } from "../../global/uploadthing";
 import { Icons } from "../../icons/icons";
 import { Mdx } from "../../md/mdx-comp";
@@ -176,49 +170,7 @@ function BlogWriteUp({ data, author }: PageProps) {
                             </ol>
                         </div>
                     ) : null}
-                    <Mdx
-                        className="prose prose-lg max-w-full text-sm text-white md:text-base"
-                        remarkPlugins={[remarkGfm, remarkMath]}
-                        rehypePlugins={[
-                            rehypeKatex,
-                            rehypeSlug,
-                            [
-                                rehypePrettyCode,
-                                {
-                                    theme: "github-dark",
-                                    onVisitLine(node: any) {
-                                        if (node.children.length === 0) {
-                                            node.children = [
-                                                {
-                                                    type: "text",
-                                                    value: " ",
-                                                },
-                                            ];
-                                        }
-                                    },
-                                    onVisitHighlightedLine(node: any) {
-                                        node.properties.className.push(
-                                            "line--highlighted"
-                                        );
-                                    },
-                                    onVisitHighlightedWord(node: any) {
-                                        node.properties.className = [
-                                            "word--highlighted",
-                                        ];
-                                    },
-                                },
-                            ],
-                            [
-                                rehypeAutolinkHeadings,
-                                {
-                                    properties: {
-                                        className: ["subheading-anchor"],
-                                        ariaLabel: "Link to section",
-                                    },
-                                },
-                            ],
-                        ]}
-                    >
+                    <Mdx className="prose prose-lg max-w-full text-sm text-white md:text-base">
                         {blogContent}
                     </Mdx>
                     <Separator className="w-full" />
