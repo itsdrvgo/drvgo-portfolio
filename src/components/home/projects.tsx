@@ -1,5 +1,3 @@
-"use client";
-
 import { projectsConfig } from "@/src/config/projects";
 import { siteConfig } from "@/src/config/site";
 import { DefaultProps } from "@/src/types";

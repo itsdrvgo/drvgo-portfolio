@@ -1,3 +1,5 @@
+"use client";
+
 import About from "@/src/components/home/about";
 import Landing from "@/src/components/home/landing";
 import Newsletter from "@/src/components/home/newsletter";

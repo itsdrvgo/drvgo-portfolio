@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
