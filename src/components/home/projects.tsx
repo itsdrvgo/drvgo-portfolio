@@ -6,7 +6,6 @@ import { DefaultProps } from "@/src/types";
 import { motion, Variants } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "../ui/button";
 
 function Projects({ className }: DefaultProps) {
     const fadeInContainer: Variants = {

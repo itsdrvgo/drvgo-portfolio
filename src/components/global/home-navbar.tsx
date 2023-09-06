@@ -4,6 +4,7 @@ import { homeMenuConfig } from "@/src/config/menu";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import LoginButton from "./login-button";
 import { MainNav } from "./main-nav";
@@ -11,6 +12,7 @@ import { MainNav } from "./main-nav";
 function HomeNavbar({ className }: DefaultProps) {
     const [hidden, setHidden] = useState(false);
     const { scrollY } = useScroll();
+    const pathname = usePathname();
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         const previous = scrollY.getPrevious();
@@ -33,7 +35,8 @@ function HomeNavbar({ className }: DefaultProps) {
                 ease: "easeInOut",
             }}
             className={cn(
-                "sticky top-0 z-40 w-full border-b border-border bg-transparent backdrop-blur-sm",
+                "top-0 z-50 w-full bg-transparent backdrop-blur-sm",
+                pathname !== "/" ? "sticky border-b border-border" : "fixed",
                 className
             )}
         >
