@@ -16,7 +16,7 @@ function Page() {
                 fill
                 style={{ objectFit: "cover" }}
             />
-            <Landing className="mb-20 flex min-h-[calc(100vh-6rem)] items-center p-5 md:mb-0" />
+            <Landing className="relative h-screen w-full overflow-hidden" />
             <About className="mb-20 flex min-h-screen items-center p-5 md:mb-0" />
             <Skills className="mb-20 flex min-h-screen items-center p-5 md:mb-0" />
             <Projects className="mb-20 flex min-h-screen items-center p-5 md:mb-0" />

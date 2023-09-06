@@ -36,7 +36,7 @@ function About({ className }: DefaultProps) {
                 className="container grid max-w-[75rem] grid-cols-1 items-center gap-5 rounded-md bg-gradient-to-b from-transparent to-card backdrop-blur-sm md:grid-cols-2 md:gap-24 md:bg-gradient-to-r"
                 variants={fadeInContainer}
             >
-                <div className="hidden items-center justify-center md:visible md:flex">
+                <div className="flex items-center justify-center">
                     <Image src={DRVGOIcon} alt="DRVGO" />
                 </div>
                 <Card className="order-1 border-none bg-transparent p-0 pb-5 md:pt-10">

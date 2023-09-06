@@ -1,112 +1,168 @@
 "use client";
 
-import { DRVGOIcon } from "@/src/config/const";
+import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
-import { motion, Variants } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
-import { Icons } from "../icons/icons";
+import { motion, useScroll, useTransform, Variants } from "framer-motion";
+import React, { useRef } from "react";
 
 function Landing({ className }: DefaultProps) {
-    const fadeInContainer: Variants = {
+    const ref = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: ref,
+        offset: ["start start", "end start"],
+    });
+
+    const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+    const backgroundMountainY = useTransform(
+        scrollYProgress,
+        [0, 1],
+        ["0%", "50%"]
+    );
+
+    const textDiv = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+    const introText = useTransform(scrollYProgress, [0, 1], ["0%", "150%"]);
+    const introTextTitle = useTransform(
+        scrollYProgress,
+        [0, 1],
+        ["0%", "150%"]
+    );
+    const introTextUnderline = useTransform(
+        scrollYProgress,
+        [0, 1],
+        ["0%", "2000%"]
+    );
+    const descText = useTransform(scrollYProgress, [0, 1], ["0%", "400%"]);
+
+    const container: Variants = {
         hide: {
             opacity: 0,
         },
         show: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.2,
+                staggerChildren: 0.1,
+                duration: 0.5,
             },
         },
     };
 
-    const slideInItem: Variants = {
+    const item: Variants = {
         hide: {
             opacity: 0,
-            y: 100,
+            y: 200,
         },
         show: {
             opacity: 1,
             y: 0,
             transition: {
                 duration: 0.5,
+                ease: "easeInOut",
             },
         },
     };
 
     return (
-        <motion.section
-            className={className}
-            initial="hide"
-            animate="show"
-            variants={fadeInContainer}
+        <div
+            className={cn("flex items-center justify-center", className)}
+            ref={ref}
         >
             <motion.div
-                className="container flex max-w-[75rem] flex-col-reverse items-center justify-between gap-10 px-2 md:flex-row"
-                variants={slideInItem}
+                className="z-20 w-full bg-white/10 p-10 text-center backdrop-blur-sm"
+                style={{
+                    y: textDiv,
+                }}
+                variants={container}
+                initial="hide"
+                animate="show"
             >
-                <motion.div
-                    className="space-y-10 text-center md:text-left"
-                    variants={slideInItem}
+                <motion.p
+                    className="text-2xl font-bold text-white"
+                    style={{
+                        y: introText,
+                    }}
+                    variants={item}
                 >
-                    <motion.div className="flex flex-col items-center gap-2 md:items-start">
-                        <motion.p
-                            className="ml-1 text-xl font-semibold drop-shadow-lg md:text-2xl"
-                            variants={slideInItem}
-                        >
-                            Welcome to
-                        </motion.p>
-                        <motion.h1
-                            className="bg-gradient-to-r from-sky-300 to-blue-500 bg-clip-text text-5xl font-bold text-transparent drop-shadow-lg md:text-7xl"
-                            variants={slideInItem}
-                        >
-                            DRVGO
-                        </motion.h1>
-                        <motion.div
-                            className="mt-2 flex gap-1"
-                            variants={slideInItem}
-                        >
-                            <motion.div className="ml-1 h-2 w-20 rounded-md bg-blue-600" />
-                            <motion.div className="ml-1 h-2 w-8 rounded-md bg-accent-foreground" />
-                            <motion.div className="ml-1 h-2 w-2 rounded-md bg-white" />
-                        </motion.div>
-                    </motion.div>
+                    Welcome to
+                </motion.p>
 
-                    <motion.div className="ml-1 flex flex-col items-center gap-4 md:items-start">
-                        <motion.p
-                            className="flex w-11/12 flex-col items-center gap-2 text-2xl font-semibold drop-shadow-lg md:flex-row md:text-4xl"
-                            variants={slideInItem}
-                        >
-                            Designer, Full-Stack Developer & Musician
-                        </motion.p>
-                        <motion.p
-                            className="w-3/5 text-sm font-light text-gray-400 drop-shadow-lg md:text-base"
-                            variants={slideInItem}
-                        >
-                            I design and code simple but beautiful things & I
-                            love what I do!
-                        </motion.p>
-                    </motion.div>
+                <motion.h1
+                    className={cn(
+                        "text-7xl font-bold drop-shadow-xl md:text-9xl",
+                        "bg-gradient-to-r from-violet-200 to-pink-200 bg-clip-text text-transparent"
+                    )}
+                    style={{
+                        y: introTextTitle,
+                    }}
+                    variants={item}
+                >
+                    DRVGO
+                </motion.h1>
 
-                    <motion.div className="ml-1 flex justify-center md:justify-start">
-                        <Link
-                            href={"/#about"}
-                            className="flex w-max items-center justify-start gap-1 rounded-md border border-gray-600 p-3 px-6 text-accent-foreground transition-all ease-in-out hover:bg-accent-foreground hover:text-black"
-                        >
-                            <p className="cursor-pointer pl-1">Know More</p>
-                            <Icons.arrowRight className="h-4 w-4 cursor-pointer" />
-                        </Link>
-                    </motion.div>
+                <motion.div
+                    className="mt-5 flex items-center justify-center gap-1"
+                    style={{
+                        y: introTextUnderline,
+                    }}
+                    variants={item}
+                >
+                    <motion.div className="ml-1 h-2 w-2 rounded-md bg-white drop-shadow-xl" />
+                    <motion.div className="ml-1 h-2 w-8 rounded-md bg-accent-foreground drop-shadow-xl" />
+                    <motion.div className="ml-1 h-2 w-20 rounded-md bg-blue-600 drop-shadow-xl" />
+                    <motion.div className="ml-1 h-2 w-8 rounded-md bg-accent-foreground drop-shadow-xl" />
+                    <motion.div className="ml-1 h-2 w-2 rounded-md bg-white drop-shadow-xl" />
                 </motion.div>
-                <Image
-                    alt="DRVGO"
-                    src={DRVGOIcon}
-                    height={500}
-                    width={500}
-                    priority
-                />
+
+                <motion.p
+                    className="mt-10 text-base text-gray-300 md:mt-20 md:text-xl"
+                    style={{
+                        y: descText,
+                    }}
+                    variants={item}
+                >
+                    I design and code simple but beautiful things & I love what
+                    I do!
+                </motion.p>
             </motion.div>
-        </motion.section>
+
+            <motion.div
+                className="absolute inset-0 z-0"
+                style={{
+                    backgroundImage: `url(/mountain-full.png)`,
+                    backgroundPosition: "bottom",
+                    backgroundSize: "cover",
+                    y: backgroundY,
+                    opacity: 0.7,
+                }}
+            />
+            <motion.div
+                className="absolute inset-0 z-10"
+                style={{
+                    backgroundImage: `url(/bottom-half.png)`,
+                    backgroundPosition: "bottom",
+                    backgroundSize: "cover",
+                    y: backgroundMountainY,
+                    opacity: 0.8,
+                }}
+            />
+            <motion.div
+                className="absolute inset-0 z-30"
+                style={{
+                    backgroundImage: `url(/bottom-quarter.png)`,
+                    backgroundPosition: "bottom",
+                    backgroundSize: "cover",
+                    y: backgroundMountainY,
+                    opacity: 0.9,
+                }}
+            />
+            <div
+                className="absolute inset-0 z-40"
+                style={{
+                    backgroundImage: `url(/mountain-bottom.png)`,
+                    backgroundPosition: "bottom",
+                    backgroundSize: "cover",
+                }}
+            />
+        </div>
     );
 }
 
