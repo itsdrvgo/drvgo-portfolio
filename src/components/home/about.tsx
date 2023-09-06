@@ -1,5 +1,3 @@
-"use client";
-
 import { DRVGOIcon } from "@/src/config/const";
 import { DefaultProps } from "@/src/types";
 import { motion, Variants } from "framer-motion";

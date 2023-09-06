@@ -1,5 +1,3 @@
-"use client";
-
 import { DefaultProps } from "@/src/types";
 import { motion, Variants } from "framer-motion";
 import { Icons } from "../icons/icons";
