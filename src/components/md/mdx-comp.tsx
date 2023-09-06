@@ -1,10 +1,15 @@
+"use client";
+
 import { cn } from "@/src/lib/utils";
 import Link from "next/link";
-import { HTMLAttributes, ImgHTMLAttributes } from "react";
+import { HTMLAttributes, ImgHTMLAttributes, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { SpecialComponents } from "react-markdown/lib/ast-to-react";
 import { NormalComponents } from "react-markdown/lib/complex-types";
 import { ReactMarkdownOptions } from "react-markdown/lib/react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import remarkGfm from "remark-gfm";
 import { Icons } from "../icons/icons";
 
 const components: Partial<
@@ -182,23 +187,66 @@ const components: Partial<
     pre: ({ className, ...props }) => (
         <pre
             className={cn(
-                "my-4 overflow-x-auto rounded-lg border bg-black p-4",
+                "bg-code my-4 overflow-x-auto rounded-lg border p-4",
                 className
             )}
             {...props}
         />
     ),
-    code: ({ className, ...props }) => (
-        <code
-            className={cn(
-                "relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm",
-                className
-            )}
-            {...props}
-        />
-    ),
+    code: ({ className, node, inline, children, ...props }) => {
+        const match = /language-(\w+)/.exec(className || "");
+
+        return !inline && match ? (
+            <div className="relative">
+                <SyntaxHighlighter
+                    {...props}
+                    style={oneDark}
+                    language={match[1]}
+                    PreTag="div"
+                    customStyle={{
+                        border: "none",
+                        padding: "0.5rem",
+                        margin: 0,
+                    }}
+                    showLineNumbers
+                    lineNumberStyle={{
+                        minWidth: "2rem",
+                        paddingRight: "1rem",
+                        textAlign: "right",
+                    }}
+                >
+                    {String(children).replace(/\n$/, "")}
+                </SyntaxHighlighter>
+
+                <button
+                    className="absolute right-2 top-2 rounded-md border border-gray-600 p-2 text-gray-500"
+                    onClick={() => {
+                        navigator.clipboard.writeText(
+                            String(children).replace(/\n$/, "")
+                        );
+                    }}
+                >
+                    <Icons.copy className="h-4 w-4" />
+                </button>
+            </div>
+        ) : (
+            <code
+                {...props}
+                className={cn(
+                    "relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm",
+                    className
+                )}
+            >
+                {children}
+            </code>
+        );
+    },
 };
 
 export function Mdx({ children }: ReactMarkdownOptions) {
-    return <ReactMarkdown components={components}>{children}</ReactMarkdown>;
+    return (
+        <ReactMarkdown components={components} remarkPlugins={[remarkGfm]}>
+            {children}
+        </ReactMarkdown>
+    );
 }

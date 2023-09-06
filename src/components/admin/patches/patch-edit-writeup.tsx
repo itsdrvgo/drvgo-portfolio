@@ -10,8 +10,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import remarkGfm from "remark-gfm";
 import { Icons } from "../../icons/icons";
 import { Mdx } from "../../md/mdx-comp";
 import { Input } from "../../ui/input";
@@ -166,21 +164,7 @@ function PatchWriteUp({ data }: PageProps) {
                             </ol>
                         </div>
                     ) : null}
-                    <Mdx
-                        className="prose prose-lg max-w-full text-sm text-white md:text-base"
-                        remarkPlugins={[remarkGfm]}
-                        rehypePlugins={[
-                            [
-                                rehypeAutolinkHeadings,
-                                {
-                                    properties: {
-                                        className: ["subheading-anchor"],
-                                        ariaLabel: "Link to section",
-                                    },
-                                },
-                            ],
-                        ]}
-                    >
+                    <Mdx className="prose prose-lg max-w-full text-sm text-white md:text-base">
                         {patchDescription}
                     </Mdx>
                     <Separator className="w-full" />

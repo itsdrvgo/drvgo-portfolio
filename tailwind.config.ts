@@ -28,6 +28,7 @@ export default withUt({
                     DEFAULT: "var(--primary)",
                     foreground: "var(--primary-foreground)",
                 },
+                code: "var(--code)",
                 secondary: {
                     DEFAULT: "var(--secondary)",
                     foreground: "var(--secondary-foreground)",

@@ -9,12 +9,6 @@ import { desc, eq } from "drizzle-orm";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeKatex from "rehype-katex";
-import rehypePrettyCode from "rehype-pretty-code";
-import rehypeSlug from "rehype-slug";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
 import { Mdx } from "../md/mdx-comp";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
@@ -167,46 +161,7 @@ async function BlogViewPage({ params, className }: PageProps) {
                         </ol>
                     </div>
                 ) : null}
-                <Mdx
-                    className="prose prose-lg max-w-full text-sm text-white md:text-base"
-                    remarkPlugins={[remarkGfm, remarkMath]}
-                    rehypePlugins={[
-                        rehypeKatex,
-                        rehypeSlug,
-                        [
-                            rehypePrettyCode,
-                            {
-                                theme: "github-dark",
-                                onVisitLine(node: any) {
-                                    if (node.children.length === 0) {
-                                        node.children = [
-                                            { type: "text", value: " " },
-                                        ];
-                                    }
-                                },
-                                onVisitHighlightedLine(node: any) {
-                                    node.properties.className.push(
-                                        "line--highlighted"
-                                    );
-                                },
-                                onVisitHighlightedWord(node: any) {
-                                    node.properties.className = [
-                                        "word--highlighted",
-                                    ];
-                                },
-                            },
-                        ],
-                        [
-                            rehypeAutolinkHeadings,
-                            {
-                                properties: {
-                                    className: ["subheading-anchor"],
-                                    ariaLabel: "Link to section",
-                                },
-                            },
-                        ],
-                    ]}
-                >
+                <Mdx className="prose prose-lg max-w-full text-sm text-white md:text-base">
                     {blog.content!}
                 </Mdx>
             </div>

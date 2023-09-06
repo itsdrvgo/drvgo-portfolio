@@ -1,27 +1,24 @@
 import { db } from "@/src/lib/drizzle";
-import { notifications, users } from "@/src/lib/drizzle/schema";
+import { User, users } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
+import { ResponseData } from "@/src/lib/validation/response";
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { Notification } from "@/src/types/notification";
-import { currentUser } from "@clerk/nextjs";
-import { and, desc, eq } from "drizzle-orm";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { eq } from "drizzle-orm";
 import { Icons } from "../icons/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import NotificationBarContent from "./notification-bar-content";
 import NotificationMarkAllAsRead from "./notification-mark-all-read";
 
-async function NotificationBar({ className }: DefaultProps) {
-    const user = await currentUser();
-    if (!user) return null;
+interface PageProps extends DefaultProps {
+    user: ClerkUser;
+    data: Notification[];
+}
 
-    const data = (await db.query.notifications.findMany({
-        where: and(
-            eq(notifications.userId, user.id),
-            eq(notifications.read, false)
-        ),
-        orderBy: [desc(notifications.createdAt)],
-    })) as Notification[];
-
+function NotificationBar({ className, data, user }: PageProps) {
     return (
         <div className={cn("", className)}>
             <Popover>
@@ -49,16 +46,12 @@ async function NotificationBar({ className }: DefaultProps) {
                     >
                         {data.length > 0 ? (
                             data.map(async (notification) => {
-                                const notifier = await db.query.users.findFirst(
-                                    {
-                                        where: eq(
-                                            users.id,
-                                            notification.notifierId
-                                        ),
-                                    }
+                                const { data } = await axios.get<ResponseData>(
+                                    `/api/users/${notification.notifierId}`
                                 );
 
-                                if (!notifier) return null;
+                                if (data.code !== 200) return null;
+                                const notifier = JSON.parse(data.data) as User;
 
                                 return (
                                     <NotificationBarContent

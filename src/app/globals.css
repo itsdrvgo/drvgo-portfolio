@@ -9,6 +9,8 @@
         --background: hsl(0, 0%, 6%);
         --foreground: hsl(213 31% 91%);
 
+        --code: hsl(220, 13%, 18%);
+
         --muted: hsl(223 47% 11%);
         --muted-foreground: hsl(215.4 16.3% 56.9%);
 
@@ -51,12 +53,14 @@
 
 ::-webkit-scrollbar {
     width: 7px;
-    background-color: black;
+    background-color: var(--background);
+    border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 2px;
     background-color: white;
+    border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

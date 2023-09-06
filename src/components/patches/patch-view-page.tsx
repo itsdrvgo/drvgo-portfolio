@@ -5,8 +5,6 @@ import { DefaultProps } from "@/src/types";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import remarkGfm from "remark-gfm";
 import { Mdx } from "../md/mdx-comp";
 import { Separator } from "../ui/separator";
 
@@ -90,21 +88,7 @@ async function PatchViewPage({ params, className }: PageProps) {
                         </ol>
                     </div>
                 ) : null}
-                <Mdx
-                    className="prose prose-lg max-w-full text-sm text-white md:text-base"
-                    remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[
-                        [
-                            rehypeAutolinkHeadings,
-                            {
-                                properties: {
-                                    className: ["subheading-anchor"],
-                                    ariaLabel: "Link to section",
-                                },
-                            },
-                        ],
-                    ]}
-                >
+                <Mdx className="prose prose-lg max-w-full text-sm text-white md:text-base">
                     {patch.description!}
                 </Mdx>
             </div>
