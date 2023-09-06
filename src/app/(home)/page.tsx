@@ -26,26 +26,26 @@ function Page() {
                 }
 
                 if (prev < 10) {
-                    return prev + 1;
-                }
-
-                if (prev < 30) {
-                    return prev + 2;
-                }
-
-                if (prev < 50) {
-                    return prev + 3;
-                }
-
-                if (prev < 70) {
                     return prev + 4;
                 }
 
-                if (prev < 90) {
-                    return prev + 5;
+                if (prev < 30) {
+                    return prev + 8;
                 }
 
-                return prev + 6;
+                if (prev < 50) {
+                    return prev + 16;
+                }
+
+                if (prev < 70) {
+                    return prev + 20;
+                }
+
+                if (prev < 90) {
+                    return prev + 10;
+                }
+
+                return prev + 5;
             });
         }, 100);
 
