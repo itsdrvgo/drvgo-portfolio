@@ -10,13 +10,13 @@ export const blogCreateSchema = z.object({
 export const publishSchema = z.object({
     title: z
         .string()
-        .min(3, "Title must have at least 3 characters")
+        .min(1, "Title must have at least 1 characters")
         .max(128, "Title cannot exceed 128 characters"),
     description: z
         .string()
-        .min(10, "Description must have at least 10 characters")
+        .min(1, "Description must have at least 1 characters")
         .max(150, "Description cannot exceed 150 characters"),
-    content: z.string().min(10, "Content must have at least 10 characters"),
+    content: z.string().min(1, "Content must have at least 1 characters"),
     thumbnailUrl: z
         .string({ invalid_type_error: "Thumbnail cannot be empty" })
         .url(),
@@ -26,7 +26,7 @@ export const publishSchema = z.object({
 export const postPatchSchema = z.object({
     title: publishSchema.shape.title.optional(),
     description: publishSchema.shape.description.optional(),
-    content: publishSchema.shape.content.optional().nullable(),
+    content: z.string().optional().nullable(),
     thumbnailUrl: publishSchema.shape.thumbnailUrl.nullable(),
     published: publishSchema.shape.published,
     action: z.enum(["edit", "publish"]),
