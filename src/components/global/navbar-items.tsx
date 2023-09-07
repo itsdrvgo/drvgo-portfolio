@@ -3,8 +3,7 @@
 import { homeMenuConfig } from "@/src/config/menu";
 import { cn } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps } from "@/src/types";
-import { Notification } from "@/src/types/notification";
+import { DefaultProps, ExtendedNotification } from "@/src/types";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Suspense, useState } from "react";
 import { Icons } from "../icons/icons";
@@ -16,7 +15,7 @@ import NotificationBar from "./notification-bar";
 
 interface PageProps extends DefaultProps {
     user: ClerkUser;
-    notifications: Notification[];
+    notifications: ExtendedNotification[];
 }
 
 function NavbarItems({ className, user, notifications }: PageProps) {

@@ -25,20 +25,12 @@ function Page() {
                     return 100;
                 }
 
-                if (prev < 10) {
-                    return prev + 4;
-                }
-
-                if (prev < 30) {
-                    return prev + 8;
+                if (prev < 20) {
+                    return prev + 10;
                 }
 
                 if (prev < 50) {
-                    return prev + 16;
-                }
-
-                if (prev < 70) {
-                    return prev + 20;
+                    return prev + 30;
                 }
 
                 if (prev < 90) {

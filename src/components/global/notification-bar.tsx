@@ -1,13 +1,6 @@
-import { db } from "@/src/lib/drizzle";
-import { User, users } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps } from "@/src/types";
-import { Notification } from "@/src/types/notification";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { eq } from "drizzle-orm";
+import { DefaultProps, ExtendedNotification } from "@/src/types";
 import { Icons } from "../icons/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import NotificationBarContent from "./notification-bar-content";
@@ -15,7 +8,7 @@ import NotificationMarkAllAsRead from "./notification-mark-all-read";
 
 interface PageProps extends DefaultProps {
     user: ClerkUser;
-    data: Notification[];
+    data: ExtendedNotification[];
 }
 
 function NotificationBar({ className, data, user }: PageProps) {
@@ -46,17 +39,10 @@ function NotificationBar({ className, data, user }: PageProps) {
                     >
                         {data.length > 0 ? (
                             data.map(async (notification) => {
-                                const { data } = await axios.get<ResponseData>(
-                                    `/api/users/${notification.notifierId}`
-                                );
-
-                                if (data.code !== 200) return null;
-                                const notifier = JSON.parse(data.data) as User;
-
                                 return (
                                     <NotificationBarContent
                                         notification={notification}
-                                        notifier={notifier}
+                                        notifier={notification.notifier}
                                         key={notification.id}
                                     />
                                 );
