@@ -9,6 +9,7 @@ import {
     User,
     View,
 } from "../lib/drizzle/schema";
+import { Notification } from "./notification";
 
 export type NavItem = {
     title: string;
@@ -51,6 +52,10 @@ export interface ExtendedBlog extends Blog {
     views: View[];
     comments: ExtendedComment[];
     author: User;
+}
+
+export interface ExtendedNotification extends Notification {
+    notifier: User;
 }
 
 export type SvixHeaders = IncomingHttpHeaders & WebhookRequiredHeaders;

@@ -155,8 +155,8 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const notificationsRelations = relations(notifications, ({ one }) => ({
-    user: one(users, {
-        fields: [notifications.userId],
+    notifier: one(users, {
+        fields: [notifications.notifierId],
         references: [users.id],
     }),
 }));
