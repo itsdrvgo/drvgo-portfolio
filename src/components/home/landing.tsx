@@ -10,11 +10,20 @@ function Landing({ className }: DefaultProps) {
         offset: ["start start", "end start"],
     });
 
-    const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-    const backgroundMountainY = useTransform(
+    const backgroundFullY = useTransform(
+        scrollYProgress,
+        [0, 1],
+        ["0%", "100%"]
+    );
+    const backgroundHalfY = useTransform(
         scrollYProgress,
         [0, 1],
         ["0%", "50%"]
+    );
+    const backgroundQuarterY = useTransform(
+        scrollYProgress,
+        [0, 1],
+        ["0%", "25%"]
     );
 
     const textDiv = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
@@ -38,6 +47,7 @@ function Landing({ className }: DefaultProps) {
         show: {
             opacity: 1,
             transition: {
+                delay: 1.5,
                 staggerChildren: 0.1,
                 duration: 0.5,
             },
@@ -53,6 +63,7 @@ function Landing({ className }: DefaultProps) {
             opacity: 1,
             y: 0,
             transition: {
+                delay: 1.5,
                 duration: 0.5,
                 ease: "easeInOut",
             },
@@ -128,7 +139,7 @@ function Landing({ className }: DefaultProps) {
                     backgroundImage: `url(/mountain-full.png)`,
                     backgroundPosition: "bottom",
                     backgroundSize: "cover",
-                    y: backgroundY,
+                    y: backgroundFullY,
                     opacity: 0.7,
                 }}
             />
@@ -138,7 +149,7 @@ function Landing({ className }: DefaultProps) {
                     backgroundImage: `url(/bottom-half.png)`,
                     backgroundPosition: "bottom",
                     backgroundSize: "cover",
-                    y: backgroundMountainY,
+                    y: backgroundHalfY,
                     opacity: 0.8,
                 }}
             />
@@ -148,7 +159,7 @@ function Landing({ className }: DefaultProps) {
                     backgroundImage: `url(/bottom-quarter.png)`,
                     backgroundPosition: "bottom",
                     backgroundSize: "cover",
-                    y: backgroundMountainY,
+                    y: backgroundQuarterY,
                     opacity: 0.9,
                 }}
             />
