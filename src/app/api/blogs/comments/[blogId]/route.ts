@@ -1,7 +1,8 @@
 import { db } from "@/src/lib/drizzle";
 import { comments, insertCommentSchema } from "@/src/lib/drizzle/schema";
-import { getAuthorizedUser, handleError } from "@/src/lib/utils";
+import { handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
+import { currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest, context: BlogContext) {
             .parse(body);
         const { params } = blogContextSchema.parse(context);
 
-        const user = await getAuthorizedUser();
+        const user = await currentUser();
         if (!user)
             return NextResponse.json({
                 code: 403,
