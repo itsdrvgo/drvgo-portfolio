@@ -1,17 +1,18 @@
 import { db } from "@/src/lib/drizzle";
 import { commentLoves } from "@/src/lib/drizzle/schema";
-import { getAuthorizedUser, handleError } from "@/src/lib/utils";
+import { handleError } from "@/src/lib/utils";
 import {
     CommentContext,
     commentContextSchema,
 } from "@/src/lib/validation/route";
+import { currentUser } from "@clerk/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, context: CommentContext) {
     try {
         const { params } = commentContextSchema.parse(context);
 
-        const user = await getAuthorizedUser();
+        const user = await currentUser();
         if (!user)
             return NextResponse.json({
                 code: 403,

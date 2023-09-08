@@ -1,7 +1,8 @@
 import { db } from "@/src/lib/drizzle";
 import { likes } from "@/src/lib/drizzle/schema";
-import { getAuthorizedUser, handleError } from "@/src/lib/utils";
+import { handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
+import { currentUser } from "@clerk/nextjs";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest, context: BlogContext) {
     try {
         const { params } = blogContextSchema.parse(context);
 
-        const user = await getAuthorizedUser();
+        const user = await currentUser();
         if (!user)
             return NextResponse.json({
                 code: 403,
@@ -36,7 +37,7 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
     try {
         const { params } = blogContextSchema.parse(context);
 
-        const user = await getAuthorizedUser();
+        const user = await currentUser();
         if (!user)
             return NextResponse.json({
                 code: 403,
