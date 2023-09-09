@@ -1,3 +1,4 @@
+import { nextui } from "@nextui-org/react";
 import { withUt } from "uploadthing/tw";
 
 export default withUt({
@@ -7,6 +8,7 @@ export default withUt({
         "./components/**/*.{ts,tsx}",
         "./app/**/*.{ts,tsx}",
         "./src/**/*.{ts,tsx}",
+        "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
         container: {
@@ -78,5 +80,6 @@ export default withUt({
     plugins: [
         require("tailwindcss-animate"),
         require("@tailwindcss/typography"),
+        nextui(),
     ],
 });

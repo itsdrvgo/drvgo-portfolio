@@ -16,6 +16,7 @@
         "@clerk/nextjs": "^4.23.4",
         "@clerk/types": "^3.50.0",
         "@hookform/resolvers": "^3.2.0",
+        "@nextui-org/react": "^2.1.10",
         "@planetscale/database": "^1.11.0",
         "@radix-ui/react-accordion": "^1.1.2",
         "@radix-ui/react-alert-dialog": "^1.0.4",
