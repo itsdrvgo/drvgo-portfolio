@@ -1,11 +1,11 @@
 import "./globals.css";
 import { Toaster } from "@/src/components/ui/toaster";
 import { siteConfig } from "@/src/config/site";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
 import { Titillium_Web } from "next/font/google";
-import Provider from "../components/global/providers";
+import ClientProvider from "../components/providers/client";
+import ServerProvider from "../components/providers/server";
 import { cn } from "../lib/utils";
 import { RootLayoutProps } from "../types";
 
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
 
 function RootLayout({ children }: RootLayoutProps) {
     return (
-        <ClerkProvider>
+        <ServerProvider>
             <html lang="en" suppressHydrationWarning>
                 <head />
                 <body
@@ -72,12 +72,12 @@ function RootLayout({ children }: RootLayoutProps) {
                         "min-h-screen overflow-x-hidden scroll-smooth antialiased"
                     )}
                 >
-                    <Provider>{children}</Provider>
+                    <ClientProvider>{children}</ClientProvider>
                     <Analytics />
                     <Toaster />
                 </body>
             </html>
-        </ClerkProvider>
+        </ServerProvider>
     );
 }
 
