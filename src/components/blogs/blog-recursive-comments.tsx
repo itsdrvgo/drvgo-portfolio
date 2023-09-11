@@ -2,10 +2,10 @@ import { defaultUserPFP } from "@/src/config/const";
 import { cn, convertMstoTimeElapsed } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
+import { Avatar, Button } from "@nextui-org/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Icons } from "../icons/icons";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import BlogCommentOperation from "./blog-comment-operation";
 import BlogCommentViewerOperation from "./blog-comment-viewer-operations";
 
@@ -69,21 +69,17 @@ function RecursiveComment({
             id={id}
         >
             <div className={cn("flex items-start gap-4", isReply && "ml-12")}>
-                <Avatar
-                    className={cn(
-                        isReply
-                            ? "h-6 w-6 md:h-8 md:w-8"
-                            : "h-8 w-8 md:h-10 md:w-10"
-                    )}
-                >
-                    <AvatarImage
-                        src={comment.user.image ?? defaultUserPFP.src}
+                <div>
+                    <Avatar
+                        isBordered
+                        showFallback
+                        as="span"
                         alt={comment.user.username}
+                        size="md"
+                        src={comment.user.image ?? defaultUserPFP.src}
                     />
-                    <AvatarFallback>
-                        {comment.user.username.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                </Avatar>
+                </div>
+
                 <div className="w-full cursor-default space-y-2">
                     {isPinned && (
                         <div className="flex items-center gap-1 text-sm text-gray-500">
@@ -132,21 +128,23 @@ function RecursiveComment({
                     />
 
                     {replies.length > 0 && (
-                        <button
-                            className="flex items-center gap-1 rounded-full p-2 px-3 text-sm text-accent-foreground transition-all ease-in-out hover:bg-gray-800"
-                            onClick={() => setShowReply(!showReply)}
+                        <Button
+                            radius="full"
+                            size="sm"
+                            className="bg-transparent text-sm text-accent-foreground transition-all ease-in-out hover:bg-gray-800"
+                            onPress={() => setShowReply(!showReply)}
+                            startContent={
+                                <Icons.chevronDown
+                                    className={cn(
+                                        "h-4 w-4 transition-all ease-in-out",
+                                        showReply && "rotate-180"
+                                    )}
+                                />
+                            }
                         >
-                            <Icons.chevronDown
-                                className={cn(
-                                    "h-4 w-4 transition-all ease-in-out",
-                                    showReply && "rotate-180"
-                                )}
-                            />
-                            <p>
-                                {replies.length}{" "}
-                                {replies.length === 1 ? "reply" : "replies"}
-                            </p>
-                        </button>
+                            {replies.length}{" "}
+                            {replies.length === 1 ? "reply" : "replies"}
+                        </Button>
                     )}
                 </div>
                 {user ? (

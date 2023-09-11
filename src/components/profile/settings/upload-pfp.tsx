@@ -17,12 +17,12 @@ import {
     AlertDialogTitle,
 } from "../../ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
-import { Button } from "../../ui/button";
 import { useToast } from "../../ui/use-toast";
 import "cropperjs/dist/cropper.css";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
+import { Button } from "@nextui-org/react";
 import axios from "axios";
 
 interface PageProps extends DefaultProps {
@@ -136,8 +136,10 @@ function UploadPFP({ user }: PageProps) {
                         <p>Drag & drop your image here</p>
 
                         <Button
-                            variant={"secondary"}
-                            className="flex items-center gap-2 border border-gray-600"
+                            type="button"
+                            className="flex items-center gap-2 border"
+                            radius="sm"
+                            color="secondary"
                         >
                             <Icons.upload className="h-4 w-4" />
                             <p>Upload Image</p>
@@ -180,13 +182,16 @@ function UploadPFP({ user }: PageProps) {
 
             <div className="flex w-full items-center justify-center md:justify-start">
                 <Button
-                    disabled={
+                    type="submit"
+                    isDisabled={
                         isLoading ||
                         iconURL === user.imageUrl ||
                         iconURL === defaultUserPFP.src
                     }
-                    className="flex w-max items-center gap-2 bg-white hover:bg-gray-200"
+                    className="flex w-max items-center gap-2 font-semibold"
                     onClick={handlePFPUpdate}
+                    radius="sm"
+                    color="primary"
                 >
                     {isLoading ? (
                         <>

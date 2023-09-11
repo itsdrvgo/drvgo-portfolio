@@ -28,8 +28,7 @@ export default authMiddleware({
         "/courses(.*)",
         "/tos(.*)",
         "/privacy(.*)",
-        "/signin(.*)",
-        "/signup(.*)",
+        "/auth(.*)",
         "/sso-callback(.*)",
         "/verification(.*)",
         "/api/uploadthing(.*)",
@@ -41,7 +40,7 @@ export default authMiddleware({
         if (auth.isPublicRoute) {
             if (
                 auth.userId &&
-                ["/signin", "/signup", "/callback", "/verification"].includes(
+                ["/auth", "/callback", "/verification"].includes(
                     req.nextUrl.pathname
                 )
             ) {
@@ -54,7 +53,7 @@ export default authMiddleware({
         }
 
         if (!auth.userId) {
-            url.pathname = "/signin";
+            url.pathname = "/auth";
             return NextResponse.redirect(url);
         }
 

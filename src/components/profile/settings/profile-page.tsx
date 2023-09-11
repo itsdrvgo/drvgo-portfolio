@@ -15,7 +15,7 @@ import UploadPFP from "./upload-pfp";
 
 async function ProfilePage({ className }: DefaultProps) {
     const user = await currentUser();
-    if (!user) return redirect("/signin");
+    if (!user) return redirect("/auth");
 
     const userData = userSchema.parse(user);
 

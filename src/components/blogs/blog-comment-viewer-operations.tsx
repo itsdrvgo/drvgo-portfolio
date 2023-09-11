@@ -6,13 +6,12 @@ import { addNotification, cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
+import { Avatar, Button } from "@nextui-org/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Icons } from "../icons/icons";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
 import { ToastAction } from "../ui/toast";
 import { useToast } from "../ui/use-toast";
 
@@ -57,7 +56,7 @@ function BlogCommentViewerOperation({
                     <ToastAction
                         className="border-white focus:ring-0 focus:ring-offset-0"
                         altText="Login to continue"
-                        onClick={() => router.push("/signin")}
+                        onClick={() => router.push("/auth")}
                     >
                         Login
                     </ToastAction>
@@ -139,7 +138,7 @@ function BlogCommentViewerOperation({
                     <ToastAction
                         className="border-white focus:ring-0 focus:ring-offset-0"
                         altText="Login to continue"
-                        onClick={() => router.push("/signin")}
+                        onClick={() => router.push("/auth")}
                     >
                         Login
                     </ToastAction>
@@ -192,7 +191,7 @@ function BlogCommentViewerOperation({
 
     return (
         <>
-            <div className="flex items-center gap-4 text-gray-400">
+            <div className="flex items-center gap-2 text-gray-400">
                 <button
                     className="flex cursor-pointer items-center gap-2"
                     onClick={handleCommentLove}
@@ -205,49 +204,60 @@ function BlogCommentViewerOperation({
                     />
                     <p className="text-sm">{comment.loves.length}</p>
                 </button>
-                <button
-                    className="rounded-full p-1 px-3 text-sm transition-all ease-in-out hover:bg-slate-800"
-                    onClick={handleSetReply}
+                <Button
+                    size="sm"
+                    radius="full"
+                    className="bg-transparent text-sm transition-all ease-in-out hover:bg-gray-800"
+                    onPress={handleSetReply}
                 >
                     Reply
-                </button>
-            </div>{" "}
+                </Button>
+            </div>
+
             {isReplying && user ? (
                 <div className="flex flex-col items-center gap-4 pt-5">
-                    <div className="flex w-full gap-2">
-                        <Avatar className="h-6 w-6 md:h-8 md:w-8">
-                            <AvatarImage
-                                src={user.imageUrl ?? defaultUserPFP.src}
+                    <div className="flex w-full gap-4">
+                        <div>
+                            <Avatar
+                                isBordered
+                                showFallback
+                                as="span"
                                 alt={user.username!}
+                                size="sm"
+                                src={user.imageUrl || defaultUserPFP.src}
                             />
-                            <AvatarFallback>
-                                {user.username![0].toUpperCase()}
-                            </AvatarFallback>
-                        </Avatar>
+                        </div>
+
                         <TextareaAutosize
                             placeholder="Reply to this comment"
-                            className="min-h-[80px] w-full resize-none overflow-hidden rounded-sm border border-gray-700 bg-zinc-950 px-3 py-2 text-sm focus:border-white"
+                            className="min-h-[80px] w-full resize-none overflow-hidden rounded-sm border border-gray-700 bg-zinc-950 px-3 py-2 text-sm outline-none focus:border-slate-500"
                             disabled={isPosting}
                             value={reply}
                             onChange={(e) => setReply(e.target.value)}
                         />
                     </div>
+
                     <div className="flex w-full items-center justify-end gap-2">
                         <Button
-                            variant={"secondary"}
-                            size={"sm"}
-                            onClick={() => {
+                            size="sm"
+                            radius="sm"
+                            onPress={() => {
                                 setIsReplying(false);
                                 setReply("");
                             }}
-                            disabled={isPosting}
+                            isDisabled={isPosting}
+                            className="font-semibold"
                         >
                             Cancel
                         </Button>
+
                         <Button
-                            size={"sm"}
-                            onClick={handleReplyAdd}
-                            disabled={!isActive}
+                            size="sm"
+                            color="primary"
+                            onPress={handleReplyAdd}
+                            isDisabled={!isActive}
+                            className="font-semibold"
+                            radius="sm"
                         >
                             Reply
                         </Button>

@@ -1,18 +1,18 @@
 "use client";
 
-import { DefaultProps } from "@/src/types";
+import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
 
-function LoginButton({ className }: DefaultProps) {
+function LoginButton() {
     const router = useRouter();
 
     return (
         <Button
             aria-label="Login to continue"
-            variant="outline"
-            className="w-full"
-            onClick={() => router.push("/signin")}
+            color="secondary"
+            radius="sm"
+            className="border border-gray-700"
+            onPress={() => router.push("/auth")}
         >
             Login
         </Button>

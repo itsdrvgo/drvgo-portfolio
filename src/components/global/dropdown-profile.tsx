@@ -1,21 +1,20 @@
 "use client";
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/src/components/ui/dropdown-menu";
 import { defaultUserPFP } from "@/src/config/const";
+import { cn } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { useClerk } from "@clerk/nextjs";
+import {
+    Avatar,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownSection,
+    DropdownTrigger,
+} from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { Icons } from "../icons/icons";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useToast } from "../ui/use-toast";
 
 interface PageProps extends DefaultProps {
@@ -49,19 +48,103 @@ function DropdownProfile({ user, className }: PageProps) {
 
     return (
         <div className={className}>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Avatar className="cursor-pointer border-2 border-slate-700">
-                        <AvatarImage
-                            src={user.imageUrl ?? defaultUserPFP.src}
-                            alt="avatar"
-                        />
-                        <AvatarFallback>
-                            {user.username![0].toUpperCase()}
-                        </AvatarFallback>
-                    </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48">
+            <Dropdown
+                placement="bottom-end"
+                radius="sm"
+                shouldBlockScroll={true}
+            >
+                <DropdownTrigger>
+                    <Avatar
+                        isBordered
+                        showFallback
+                        as="button"
+                        className="transition-transform"
+                        size="sm"
+                        src={user.imageUrl || defaultUserPFP.src}
+                    />
+                </DropdownTrigger>
+
+                <DropdownMenu aria-label="Profile Actions" variant="flat">
+                    <DropdownItem key="profile" className="h-14 gap-2">
+                        <p className="font-semibold">Signed in as</p>
+                        <p className="font-semibold">@{user.username}</p>
+                    </DropdownItem>
+
+                    <DropdownSection title="Communications" showDivider>
+                        <DropdownItem
+                            key="messages"
+                            startContent={<Icons.comment className="h-4 w-4" />}
+                            onPress={() => router.push("/messages")}
+                        >
+                            Messages
+                        </DropdownItem>
+
+                        <DropdownItem
+                            key="support"
+                            startContent={<Icons.gem className="h-4 w-4" />}
+                            onPress={() => router.push("/support")}
+                        >
+                            Support
+                        </DropdownItem>
+                    </DropdownSection>
+
+                    <DropdownSection title="Profile" showDivider>
+                        <DropdownItem
+                            key="settings"
+                            startContent={
+                                <Icons.settings className="h-4 w-4" />
+                            }
+                            onPress={() => router.push("/profile/settings")}
+                        >
+                            Settings
+                        </DropdownItem>
+
+                        <DropdownItem
+                            key="preferences"
+                            startContent={<Icons.wrench className="h-4 w-4" />}
+                            onPress={() => router.push("/profile/preferences")}
+                        >
+                            Preferences
+                        </DropdownItem>
+
+                        <DropdownItem
+                            key="billing"
+                            startContent={<Icons.billing className="h-4 w-4" />}
+                            onPress={() => router.push("/profile/billing")}
+                        >
+                            Billing
+                        </DropdownItem>
+                    </DropdownSection>
+
+                    <DropdownSection
+                        title="Admin"
+                        showDivider
+                        className={cn(
+                            user.privateMetadata.role === "user" && "visible"
+                        )}
+                    >
+                        <DropdownItem
+                            key="admin"
+                            startContent={<Icons.shield className="h-4 w-4" />}
+                            onPress={() => router.push("/admin")}
+                        >
+                            Admin
+                        </DropdownItem>
+                    </DropdownSection>
+
+                    <DropdownSection title="Danger zone">
+                        <DropdownItem
+                            key="logout"
+                            color="danger"
+                            startContent={<Icons.logout className="h-4 w-4" />}
+                            onPress={handleLogout}
+                        >
+                            Log Out
+                        </DropdownItem>
+                    </DropdownSection>
+                </DropdownMenu>
+
+                {/* <DropdownMenuContent className="w-48">
                     <DropdownMenuLabel className="truncate">
                         @{user.username}
                     </DropdownMenuLabel>
@@ -139,8 +222,8 @@ function DropdownProfile({ user, className }: PageProps) {
                         <Icons.logout className="mr-2 h-4 w-4" />
                         <span>Log out</span>
                     </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuContent> */}
+            </Dropdown>
         </div>
     );
 }

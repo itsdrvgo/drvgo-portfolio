@@ -1,5 +1,5 @@
 import { DashFooter } from "@/src/components/global/dash-footer";
-import Navbar from "@/src/components/global/navbar";
+import Navbar from "@/src/components/global/navbar-dash";
 import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 

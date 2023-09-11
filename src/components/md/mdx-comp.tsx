@@ -2,7 +2,7 @@
 
 import { cn } from "@/src/lib/utils";
 import Link from "next/link";
-import { HTMLAttributes, ImgHTMLAttributes, useState } from "react";
+import { HTMLAttributes, ImgHTMLAttributes } from "react";
 import ReactMarkdown from "react-markdown";
 import { SpecialComponents } from "react-markdown/lib/ast-to-react";
 import { NormalComponents } from "react-markdown/lib/complex-types";
@@ -12,6 +12,7 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
 import CopyButton from "../global/copy-button";
 import { Icons } from "../icons/icons";
+import MdImage from "./mdx-image";
 
 const components: Partial<
     Omit<NormalComponents, keyof SpecialComponents> & SpecialComponents
@@ -148,12 +149,8 @@ const components: Partial<
         alt,
         ...props
     }: ImgHTMLAttributes<HTMLImageElement>) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-            className={cn("rounded-md border", className)}
-            alt={alt}
-            {...props}
-        />
+        // @ts-ignore
+        <MdImage alt={alt} {...props} />
     ),
     hr: ({ ...props }) => <hr className="my-4 md:my-8" {...props} />,
     table: ({ className, ...props }: HTMLAttributes<HTMLTableElement>) => (
@@ -225,7 +222,7 @@ const components: Partial<
             <code
                 {...props}
                 className={cn(
-                    "relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm",
+                    "relative rounded bg-gray-800 px-[0.3rem] py-[0.2rem] font-mono text-sm",
                     className
                 )}
             >

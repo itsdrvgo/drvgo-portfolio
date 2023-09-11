@@ -1,7 +1,7 @@
 "use client";
 
+import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
 
 function GoBackButton() {
     const router = useRouter();
@@ -10,10 +10,10 @@ function GoBackButton() {
         <div className="flex items-center">
             <Button
                 aria-label="Go back to the previous page"
-                variant="outline"
-                size="sm"
-                className="w-full"
-                onClick={() => router.back()}
+                color="secondary"
+                radius="sm"
+                className="border border-gray-700"
+                onPress={() => router.back()}
             >
                 Go back
             </Button>

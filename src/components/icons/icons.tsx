@@ -12,6 +12,7 @@ import {
     Bold,
     BookMarked,
     BookOpenCheck,
+    Bug,
     Cake,
     Check,
     CheckCircle,
@@ -22,6 +23,7 @@ import {
     Command,
     Component,
     Construction,
+    Copy,
     CreditCard,
     DollarSign,
     Eye,
@@ -96,13 +98,13 @@ import {
     Youtube,
     Zap,
     type IconNode as LucideIcon,
-    Copy,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
 
 export const Icons = {
     podcast: Podcast,
+    bug: Bug,
     gem: Gem,
     copy: Copy,
     wrench: Wrench,

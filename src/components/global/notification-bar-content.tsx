@@ -9,8 +9,8 @@ import {
 } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Notification } from "@/src/types/notification";
+import { Avatar } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useToast } from "../ui/use-toast";
 
 interface PageProps extends DefaultProps {
@@ -93,18 +93,18 @@ function NotificationBarContent({
         <div
             key={notification.id}
             className={cn(
-                "flex cursor-pointer items-center gap-4 rounded-md p-2 transition-all ease-in-out hover:bg-gray-800",
+                "grid cursor-pointer grid-flow-col items-center gap-4 rounded-md p-2 transition-all ease-in-out hover:bg-gray-800",
                 className
             )}
             onClick={handleNotificationClick}
         >
-            <Avatar>
-                <AvatarImage
-                    src={notifier.image ?? defaultUserPFP.src}
-                    alt={notifier?.username}
-                />
-                <AvatarFallback>{notifier.username[0]}</AvatarFallback>
-            </Avatar>
+            <Avatar
+                isBordered
+                showFallback
+                as="span"
+                size="md"
+                src={notifier.image || defaultUserPFP.src}
+            />
             <div className="space-y-2">
                 <p className="text-sm">
                     {notification.content} :{" "}

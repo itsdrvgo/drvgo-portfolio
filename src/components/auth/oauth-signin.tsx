@@ -6,9 +6,9 @@ import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { isClerkAPIResponseError, useSignIn } from "@clerk/nextjs";
 import { OAuthStrategy } from "@clerk/types";
+import { Button } from "@nextui-org/react";
 import { useState } from "react";
 import { Icons } from "../icons/icons";
-import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 
 interface OAuthProviders {
@@ -75,28 +75,33 @@ function OAuth({ className }: DefaultProps) {
 
     return (
         <div
-            className={cn("flex items-center justify-between gap-2", className)}
+            className={cn(
+                "flex w-full items-center justify-center gap-2",
+                className
+            )}
         >
-            {providers.map((provider, index) => {
+            {providers.map((provider) => {
                 const Icon = Icons[provider.icon];
 
                 return (
                     <Button
+                        fullWidth
                         aria-label={`Sign in with ${provider.name}`}
+                        radius="sm"
                         key={provider.provider}
-                        variant="outline"
-                        className="flex w-full items-center gap-2 bg-background"
-                        onClick={() => void handleLogin(provider.provider)}
-                        disabled={
+                        className="border bg-background"
+                        onPress={() => void handleLogin(provider.provider)}
+                        isDisabled={
                             isAuthLoading || isLoading === provider.provider
                         }
+                        startContent={
+                            isLoading !== provider.provider && (
+                                <Icon className="h-4 w-4" />
+                            )
+                        }
+                        isLoading={isLoading === provider.provider}
                     >
-                        {isLoading === provider.provider ? (
-                            <Icons.spinner className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Icon className="h-4 w-4" aria-hidden="true" />
-                        )}
-                        <p>{provider.name}</p>
+                        {provider.name}
                     </Button>
                 );
             })}

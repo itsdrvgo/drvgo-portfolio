@@ -12,14 +12,12 @@ import {
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { Avatar, Button, ButtonGroup, Divider } from "@nextui-org/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Icons } from "../icons/icons";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
 import { ToastAction } from "../ui/toast";
 import { useToast } from "../ui/use-toast";
 import BlogViewComments from "./blog-view-comments";
@@ -66,7 +64,7 @@ function BlogViewOperations({
                     <ToastAction
                         className="border-white focus:ring-0 focus:ring-offset-0"
                         altText="Login to continue"
-                        onClick={() => router.push("/signin")}
+                        onClick={() => router.push("/auth")}
                     >
                         Login
                     </ToastAction>
@@ -144,7 +142,7 @@ function BlogViewOperations({
                     <ToastAction
                         className="border-white focus:ring-0 focus:ring-offset-0"
                         altText="Login to continue"
-                        onClick={() => router.push("/signin")}
+                        onClick={() => router.push("/auth")}
                     >
                         Login
                     </ToastAction>
@@ -212,51 +210,45 @@ function BlogViewOperations({
 
     return (
         <>
-            <div
-                className={cn(
-                    "sticky bottom-10 flex items-center gap-4 rounded-full border border-border bg-white/5 p-3 px-5 backdrop-blur-sm",
-                    className
-                )}
-            >
-                <button
-                    className="flex items-center justify-center gap-2"
-                    onClick={handleLike}
+            <ButtonGroup className="sticky bottom-10 z-50">
+                <Button
+                    onPress={handleLike}
+                    className="border border-r-0 border-gray-500 bg-white/5 backdrop-blur-sm"
                 >
                     <Icons.heart
                         className={cn(
                             "h-4 w-4 transition-all ease-in-out",
                             isLiked
                                 ? "fill-red-500 text-red-500"
-                                : "fill-transparent text-gray-500"
+                                : "fill-transparent"
                         )}
                     />
                     {shortenNumber(blog.likes.length)}
-                </button>
+                </Button>
 
-                <Separator orientation="vertical" className="h-6 bg-gray-500" />
+                <Divider orientation="vertical" />
 
-                <button
-                    className="flex cursor-pointer items-center justify-center gap-2"
-                    onClick={() =>
+                <Button
+                    onPress={() =>
                         router.push(`/blogs/${params.blogId}#comment`)
                     }
+                    className="border border-x-0 border-gray-500 bg-white/5 backdrop-blur-sm"
                 >
                     <Icons.comment className="h-4 w-4" />
                     {shortenNumber(blog.comments.length)}
-                </button>
+                </Button>
 
-                <Separator orientation="vertical" className="h-6 bg-gray-500" />
+                <Divider orientation="vertical" />
 
-                <div className="flex cursor-pointer items-center justify-center gap-2">
+                <Button className="border border-x-0 border-gray-500 bg-white/5 backdrop-blur-sm">
                     <Icons.analytics className="h-4 w-4" />
                     {shortenNumber(blog.views.length)}
-                </div>
+                </Button>
 
-                <Separator orientation="vertical" className="h-6 bg-gray-500" />
+                <Divider orientation="vertical" />
 
-                <button
-                    className="flex cursor-pointer items-center justify-center gap-2"
-                    onClick={() => {
+                <Button
+                    onPress={() => {
                         navigator.clipboard.writeText(
                             env.NEXT_PUBLIC_APP_URL + "/blogs/" + params.blogId
                         );
@@ -264,36 +256,27 @@ function BlogViewOperations({
                             description: "Link has been copied to clipboard",
                         });
                     }}
+                    className="border border-l-0 border-gray-500 bg-white/5 backdrop-blur-sm"
                 >
                     <Icons.share className="h-4 w-4" />
                     Share
-                </button>
-            </div>
+                </Button>
+            </ButtonGroup>
 
             <div className="w-full space-y-6 pt-5">
                 <p className="text-2xl font-semibold md:text-3xl">Comments</p>
                 <div className="flex gap-4">
-                    <Avatar className="h-8 w-8 md:h-10 md:w-10">
-                        {user ? (
-                            <>
-                                <AvatarImage
-                                    src={user.imageUrl ?? defaultUserPFP.src}
-                                    alt={user.username!}
-                                />
-                                <AvatarFallback>
-                                    {user.username![0].toUpperCase()}
-                                </AvatarFallback>
-                            </>
-                        ) : (
-                            <>
-                                <AvatarImage
-                                    src={defaultUserPFP.src}
-                                    alt={"User"}
-                                />
-                                <AvatarFallback>{"D"}</AvatarFallback>
-                            </>
-                        )}
-                    </Avatar>
+                    <div>
+                        <Avatar
+                            isBordered
+                            showFallback
+                            as="span"
+                            alt={user?.username || "User"}
+                            size="md"
+                            src={user?.imageUrl || defaultUserPFP.src}
+                        />
+                    </div>
+
                     <div className="w-full space-y-2">
                         <p className="cursor-default text-sm md:text-base">
                             {user ? <>@{user.username}</> : <>@user</>}
@@ -307,22 +290,24 @@ function BlogViewOperations({
                                     : "You need to login in order to comment"
                             }
                             value={comment}
-                            className="min-h-[100px] w-full resize-none overflow-hidden rounded-sm border border-gray-700 bg-zinc-950 px-3 py-2 text-sm focus:border-white md:text-base"
+                            className="min-h-[100px] w-full resize-none overflow-hidden rounded-sm border border-gray-700 bg-zinc-950 px-3 py-2 text-sm outline-none focus:border-slate-500 md:text-base"
                             onChange={(e) => setComment(e.target.value)}
                         />
                         <div className="flex items-center justify-end gap-2">
                             <Button
-                                variant={"secondary"}
-                                size={"sm"}
-                                disabled={!isActive}
-                                onClick={() => setComment("")}
+                                radius="sm"
+                                isDisabled={!isActive}
+                                onPress={() => setComment("")}
+                                className="font-semibold"
                             >
                                 Cancel
                             </Button>
                             <Button
-                                size={"sm"}
-                                disabled={!isActive}
-                                onClick={addComment}
+                                isDisabled={!isActive}
+                                onPress={addComment}
+                                color="primary"
+                                radius="sm"
+                                className="font-semibold"
                             >
                                 Post
                             </Button>

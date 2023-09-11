@@ -1,7 +1,7 @@
 import { DefaultProps } from "@/src/types";
+import { Button, Input } from "@nextui-org/react";
 import { motion, Variants } from "framer-motion";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+// import { Input } from "../ui/input";
 import { useToast } from "../ui/use-toast";
 
 function Newsletter({ className }: DefaultProps) {
@@ -58,11 +58,18 @@ function Newsletter({ className }: DefaultProps) {
                     variants={fadeInContainer}
                 >
                     <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:gap-5">
-                        <Input className="h-9" />
+                        <Input
+                            placeholder="ryomensukuna@jjk.jp"
+                            radius="sm"
+                            variant="bordered"
+                            classNames={{
+                                inputWrapper: "bg-background",
+                            }}
+                        />
                         <Button
-                            variant={"destructive"}
-                            className="uppercase"
-                            size={"sm"}
+                            radius="sm"
+                            color="danger"
+                            className="bg-destructive uppercase"
                             onClick={handleNewsLetter}
                         >
                             Subscribe

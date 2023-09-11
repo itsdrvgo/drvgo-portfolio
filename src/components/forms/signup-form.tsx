@@ -5,11 +5,11 @@ import useAuthStore from "@/src/lib/store/auth";
 import { SignUpData, signupSchema } from "@/src/lib/validation/auth";
 import { isClerkAPIResponseError, useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Icons } from "../icons/icons";
-import { Button } from "../ui/button";
 import {
     Form,
     FormControl,
@@ -167,20 +167,14 @@ function SignUpForm() {
                     )}
                 />
                 <Button
-                    disabled={isAuthLoading}
-                    className="flex items-center gap-2 bg-white hover:bg-gray-200"
+                    className="font-semibold"
+                    type="submit"
+                    color="primary"
+                    radius="sm"
+                    isDisabled={isAuthLoading}
+                    isLoading={isAuthLoading}
                 >
-                    {isAuthLoading ? (
-                        <>
-                            <Icons.spinner
-                                className="h-4 w-4 animate-spin"
-                                aria-hidden="true"
-                            />
-                            <p>Signing Up</p>
-                        </>
-                    ) : (
-                        <p>Sign Up</p>
-                    )}
+                    {isAuthLoading ? <>Signing Up</> : <>Sign Up</>}
                 </Button>
             </form>
         </Form>
