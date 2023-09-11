@@ -1,6 +1,7 @@
 import { IncomingHttpHeaders } from "http";
 import { HTMLAttributes } from "react";
 import { WebhookRequiredHeaders } from "svix";
+import { Icons } from "../components/icons/icons";
 import {
     Blog,
     Comment,
@@ -13,8 +14,10 @@ import { Notification } from "./notification";
 
 export type NavItem = {
     title: string;
+    description?: string;
     href: string;
     disabled?: boolean;
+    icon?: keyof typeof Icons;
 };
 
 export type MainNavItem = NavItem;

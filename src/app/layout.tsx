@@ -64,18 +64,20 @@ export const metadata: Metadata = {
 function RootLayout({ children }: RootLayoutProps) {
     return (
         <ServerProvider>
-            <html lang="en" suppressHydrationWarning>
+            <html lang="en" suppressHydrationWarning className="dark">
                 <head />
-                <body
-                    className={cn(
-                        poppins.className,
-                        "min-h-screen overflow-x-hidden scroll-smooth antialiased"
-                    )}
-                >
-                    <ClientProvider>{children}</ClientProvider>
-                    <Analytics />
-                    <Toaster />
-                </body>
+                    <body
+                        className={cn(
+                            poppins.className,
+                            "min-h-screen overflow-x-hidden scroll-smooth antialiased"
+                        )}
+                        >
+                        <ClientProvider>
+                        {children}
+                </ClientProvider>
+                        <Analytics />
+                        <Toaster />
+                    </body>
             </html>
         </ServerProvider>
     );

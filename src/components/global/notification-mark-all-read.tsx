@@ -38,7 +38,7 @@ function NotificationMarkAllAsRead({ className, userId }: PageProps) {
     return (
         <div
             className={cn(
-                "absolute bottom-0 left-0 w-full cursor-pointer rounded-b-md border-t border-border bg-popover p-2 py-3 text-center text-sm",
+                "absolute bottom-0 left-0 w-full cursor-pointer rounded-b-md border-t border-border p-2 py-3 text-center text-sm",
                 className
             )}
             onClick={handleMarkAllAsRead}

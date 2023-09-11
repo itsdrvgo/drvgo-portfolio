@@ -6,12 +6,12 @@ import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@nextui-org/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Icons } from "../icons/icons";
-import { Button } from "../ui/button";
 import {
     Form,
     FormControl,
@@ -100,11 +100,14 @@ function UsernameForm({ user }: PageProps) {
                 />
                 <div className="flex w-full items-center justify-center md:justify-start">
                     <Button
-                        disabled={
+                        type="submit"
+                        isDisabled={
                             isLoading ||
                             form.getValues().username === user.username
                         }
-                        className="flex w-max items-center gap-2 bg-white hover:bg-gray-200"
+                        className="flex items-center gap-2 font-semibold"
+                        radius="sm"
+                        color="primary"
                     >
                         {isLoading ? (
                             <>

@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-    title: "Sign Up",
-    description: "Create a new account",
+    title: "Authentication",
+    description: "Sign in or sign up to DRVGO",
 };
 
 function Layout({ children }: RootLayoutProps) {

@@ -66,6 +66,32 @@ export const notifications = mysqlTable(
     })
 );
 
+export const projects = mysqlTable(
+    "projects",
+    {
+        id: varchar("id", { length: 191 }).notNull().primaryKey(),
+        name: varchar("name", { length: 191 }).notNull(),
+        description: varchar("description", { length: 500 }).notNull(),
+        requirements: longtext("requirements").notNull(),
+        purchaserId: varchar("purchaserId", { length: 191 }).notNull(),
+        price: int("price").default(0).notNull(),
+        createdAt: timestamp("created_at")
+            .default(sql`current_timestamp()`)
+            .notNull(),
+        deadline: timestamp("deadline"),
+        completed: boolean("completed").default(false).notNull(),
+        completedAt: timestamp("completed_at"),
+        rejected: boolean("rejected").default(false).notNull(),
+        rejectedAt: timestamp("rejected_at"),
+        rejectedReason: varchar("rejectedReason", { length: 191 }),
+        accepted: boolean("accepted").default(false).notNull(),
+        acceptedAt: timestamp("accepted_at"),
+    },
+    (project) => ({
+        purchaserIdIndex: index("purchaser_id_idx").on(project.purchaserId),
+    })
+);
+
 export const images = mysqlTable(
     "images",
     {
@@ -152,6 +178,14 @@ export const usersRelations = relations(users, ({ many }) => ({
     comments: many(comments),
     images: many(images),
     notifications: many(notifications),
+    projects: many(projects),
+}));
+
+export const projectsRelations = relations(projects, ({ one }) => ({
+    purchaser: one(users, {
+        fields: [projects.purchaserId],
+        references: [users.id],
+    }),
 }));
 
 export const notificationsRelations = relations(notifications, ({ one }) => ({
@@ -248,6 +282,9 @@ export type NewImage = InferModel<typeof images, "insert">;
 export type Patch = InferModel<typeof patches>;
 export type NewPatch = InferModel<typeof patches, "insert">;
 
+export type Project = InferModel<typeof projects>;
+export type NewProject = InferModel<typeof projects, "insert">;
+
 // ZOD SCHEMA
 
 export const insertUserSchema = createInsertSchema(users);
@@ -267,3 +304,5 @@ export const insertCommentLoveSchema = createInsertSchema(commentLoves);
 export const insertImageSchema = createInsertSchema(images);
 
 export const insertPatchSchema = createInsertSchema(patches);
+
+export const insertProjectSchema = createInsertSchema(projects);

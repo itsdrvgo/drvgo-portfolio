@@ -4,10 +4,10 @@ import { userSchema } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedNotification } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
 import { and, desc, eq } from "drizzle-orm";
-import HomeNavbar from "./home-navbar";
-import NavbarItems from "./navbar-items";
+import NavDashItems from "./navbar-dash-items";
+import HomeNavbar from "./navbar-home";
 
-async function Navbar({ className }: DefaultProps) {
+async function DashNavbar({ className }: DefaultProps) {
     const user = await currentUser();
     if (!user) return <HomeNavbar />;
 
@@ -24,7 +24,7 @@ async function Navbar({ className }: DefaultProps) {
 
     const userData = userSchema.parse(user);
 
-    return <NavbarItems user={userData} notifications={data} />;
+    return <NavDashItems user={userData} notifications={data} />;
 }
 
-export default Navbar;
+export default DashNavbar;

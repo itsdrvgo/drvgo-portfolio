@@ -1,11 +1,11 @@
 import { defaultBlogThumbnail } from "@/src/config/const";
 import { formatDate, shortenNumber } from "@/src/lib/utils";
 import { ExtendedBlog } from "@/src/types";
-import Image from "next/image";
+import { Card, CardBody, CardFooter, Divider, Image } from "@nextui-org/react";
+import NextImage from "next/image";
 import { useRouter } from "next/navigation";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 import { Icons } from "../icons/icons";
-import { Separator } from "../ui/separator";
 
 interface PageProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -17,73 +17,70 @@ function BlogItem({ blogId, blogData, ref }: PageProps) {
     const router = useRouter();
 
     return (
-        <div
-            key={blogId}
-            className={
-                "flex h-full flex-col items-center justify-between overflow-hidden rounded-md border border-gray-500"
-            }
-            ref={ref}
-        >
-            <div
-                className="cursor-pointer"
-                onClick={() => router.push(`/blogs/${blogId}`)}
+        <div key={blogId} ref={ref}>
+            <Card
+                radius="sm"
+                isPressable
+                className="h-full"
+                onPress={() => router.push(`/blogs/${blogId}`)}
             >
-                <Image
-                    src={
-                        blogData.find((x) => x.id === blogId)?.thumbnailUrl ??
-                        defaultBlogThumbnail.src
-                    }
-                    alt={blogId.toString()}
-                    width={500}
-                    height={500}
-                    className="aspect-video object-cover"
-                />
-                <div className="space-y-2 p-5 pb-2">
-                    <p className="font-semibold">
-                        {blogData.find((x) => x.id === blogId)?.title}
-                    </p>
+                <CardBody className="p-3">
+                    <Image
+                        as={NextImage}
+                        radius="sm"
+                        src={
+                            blogData.find((x) => x.id === blogId)
+                                ?.thumbnailUrl ?? defaultBlogThumbnail.src
+                        }
+                        isZoomed
+                        alt={blogId.toString()}
+                        width={500}
+                        height={500}
+                        className="aspect-video object-cover"
+                    />
+                </CardBody>
 
-                    <p className="text-sm text-muted-foreground">
-                        {formatDate(
-                            blogData
-                                .find((x) => x.id === blogId)
-                                ?.createdAt.getTime()!
-                        )}
-                    </p>
-                </div>
-            </div>
-
-            <div className="flex w-full flex-col items-center gap-2">
-                <Separator />
-
-                <div className="grid w-full cursor-default grid-cols-3 justify-items-stretch p-1 pb-3 text-sm text-gray-400">
-                    <div className="flex items-center justify-center gap-2">
-                        <Icons.heart
-                            className="h-4 w-4 cursor-pointer"
-                            onClick={() => router.push(`/blogs/${blogId}`)}
-                        />
-                        {shortenNumber(
-                            blogData.find((x) => x.id === blogId)?.likes.length!
-                        )}
+                <CardFooter className="flex flex-col items-start gap-4 px-4 text-start">
+                    <div className="space-y-2">
+                        <p className="font-semibold">
+                            {blogData.find((x) => x.id === blogId)?.title}
+                        </p>
+                        <p className="text-sm text-gray-400">
+                            {formatDate(
+                                blogData
+                                    .find((x) => x.id === blogId)
+                                    ?.createdAt.getTime()!
+                            )}
+                        </p>
                     </div>
-                    <button className="flex items-center justify-center gap-2">
-                        <Icons.comment
-                            className="h-4 w-4 cursor-pointer"
-                            onClick={() => router.push(`/blogs/${blogId}`)}
-                        />
-                        {shortenNumber(
-                            blogData.find((x) => x.id === blogId)?.comments
-                                .length!
-                        )}
-                    </button>
-                    <div className="flex items-center justify-center gap-2">
-                        <Icons.analytics className="h-4 w-4" />
-                        {shortenNumber(
-                            blogData.find((x) => x.id === blogId)?.views.length!
-                        )}
+
+                    <Divider />
+
+                    <div className="grid w-full grid-cols-3 justify-items-stretch text-sm text-gray-400">
+                        <div className="flex items-center justify-center gap-2">
+                            <Icons.heart className="h-4 w-4 cursor-pointer" />
+                            {shortenNumber(
+                                blogData.find((x) => x.id === blogId)?.likes
+                                    .length!
+                            )}
+                        </div>
+                        <div className="flex items-center justify-center gap-2">
+                            <Icons.comment className="h-4 w-4 cursor-pointer" />
+                            {shortenNumber(
+                                blogData.find((x) => x.id === blogId)?.comments
+                                    .length!
+                            )}
+                        </div>
+                        <div className="flex items-center justify-center gap-2">
+                            <Icons.analytics className="h-4 w-4" />
+                            {shortenNumber(
+                                blogData.find((x) => x.id === blogId)?.views
+                                    .length!
+                            )}
+                        </div>
                     </div>
-                </div>
-            </div>
+                </CardFooter>
+            </Card>
         </div>
     );
 }

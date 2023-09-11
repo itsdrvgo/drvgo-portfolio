@@ -4,8 +4,8 @@ import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Blogs",
-    description: "Read all the latest blogs",
+    title: "Start a Project",
+    description: "Start a project with DRVGO today!",
 };
 
 function Layout({ children }: RootLayoutProps) {

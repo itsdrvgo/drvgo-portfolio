@@ -1,15 +1,13 @@
 "use client";
 
 import { SiteFooter } from "@/src/components/global/footer";
-import HomeNavbar from "@/src/components/global/home-navbar";
+import HomeNavbar from "@/src/components/global/navbar-home";
 import About from "@/src/components/home/about";
 import Landing from "@/src/components/home/landing";
 import Newsletter from "@/src/components/home/newsletter";
 import Projects from "@/src/components/home/projects";
 import Skills from "@/src/components/home/skills";
-import { Stripes } from "@/src/config/const";
 import { cn } from "@/src/lib/utils";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
 function Page() {
@@ -68,14 +66,13 @@ function Page() {
             </div>
 
             <HomeNavbar />
-            <main className="flex-1">
-                <Image
-                    src={Stripes}
-                    alt="Stripes"
-                    className="absolute left-0 top-0 -z-10 opacity-50"
-                    fill
-                    style={{ objectFit: "cover" }}
-                />
+            <main
+                className="flex-1"
+                style={{
+                    backgroundImage: "url(/stripes.svg)",
+                    backgroundSize: "cover",
+                }}
+            >
                 <Landing className="relative h-screen w-full overflow-hidden" />
                 <About className="mb-20 flex min-h-screen items-center p-5 md:mb-0" />
                 <Skills className="mb-20 flex min-h-screen items-center p-5 md:mb-0" />

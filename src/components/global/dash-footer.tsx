@@ -1,9 +1,8 @@
-import { DRVGOIcon } from "@/src/config/const";
 import { siteConfig } from "@/src/config/site";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
-import Image from "next/image";
 import Link from "next/link";
+import DRVGOLogo from "./DRVGOLogo";
 
 function DashFooter({ className }: DefaultProps) {
     return (
@@ -14,7 +13,7 @@ function DashFooter({ className }: DefaultProps) {
             )}
         >
             <div className="flex w-full max-w-[75rem] flex-col items-center justify-between gap-7 md:flex-row">
-                <Image src={DRVGOIcon} alt="DRVGO" width={40} height={40} />
+                <DRVGOLogo height={40} width={40} />
                 <p className="text-sm">
                     Copyright © 2023{" "}
                     <Link

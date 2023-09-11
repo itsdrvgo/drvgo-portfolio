@@ -1,23 +1,16 @@
-import { defaultUserPFP } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import { blogs, comments } from "@/src/lib/drizzle/schema";
-import { cn, formatDate } from "@/src/lib/utils";
+import { cn } from "@/src/lib/utils";
 import { userSchema } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Mdx } from "../md/mdx-comp";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "../ui/tooltip";
+import BlogAuthor from "./blog-author";
+import BlogImage from "./blog-image";
 import BlogViewOperations from "./blog-view-operations";
 
 interface PageProps extends DefaultProps {
@@ -67,52 +60,12 @@ async function BlogViewPage({ params, className }: PageProps) {
                 <p className="text-xl font-bold md:text-5xl md:leading-tight">
                     {blog.title}
                 </p>
+
                 <Separator className="w-full" />
-                <div className="z-10 flex items-center gap-3 text-xs md:text-sm">
-                    <Avatar>
-                        <AvatarImage
-                            src={blog.author.image ?? defaultUserPFP.src}
-                            alt={blog.author.username}
-                        />
-                        <AvatarFallback>
-                            {blog.author.username[0].toUpperCase()}
-                        </AvatarFallback>
-                    </Avatar>
-                    <div className="space-y-1">
-                        <p>@{blog.author.username}</p>
-                        <div className="flex gap-1">
-                            <p className="text-gray-400">
-                                Published on{" "}
-                                {formatDate(blog.createdAt.getTime())}
-                            </p>
-                            {blog.updatedAt ? (
-                                <TooltipProvider delayDuration={0}>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <p className="text-gray-400">
-                                                (Updated)
-                                            </p>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>
-                                                {formatDate(
-                                                    blog.updatedAt.getTime()
-                                                )}
-                                            </p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            ) : null}
-                        </div>
-                    </div>
-                </div>
-                <Image
-                    src={blog.thumbnailUrl!}
-                    alt="thumbnail"
-                    width={1920}
-                    height={1080}
-                    className="rounded object-cover"
-                />
+
+                <BlogAuthor blog={blog} />
+                <BlogImage blog={blog} />
+
                 {blog.content?.split("\n").length! > 1 ? (
                     <div className="flex cursor-default flex-col gap-4 rounded-md border border-gray-400 bg-stone-950 p-5">
                         <p className="text-lg font-bold underline underline-offset-4 md:text-xl">

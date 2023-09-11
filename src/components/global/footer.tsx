@@ -1,10 +1,10 @@
-import { DRVGOIcon } from "@/src/config/const";
 import { siteConfig } from "@/src/config/site";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
-import Image from "next/image";
 import Link from "next/link";
 import { Icons } from "../icons/icons";
+import DRVGOLogo from "./DRVGOLogo";
+import { ProjectStartButton } from "./project-start-button";
 
 function SiteFooter({ className }: DefaultProps) {
     return (
@@ -23,18 +23,12 @@ function SiteFooter({ className }: DefaultProps) {
                     something unthinkable!
                 </p>
                 <div className="flex items-center justify-center md:justify-end">
-                    <Link
-                        href={"/support"}
-                        className="flex items-center gap-1 rounded-md bg-secondary p-2 px-3 transition-all ease-in-out hover:bg-gray-800"
-                    >
-                        <Icons.sparkles className="h-4 w-4" />
-                        <p>Let&apos;s go</p>
-                    </Link>
+                    <ProjectStartButton />
                 </div>
             </div>
 
             <div className="flex flex-col items-center justify-center gap-7">
-                <Image src={DRVGOIcon} alt="DRVGO" width={100} height={100} />
+                <DRVGOLogo width={100} height={100} />
                 <p className="w-60 text-center">
                     Learning, Coding & Bringing the best out of me.
                 </p>

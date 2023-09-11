@@ -2,11 +2,15 @@
 
 import { cn } from "@/src/lib/utils";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
+import {
+    Button,
+    Divider,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { Icons } from "../icons/icons";
-import { Button } from "../ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Separator } from "../ui/separator";
 
 interface PageProps extends DefaultProps {
     data: ExtendedBlog[];
@@ -18,30 +22,45 @@ function BlogNavItems({ className, data }: PageProps) {
     return (
         <div className="flex items-center justify-between">
             <Button
-                className="flex items-center gap-1 border border-gray-700 bg-background"
-                variant={"secondary"}
-                onClick={() => router.push("/blogs")}
+                radius="sm"
+                className="border border-gray-700 bg-background"
+                onPress={() => router.push("/blogs")}
+                startContent={<Icons.chevronLeft className="h-5 w-5" />}
             >
-                <Icons.chevronLeft className="h-5 w-5" />
-                <p>Go Back</p>
+                Go Back
             </Button>
 
-            <Popover>
-                <PopoverTrigger className="flex items-center gap-2 rounded-md border border-gray-700 p-2 px-4">
-                    <Icons.dashboard className="h-5 w-5" />
-                    <p className="text-sm">More Blogs</p>
+            <Popover
+                placement="bottom"
+                radius="sm"
+                classNames={{
+                    base: "w-72 max-h-96",
+                }}
+            >
+                <PopoverTrigger>
+                    <Button
+                        radius="sm"
+                        className="border border-gray-700 bg-background"
+                        startContent={<Icons.dashboard className="h-5 w-5" />}
+                    >
+                        More Blogs
+                    </Button>
                 </PopoverTrigger>
-
-                <PopoverContent className="ml-2">
-                    <h2 className="p-2 font-semibold uppercase">
+                <PopoverContent className="gap-2 pb-4 pt-2">
+                    <h2
+                        className={cn(
+                            "p-2 font-semibold uppercase",
+                            "text-center"
+                        )}
+                    >
                         People Also Like
                     </h2>
 
-                    <Separator className="mb-2" />
+                    <Divider />
 
                     <div
                         className={cn(
-                            "flex max-h-96 flex-col gap-2 overflow-y-scroll",
+                            "flex flex-col gap-2 overflow-y-scroll",
                             className
                         )}
                     >
@@ -49,9 +68,9 @@ function BlogNavItems({ className, data }: PageProps) {
                             data
                                 .sort((a, b) => b.likes.length - a.likes.length)
                                 .map((blog) => (
-                                    <div
+                                    <button
                                         key={blog.id}
-                                        className="cursor-pointer space-y-2 rounded-md p-4 transition-all ease-in-out hover:bg-gray-800"
+                                        className="space-y-2 rounded-md p-4 text-left transition-all ease-in-out hover:bg-gray-800"
                                         onClick={() =>
                                             router.push(`/blogs/${blog.id}`)
                                         }
@@ -74,7 +93,7 @@ function BlogNavItems({ className, data }: PageProps) {
                                                 <p>{blog.views.length}</p>
                                             </div>
                                         </div>
-                                    </div>
+                                    </button>
                                 ))
                         ) : (
                             <p className="p-1 text-sm text-gray-400">
