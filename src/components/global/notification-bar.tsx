@@ -21,23 +21,24 @@ function NotificationBar({ className, data, user }: PageProps) {
     return (
         <div className={cn("", className)}>
             <Popover showArrow={true} shouldBlockScroll={true} radius="sm">
-                <PopoverTrigger>
-                    <Button
-                        radius="sm"
-                        size="sm"
-                        isIconOnly
-                        type="button"
-                        variant="bordered"
-                    >
-                        <Badge
-                            isInvisible={data.length === 0}
-                            content={data.length > 50 ? "50+" : data.length}
-                            color="danger"
+                <Badge
+                    isInvisible={data.length === 0}
+                    content={data.length > 50 ? "50+" : data.length}
+                    color="danger"
+                    shape="circle"
+                >
+                    <PopoverTrigger>
+                        <Button
+                            radius="sm"
+                            size="sm"
+                            isIconOnly
+                            as="button"
+                            variant="bordered"
                         >
                             <Icons.notification className="h-4 w-4" />
-                        </Badge>
-                    </Button>
-                </PopoverTrigger>
+                        </Button>
+                    </PopoverTrigger>
+                </Badge>
 
                 <PopoverContent className="h-96 w-72 px-2">
                     <div className="relative h-full w-full p-2">
