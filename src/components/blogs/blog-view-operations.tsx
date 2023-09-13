@@ -86,7 +86,7 @@ function BlogViewOperations({
                     router.refresh();
                 })
                 .catch((err) => {
-                    console.log(err);
+                    console.error(err);
 
                     toast({
                         title: "Oops!",
@@ -108,7 +108,7 @@ function BlogViewOperations({
                     router.refresh();
                 })
                 .catch((err) => {
-                    console.log(err);
+                    console.error(err);
 
                     toast({
                         title: "Oops!",
@@ -198,7 +198,7 @@ function BlogViewOperations({
             })
             .catch((err) => {
                 setIsPosting(false);
-                console.log(err);
+                console.error(err);
 
                 toast({
                     title: "Oops!",

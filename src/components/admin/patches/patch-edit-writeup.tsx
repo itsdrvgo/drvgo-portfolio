@@ -74,7 +74,7 @@ function PatchWriteUp({ data }: PageProps) {
             })
             .catch((err) => {
                 setIsSaving(false);
-                console.log(err);
+                console.error(err);
 
                 toast({
                     title: "Oops!",

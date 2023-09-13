@@ -1,7 +1,10 @@
+"use client";
+
 import { defaultBlogThumbnail } from "@/src/config/const";
-import { cn, formatDate } from "@/src/lib/utils";
+import { formatDate } from "@/src/lib/utils";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
-import Image from "next/image";
+import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import NextImage from "next/image";
 import Link from "next/link";
 import BlogOperations from "./blog-item-operations";
 
@@ -11,39 +14,37 @@ interface PageProps extends DefaultProps {
 
 function BlogItem({ blog, className }: PageProps) {
     return (
-        <div
-            className={cn(
-                "flex flex-col items-center gap-2 overflow-hidden rounded-md border border-gray-500",
-                className
-            )}
-        >
-            <Image
-                src={blog.thumbnailUrl ?? defaultBlogThumbnail.src}
-                alt={blog.id.toString()}
-                width={500}
-                height={500}
-                className="aspect-video object-cover"
-            />
-            <div className="flex h-full w-full items-center justify-between p-5">
-                <div className="flex h-full basis-5/6 flex-col justify-between">
+        <Card radius="sm" isPressable className="h-full">
+            <CardBody className="p-3">
+                <Image
+                    as={NextImage}
+                    radius="sm"
+                    src={blog.thumbnailUrl ?? defaultBlogThumbnail.src}
+                    isZoomed
+                    alt={blog.id.toString()}
+                    width={500}
+                    height={500}
+                    className="aspect-video object-cover"
+                />
+            </CardBody>
+
+            <CardFooter className="flex items-center justify-between gap-2 px-4 text-left">
+                <div className="space-y-2">
                     <Link
                         href={`/admin/blogs/${blog.id}`}
                         className="font-semibold hover:underline"
                     >
                         {blog.title}
                     </Link>
-                    <div>
-                        <p className="text-sm text-muted-foreground">
-                            {formatDate(blog.createdAt.getTime())}
-                        </p>
-                    </div>
+
+                    <p className="text-sm text-gray-400">
+                        {formatDate(blog.createdAt.getTime())}
+                    </p>
                 </div>
-                <BlogOperations
-                    blog={blog}
-                    className="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-muted"
-                />
-            </div>
-        </div>
+
+                <BlogOperations blog={blog} />
+            </CardFooter>
+        </Card>
     );
 }
 

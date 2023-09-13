@@ -1,22 +1,28 @@
 "use client";
 
-import { defaultUserPFP } from "@/src/config/const";
 import { Blog, User } from "@/src/lib/drizzle/schema";
-import { cn, formatDate } from "@/src/lib/utils";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
+import {
+    Accordion,
+    AccordionItem,
+    Button,
+    ButtonGroup,
+    Image,
+    Input,
+    Textarea,
+} from "@nextui-org/react";
 import axios from "axios";
-import Image from "next/image";
+import NextImage from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import TextareaAutosize from "react-textarea-autosize";
-import { UploadButton, UploadDropzone } from "../../global/uploadthing";
+import BlogAuthor from "../../blogs/blog-author";
+import BlogImage from "../../blogs/blog-image";
+import { UploadDropzone } from "../../global/uploadthing";
 import { Icons } from "../../icons/icons";
 import { Mdx } from "../../md/mdx-comp";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
-import { Input } from "../../ui/input";
 import { Separator } from "../../ui/separator";
 import { useToast } from "../../ui/use-toast";
 
@@ -40,11 +46,6 @@ function BlogWriteUp({ data, author }: PageProps) {
         data.description ?? ""
     );
     const [thumbnailURL, setThumbnailURL] = useState(data.thumbnailUrl);
-
-    const [showTitle, setShowTitle] = useState(false);
-    const [showThumbnail, setShowThumbnail] = useState(false);
-    const [showDescription, setShowDescription] = useState(false);
-    const [showContent, setShowContent] = useState(false);
 
     const handleSave = () => {
         setIsSaving(true);
@@ -78,7 +79,7 @@ function BlogWriteUp({ data, author }: PageProps) {
             })
             .catch((err) => {
                 setIsSaving(false);
-                console.log(err);
+                console.error(err);
 
                 toast({
                     title: "Oops!",
@@ -95,32 +96,17 @@ function BlogWriteUp({ data, author }: PageProps) {
                     <p className="text-2xl font-bold md:text-5xl">
                         {blogTitle}
                     </p>
+
                     <Separator className="w-full" />
-                    <div className="flex items-center gap-3 text-xs md:text-sm">
-                        <Avatar>
-                            <AvatarImage
-                                src={author.image ?? defaultUserPFP.src}
-                                alt={author.username}
-                            />
-                            <AvatarFallback>
-                                {author.username[0].toUpperCase()}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p>@{author.username}</p>
-                            <p className="text-gray-400">
-                                Published on {formatDate(Date.now())}
-                            </p>
-                        </div>
-                    </div>
+
+                    <BlogAuthor
+                        authorName={author.username}
+                        createdAt={data.createdAt}
+                        image={author.image ?? undefined}
+                    />
+
                     {thumbnailURL ? (
-                        <Image
-                            src={thumbnailURL}
-                            alt="thumbnail"
-                            width={2000}
-                            height={2000}
-                            className="h-full w-full rounded"
-                        />
+                        <BlogImage imageUrl={thumbnailURL} />
                     ) : null}
                     {blogContent.split("\n").length! > 1 ? (
                         <div className="flex cursor-default flex-col gap-4 rounded-md border border-gray-400 bg-stone-950 p-5">
@@ -176,294 +162,176 @@ function BlogWriteUp({ data, author }: PageProps) {
                     <Separator className="w-full" />
                 </div>
             ) : (
-                <div className="mx-auto flex w-full flex-col gap-4">
-                    <div
-                        className={cn(
-                            "flex flex-col rounded-md border border-border bg-secondary p-5 transition-all ease-in-out",
-                            { "gap-4": showTitle },
-                            { "gap-0": !showTitle }
-                        )}
-                    >
-                        <button
-                            className="flex w-full items-center justify-between"
-                            onClick={() => setShowTitle(!showTitle)}
-                        >
-                            <p className="text-2xl font-bold">Title</p>
-                            <Icons.chevronDown
-                                className={cn(
-                                    "transition-all ease-in-out",
-                                    showTitle ? "rotate-180" : "rotate-0"
-                                )}
-                            />
-                        </button>
-                        <div
-                            className={cn(
-                                "w-full space-y-4 transition-all ease-in-out",
-                                { "max-h-full opacity-100": showTitle },
-                                {
-                                    "max-h-0 overflow-hidden opacity-0":
-                                        !showTitle,
-                                }
-                            )}
-                        >
-                            <Separator />
-                            <Input
-                                defaultValue={blogTitle}
-                                placeholder="Enter blog title"
-                                className="h-auto text-xl font-bold"
-                                onChange={(e) => setBlogTitle(e.target.value)}
-                            />
-                        </div>
-                    </div>
+                <Accordion
+                    variant="splitted"
+                    selectionMode="multiple"
+                    defaultExpandedKeys={[
+                        "title",
+                        "thumbnail",
+                        "description",
+                        "content",
+                    ]}
+                >
+                    <AccordionItem key="title" title="Title" aria-label="title">
+                        <Input
+                            radius="sm"
+                            variant="bordered"
+                            defaultValue={blogTitle}
+                            placeholder="Enter blog title"
+                            classNames={{
+                                inputWrapper: "bg-background",
+                            }}
+                            onValueChange={(value) => setBlogTitle(value)}
+                        />
+                    </AccordionItem>
 
-                    <div
-                        className={cn(
-                            "flex flex-col rounded-md border border-border bg-secondary p-5 transition-all ease-in-out",
-                            { "gap-4": showThumbnail },
-                            { "gap-0": !showThumbnail }
-                        )}
+                    <AccordionItem
+                        key="thumbnail"
+                        title="Thumbnail"
+                        aria-label="thumbnail"
                     >
-                        <button
-                            className="flex w-full items-center justify-between"
-                            onClick={() => setShowThumbnail(!showThumbnail)}
-                        >
-                            <p className="text-2xl font-bold">Thumbnail</p>
-                            <Icons.chevronDown
-                                className={cn(
-                                    "transition-all ease-in-out",
-                                    showThumbnail ? "rotate-180" : "rotate-0"
-                                )}
-                            />
-                        </button>
-                        <div
-                            className={cn(
-                                "w-full space-y-4 transition-all ease-in-out",
-                                { "max-h-full opacity-100": showThumbnail },
-                                {
-                                    "max-h-0 overflow-hidden opacity-0":
-                                        !showThumbnail,
-                                }
-                            )}
-                        >
-                            <Separator />
-                            {thumbnailURL ? (
-                                <div className="flex flex-col items-center gap-5">
-                                    <Image
-                                        src={thumbnailURL}
-                                        alt="thumbnail"
-                                        width={2000}
-                                        height={2000}
-                                        className="rounded"
-                                    />
-                                    <UploadButton
-                                        endpoint="blogThumbnail"
-                                        appearance={{
-                                            button: "ut-ready:bg-gray-950 bg-gray-900 text-secondary-foreground border border-gray-700 font-semibold",
-                                            allowedContent: "text-gray-400",
-                                        }}
-                                        content={{
-                                            button({ ready, isUploading }) {
-                                                return isUploading
-                                                    ? "Uploading..."
-                                                    : ready
-                                                    ? "Change Thumbnail"
-                                                    : "Loading...";
-                                            },
-                                        }}
-                                        onClientUploadComplete={(res) => {
-                                            if (!res)
-                                                return toast({
-                                                    title: "Oops!",
-                                                    description:
-                                                        "Error uploading your image",
-                                                    variant: "destructive",
-                                                });
-
-                                            setThumbnailURL(res[0].url);
-                                            toast({
-                                                description: "Upload complete",
-                                            });
-                                        }}
-                                        onUploadError={(error: Error) => {
-                                            toast({
-                                                title: "Oops!",
-                                                description: error.message,
-                                                variant: "destructive",
-                                            });
-                                        }}
-                                    />
-                                </div>
-                            ) : (
-                                <UploadDropzone
-                                    endpoint="blogThumbnail"
-                                    appearance={{
-                                        label: "text-xl font-semibold",
-                                        allowedContent: "text-base",
-                                        container:
-                                            "bg-background min-h-[300px]",
-                                        uploadIcon: "text-accent-foreground",
-                                        button: "ut-ready:bg-blue-800 ut-uploading:cursor-not-allowed bg-red-500",
-                                    }}
-                                    content={{
-                                        label({
-                                            isDragActive,
-                                            isUploading,
-                                            ready,
-                                        }) {
-                                            return isUploading
+                        <UploadDropzone
+                            endpoint="blogThumbnail"
+                            appearance={{
+                                label: "text-xl font-semibold",
+                                allowedContent: "text-base",
+                                uploadIcon: "text-accent-foreground",
+                                container({ isDragActive }) {
+                                    return `min-h-[250px] ${
+                                        isDragActive
+                                            ? "bg-sky-900"
+                                            : "bg-background"
+                                    } rounded-md border-gray-500 overflow-hidden`;
+                                },
+                            }}
+                            content={{
+                                label({ isUploading, ready }) {
+                                    return isUploading
+                                        ? "Uploading..."
+                                        : ready
+                                        ? "Drop your thumbnail here"
+                                        : "Please wait...";
+                                },
+                                uploadIcon() {
+                                    return (
+                                        thumbnailURL && (
+                                            <Image
+                                                as={NextImage}
+                                                radius="sm"
+                                                src={thumbnailURL}
+                                                alt="thumbnail"
+                                                width={2000}
+                                                height={2000}
+                                                className="rounded"
+                                            />
+                                        )
+                                    );
+                                },
+                                button({ ready, isUploading }) {
+                                    return (
+                                        <Button>
+                                            {isUploading
                                                 ? "Uploading..."
                                                 : ready
-                                                ? "Drop your thumbnail here"
-                                                : isDragActive
-                                                ? "Drop your thumbnail here"
-                                                : "Drag and drop your thumbnail here";
-                                        },
-                                    }}
-                                    onClientUploadComplete={(res) => {
-                                        if (!res)
-                                            return toast({
-                                                title: "Oops!",
-                                                description:
-                                                    "Error uploading your image",
-                                                variant: "destructive",
-                                            });
+                                                ? thumbnailURL
+                                                    ? "Change Thumbnail"
+                                                    : "Upload Thumbnail"
+                                                : "Loading..."}
+                                        </Button>
+                                    );
+                                },
+                            }}
+                            onClientUploadComplete={(res) => {
+                                if (!res)
+                                    return toast({
+                                        title: "Oops!",
+                                        description:
+                                            "Error uploading your image",
+                                        variant: "destructive",
+                                    });
 
-                                        setThumbnailURL(res[0].url);
-                                        toast({
-                                            description: "Upload complete",
-                                        });
-                                    }}
-                                    onUploadError={(error: Error) => {
-                                        toast({
-                                            title: "Oops!",
-                                            description: error.message,
-                                            variant: "destructive",
-                                        });
-                                    }}
-                                />
-                            )}
-                        </div>
-                    </div>
+                                setThumbnailURL(res[0].url);
+                                toast({
+                                    description: "Upload complete",
+                                });
+                            }}
+                            onUploadError={(error: Error) => {
+                                toast({
+                                    title: "Oops!",
+                                    description: error.message,
+                                    variant: "destructive",
+                                });
+                            }}
+                        />
+                    </AccordionItem>
 
-                    <div
-                        className={cn(
-                            "flex flex-col rounded-md border border-border bg-secondary p-5 transition-all ease-in-out",
-                            { "gap-4": showDescription },
-                            { "gap-0": !showDescription }
-                        )}
+                    <AccordionItem
+                        key="description"
+                        title="Description"
+                        aria-label="description"
                     >
-                        <button
-                            className="flex w-full items-center justify-between"
-                            onClick={() => setShowDescription(!showDescription)}
-                        >
-                            <p className="text-2xl font-bold">Description</p>
-                            <Icons.chevronDown
-                                className={cn(
-                                    "transition-all ease-in-out",
-                                    showDescription ? "rotate-180" : "rotate-0"
-                                )}
-                            />
-                        </button>
-                        <div
-                            className={cn(
-                                "w-full space-y-4 transition-all ease-in-out",
-                                { "max-h-full opacity-100": showDescription },
-                                {
-                                    "max-h-0 overflow-hidden opacity-0":
-                                        !showDescription,
-                                }
-                            )}
-                        >
-                            <Separator />
-                            <TextareaAutosize
-                                defaultValue={blogDescription}
-                                maxLength={150}
-                                minLength={3}
-                                placeholder="Enter the blog description in short"
-                                className="min-h-[100px] w-full resize-none rounded-sm border border-border bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-base"
-                                onChange={(e) =>
-                                    setBlogDescription(e.target.value)
-                                }
-                            />
-                        </div>
-                    </div>
+                        <Textarea
+                            radius="sm"
+                            variant="bordered"
+                            minRows={3}
+                            defaultValue={blogDescription}
+                            maxLength={150}
+                            minLength={3}
+                            placeholder="Enter the blog description in short"
+                            onValueChange={(value) => setBlogDescription(value)}
+                            classNames={{
+                                inputWrapper: "bg-background",
+                            }}
+                        />
+                    </AccordionItem>
 
-                    <div
-                        className={cn(
-                            "flex flex-col rounded-md border border-border bg-secondary p-5 transition-all ease-in-out",
-                            { "gap-4": showContent },
-                            { "gap-0": !showContent }
-                        )}
+                    <AccordionItem
+                        key="content"
+                        title="Content"
+                        aria-label="content"
                     >
-                        <button
-                            className="flex w-full items-center justify-between"
-                            onClick={() => setShowContent(!showContent)}
-                        >
-                            <p className="text-2xl font-bold">Content</p>
-                            <Icons.chevronDown
-                                className={cn(
-                                    "transition-all ease-in-out",
-                                    showContent ? "rotate-180" : "rotate-0"
-                                )}
-                            />
-                        </button>
-                        <div
-                            className={cn(
-                                "w-full space-y-4 transition-all ease-in-out",
-                                { "max-h-full opacity-100": showContent },
-                                {
-                                    "max-h-0 overflow-hidden opacity-0":
-                                        !showContent,
-                                }
-                            )}
-                        >
-                            <Separator />
-                            <TextareaAutosize
-                                autoFocus
-                                defaultValue={blogContent}
-                                placeholder="Enter the blog content"
-                                className="min-h-[300px] w-full resize-none rounded-sm border border-border bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-base"
-                                onChange={(e) => setBlogContent(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                </div>
+                        <Textarea
+                            radius="sm"
+                            variant="bordered"
+                            minRows={10}
+                            maxRows={400}
+                            defaultValue={blogContent}
+                            placeholder="Enter the blog content"
+                            onValueChange={(value) => setBlogContent(value)}
+                            classNames={{
+                                inputWrapper: "bg-background",
+                            }}
+                        />
+                    </AccordionItem>
+                </Accordion>
             )}
-            <div className="sticky bottom-10 flex w-auto items-center justify-center gap-3 rounded-full border border-gray-600 bg-card p-5 py-3">
-                <button
-                    onClick={handleSave}
-                    className="flex items-center gap-2 text-sm"
-                    disabled={isSaving}
-                >
-                    {isSaving ? (
-                        <Icons.spinner className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <Icons.document className="h-4 w-4" />
-                    )}
-                    <span>
-                        {data.published ? "Save & Publish" : "Save as Draft"}
-                    </span>
-                </button>
 
-                <Separator orientation="vertical" className="h-5 bg-gray-600" />
-
-                <button
-                    type="button"
-                    onClick={() => setPreviewEnable(!previewEnabled)}
-                    className="flex items-center gap-2 text-sm"
+            <ButtonGroup className="sticky bottom-10 z-50">
+                <Button
+                    onPress={handleSave}
+                    className="border border-r-0 border-gray-500 bg-white/30 backdrop-blur-sm"
+                    startContent={
+                        !isSaving && <Icons.document className="h-4 w-4" />
+                    }
+                    isLoading={isSaving}
                 >
-                    {isSaving ? (
-                        <Icons.spinner className="h-4 w-4 animate-spin" />
-                    ) : previewEnabled ? (
-                        <Icons.view className="h-4 w-4" />
-                    ) : (
-                        <Icons.hide className="h-4 w-4" />
-                    )}
-                    <span>
-                        {previewEnabled ? "Hide Preview" : "Show Preview"}
-                    </span>
-                </button>
-            </div>
+                    {data.published ? "Save & Publish" : "Save as Draft"}
+                </Button>
+
+                <Button
+                    onPress={() => setPreviewEnable(!previewEnabled)}
+                    className="border border-gray-500 bg-white/30 backdrop-blur-sm"
+                    startContent={
+                        previewEnabled ? (
+                            <Icons.hide className="h-4 w-4" />
+                        ) : (
+                            <Icons.view className="h-4 w-4" />
+                        )
+                    }
+                >
+                    {previewEnabled ? "Hide Preview" : "Show Preview"}
+                </Button>
+            </ButtonGroup>
         </div>
     );
 }

@@ -1,11 +1,12 @@
 "use client";
 
-import CanvasBlog from "@/public/canvas_blog_draw.jpg";
-import CanvasSocialMedia from "@/public/canvas_social_media.jpg";
-import CanvasCourse from "@/public/course_audio.jpeg";
-import CanvasUsers from "@/public/database_users.webp";
+import BlogCreation from "@/public/blog_creation.jpg";
+import CourseCreation from "@/public/course_creation.jpg";
+import PatchNotes from "@/public/patch_notes.jpg";
+import UsersPanel from "@/public/users_panel.jpg";
 import { DefaultProps } from "@/src/types";
-import Image, { StaticImageData } from "next/image";
+import { Card, Image } from "@nextui-org/react";
+import { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import { Icons } from "../icons/icons";
 
@@ -21,25 +22,25 @@ const adminTabItems: AdminTabItem[] = [
         name: "Blog Creation Tool",
         icon: "pencil",
         href: "/admin/blogs",
-        image: CanvasBlog,
+        image: BlogCreation,
     },
     {
         name: "Course Creation Tool",
         icon: "bookopencheck",
         href: "/admin/courses",
-        image: CanvasCourse,
+        image: CourseCreation,
     },
     {
         name: "Users Panel",
         icon: "users",
         href: "/admin/users",
-        image: CanvasUsers,
+        image: UsersPanel,
     },
     {
-        name: "Patch Note Creation Tool",
-        icon: "bookopencheck",
+        name: "Patch Creation Tool",
+        icon: "analytics",
         href: "/admin/patches",
-        image: CanvasSocialMedia,
+        image: PatchNotes,
     },
 ];
 
@@ -52,23 +53,25 @@ function AdminButtons({ className }: DefaultProps) {
                 const Icon = Icons[item.icon];
 
                 return (
-                    <div
+                    <Card
                         key={item.name}
-                        className="group relative h-52 cursor-pointer overflow-hidden rounded-lg border border-white bg-zinc-800 p-5"
-                        onClick={() => router.push(item.href)}
+                        isPressable
+                        classNames={{
+                            base: "h-52 border",
+                        }}
+                        radius="sm"
+                        onPress={() => router.push(item.href)}
                     >
                         <Image
-                            src={item.image}
                             alt={item.name}
-                            className="opacity-30 transition-all ease-in-out group-hover:opacity-20"
-                            fill
-                            style={{ objectFit: "cover" }}
+                            src={item.image.src}
+                            className="z-0 object-cover"
                         />
-                        <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 font-semibold drop-shadow-xl">
-                            <Icon />
+                        <div className="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-2 bg-white/10 py-5 backdrop-blur-sm">
+                            <Icon className="h-5 w-5" />
                             <p>{item.name}</p>
                         </div>
-                    </div>
+                    </Card>
                 );
             })}
         </div>

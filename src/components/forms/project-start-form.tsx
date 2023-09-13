@@ -58,7 +58,7 @@ function ProjectStartForm() {
         } catch (err) {
             setIsLoading(false);
 
-            console.log(err);
+            console.error(err);
             toast({
                 title: "Oops!",
                 description: "Something went wrong, try again later.",

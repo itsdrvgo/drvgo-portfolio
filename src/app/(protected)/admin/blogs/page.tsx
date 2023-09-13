@@ -18,8 +18,10 @@ function Page() {
                         <p className="text-4xl font-bold">Blogs</p>
                         <p className="text-gray-400">Create and manage blogs</p>
                     </div>
-                    <BlogCreateButton />
+
+                    <BlogCreateButton color="primary" />
                 </div>
+
                 <Suspense
                     fallback={
                         <div className="grid grid-cols-1 justify-items-stretch gap-5 md:grid-cols-3">

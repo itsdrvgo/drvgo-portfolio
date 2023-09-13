@@ -8,6 +8,7 @@ const nextConfig = {
             "i.scdn.co",
             "uploadthing.com",
             "images.clerk.dev",
+            "utfs.io",
         ],
     },
     reactStrictMode: true,

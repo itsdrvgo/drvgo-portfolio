@@ -2,14 +2,23 @@
 
 import { defaultUserPFP } from "@/src/config/const";
 import { cn, formatDate } from "@/src/lib/utils";
-import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { DefaultProps } from "@/src/types";
 import { Avatar, Tooltip } from "@nextui-org/react";
 
 interface PageProps extends DefaultProps {
-    blog: ExtendedBlog;
+    image?: string;
+    authorName: string;
+    createdAt: Date;
+    updatedAt?: Date;
 }
 
-function BlogAuthor({ blog, className }: PageProps) {
+function BlogAuthor({
+    className,
+    image,
+    authorName,
+    createdAt,
+    updatedAt,
+}: PageProps) {
     return (
         <div className={cn("flex items-center gap-4", className)}>
             <Avatar
@@ -17,17 +26,17 @@ function BlogAuthor({ blog, className }: PageProps) {
                 showFallback
                 as="span"
                 size="md"
-                src={blog.author.image || defaultUserPFP.src}
+                src={image || defaultUserPFP.src}
             />
             <div className="space-y-1">
-                <p>@{blog.author.username}</p>
+                <p>@{authorName}</p>
 
                 <div className="flex gap-1 text-sm text-gray-600">
-                    <p>Published on {formatDate(blog.createdAt.getTime())}</p>
+                    <p>Published on {formatDate(createdAt.getTime())}</p>
 
-                    {blog.updatedAt ? (
+                    {updatedAt ? (
                         <Tooltip
-                            content={formatDate(blog.updatedAt.getTime())}
+                            content={formatDate(updatedAt.getTime())}
                             radius="sm"
                         >
                             <p>(Updated)</p>

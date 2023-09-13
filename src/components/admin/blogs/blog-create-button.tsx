@@ -3,14 +3,14 @@
 import { NewBlog } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
+import { Button, ButtonProps } from "@nextui-org/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Icons } from "../../icons/icons";
-import { ButtonProps, buttonVariants } from "../../ui/button";
 import { useToast } from "../../ui/use-toast";
 
-function BlogCreateButton({ className, variant, ...props }: ButtonProps) {
+function BlogCreateButton({ className, ...props }: ButtonProps) {
     const router = useRouter();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -26,6 +26,7 @@ function BlogCreateButton({ className, variant, ...props }: ButtonProps) {
             .post<ResponseData>("/api/blogs", JSON.stringify(data))
             .then(({ data: resData }) => {
                 setIsLoading(false);
+
                 if (resData.code !== 200)
                     return toast({
                         title: "Oops!",
@@ -37,7 +38,7 @@ function BlogCreateButton({ className, variant, ...props }: ButtonProps) {
                 router.push(`/admin/blogs/${blogId}`);
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
 
                 setIsLoading(false);
                 toast({
@@ -49,23 +50,17 @@ function BlogCreateButton({ className, variant, ...props }: ButtonProps) {
     };
 
     return (
-        <button
-            onClick={handleBlogCreate}
-            className={cn(
-                buttonVariants({ variant }),
-                { "cursor-not-allowed opacity-60": isLoading },
-                className
-            )}
-            disabled={isLoading}
+        <Button
+            onPress={handleBlogCreate}
+            isDisabled={isLoading}
+            isLoading={isLoading}
+            className={cn("font-semibold", className)}
+            radius="sm"
+            startContent={!isLoading && <Icons.add className="h-4 w-4" />}
             {...props}
         >
-            {isLoading ? (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-                <Icons.add className="mr-2 h-4 w-4" />
-            )}
             New Blog
-        </button>
+        </Button>
     );
 }
 

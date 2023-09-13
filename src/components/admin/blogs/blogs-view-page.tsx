@@ -36,19 +36,25 @@ async function BlogsPage({ className }: DefaultProps) {
             ) : (
                 <EmptyPlaceholder>
                     <EmptyPlaceholder.Icon name="document" />
+
                     <EmptyPlaceholder.Title>
                         No blogs created
                     </EmptyPlaceholder.Title>
+
                     <EmptyPlaceholder.Description>
                         You don&apos;t have any blogs yet. Start creating
                         content.
                     </EmptyPlaceholder.Description>
-                    <BlogCreateButton variant="outline" />
+
+                    <BlogCreateButton color="secondary" className="border" />
                 </EmptyPlaceholder>
             )}
+
             <div className="space-y-4">
                 <p className="text-4xl font-bold">F.A.Q.</p>
+
                 <Separator className="h-[2px] w-12 bg-blue-300" />
+
                 <FAQAccordian className="w-full text-left" />
             </div>
         </>

@@ -114,7 +114,7 @@ function BlogCommentViewerOperation({
                 router.refresh();
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 return toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
@@ -180,7 +180,7 @@ function BlogCommentViewerOperation({
                 router.refresh();
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
