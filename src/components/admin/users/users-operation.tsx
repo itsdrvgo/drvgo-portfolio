@@ -1,20 +1,34 @@
 "use client";
 
-import {
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-} from "@/src/components/ui/dropdown-menu";
 import { useToast } from "@/src/components/ui/use-toast";
 import { User } from "@/src/lib/drizzle/schema";
-import { checkRoleHierarchy, manageRole, wait } from "@/src/lib/utils";
+import { checkRoleHierarchy, cn, manageRole, wait } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
-import { useAuth } from "@clerk/nextjs";
+import {
+    Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownSection,
+    DropdownTrigger,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    useDisclosure,
+} from "@nextui-org/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Icons } from "../../icons/icons";
+import { PartialUser } from "./users-table";
 
 interface PageProps extends DefaultProps {
-    rowData: User;
+    data: PartialUser;
+    authUser: ClerkUser;
 }
 
 type Action = {
@@ -28,42 +42,43 @@ const fetchUser = async (userId: string) => {
     return JSON.parse(data) as User | null;
 };
 
-function UsersOperation({ rowData }: PageProps) {
-    const { userId } = useAuth();
-
+function UsersOperation({ data, authUser }: PageProps) {
     const { toast } = useToast();
     const router = useRouter();
 
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    const {
+        isOpen: isDeleteOpen,
+        onOpen: onDeleteOpen,
+        onClose: onDeleteClose,
+        onOpenChange: onDeleteOpenChange,
+    } = useDisclosure();
+
     const handleUserDelete = async () => {
-        const [user, target] = await Promise.all([
-            fetchUser(userId!),
-            fetchUser(rowData.id),
-        ]);
-
-        if (!target || !user)
-            return toast({
-                title: "Oops!",
-                description: "User doesn't exist",
-                variant: "destructive",
-            });
-
-        if (user.id === target.id)
+        if (authUser.id === data.id)
             return toast({
                 title: "Oops!",
                 description: "You cannot delete your own account",
                 variant: "destructive",
             });
 
-        if (!checkRoleHierarchy(user.role, target.role))
+        if (!checkRoleHierarchy(authUser.privateMetadata.role, data.role))
             return toast({
                 title: "Oops!",
                 description: "You don't have permission to execute this action",
                 variant: "destructive",
             });
 
+        setIsDeleting(true);
+
         axios
-            .delete<ResponseData>(`/api/users/${target.id}`)
+            .delete<ResponseData>(`/api/users/${data.id}`)
             .then(async ({ data: resData }) => {
+                setIsDeleting(false);
+                onDeleteClose();
+
                 if (resData.code !== 200)
                     return toast({
                         title: "Oops!",
@@ -79,7 +94,10 @@ function UsersOperation({ rowData }: PageProps) {
                 router.refresh();
             })
             .catch((err) => {
-                console.log(err);
+                setIsDeleting(false);
+                onDeleteClose();
+
+                console.error(err);
                 toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
@@ -89,26 +107,21 @@ function UsersOperation({ rowData }: PageProps) {
     };
 
     const handleUserRole = async ({ action }: Action) => {
-        const [user, target] = await Promise.all([
-            fetchUser(userId!),
-            fetchUser(rowData.id),
-        ]);
-
-        if (!target || !user)
+        if (authUser.id === data.id)
             return toast({
                 title: "Oops!",
-                description: "User doesn't exist",
+                description: "You cannot change your own role",
                 variant: "destructive",
             });
 
-        if (!checkRoleHierarchy(user.role, target.role))
+        if (!checkRoleHierarchy(authUser.privateMetadata.role, data.role))
             return toast({
                 title: "Oops!",
                 description: "You don't have permission to execute this action",
                 variant: "destructive",
             });
 
-        const role = manageRole(target.role, action);
+        const role = manageRole(data.role, action);
         if (!role)
             return toast({
                 title: "Oops!",
@@ -116,12 +129,16 @@ function UsersOperation({ rowData }: PageProps) {
                 variant: "destructive",
             });
 
+        setIsUpdating(true);
+
         axios
             .patch<ResponseData>(
-                `/api/users/${target.id}`,
+                `/api/users/${data.id}`,
                 JSON.stringify({ role })
             )
             .then(async ({ data: resData }) => {
+                setIsUpdating(false);
+
                 if (resData.code !== 200)
                     return toast({
                         title: "Oops!",
@@ -137,7 +154,9 @@ function UsersOperation({ rowData }: PageProps) {
                 router.refresh();
             })
             .catch((err) => {
-                console.log(err);
+                setIsUpdating(false);
+
+                console.error(err);
                 toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
@@ -148,80 +167,220 @@ function UsersOperation({ rowData }: PageProps) {
 
     return (
         <>
-            {rowData.role !== "owner" ? (
-                <>
-                    <DropdownMenuSeparator />
-                    {rowData.role === "user" ? (
-                        <DropdownMenuItem
-                            className="cursor-pointer"
-                            onSelect={() =>
+            <Dropdown radius="sm">
+                <DropdownTrigger>
+                    <Button isIconOnly size="sm" variant="light">
+                        <Icons.moreVert className="h-4 w-4 text-gray-400" />
+                    </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                    itemClasses={{
+                        base: "rounded-sm",
+                    }}
+                    disabledKeys={[
+                        ["owner", "admin"].includes(data.role)
+                            ? "promote"
+                            : checkRoleHierarchy(
+                                  authUser.privateMetadata.role,
+                                  data.role
+                              )
+                            ? data.role === "user"
+                                ? "demote"
+                                : ""
+                            : "promote",
+                        authUser.id === data.id ? "delete" : "",
+                    ]}
+                >
+                    <DropdownSection showDivider title={"Details"}>
+                        <DropdownItem
+                            key={"copy_id"}
+                            startContent={
+                                <Icons.user className="h-4 w-4 text-gray-400" />
+                            }
+                            onPress={() => {
+                                navigator.clipboard.writeText(data.id);
+                                toast({
+                                    description: "ID has been copied",
+                                });
+                            }}
+                        >
+                            Copy ID
+                        </DropdownItem>
+                        <DropdownItem
+                            key={"copy_email"}
+                            startContent={
+                                <Icons.email className="h-4 w-4 text-gray-400" />
+                            }
+                            onPress={() => {
+                                navigator.clipboard.writeText(data.email);
+                                toast({
+                                    description: "Email has been copied",
+                                });
+                            }}
+                        >
+                            Copy Email
+                        </DropdownItem>
+                    </DropdownSection>
+
+                    <DropdownSection
+                        showDivider={authUser.privateMetadata.role === "owner"}
+                        title={"Manage Role"}
+                    >
+                        <DropdownItem
+                            key={"promote"}
+                            startContent={
+                                <Icons.chevronUp className="h-4 w-4 text-gray-400" />
+                            }
+                            onPress={() =>
                                 handleUserRole({ action: "promote" })
                             }
                         >
                             Promote
-                        </DropdownMenuItem>
-                    ) : rowData.role === "guest" ? (
-                        <>
-                            <DropdownMenuItem
-                                className="cursor-pointer"
-                                onSelect={() =>
-                                    handleUserRole({ action: "promote" })
-                                }
-                            >
-                                Promote
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                className="cursor-pointer"
-                                onSelect={() =>
-                                    handleUserRole({ action: "demote" })
-                                }
-                            >
-                                Demote
-                            </DropdownMenuItem>
-                        </>
-                    ) : rowData.role === "moderator" ? (
-                        <>
-                            <DropdownMenuItem
-                                className="cursor-pointer"
-                                onSelect={() =>
-                                    handleUserRole({ action: "promote" })
-                                }
-                            >
-                                Promote
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                className="cursor-pointer"
-                                onSelect={() =>
-                                    handleUserRole({ action: "demote" })
-                                }
-                            >
-                                Demote
-                            </DropdownMenuItem>
-                        </>
-                    ) : rowData.role === "admin" ? (
-                        <DropdownMenuItem
-                            className="cursor-pointer"
-                            onSelect={() =>
-                                handleUserRole({ action: "demote" })
+                        </DropdownItem>
+                        <DropdownItem
+                            key={"demote"}
+                            startContent={
+                                <Icons.chevronDown className="h-4 w-4 text-gray-400" />
                             }
+                            onPress={() => handleUserRole({ action: "demote" })}
                         >
                             Demote
-                        </DropdownMenuItem>
-                    ) : null}
-                </>
-            ) : null}
-            {rowData.id !== userId ? (
-                <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        className="cursor-pointer text-destructive focus:text-destructive"
-                        onSelect={handleUserDelete}
+                        </DropdownItem>
+                    </DropdownSection>
+
+                    <DropdownSection
+                        title={"Danger Zone"}
+                        className={cn(
+                            authUser.privateMetadata.role !== "owner" &&
+                                "hidden"
+                        )}
                     >
-                        Delete User
-                    </DropdownMenuItem>
-                </>
-            ) : null}
+                        <DropdownItem
+                            key={"delete"}
+                            startContent={
+                                <Icons.trash className="h-4 w-4 text-gray-400" />
+                            }
+                            color="danger"
+                            onPress={onDeleteOpen}
+                        >
+                            Delete User
+                        </DropdownItem>
+                    </DropdownSection>
+                </DropdownMenu>
+            </Dropdown>
+
+            <Modal isOpen={isDeleteOpen} onOpenChange={onDeleteOpenChange}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader>Delete User</ModalHeader>
+                            <ModalBody>
+                                Are you sure you want to delete this user? This
+                                action cannot be undone.
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    radius="sm"
+                                    color="danger"
+                                    variant="light"
+                                    isDisabled={isDeleting}
+                                    onPress={onClose}
+                                    className="font-semibold"
+                                >
+                                    Close
+                                </Button>
+                                <Button
+                                    radius="sm"
+                                    color="primary"
+                                    onPress={handleUserDelete}
+                                    className="font-semibold"
+                                    isDisabled={isDeleting}
+                                    isLoading={isDeleting}
+                                >
+                                    Delete
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </>
+
+        // <>
+        //     {data.role !== "owner" ? (
+        //         <>
+        //             <DropdownMenuSeparator />
+        //             {data.role === "user" ? (
+        //                 <DropdownMenuItem
+        //                     className="cursor-pointer"
+        //                     onSelect={() =>
+        //                         handleUserRole({ action: "promote" })
+        //                     }
+        //                 >
+        //                     Promote
+        //                 </DropdownMenuItem>
+        //             ) : data.role === "guest" ? (
+        //                 <>
+        //                     <DropdownMenuItem
+        //                         className="cursor-pointer"
+        //                         onSelect={() =>
+        //                             handleUserRole({ action: "promote" })
+        //                         }
+        //                     >
+        //                         Promote
+        //                     </DropdownMenuItem>
+        //                     <DropdownMenuItem
+        //                         className="cursor-pointer"
+        //                         onSelect={() =>
+        //                             handleUserRole({ action: "demote" })
+        //                         }
+        //                     >
+        //                         Demote
+        //                     </DropdownMenuItem>
+        //                 </>
+        //             ) : data.role === "moderator" ? (
+        //                 <>
+        //                     <DropdownMenuItem
+        //                         className="cursor-pointer"
+        //                         onSelect={() =>
+        //                             handleUserRole({ action: "promote" })
+        //                         }
+        //                     >
+        //                         Promote
+        //                     </DropdownMenuItem>
+        //                     <DropdownMenuItem
+        //                         className="cursor-pointer"
+        //                         onSelect={() =>
+        //                             handleUserRole({ action: "demote" })
+        //                         }
+        //                     >
+        //                         Demote
+        //                     </DropdownMenuItem>
+        //                 </>
+        //             ) : data.role === "admin" ? (
+        //                 <DropdownMenuItem
+        //                     className="cursor-pointer"
+        //                     onSelect={() =>
+        //                         handleUserRole({ action: "demote" })
+        //                     }
+        //                 >
+        //                     Demote
+        //                 </DropdownMenuItem>
+        //             ) : null}
+        //         </>
+        //     ) : null}
+        //     {data.id !== userId ? (
+        //         <>
+        //             <DropdownMenuSeparator />
+        //             <DropdownMenuItem
+        //                 className="cursor-pointer text-destructive focus:text-destructive"
+        //                 onSelect={handleUserDelete}
+        //             >
+        //                 Delete User
+        //             </DropdownMenuItem>
+        //         </>
+        //     ) : null}
+        // </>
     );
 }
 

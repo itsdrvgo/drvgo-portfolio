@@ -63,8 +63,13 @@ async function BlogViewPage({ params, className }: PageProps) {
 
                 <Separator className="w-full" />
 
-                <BlogAuthor blog={blog} />
-                <BlogImage blog={blog} />
+                <BlogAuthor
+                    authorName={blog.author.username}
+                    createdAt={blog.createdAt}
+                    image={blog.author.image ?? undefined}
+                    updatedAt={blog.updatedAt ?? undefined}
+                />
+                <BlogImage imageUrl={blog.thumbnailUrl!} />
 
                 {blog.content?.split("\n").length! > 1 ? (
                     <div className="flex cursor-default flex-col gap-4 rounded-md border border-gray-400 bg-stone-950 p-5">

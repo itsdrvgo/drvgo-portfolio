@@ -40,7 +40,7 @@ function PatchCreateButton({ className, variant, ...props }: ButtonProps) {
                 router.push(`/admin/patches/${patchId}`);
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
 
                 setIsLoading(false);
                 toast({

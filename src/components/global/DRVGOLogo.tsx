@@ -1,9 +1,10 @@
 interface DRVGOLogoProps {
     width?: number;
     height?: number;
+    className?: string;
 }
 
-function DRVGOLogo({ width, height }: DRVGOLogoProps) {
+function DRVGOLogo({ width, height, className }: DRVGOLogoProps) {
     return (
         <svg
             id="DRVGO"
@@ -12,6 +13,7 @@ function DRVGOLogo({ width, height }: DRVGOLogoProps) {
             viewBox="0 0 2000 2000"
             height={height || 30}
             width={width || 30}
+            className={className}
         >
             <defs></defs>
             <path

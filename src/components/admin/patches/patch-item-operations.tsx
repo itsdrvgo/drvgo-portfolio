@@ -69,7 +69,7 @@ function PatchOperations({ patch, className }: PageProps) {
             .catch((err) => {
                 setIsDeleteLoading(false);
                 setShowDeleteAlert(false);
-                console.log(err);
+                console.error(err);
 
                 toast({
                     title: "Oops!",
@@ -123,7 +123,7 @@ function PatchOperations({ patch, className }: PageProps) {
             .catch((err) => {
                 setIsPublishLoading(false);
                 setShowPublishAlert(false);
-                console.log(err);
+                console.error(err);
 
                 toast({
                     title: "Oops!",

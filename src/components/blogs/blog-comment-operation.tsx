@@ -85,7 +85,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
             .catch((err) => {
                 onDeleteModalClose();
 
-                console.log(err);
+                console.error(err);
                 return toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
@@ -133,7 +133,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
                 router.refresh();
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 return toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
@@ -172,7 +172,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
             .catch((err) => {
                 onEditModalClose();
 
-                console.log(err);
+                console.error(err);
                 return toast({
                     title: "Oops!",
                     description: "Something went wrong, try again later",
@@ -224,9 +224,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
                                     ? "visible"
                                     : "hidden"
                             )}
-                            startContent={
-                                <Icons.pin className={cn("text-lg")} />
-                            }
+                            startContent={<Icons.pin className="text-lg" />}
                             description={
                                 isPinned
                                     ? "Unpin this comment"
@@ -282,9 +280,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                Edit Comment
-                            </ModalHeader>
+                            <ModalHeader>Edit Comment</ModalHeader>
                             <ModalBody>
                                 <p>
                                     Make changes to your comment & save it to

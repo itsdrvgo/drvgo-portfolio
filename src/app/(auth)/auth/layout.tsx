@@ -1,4 +1,5 @@
-import { DRVGOIcon, Stripes } from "@/src/config/const";
+import DRVGOLogo from "@/src/components/global/DRVGOLogo";
+import { Stripes } from "@/src/config/const";
 import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -15,12 +16,7 @@ function Layout({ children }: RootLayoutProps) {
             <header className="sticky top-0 z-40 w-full">
                 <div className="container flex items-center justify-center py-6">
                     <Link href={"/"}>
-                        <Image
-                            src={DRVGOIcon}
-                            alt="DRVGO"
-                            height={110}
-                            width={110}
-                        />
+                        <DRVGOLogo height={110} width={110} />
                     </Link>
                 </div>
             </header>

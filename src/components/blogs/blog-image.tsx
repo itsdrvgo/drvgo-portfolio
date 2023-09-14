@@ -5,15 +5,15 @@ import { Image } from "@nextui-org/react";
 import NextImage from "next/image";
 
 interface PageProps extends DefaultProps {
-    blog: ExtendedBlog;
+    imageUrl: string;
 }
 
-function BlogImage({ blog }: PageProps) {
+function BlogImage({ imageUrl }: PageProps) {
     return (
         <Image
             as={NextImage}
             radius="sm"
-            src={blog.thumbnailUrl!}
+            src={imageUrl}
             alt="thumbnail"
             width={1920}
             height={1080}

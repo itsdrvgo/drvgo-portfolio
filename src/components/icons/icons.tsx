@@ -19,6 +19,7 @@ import {
     ChevronDown,
     ChevronLeft,
     ChevronRight,
+    ChevronUp,
     Code,
     Command,
     Component,
@@ -59,6 +60,7 @@ import {
     LogOut,
     LucideLoader2,
     LucideProps,
+    Mail,
     MapPin,
     Medal,
     MessageSquare,
@@ -103,6 +105,7 @@ import {
 export type Icon = LucideIcon;
 
 export const Icons = {
+    email: Mail,
     podcast: Podcast,
     bug: Bug,
     gem: Gem,
@@ -118,6 +121,7 @@ export const Icons = {
     link: Link,
     pin: Pin,
     spinner: Loader2,
+    chevronUp: ChevronUp,
     chevronLeft: ChevronLeft,
     chevronRight: ChevronRight,
     chevronDown: ChevronDown,

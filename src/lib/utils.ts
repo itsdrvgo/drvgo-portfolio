@@ -28,7 +28,7 @@ export function formatDate(input: string | number): string {
 }
 
 export function handleError(err: unknown) {
-    console.log(err);
+    console.error(err);
     if (err instanceof ZodError)
         return NextResponse.json({
             code: 422,
@@ -132,7 +132,7 @@ export function updateBlogViews(blogId: string) {
             console.log("Updated view");
         })
         .catch((err) => {
-            console.log(err);
+            console.error(err);
             console.log("Couldn't update view");
         });
 }
@@ -160,7 +160,7 @@ export async function addNotification(
         console.log("Added notification");
         return true;
     } catch (err) {
-        console.log(err);
+        console.error(err);
         console.log("Couldn't add notification");
         return false;
     }
@@ -190,7 +190,7 @@ export async function markNotificationAsRead({
         console.log("Marked notification as read");
         return true;
     } catch (err) {
-        console.log(err);
+        console.error(err);
         console.log("Couldn't mark notification as read");
         return false;
     }
@@ -207,7 +207,7 @@ export async function getBlog(blogId: string) {
 
         return data.data as Blog;
     } catch (err) {
-        console.log(err);
+        console.error(err);
         console.log("Couldn't get blog");
         return null;
     }

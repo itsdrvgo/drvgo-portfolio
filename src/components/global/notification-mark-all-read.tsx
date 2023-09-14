@@ -25,7 +25,7 @@ function NotificationMarkAllAsRead({ className, userId }: PageProps) {
                 });
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
 
                 toast({
                     title: "Oops!",

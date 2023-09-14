@@ -53,8 +53,8 @@ function Page() {
         >
             <div
                 className={cn(
-                    "absolute left-0 top-0 z-[60] flex h-screen w-full items-center justify-center bg-background transition-all duration-1000 ease-in-out",
-                    isLoading ? "translate-y-0" : "-translate-y-full"
+                    "absolute left-0 top-0 z-[60] flex h-screen w-full items-center justify-center bg-background transition-all ease-in-out",
+                    isLoading ? "translate-y-[0%]" : "-translate-y-full"
                 )}
             >
                 <p>
