@@ -18,8 +18,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import TextareaAutosize from "react-textarea-autosize";
-import { Icons } from "../icons/icons";
-// import { Button } from "../ui/button";
 import {
     Form,
     FormControl,
@@ -36,9 +34,9 @@ function ProjectStartForm() {
     const { toast } = useToast();
     const router = useRouter();
 
-    const { isOpen } = useDisclosure();
+    const { isOpen, onClose, onOpenChange, onOpen } = useDisclosure();
+
     const [isLoading, setIsLoading] = useState(false);
-    const [showModal, setShowModal] = useState(isOpen);
 
     const form = useForm<ProjectCreateData>({
         resolver: zodResolver(projectCreateSchema),
@@ -49,14 +47,21 @@ function ProjectStartForm() {
         },
     });
 
-    const onSubmit = async (data: ProjectCreateData) => {
+    const handleCreateProject = () => {
         setIsLoading(true);
 
         try {
-            setShowModal(true);
             setIsLoading(false);
+            onClose();
+
+            toast({
+                title: "Oops!",
+                description: "This feature is not available yet!",
+                variant: "destructive",
+            });
         } catch (err) {
             setIsLoading(false);
+            onClose();
 
             console.error(err);
             toast({
@@ -72,7 +77,7 @@ function ProjectStartForm() {
             <Form {...form}>
                 <form
                     className="grid gap-5"
-                    onSubmit={(...args) => form.handleSubmit(onSubmit)(...args)}
+                    onSubmit={(...args) => form.handleSubmit(onOpen)(...args)}
                 >
                     <FormField
                         control={form.control}
@@ -140,27 +145,20 @@ function ProjectStartForm() {
                     <Button
                         type="submit"
                         radius="sm"
-                        disabled={isLoading}
-                        className="flex items-center gap-2"
+                        color="primary"
+                        className="font-semibold"
+                        isDisabled={isLoading}
+                        isLoading={isLoading}
                     >
-                        {isLoading ? (
-                            <>
-                                <Icons.spinner
-                                    className="h-4 w-4 animate-spin"
-                                    aria-hidden="true"
-                                />
-                                <p>Creating Project</p>
-                            </>
-                        ) : (
-                            <p>Create Project</p>
-                        )}
+                        {isLoading ? "Creating Project" : "Create Project"}
                     </Button>
                 </form>
             </Form>
+
             <Modal
                 backdrop="blur"
-                isOpen={showModal}
-                onOpenChange={setShowModal}
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
                 size="3xl"
                 placement="center"
                 scrollBehavior="inside"
@@ -258,16 +256,19 @@ function ProjectStartForm() {
                                 </p>
                             </ModalBody>
                             <ModalFooter>
-                                <Button radius="sm" onClick={onClose}>
+                                <Button
+                                    radius="sm"
+                                    onPress={onClose}
+                                    isDisabled={isLoading}
+                                >
                                     Cancel
                                 </Button>
                                 <Button
                                     radius="sm"
                                     color="success"
-                                    onClick={async () => {
-                                        await onSubmit(form.getValues());
-                                        onClose();
-                                    }}
+                                    onPress={handleCreateProject}
+                                    isDisabled={isLoading}
+                                    isLoading={isLoading}
                                 >
                                     Agree
                                 </Button>
