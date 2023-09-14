@@ -1,7 +1,6 @@
 import { DefaultProps } from "@/src/types";
 import { Button, Input } from "@nextui-org/react";
 import { motion, Variants } from "framer-motion";
-// import { Input } from "../ui/input";
 import { useToast } from "../ui/use-toast";
 
 function Newsletter({ className }: DefaultProps) {
