@@ -2,7 +2,7 @@
 
 import { defaultUserPFP } from "@/src/config/const";
 import { User as DBUser } from "@/src/lib/drizzle/schema";
-import { formatDate } from "@/src/lib/utils";
+import { cn, formatDate } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import {
@@ -25,8 +25,16 @@ import {
     TableRow,
     User,
 } from "@nextui-org/react";
-import { ChangeEvent, Key, useCallback, useMemo, useState } from "react";
+import {
+    ChangeEvent,
+    Key,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { Icons } from "../../icons/icons";
+import UsersMassManage from "./users-mass-manage";
 import UsersOperation from "./users-operation";
 
 interface Column {
@@ -215,7 +223,10 @@ function UsersTable({ data, authUser }: PageProps) {
                         onValueChange={onSearchChange}
                         radius="sm"
                     />
-                    <div className="flex gap-3">
+
+                    <div className="flex items-center gap-2">
+                        <UsersMassManage keys={selectedKeys} />
+
                         <Dropdown>
                             <DropdownTrigger className="sm:flex">
                                 <Button
@@ -248,13 +259,14 @@ function UsersTable({ data, authUser }: PageProps) {
                         </Dropdown>
                     </div>
                 </div>
+
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-small text-default-400">
                             Total {data.length} users
                         </p>
                     </div>
-                    <div className="w-full max-w-[44%]">
+                    <div className="w-full max-w-[44%] md:max-w-[20%]">
                         <Select
                             label="Rows per page"
                             onChange={onRowsPerPageChange}
@@ -277,6 +289,7 @@ function UsersTable({ data, authUser }: PageProps) {
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
+        selectedKeys,
         filterValue,
         visibleColumns,
         onSearchChange,
