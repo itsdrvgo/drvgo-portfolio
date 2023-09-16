@@ -26,6 +26,7 @@ export default authMiddleware({
         "/blogs(.*)",
         "/patches(.*)",
         "/courses(.*)",
+        "/music(.*)",
         "/tos(.*)",
         "/privacy(.*)",
         "/auth(.*)",
