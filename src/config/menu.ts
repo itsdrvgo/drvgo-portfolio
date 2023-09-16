@@ -11,8 +11,8 @@ export const homeMenuConfig: MenuConfig = {
             href: "/courses",
         },
         {
-            title: "Contact",
-            href: "/contact",
+            title: "Music",
+            href: "/music",
         },
         {
             title: "FAQ",
