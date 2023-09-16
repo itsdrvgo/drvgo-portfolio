@@ -42,20 +42,21 @@ export const music: Music = {
     songs: [],
     albums: [],
     videos: [
-        // {
-        //     name: "Sapna Jahan - DRVGO ft. Tisha (Cover) | WhatsApp Version",
-        //     artists: [
-        //         {
-        //             name: "DRVGO",
-        //             href: "https://www.youtube.com/@itsdrvgo",
-        //         },
-        //         {
-        //             name: "Tisha",
-        //             href: "https://www.instagram.com/tishade2004",
-        //         },
-        //     ],
-        //     href: "https://www.youtube.com/watch?v=Q3Z3Q4Z6Z5M",
-        // },
+        {
+            name: "Sapna Jahan - DRVGO ft. Tisha (Cover) | WhatsApp Version",
+            artists: [
+                {
+                    name: "DRVGO",
+                    href: "https://www.youtube.com/@itsdrvgo",
+                },
+                {
+                    name: "Tisha",
+                    href: "https://www.instagram.com/tishade2004",
+                },
+            ],
+            href: "https://www.youtube.com/watch?v=V2GwWe3teDE",
+            embed: "https://www.youtube.com/embed/V2GwWe3teDE?si=CevulRoGsZFOT3Qm",
+        },
         {
             name: "GTA San Andreas Theme Song (Cover)",
             artists: [

@@ -18,20 +18,20 @@ function MusicViewPage({ className }: DefaultProps) {
                     const artists =
                         video.artists.length > 2
                             ? video.artists[0].name +
-                              "ft." +
+                              " ft. " +
                               video.artists
                                   .slice(1)
                                   .map((artist) => artist.name)
                                   .join(", ")
                             : video.artists.length === 2
                             ? video.artists[0].name +
-                              "ft." +
+                              " ft. " +
                               video.artists[1].name
                             : video.artists[0].name;
 
                     return (
                         <div key={index}>
-                            <Card>
+                            <Card className="h-full" radius="sm">
                                 <CardBody className="p-3">
                                     <IFrame src={video.embed} />
                                 </CardBody>
@@ -40,7 +40,11 @@ function MusicViewPage({ className }: DefaultProps) {
 
                                 <CardFooter className="flex-col p-4 text-center">
                                     <p className="text-lg font-semibold">
-                                        {video.name}
+                                        {video.name.split(" - ")[0].length > 30
+                                            ? video.name
+                                                  .split(" - ")[0]
+                                                  .slice(0, 30) + "..."
+                                            : video.name.split(" - ")[0]}
                                     </p>
                                     <p className="text-base">by {artists}</p>
                                 </CardFooter>
