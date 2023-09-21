@@ -46,7 +46,7 @@ function MusicViewPage({ className }: DefaultProps) {
                                                   .slice(0, 30) + "..."
                                             : video.name.split(" - ")[0]}
                                     </p>
-                                    <p className="text-base">by {artists}</p>
+                                    <p className="text-base">{artists}</p>
                                 </CardFooter>
                             </Card>
                         </div>

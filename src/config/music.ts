@@ -43,7 +43,22 @@ export const music: Music = {
     albums: [],
     videos: [
         {
-            name: "Sapna Jahan - DRVGO ft. Tisha (Cover) | WhatsApp Version",
+            name: "Until I Found You",
+            artists: [
+                {
+                    name: "DRVGO",
+                    href: "https://www.youtube.com/@itsdrvgo",
+                },
+                {
+                    name: "Tisha",
+                    href: "https://www.instagram.com/tishade2004",
+                },
+            ],
+            href: "https://www.youtube.com/watch?v=LnsPH6y2GYc",
+            embed: "https://www.youtube.com/embed/LnsPH6y2GYc?si=ghS-mAiZUPoQXMK5",
+        },
+        {
+            name: "Sapna Jahan",
             artists: [
                 {
                     name: "DRVGO",
@@ -58,7 +73,7 @@ export const music: Music = {
             embed: "https://www.youtube.com/embed/V2GwWe3teDE?si=CevulRoGsZFOT3Qm",
         },
         {
-            name: "GTA San Andreas Theme Song (Cover)",
+            name: "GTA San Andreas Theme Song",
             artists: [
                 {
                     name: "DRVGO",
