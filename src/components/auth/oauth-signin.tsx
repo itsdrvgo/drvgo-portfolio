@@ -8,8 +8,8 @@ import { isClerkAPIResponseError, useSignIn } from "@clerk/nextjs";
 import { OAuthStrategy } from "@clerk/types";
 import { Button } from "@nextui-org/react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { Icons } from "../icons/icons";
-import { useToast } from "../ui/use-toast";
 
 interface OAuthProviders {
     name: string;
@@ -30,9 +30,7 @@ const providers: OAuthProviders[] = [
     },
 ];
 
-function OAuth({ className }: DefaultProps) {
-    const { toast } = useToast();
-
+function OAuth({ className, ...props }: DefaultProps) {
     const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
     const [isLoading, setLoading] = useState<OAuthStrategy | null>(null);
@@ -53,23 +51,15 @@ function OAuth({ className }: DefaultProps) {
                 redirectUrl: env.NEXT_PUBLIC_APP_URL + "/sso-callback",
                 redirectUrlComplete: env.NEXT_PUBLIC_APP_URL + "/profile",
             });
-        } catch (error) {
+        } catch (err) {
             setLoading(null);
-            console.log(error);
+            console.error(err);
 
             const unknownError = "Something went wrong, please try again.";
 
-            isClerkAPIResponseError(error)
-                ? toast({
-                      title: "Oops!",
-                      description: error.errors[0]?.longMessage ?? unknownError,
-                      variant: "destructive",
-                  })
-                : toast({
-                      title: "Oops!",
-                      description: unknownError,
-                      variant: "destructive",
-                  });
+            isClerkAPIResponseError(err)
+                ? toast.error(err.errors[0]?.longMessage ?? unknownError)
+                : toast.error(unknownError);
         }
     };
 
@@ -79,6 +69,7 @@ function OAuth({ className }: DefaultProps) {
                 "flex w-full items-center justify-center gap-2",
                 className
             )}
+            {...props}
         >
             {providers.map((provider) => {
                 const Icon = Icons[provider.icon];
@@ -88,9 +79,10 @@ function OAuth({ className }: DefaultProps) {
                         fullWidth
                         aria-label={`Sign in with ${provider.name}`}
                         radius="sm"
+                        variant="light"
                         key={provider.provider}
-                        className="border bg-background"
-                        onPress={() => void handleLogin(provider.provider)}
+                        className="border border-gray-700"
+                        onPress={() => handleLogin(provider.provider)}
                         isDisabled={
                             isAuthLoading || isLoading === provider.provider
                         }

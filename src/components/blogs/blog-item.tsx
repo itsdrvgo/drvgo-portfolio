@@ -1,4 +1,4 @@
-import { defaultBlogThumbnail } from "@/src/config/const";
+import { DEFAULT_BLOG_THUMBNAIL } from "@/src/config/const";
 import { formatDate, shortenNumber } from "@/src/lib/utils";
 import { ExtendedBlog } from "@/src/types";
 import { Card, CardBody, CardFooter, Divider, Image } from "@nextui-org/react";
@@ -30,7 +30,7 @@ function BlogItem({ blogId, blogData, ref }: PageProps) {
                         radius="sm"
                         src={
                             blogData.find((x) => x.id === blogId)
-                                ?.thumbnailUrl ?? defaultBlogThumbnail.src
+                                ?.thumbnailUrl ?? DEFAULT_BLOG_THUMBNAIL.src
                         }
                         isZoomed
                         alt={blogId.toString()}

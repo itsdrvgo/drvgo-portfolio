@@ -31,19 +31,38 @@ export const users = mysqlTable(
             .notNull()
             .default(sql`current_timestamp()`)
             .onUpdateNow(),
-        role: mysqlEnum("role", [
-            "user",
-            "guest",
-            "moderator",
-            "admin",
-            "owner",
-        ])
-            .default("user")
-            .notNull(),
     },
     (user) => ({
         emailIndex: uniqueIndex("email_idx").on(user.email),
         usernameIndex: uniqueIndex("name_idx").on(user.username),
+    })
+);
+
+export const accounts = mysqlTable("accounts", {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    roles: json("roles").$type<string[]>().notNull().default(["user"]),
+    strikes: int("strikes").notNull().default(0),
+    permissions: int("permissions").notNull().default(1),
+});
+
+export const roles = mysqlTable(
+    "roles",
+    {
+        id: varchar("id", { length: 191 }).notNull().primaryKey(),
+        name: varchar("name", { length: 191 }).notNull().unique(),
+        key: varchar("key", { length: 191 }).notNull().unique(),
+        position: int("position").notNull().default(0),
+        permissions: int("permissions").notNull().default(1),
+        createdAt: timestamp("created_at")
+            .default(sql`current_timestamp()`)
+            .notNull(),
+        updatedAt: timestamp("updated_at")
+            .default(sql`current_timestamp()`)
+            .notNull()
+            .onUpdateNow(),
+    },
+    (role) => ({
+        nameIndex: uniqueIndex("name_idx").on(role.name),
     })
 );
 
@@ -79,13 +98,23 @@ export const projects = mysqlTable(
             .default(sql`current_timestamp()`)
             .notNull(),
         deadline: timestamp("deadline"),
-        completed: boolean("completed").default(false).notNull(),
-        completedAt: timestamp("completed_at"),
-        rejected: boolean("rejected").default(false).notNull(),
-        rejectedAt: timestamp("rejected_at"),
-        rejectedReason: varchar("rejectedReason", { length: 191 }),
-        accepted: boolean("accepted").default(false).notNull(),
         acceptedAt: timestamp("accepted_at"),
+        rejectedAt: timestamp("rejected_at"),
+        completedAt: timestamp("completed_at"),
+        cancelledAt: timestamp("cancelled_at"),
+        paidAt: timestamp("paid_at"),
+        rejectedReason: varchar("rejectedReason", { length: 191 }),
+        status: mysqlEnum("status", [
+            "pending",
+            "accepted",
+            "rejected",
+            "in_progress",
+            "paid",
+            "completed",
+            "cancelled",
+        ])
+            .default("pending")
+            .notNull(),
     },
     (project) => ({
         purchaserIdIndex: index("purchaser_id_idx").on(project.purchaserId),
@@ -158,27 +187,31 @@ export const commentLoves = mysqlTable("comment_loves", {
     userId: varchar("userId", { length: 191 }).notNull(),
 });
 
-export const patches = mysqlTable("patches", {
+export const projectsState = mysqlTable("projects_state", {
     id: varchar("id", { length: 191 }).notNull().primaryKey(),
-    major: int("major").notNull(),
-    minor: int("minor").notNull(),
-    patch: int("patch").notNull(),
-    description: longtext("description"),
-    published: boolean("published").default(false).notNull(),
-    createdAt: timestamp("created_at")
-        .default(sql`current_timestamp()`)
-        .notNull(),
+    state: boolean("state").default(true).notNull(),
 });
 
 // RELATIONS
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
     likes: many(likes),
     blogs: many(blogs),
     comments: many(comments),
     images: many(images),
     notifications: many(notifications),
     projects: many(projects),
+    account: one(accounts, {
+        fields: [users.id],
+        references: [accounts.id],
+    }),
+}));
+
+export const accountsRelations = relations(accounts, ({ one }) => ({
+    user: one(users, {
+        fields: [accounts.id],
+        references: [users.id],
+    }),
 }));
 
 export const projectsRelations = relations(projects, ({ one }) => ({
@@ -258,6 +291,9 @@ export const commentLovesRelations = relations(commentLoves, ({ one }) => ({
 export type User = InferModel<typeof users>;
 export type NewUser = InferModel<typeof users, "insert">;
 
+export type Account = InferModel<typeof accounts>;
+export type NewAccount = InferModel<typeof accounts, "insert">;
+
 export type Notification = InferModel<typeof notifications>;
 export type NewNotification = InferModel<typeof notifications, "insert">;
 
@@ -279,15 +315,20 @@ export type NewCommentLove = InferModel<typeof commentLoves, "insert">;
 export type Image = InferModel<typeof images>;
 export type NewImage = InferModel<typeof images, "insert">;
 
-export type Patch = InferModel<typeof patches>;
-export type NewPatch = InferModel<typeof patches, "insert">;
-
 export type Project = InferModel<typeof projects>;
 export type NewProject = InferModel<typeof projects, "insert">;
+
+export type ProjectState = InferModel<typeof projectsState>;
+export type NewProjectState = InferModel<typeof projectsState, "insert">;
+
+export type Role = InferModel<typeof roles>;
+export type NewRole = InferModel<typeof roles, "insert">;
 
 // ZOD SCHEMA
 
 export const insertUserSchema = createInsertSchema(users);
+
+export const insertAccountSchema = createInsertSchema(accounts);
 
 export const insertNotificationSchema = createInsertSchema(notifications);
 
@@ -303,6 +344,8 @@ export const insertCommentLoveSchema = createInsertSchema(commentLoves);
 
 export const insertImageSchema = createInsertSchema(images);
 
-export const insertPatchSchema = createInsertSchema(patches);
-
 export const insertProjectSchema = createInsertSchema(projects);
+
+export const insertProjectStateSchema = createInsertSchema(projectsState);
+
+export const insertRoleSchema = createInsertSchema(roles);

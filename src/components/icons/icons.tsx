@@ -35,6 +35,7 @@ import {
     FileQuestion,
     FileText,
     Fingerprint,
+    Folder,
     Gem,
     Gift,
     Github,
@@ -100,12 +101,21 @@ import {
     Youtube,
     Zap,
     type IconNode as LucideIcon,
+    Calendar,
+    SendHorizonal,
+    GripVertical,
+    UserCog,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
 
 export const Icons = {
+    folder: Folder,
     email: Mail,
+    gripV: GripVertical,
+    sendHorizontal: SendHorizonal,
+    calender: Calendar,
+    userSettings: UserCog,
     podcast: Podcast,
     bug: Bug,
     gem: Gem,

@@ -1,9 +1,9 @@
 import { projectsConfig } from "@/src/config/projects";
 import { siteConfig } from "@/src/config/site";
 import { DefaultProps } from "@/src/types";
+import { Button, Link } from "@nextui-org/react";
 import { motion, Variants } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 
 function Projects({ className }: DefaultProps) {
     const fadeInContainer: Variants = {
@@ -72,13 +72,15 @@ function Projects({ className }: DefaultProps) {
                                         {project.name}
                                     </p>
                                     <div className="flex items-center justify-center">
-                                        <Link
+                                        <Button
+                                            as={Link}
+                                            radius="sm"
+                                            showAnchorIcon
                                             href={project.link}
                                             target="_blank"
-                                            className="flex items-center justify-center rounded-md border border-gray-700 bg-secondary p-2 px-3 text-sm font-semibold transition-all ease-in-out hover:bg-gray-800"
                                         >
                                             View Project
-                                        </Link>
+                                        </Button>
                                     </div>
                                 </div>
                             </div>

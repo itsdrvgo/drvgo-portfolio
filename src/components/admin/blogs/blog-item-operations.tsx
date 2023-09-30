@@ -1,8 +1,7 @@
 "use client";
 
 import { Icons } from "@/src/components/icons/icons";
-import { useToast } from "@/src/components/ui/use-toast";
-import { addNotification, cn } from "@/src/lib/utils";
+import { addNotification } from "@/src/lib/utils";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
@@ -23,6 +22,7 @@ import {
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface PageProps extends DefaultProps {
     blog: ExtendedBlog;
@@ -30,7 +30,6 @@ interface PageProps extends DefaultProps {
 
 function BlogOperations({ blog, className }: PageProps) {
     const router = useRouter();
-    const { toast } = useToast();
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isPublishing, setIsPublishing] = useState<boolean>(false);
@@ -49,52 +48,43 @@ function BlogOperations({ blog, className }: PageProps) {
         onOpenChange: onPublishOpenChange,
     } = useDisclosure();
 
-    const deleteBlog = async () => {
+    const deleteBlog = () => {
         setIsDeleting(true);
-        toast({
-            description: "Deleting blog...",
-        });
+
+        const toastId = toast.loading("Deleting blog...");
 
         axios
             .delete<ResponseData>(`/api/blogs/${blog.id}`)
             .then(({ data: resData }) => {
-                setIsDeleting(false);
-                onDeleteClose();
-
                 if (resData.code !== 204)
-                    return toast({
-                        title: "Oops!",
-                        description: resData.message,
-                        variant: "destructive",
+                    return toast.error(resData.message, {
+                        id: toastId,
                     });
 
-                toast({
-                    description: "Blog has been deleted",
+                toast.success("Blog has been deleted", {
+                    id: toastId,
                 });
-
-                router.refresh();
             })
             .catch((err) => {
                 console.error(err);
 
+                toast.error("Blog was not deleted, try again later!", {
+                    id: toastId,
+                });
+            })
+            .finally(() => {
                 setIsDeleting(false);
                 onDeleteClose();
-
-                toast({
-                    title: "Oops!",
-                    description: "Blog was not deleted, try again later",
-                    variant: "destructive",
-                });
+                router.refresh();
             });
     };
 
     const publishBlog = () => {
         setIsPublishing(true);
-        toast({
-            description: blog.published
-                ? "Unpublishing blog..."
-                : "Publishing blog...",
-        });
+
+        const toastId = toast.loading(
+            blog.published ? "Unpublishing blog..." : "Publishing blog..."
+        );
 
         const body: BlogPatchData = {
             ...blog,
@@ -105,21 +95,19 @@ function BlogOperations({ blog, className }: PageProps) {
         axios
             .patch<ResponseData>(`/api/blogs/${blog.id}`, JSON.stringify(body))
             .then(({ data: resData }) => {
-                setIsPublishing(false);
-                onPublishClose();
-
                 if (resData.code !== 200)
-                    return toast({
-                        title: "Oops!",
-                        description: resData.message,
-                        variant: "destructive",
+                    return toast.error(resData.message, {
+                        id: toastId,
                     });
 
-                toast({
-                    description: blog.published
+                toast.success(
+                    blog.published
                         ? "Blog has been unpublished"
                         : "Blog has been published",
-                });
+                    {
+                        id: toastId,
+                    }
+                );
 
                 addNotification({
                     notifierId: blog.authorId,
@@ -132,22 +120,23 @@ function BlogOperations({ blog, className }: PageProps) {
                         blogTitle: blog.title,
                     },
                 });
-
-                router.refresh();
             })
             .catch((err) => {
                 console.error(err);
 
+                toast.error(
+                    blog.published
+                        ? "Error unpublishing the blog, try again later!"
+                        : "Blog was not published, try again later!",
+                    {
+                        id: toastId,
+                    }
+                );
+            })
+            .finally(() => {
                 setIsPublishing(false);
                 onPublishClose();
-
-                toast({
-                    title: "Oops!",
-                    description: blog.published
-                        ? "Error unpublishing the blog, try again later"
-                        : "Blog was not published, try again later",
-                    variant: "destructive",
-                });
+                router.refresh();
             });
     };
 
@@ -160,11 +149,7 @@ function BlogOperations({ blog, className }: PageProps) {
                     </Button>
                 </DropdownTrigger>
 
-                <DropdownMenu
-                    itemClasses={{
-                        base: "rounded-sm",
-                    }}
-                >
+                <DropdownMenu>
                     <DropdownSection showDivider title={"Action"}>
                         <DropdownItem
                             startContent={<Icons.pencil className="text-lg" />}

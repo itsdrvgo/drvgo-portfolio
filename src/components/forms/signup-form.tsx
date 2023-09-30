@@ -5,10 +5,11 @@ import useAuthStore from "@/src/lib/store/auth";
 import { SignUpData, signupSchema } from "@/src/lib/validation/auth";
 import { isClerkAPIResponseError, useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { Icons } from "../icons/icons";
 import {
     Form,
@@ -18,12 +19,8 @@ import {
     FormLabel,
     FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/input";
-import { useToast } from "../ui/use-toast";
 
 function SignUpForm() {
-    const { toast } = useToast();
-
     const router = useRouter();
 
     const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
@@ -62,26 +59,17 @@ function SignUpForm() {
                 emailAddress: data.email,
             });
 
-            toast({
-                description:
-                    "A sign up link has been sent to your email. Please check your inbox.",
-            });
+            toast.success(
+                "A sign up link has been sent to your email. Please check your inbox"
+            );
         } catch (err) {
             setAuthLoading(false);
 
             const unknownError = "Something went wrong, please try again.";
 
             isClerkAPIResponseError(err)
-                ? toast({
-                      title: "Oops!",
-                      description: err.errors[0]?.longMessage ?? unknownError,
-                      variant: "destructive",
-                  })
-                : toast({
-                      title: "Oops!",
-                      description: unknownError,
-                      variant: "destructive",
-                  });
+                ? toast.error(err.errors[0]?.longMessage ?? unknownError)
+                : toast.error(unknownError);
 
             return;
         }
@@ -101,10 +89,9 @@ function SignUpForm() {
             setAuthLoading(false);
             setActive({ session: su.createdSessionId }).then(() => {
                 router.push("/profile");
-                toast({
-                    description:
-                        "Welcome to DRVGO! You have successfully signed in. Please wait while we redirect you to your profile.",
-                });
+                toast.success(
+                    "Welcome to DRVGO! You have successfully signed in. Please wait while we redirect you to your profile"
+                );
             });
             return;
         }
@@ -113,16 +100,12 @@ function SignUpForm() {
     if (expired) {
         setAuthLoading(false);
         router.push("/");
-        toast({
-            description: "Verification link expired, please try again.",
-        });
+        toast.error("Verification link expired, please try again!");
     }
     if (verified) {
         setAuthLoading(false);
         router.push("/profile");
-        toast({
-            description: "Welcome to DRVGO! You have successfully signed in.",
-        });
+        toast.success("Welcome to DRVGO! You have successfully signed in");
     }
 
     return (
@@ -139,9 +122,13 @@ function SignUpForm() {
                             <FormLabel>Username</FormLabel>
                             <FormControl>
                                 <Input
+                                    classNames={{
+                                        inputWrapper:
+                                            "border border-gray-700 bg-background lowercase",
+                                    }}
+                                    radius="sm"
                                     placeholder="duckymomo60"
                                     disabled={isAuthLoading}
-                                    className="lowercase"
                                     {...field}
                                 />
                             </FormControl>
@@ -157,6 +144,13 @@ function SignUpForm() {
                             <FormLabel>Email</FormLabel>
                             <FormControl>
                                 <Input
+                                    type="email"
+                                    inputMode="email"
+                                    classNames={{
+                                        inputWrapper:
+                                            "border border-gray-700 bg-background",
+                                    }}
+                                    radius="sm"
                                     placeholder="ryomensukuna@jjk.jp"
                                     disabled={isAuthLoading}
                                     {...field}
@@ -181,4 +175,4 @@ function SignUpForm() {
     );
 }
 
-export { SignUpForm };
+export default SignUpForm;

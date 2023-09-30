@@ -1,12 +1,12 @@
 import { db } from "@/src/lib/drizzle";
 import { blogs } from "@/src/lib/drizzle/schema";
+import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
-import { desc } from "drizzle-orm";
-import { EmptyPlaceholder } from "../../global/empty-placeholder";
-import { Separator } from "../../ui/separator";
-import BlogCreateButton from "./blog-create-button";
+import { desc, eq } from "drizzle-orm";
+import BlogCreateButton from "../../global/buttons/blog-create-button";
+import { EmptyPlaceholder } from "../../ui/empty-placeholder";
 import BlogItem from "./blog-item";
-import FAQAccordian from "./faq";
+import BlogFAQ from "./blogs-faq";
 
 async function BlogsPage({ className }: DefaultProps) {
     const data = await db.query.blogs.findMany({
@@ -28,35 +28,26 @@ async function BlogsPage({ className }: DefaultProps) {
     return (
         <>
             {data.length ? (
-                <div className={className}>
+                <div
+                    className={cn(
+                        "grid grid-cols-1 justify-items-stretch gap-5 md:grid-cols-3",
+                        className
+                    )}
+                >
                     {data.map((blog) => (
                         <BlogItem key={blog.id} blog={blog} />
                     ))}
                 </div>
             ) : (
-                <EmptyPlaceholder>
-                    <EmptyPlaceholder.Icon name="document" />
-
-                    <EmptyPlaceholder.Title>
-                        No blogs created
-                    </EmptyPlaceholder.Title>
-
-                    <EmptyPlaceholder.Description>
-                        You don&apos;t have any blogs yet. Start creating
-                        content.
-                    </EmptyPlaceholder.Description>
-
-                    <BlogCreateButton color="secondary" className="border" />
-                </EmptyPlaceholder>
+                <EmptyPlaceholder
+                    icon="document"
+                    title="No blogs created"
+                    description="You don't have any blogs yet. Start creating content."
+                    endContent={<BlogCreateButton />}
+                />
             )}
 
-            <div className="space-y-4">
-                <p className="text-4xl font-bold">F.A.Q.</p>
-
-                <Separator className="h-[2px] w-12 bg-blue-300" />
-
-                <FAQAccordian className="w-full text-left" />
-            </div>
+            <BlogFAQ />
         </>
     );
 }

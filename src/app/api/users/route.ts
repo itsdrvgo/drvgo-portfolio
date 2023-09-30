@@ -1,6 +1,15 @@
 import { env } from "@/env.mjs";
 import { db } from "@/src/lib/drizzle";
-import { comments, images, likes, users } from "@/src/lib/drizzle/schema";
+import {
+    accounts,
+    commentLoves,
+    comments,
+    images,
+    likes,
+    notifications,
+    projects,
+    users,
+} from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import {
     userDeleteSchema,
@@ -9,7 +18,7 @@ import {
     webhookSchema,
 } from "@/src/lib/validation/webhook";
 import { SvixHeaders } from "@/src/types";
-import { and, eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { Webhook } from "svix";
 
@@ -30,7 +39,7 @@ export async function POST(req: NextRequest) {
     } catch (err) {
         return NextResponse.json({
             code: 400,
-            message: "Bad Request",
+            message: "Bad Request!",
         });
     }
 
@@ -40,14 +49,26 @@ export async function POST(req: NextRequest) {
         case "user.created": {
             try {
                 const { id, email_addresses, profile_image_url, username } =
-                    userWebhookSchema.parse(data);
+                    userWebhookSchema
+                        .omit({
+                            private_metadata: true,
+                        })
+                        .parse(data);
 
-                await db.insert(users).values({
-                    username,
-                    id,
-                    image: profile_image_url,
-                    email: email_addresses[0].email_address,
-                });
+                await Promise.all([
+                    db.insert(users).values({
+                        username,
+                        id,
+                        image: profile_image_url,
+                        email: email_addresses[0].email_address,
+                    }),
+                    db.insert(accounts).values({
+                        id,
+                        permissions: 1,
+                        roles: ["user"],
+                        strikes: 0,
+                    }),
+                ]);
 
                 return NextResponse.json({
                     code: 201,
@@ -67,14 +88,19 @@ export async function POST(req: NextRequest) {
                 private_metadata,
             } = userWebhookSchema.parse(data);
 
-            const existingUser = await db.query.users.findFirst({
-                where: eq(users.id, id),
-            });
+            const [existingUser, existingAccount] = await Promise.all([
+                db.query.users.findFirst({
+                    where: eq(users.id, id),
+                }),
+                db.query.accounts.findFirst({
+                    where: eq(accounts.id, id),
+                }),
+            ]);
 
-            if (!existingUser)
+            if (!existingUser || !existingAccount)
                 return NextResponse.json({
                     code: 404,
-                    message: "Account doesn't exist",
+                    message: "Account doesn't exist!",
                 });
 
             if (existingUser.image) {
@@ -88,16 +114,29 @@ export async function POST(req: NextRequest) {
                     );
             }
 
-            await db
-                .update(users)
-                .set({
-                    email:
-                        email_addresses[0].email_address ?? existingUser.email,
-                    username: username ?? existingUser.username,
-                    image: profile_image_url ?? existingUser.image,
-                    role: private_metadata.role ?? existingUser.role,
-                })
-                .where(eq(users.id, existingUser.id));
+            await Promise.all([
+                db
+                    .update(users)
+                    .set({
+                        email:
+                            email_addresses[0].email_address ??
+                            existingUser.email,
+                        username: username ?? existingUser.username,
+                        image: profile_image_url ?? existingUser.image,
+                    })
+                    .where(eq(users.id, existingUser.id)),
+                db
+                    .update(accounts)
+                    .set({
+                        permissions:
+                            private_metadata.permissions ??
+                            existingAccount.permissions,
+                        roles: private_metadata.roles ?? existingAccount.roles,
+                        strikes:
+                            private_metadata.strikes ?? existingAccount.strikes,
+                    })
+                    .where(eq(accounts.id, existingAccount.id)),
+            ]);
 
             return NextResponse.json({
                 code: 200,
@@ -116,13 +155,25 @@ export async function POST(req: NextRequest) {
             if (!existingUser)
                 return NextResponse.json({
                     code: 404,
-                    message: "Account doesn't exist",
+                    message: "Account doesn't exist!",
                 });
 
             await Promise.all([
                 db.delete(users).where(eq(users.id, id)),
+                db.delete(accounts).where(eq(accounts.id, id)),
                 db.delete(comments).where(eq(comments.authorId, id)),
+                db.delete(images).where(eq(images.uploaderId, id)),
                 db.delete(likes).where(eq(likes.userId, id)),
+                db
+                    .delete(notifications)
+                    .where(
+                        or(
+                            eq(notifications.userId, id),
+                            eq(notifications.notifierId, id)
+                        )
+                    ),
+                db.delete(commentLoves).where(eq(commentLoves.userId, id)),
+                db.delete(projects).where(eq(projects.purchaserId, id)),
             ]);
 
             return NextResponse.json({
@@ -135,7 +186,7 @@ export async function POST(req: NextRequest) {
         default: {
             return NextResponse.json({
                 code: 400,
-                message: "Bad Request",
+                message: "Bad Request!",
             });
         }
     }

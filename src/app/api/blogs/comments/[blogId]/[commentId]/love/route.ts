@@ -6,6 +6,7 @@ import {
     commentContextSchema,
 } from "@/src/lib/validation/route";
 import { currentUser } from "@clerk/nextjs";
+import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, context: CommentContext) {
@@ -16,10 +17,10 @@ export async function POST(req: NextRequest, context: CommentContext) {
         if (!user)
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
-        const loveId = crypto.randomUUID();
+        const loveId = nanoid();
 
         await db.insert(commentLoves).values({
             id: loveId,
@@ -33,6 +34,6 @@ export async function POST(req: NextRequest, context: CommentContext) {
             data: JSON.stringify(loveId),
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }

@@ -1,15 +1,18 @@
+import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import {
     commentLoves,
     comments,
     insertCommentSchema,
 } from "@/src/lib/drizzle/schema";
-import { getAuthorizedUser, handleError } from "@/src/lib/utils";
+import { handleError } from "@/src/lib/utils";
 import {
     CommentContext,
     commentContextSchema,
 } from "@/src/lib/validation/route";
+import { currentUser } from "@clerk/nextjs";
 import { and, eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
 const replySchema = insertCommentSchema.pick({ content: true });
@@ -19,11 +22,12 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
     try {
         const { params } = commentContextSchema.parse(context);
 
-        const user = await getAuthorizedUser();
-        if (!user)
+        if (
+            !(await verifyCurrentUserHasAccessToDeleteComment(params.commentId))
+        )
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
         const comment = await db.query.comments.findFirst({
@@ -33,7 +37,7 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
         if (!comment)
             return NextResponse.json({
                 code: 404,
-                message: "Comment not found",
+                message: "Comment not found!",
             });
 
         if (comment.parentId === null) {
@@ -76,7 +80,7 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
             message: "Ok",
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }
 
@@ -87,14 +91,14 @@ export async function POST(req: NextRequest, context: CommentContext) {
         const { params } = commentContextSchema.parse(context);
         const { content } = replySchema.parse(body);
 
-        const user = await getAuthorizedUser();
+        const user = await currentUser();
         if (!user)
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
-        const replyId = crypto.randomUUID();
+        const replyId = nanoid();
 
         await db.insert(comments).values({
             id: replyId,
@@ -110,7 +114,7 @@ export async function POST(req: NextRequest, context: CommentContext) {
             data: JSON.stringify(replyId),
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }
 
@@ -121,11 +125,10 @@ export async function PATCH(req: NextRequest, context: CommentContext) {
         const { params } = commentContextSchema.parse(context);
         const { content } = commentEditSchema.parse(body);
 
-        const user = await getAuthorizedUser();
-        if (!user)
+        if (!(await verifyCurrentUserHasAccessToEditComment(params.commentId)))
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
         await db
@@ -138,6 +141,36 @@ export async function PATCH(req: NextRequest, context: CommentContext) {
             message: "Ok",
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
+}
+
+async function verifyCurrentUserHasAccessToEditComment(commentId: string) {
+    const user = await currentUser();
+    if (!user) return false;
+
+    const comment = await db.query.comments.findFirst({
+        where: and(eq(comments.id, commentId), eq(comments.authorId, user.id)),
+    });
+    if (!comment) return false;
+    return true;
+}
+
+async function verifyCurrentUserHasAccessToDeleteComment(commentId: string) {
+    const user = await currentUser();
+    if (!user) return false;
+
+    if (
+        user.privateMetadata.permissions &
+        (BitFieldPermissions.Administrator |
+            BitFieldPermissions.ManagePages |
+            BitFieldPermissions.ManageBlogs)
+    )
+        return true;
+
+    const comment = await db.query.comments.findFirst({
+        where: and(eq(comments.id, commentId), eq(comments.authorId, user.id)),
+    });
+    if (!comment) return false;
+    return true;
 }

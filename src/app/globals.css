@@ -4,39 +4,11 @@
 
 @layer base {
     :root {
-        --text: hsl(216, 70%, 91%);
-
+        --text: hsl(0, 0%, 100%);
         --background: hsl(0, 0%, 6%);
-        --foreground: hsl(213 31% 91%);
-
         --code: hsl(220, 13%, 18%);
-
-        --muted: hsl(223 47% 11%);
-        --muted-foreground: hsl(215.4 16.3% 56.9%);
-
-        --accent: hsl(216 34% 17%);
-        --accent-foreground: hsl(212, 85%, 82%);
-
-        --popover: hsl(231, 54%, 3%);
-        --popover-foreground: hsl(215 20.2% 65.1%);
-
-        --border: hsl(216 34% 17%);
-        --input: hsl(216 34% 17%);
-
-        --card: hsl(249, 39%, 19%);
-        --card-foreground: hsl(213 31% 91%);
-
-        --primary: hsl(210 40% 98%);
-        --primary-foreground: hsl(222.2 47.4% 1.2%);
-
-        --secondary: hsl(224, 48%, 9%);
-        --secondary-foreground: hsl(210 40% 98%);
-
-        --destructive: hsl(0 63% 31%);
-        --destructive-foreground: hsl(210 40% 98%);
-
-        --ring: hsl(216 34% 17%);
-
+        --accent: hsl(212, 85%, 82%);
+        --border: hsl(213, 10%, 17%);
         --radius: 0.5rem;
     }
 }
@@ -63,5 +35,5 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--primary);
+    background-color: var(--accent);
 }

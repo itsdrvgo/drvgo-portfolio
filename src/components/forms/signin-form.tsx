@@ -6,10 +6,11 @@ import { LoginData, loginSchema } from "@/src/lib/validation/auth";
 import { isClerkAPIResponseError, useSignIn } from "@clerk/nextjs";
 import { EmailLinkFactor, SignInResource } from "@clerk/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { Icons } from "../icons/icons";
 import {
     Form,
@@ -19,12 +20,8 @@ import {
     FormLabel,
     FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/input";
-import { useToast } from "../ui/use-toast";
 
 function SignInForm() {
-    const { toast } = useToast();
-
     const router = useRouter();
 
     const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
@@ -62,26 +59,17 @@ function SignInForm() {
         try {
             si = await signIn.create({ identifier: data.email });
 
-            toast({
-                description:
-                    "A sign in link has been sent to your email. Please check your inbox.",
-            });
+            toast.success(
+                "A sign in link has been sent to your email. Please check your inbox"
+            );
         } catch (err) {
             setAuthLoading(false);
 
             const unknownError = "Something went wrong, please try again.";
 
             isClerkAPIResponseError(err)
-                ? toast({
-                      title: "Oops!",
-                      description: err.errors[0]?.longMessage ?? unknownError,
-                      variant: "destructive",
-                  })
-                : toast({
-                      title: "Oops!",
-                      description: unknownError,
-                      variant: "destructive",
-                  });
+                ? toast.error(err.errors[0]?.longMessage ?? unknownError)
+                : toast.error(unknownError);
 
             return;
         }
@@ -91,12 +79,10 @@ function SignInForm() {
                 x.strategy === "email_link" && x.safeIdentifier === data.email
         ) as EmailLinkFactor | undefined;
 
-        if (!siFactor || !siFactor.emailAddressId) {
-            return toast({
-                description:
-                    "A sign in link has been sent to your email. Please check your inbox.",
-            });
-        }
+        if (!siFactor || !siFactor.emailAddressId)
+            return toast.success(
+                "A sign in link has been sent to your email. Please check your inbox"
+            );
 
         const res = await startMagicLinkFlow({
             emailAddressId: siFactor.emailAddressId,
@@ -114,10 +100,9 @@ function SignInForm() {
             setAuthLoading(false);
             setActive({ session: res.createdSessionId }).then(() => {
                 router.push("/profile");
-                toast({
-                    description:
-                        "Welcome to DRVGO! You have successfully signed in. Please wait while we redirect you to your profile.",
-                });
+                toast.success(
+                    "Welcome to DRVGO! You have successfully signed in"
+                );
             });
             return;
         }
@@ -126,16 +111,13 @@ function SignInForm() {
     if (expired) {
         setAuthLoading(false);
         router.push("/");
-        toast({
-            description: "Verification link expired, please try again.",
-        });
+        toast.error("Verification link expired, please try again");
     }
+
     if (verified) {
         setAuthLoading(false);
         router.push("/profile");
-        toast({
-            description: "Welcome to DRVGO! You have successfully signed in.",
-        });
+        toast.error("Welcome to DRVGO! You have successfully signed in");
     }
 
     return (
@@ -152,6 +134,11 @@ function SignInForm() {
                             <FormLabel>Email</FormLabel>
                             <FormControl>
                                 <Input
+                                    classNames={{
+                                        inputWrapper:
+                                            "border border-gray-700 bg-background",
+                                    }}
+                                    radius="sm"
                                     placeholder="ryomensukuna@jjk.jp"
                                     disabled={isAuthLoading}
                                     {...field}
@@ -176,4 +163,4 @@ function SignInForm() {
     );
 }
 
-export { SignInForm };
+export default SignInForm;

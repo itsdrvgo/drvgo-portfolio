@@ -11,21 +11,19 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    Spinner,
     useDisclosure,
 } from "@nextui-org/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
-import { useToast } from "../../ui/use-toast";
 
 interface PageProps extends DefaultProps {
     user: ClerkUser;
 }
 
 function DeleteAccount({ user, className }: PageProps) {
-    const { toast } = useToast();
     const router = useRouter();
 
     const [isLoading, setLoading] = useState(false);
@@ -34,34 +32,31 @@ function DeleteAccount({ user, className }: PageProps) {
     const handleAccountDeletion = () => {
         setLoading(true);
 
+        const toastId = toast.loading("Deleting account");
+
         axios
             .delete<ResponseData>(`/api/users/${user.id}`)
             .then(({ data: resData }) => {
-                setLoading(false);
-                onClose();
-
-                if (resData.code !== 200) return;
-                toast({
-                    title: "Oops!",
-                    description: resData.message,
-                    variant: "destructive",
-                });
+                if (resData.code !== 204)
+                    return toast.error(resData.message, {
+                        id: toastId,
+                    });
 
                 router.push("/");
-                toast({
-                    description: "Account deleted",
+
+                toast.success(resData.message, {
+                    id: toastId,
                 });
             })
             .catch((err) => {
+                console.error(err);
+                toast.error("Something went wrong, try again later!", {
+                    id: toastId,
+                });
+            })
+            .finally(() => {
                 setLoading(false);
                 onClose();
-
-                console.error(err);
-                toast({
-                    title: "Oops!",
-                    description: "Something went wrong, try again later",
-                    variant: "destructive",
-                });
             });
     };
 
@@ -74,9 +69,10 @@ function DeleteAccount({ user, className }: PageProps) {
         >
             <Button
                 onPress={onOpen}
-                className="bg-destructive"
+                color="danger"
                 isDisabled={isLoading}
                 radius="sm"
+                className="bg-danger-300"
                 startContent={<Icons.trash className="h-4 w-4" />}
             >
                 {isLoading ? <p>Deleting Account</p> : <p>Delete Account</p>}
@@ -102,16 +98,22 @@ function DeleteAccount({ user, className }: PageProps) {
                             <ModalFooter>
                                 <Button
                                     radius="sm"
-                                    onPress={onClose}
+                                    color="danger"
+                                    variant="light"
+                                    className="font-semibold"
                                     isDisabled={isLoading}
+                                    isLoading={isLoading}
+                                    onPress={onClose}
                                 >
                                     Close
                                 </Button>
                                 <Button
-                                    color="danger"
-                                    className="bg-destructive"
                                     radius="sm"
+                                    color="primary"
+                                    variant="flat"
+                                    className="font-semibold"
                                     onPress={handleAccountDeletion}
+                                    isDisabled={isLoading}
                                     isLoading={isLoading}
                                 >
                                     Yes, I&apos;m sure

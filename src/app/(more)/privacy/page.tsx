@@ -1,6 +1,6 @@
 function Page() {
     return (
-        <section className="m-5 my-10 flex">
+        <section className="flex p-5 py-10">
             <div className="container max-w-[75rem] space-y-8 p-0">
                 <div>
                     <p className="text-5xl font-bold">Privacy Policy</p>

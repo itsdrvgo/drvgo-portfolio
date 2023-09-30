@@ -1,4 +1,5 @@
 import { DefaultProps } from "@/src/types";
+import { Badge, Button, Card, CardBody, Divider } from "@nextui-org/react";
 import { motion, Variants } from "framer-motion";
 import { Icons } from "../icons/icons";
 
@@ -38,130 +39,143 @@ function Skills({ className }: DefaultProps) {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 divide-x-0 divide-y overflow-hidden rounded-md border border-gray-600 backdrop-blur-sm md:grid-cols-3 md:divide-x md:divide-y-0">
-                    <motion.div
-                        className="flex flex-col items-center gap-10 p-10 py-20 text-center"
-                        variants={fadeInContainer}
-                    >
-                        <div className="flex flex-col items-center justify-center gap-5">
-                            <div className="rounded-full bg-card p-4">
-                                <Icons.layers className="h-8 w-8" />
+                <Card>
+                    <CardBody className="grid grid-flow-row overflow-y-hidden md:grid-flow-col">
+                        <motion.div
+                            className="flex flex-col items-center gap-10 p-10 py-20 text-center"
+                            variants={fadeInContainer}
+                        >
+                            <div className="flex flex-col items-center justify-center gap-5">
+                                <div className="rounded-full bg-secondary-200 p-4">
+                                    <Icons.layers className="h-8 w-8" />
+                                </div>
+                                <p className="text-xl font-semibold">
+                                    Designer
+                                </p>
+                                <p className="text-sm text-gray-300">
+                                    I value simplicity, clean designs, and
+                                    unique interactions
+                                </p>
                             </div>
-                            <p className="text-xl font-semibold">Designer</p>
-                            <p className="text-sm text-gray-300">
-                                I value simplicity, clean designs, and unique
-                                interactions
-                            </p>
-                        </div>
 
-                        <div className="space-y-4">
-                            <p className="text-lg font-semibold text-accent-foreground">
-                                Things I know:
-                            </p>
-                            <p className="text-sm text-gray-400">
-                                3D Modeling, Animation, Logos, Web, UI, UX
-                            </p>
-                        </div>
-
-                        <div className="space-y-4">
-                            <p className="text-lg font-semibold text-accent-foreground">
-                                Tools:
-                            </p>
-                            <ul className="list-none text-sm text-gray-400">
-                                <li>Adobe Premiere Pro</li>
-                                <li>Adobe Photoshop</li>
-                                <li>Adobe After Effects</li>
-                                <li>Adobe Illustrator</li>
-                                <li>Figma</li>
-                                <li>Blender</li>
-                                <li>DaVinci Resolve</li>
-                            </ul>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        className="flex flex-col items-center gap-10 p-10 py-20 text-center"
-                        variants={fadeInContainer}
-                    >
-                        <div className="flex flex-col items-center justify-center gap-5">
-                            <div className="rounded-full bg-card p-4">
-                                <Icons.code className="h-8 w-8" />
+                            <div className="space-y-4">
+                                <p className="text-lg font-semibold text-accent">
+                                    Things I know:
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                    3D Modeling, Animation, Logos, Web, UI, UX
+                                </p>
                             </div>
-                            <p className="text-xl font-semibold">
-                                Full-stack Developer
-                            </p>
-                            <p className="text-sm text-gray-300">
-                                I love coding from the scratch, and bringing new
-                                ideas to life.
-                            </p>
-                        </div>
 
-                        <div className="space-y-4">
-                            <p className="text-lg font-semibold text-accent-foreground">
-                                Frameworks & Libraries:
-                            </p>
-                            <p className="text-sm text-gray-400">
-                                React, Next.JS, ShadCN UI, Tailwind CSS, Sass
-                            </p>
-                        </div>
-
-                        <div className="space-y-4">
-                            <p className="text-lg font-semibold text-accent-foreground">
-                                Languages:
-                            </p>
-                            <p className="text-sm text-gray-400">
-                                HTML, CSS, JavaScript, TypeScript, Node.JS
-                            </p>
-                        </div>
-
-                        <div className="space-y-4">
-                            <p className="text-lg font-semibold text-accent-foreground">
-                                Back-End & Database:
-                            </p>
-                            <p className="text-sm text-gray-400">
-                                MySQL, MongoDB, Planetscale, Drizzle ORM,
-                                Next-Auth, Clerk, Zod, Vercel
-                            </p>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        className="flex flex-col items-center gap-10 p-10 py-20 text-center"
-                        variants={fadeInContainer}
-                    >
-                        <div className="flex flex-col items-center justify-center gap-5">
-                            <div className="rounded-full bg-card p-4">
-                                <Icons.music className="h-8 w-8" />
+                            <div className="space-y-4">
+                                <p className="text-lg font-semibold text-accent">
+                                    Tools:
+                                </p>
+                                <ul className="list-none text-sm text-gray-400">
+                                    <li>Adobe Premiere Pro</li>
+                                    <li>Adobe Photoshop</li>
+                                    <li>Adobe After Effects</li>
+                                    <li>Adobe Illustrator</li>
+                                    <li>Figma</li>
+                                    <li>Blender</li>
+                                    <li>DaVinci Resolve</li>
+                                </ul>
                             </div>
-                            <p className="text-xl font-semibold">Musician</p>
-                            <p className="text-sm text-gray-300">
-                                Since my childhood, I always had an affection to
-                                Music.
-                            </p>
-                        </div>
+                        </motion.div>
 
-                        <div className="space-y-4">
-                            <p className="text-lg font-semibold text-accent-foreground">
-                                Genres I like:
-                            </p>
-                            <p className="text-sm text-gray-400">
-                                Pop, J-Rock, Country, RnB, Soul, Lo-Fi, EDM,
-                                Jazz, Blues
-                            </p>
-                        </div>
+                        <Divider orientation="vertical" />
+                        <Divider orientation="horizontal" />
 
-                        <div className="space-y-4">
-                            <p className="text-lg font-semibold text-accent-foreground">
-                                Experiences:
-                            </p>
-                            <ul className="list-none text-sm text-gray-400">
-                                <li>10+ Original Compositions</li>
-                                <li>50+ Raw Tracks</li>
-                                <li>100+ Songs</li>
-                            </ul>
-                        </div>
-                    </motion.div>
-                </div>
+                        <motion.div
+                            className="flex flex-col items-center gap-10 p-10 py-20 text-center"
+                            variants={fadeInContainer}
+                        >
+                            <div className="flex flex-col items-center justify-center gap-5">
+                                <div className="rounded-full bg-secondary-200 p-4">
+                                    <Icons.code className="h-8 w-8" />
+                                </div>
+                                <p className="text-xl font-semibold">
+                                    Full-stack Developer
+                                </p>
+                                <p className="text-sm text-gray-300">
+                                    I love coding from the scratch, and bringing
+                                    new ideas to life.
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <p className="text-lg font-semibold text-accent">
+                                    Frameworks & Libraries:
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                    React, Next.JS, ShadCN UI, Tailwind CSS,
+                                    Sass
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <p className="text-lg font-semibold text-accent">
+                                    Languages:
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                    HTML, CSS, JavaScript, TypeScript, Node.JS
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <p className="text-lg font-semibold text-accent">
+                                    Back-End & Database:
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                    MySQL, MongoDB, Planetscale, Drizzle ORM,
+                                    Next-Auth, Clerk, Zod, Vercel
+                                </p>
+                            </div>
+                        </motion.div>
+
+                        <Divider orientation="vertical" />
+                        <Divider orientation="horizontal" />
+
+                        <motion.div
+                            className="flex flex-col items-center gap-10 p-10 py-20 text-center"
+                            variants={fadeInContainer}
+                        >
+                            <div className="flex flex-col items-center justify-center gap-5">
+                                <div className="rounded-full bg-secondary-200 p-4">
+                                    <Icons.music className="h-8 w-8" />
+                                </div>
+                                <p className="text-xl font-semibold">
+                                    Musician
+                                </p>
+                                <p className="text-sm text-gray-300">
+                                    Since my childhood, I always had an
+                                    affection to Music.
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <p className="text-lg font-semibold text-accent">
+                                    Genres I like:
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                    Pop, J-Rock, Country, RnB, Soul, Lo-Fi, EDM,
+                                    Jazz, Blues
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <p className="text-lg font-semibold text-accent">
+                                    Experiences:
+                                </p>
+                                <ul className="list-none text-sm text-gray-400">
+                                    <li>10+ Original Compositions</li>
+                                    <li>50+ Raw Tracks</li>
+                                    <li>100+ Songs</li>
+                                </ul>
+                            </div>
+                        </motion.div>
+                    </CardBody>
+                </Card>
             </motion.div>
         </motion.section>
     );

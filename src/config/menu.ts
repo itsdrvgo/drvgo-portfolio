@@ -21,15 +21,9 @@ export const homeMenuConfig: MenuConfig = {
     ],
     subNav: [
         {
-            title: "Patch Notes",
-            description: "See what's new in the latest update.",
-            href: "/patches",
-            icon: "page",
-        },
-        {
             title: "Hire Me",
             description: "Hire me to build your next project.",
-            href: "/start-a-project",
+            href: "/projects/create",
             icon: "command",
         },
         {

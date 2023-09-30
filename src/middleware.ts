@@ -2,6 +2,8 @@ import { authMiddleware, clerkClient } from "@clerk/nextjs";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { NextResponse } from "next/server";
+import { BitFieldPermissions } from "./config/const";
+import { hasPermission } from "./lib/utils";
 
 const cache = new Map();
 
@@ -24,7 +26,6 @@ const viewsRateLimiter = new Ratelimit({
 export default authMiddleware({
     publicRoutes: [
         "/blogs(.*)",
-        "/patches(.*)",
         "/courses(.*)",
         "/music(.*)",
         "/tos(.*)",
@@ -59,24 +60,44 @@ export default authMiddleware({
         }
 
         const user = await clerkClient.users.getUser(auth.userId);
-        if (!user) throw new Error("User not found.");
+        if (!user) throw new Error("User not found!");
 
-        if (!user.privateMetadata.role) {
+        if (
+            (!user.privateMetadata.roles ||
+                !user.privateMetadata.roles.length) &&
+            !user.privateMetadata.permissions &&
+            !user.privateMetadata.strikes
+        ) {
             await clerkClient.users.updateUserMetadata(auth.userId, {
                 privateMetadata: {
-                    role: "user",
+                    roles: ["user"],
+                    permissions: 1,
+                    strikes: 0,
                 },
             });
         }
 
-        if (
-            req.nextUrl.pathname.startsWith("/admin") &&
-            user.privateMetadata.role === "user"
-        )
-            return NextResponse.json({
-                code: 403,
-                message: "Forbidden",
-            });
+        if (req.nextUrl.pathname.startsWith("/admin")) {
+            if (
+                hasPermission(
+                    user.privateMetadata.permissions,
+                    BitFieldPermissions.Administrator
+                )
+            )
+                return NextResponse.next();
+            else if (
+                hasPermission(
+                    user.privateMetadata.permissions,
+                    BitFieldPermissions.ViewPrivatePages
+                )
+            )
+                return NextResponse.next();
+            else
+                return NextResponse.json({
+                    code: 403,
+                    message: "Forbidden!",
+                });
+        }
 
         if (req.nextUrl.pathname === "/profile")
             return NextResponse.redirect(new URL("/profile/settings", req.url));

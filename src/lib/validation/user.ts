@@ -8,7 +8,9 @@ export const userSchema = z.object({
     lastSignInAt: z.number().nullable(),
     username: z.string().nullable(),
     privateMetadata: z.object({
-        role: z.enum(["user", "guest", "moderator", "admin", "owner"]),
+        roles: z.array(z.string()),
+        permissions: z.number(),
+        strikes: z.number(),
     }),
     emailAddresses: z.array(
         z.object({

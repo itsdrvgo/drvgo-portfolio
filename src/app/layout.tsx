@@ -1,9 +1,9 @@
 import "./globals.css";
-import { Toaster } from "@/src/components/ui/toaster";
 import { siteConfig } from "@/src/config/site";
 import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
 import { Titillium_Web } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import ClientProvider from "../components/providers/client";
 import ServerProvider from "../components/providers/server";
 import { cn } from "../lib/utils";
@@ -66,18 +66,23 @@ function RootLayout({ children }: RootLayoutProps) {
         <ServerProvider>
             <html lang="en" suppressHydrationWarning className="dark">
                 <head />
-                    <body
-                        className={cn(
-                            poppins.className,
-                            "min-h-screen overflow-x-hidden scroll-smooth antialiased"
-                        )}
-                        >
-                        <ClientProvider>
-                        {children}
-                </ClientProvider>
-                        <Analytics />
-                        <Toaster />
-                    </body>
+                <body
+                    className={cn(
+                        poppins.className,
+                        "min-h-screen overflow-x-hidden scroll-smooth antialiased"
+                    )}
+                >
+                    <ClientProvider>{children}</ClientProvider>
+                    <Analytics />
+                    <Toaster
+                        toastOptions={{
+                            style: {
+                                background: "#333",
+                                color: "#fff",
+                            },
+                        }}
+                    />
+                </body>
             </html>
         </ServerProvider>
     );
