@@ -1,5 +1,5 @@
 import DRVGOLogo from "@/src/components/global/DRVGOLogo";
-import { Stripes } from "@/src/config/const";
+import { STRIPES } from "@/src/config/const";
 import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -22,8 +22,8 @@ function Layout({ children }: RootLayoutProps) {
             </header>
             <main className="flex-1">
                 <Image
-                    src={Stripes}
-                    alt="Stripes"
+                    src={STRIPES}
+                    alt="STRIPES"
                     className="absolute left-0 top-0 -z-10 opacity-50"
                     fill
                     style={{ objectFit: "cover" }}

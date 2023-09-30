@@ -1,10 +1,11 @@
-interface DRVGOLogoProps {
-    width?: number;
-    height?: number;
-    className?: string;
-}
+import { SVGProps } from "react";
 
-function DRVGOLogo({ width, height, className }: DRVGOLogoProps) {
+function DRVGOLogo({
+    width,
+    height,
+    className,
+    ...props
+}: SVGProps<SVGSVGElement>) {
     return (
         <svg
             id="DRVGO"
@@ -14,6 +15,7 @@ function DRVGOLogo({ width, height, className }: DRVGOLogoProps) {
             height={height || 30}
             width={width || 30}
             className={className}
+            {...props}
         >
             <defs></defs>
             <path

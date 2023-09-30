@@ -2,6 +2,8 @@ import { User } from "../lib/drizzle/schema";
 
 declare global {
     interface UserPrivateMetadata {
-        role: User["role"];
+        roles: string[];
+        permissions: number;
+        strikes: number;
     }
 }

@@ -40,6 +40,9 @@ The portfolio website is built with the following technologies:
 -   [TypeScript](https://www.typescriptlang.org/): Ensuring robust and type-safe code for enhanced development.
 -   [React.js](https://react.dev/): Creating dynamic and interactive user interfaces for seamless navigation.
 -   [ShadCN UI](https://ui.shadcn.com/): The best library of manipulate the UI.
+-   [Next UI](https://nextui.org/): The best library of manipulate the UI.
+-   [Pusher](https://pusher.com/): Adding real-time functionality to the application.
+-   [React Hot Toast](https://react-hot-toast.com/): Adding toast notifications to the application.
 -   [Tailwind CSS](https://tailwindcss.com/): Designing responsive layouts with ease and speed.
 -   [Zod](https://zod.dev/): Implementing strong data validation for secure user interactions.
 -   [Clerk](https://clerk.com/): Facilitating authentication and user management.
@@ -52,6 +55,7 @@ The portfolio website is built with the following technologies:
 -   [Upstash Redis](https://upstash.com/): Adding ratelimiter to api routes.
 -   [Axios](https://axios-http.com/docs/intro): Manipulating data between Front-end & Back-end.
 -   [Lucide Icons](https://lucide.dev/): Adding interesting icons.
+-   [Zustand](https://github.com/pmndrs/zustand): State management for React.
 
 ## Community
 

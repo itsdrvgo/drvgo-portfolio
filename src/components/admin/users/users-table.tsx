@@ -1,12 +1,14 @@
 "use client";
 
-import { defaultUserPFP } from "@/src/config/const";
-import { User as DBUser } from "@/src/lib/drizzle/schema";
-import { cn, formatDate } from "@/src/lib/utils";
+import { BitFieldPermissions, DEFAULT_USER_IMAGE } from "@/src/config/const";
+import { Role } from "@/src/lib/drizzle/schema";
+import { formatDate, hasPermission } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps } from "@/src/types";
+import { Column, DefaultProps, UserWithAccount } from "@/src/types";
 import {
     Button,
+    Chip,
+    ChipProps,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -34,41 +36,49 @@ import {
     useState,
 } from "react";
 import { Icons } from "../../icons/icons";
-import UsersMassManage from "./users-mass-manage";
+import UsersMassManageButton from "./users-mass-manage-button";
 import UsersOperation from "./users-operation";
 
-interface Column {
-    name: string;
-    uid: string;
-    sortable?: boolean;
-}
-
-const columns: Column[] = [
+const rawColumns: Column[] = [
     { name: "Username", uid: "username", sortable: true },
     { name: "ID", uid: "id", sortable: true },
     { name: "Email", uid: "email", sortable: true },
-    { name: "Role", uid: "role" },
-    { name: "Created", uid: "created", sortable: true },
+    { name: "Roles", uid: "roles" },
+    { name: "Created", uid: "createdAt", sortable: true },
+    { name: "Strikes", uid: "strikes", sortable: true },
     { name: "Actions", uid: "actions" },
 ];
 
-const INITIAL_VISIBLE_COLUMNS = ["id", "username", "email", "role", "actions"];
-
-export type PartialUser = {
-    id: string;
-    username: string;
-    email: string;
-    role: DBUser["role"];
-    created: string;
-    image: string | null;
-};
+const INITIAL_VISIBLE_COLUMNS = [
+    "id",
+    "username",
+    "roles",
+    "actions",
+    "strikes",
+    "createdAt",
+];
 
 interface PageProps extends DefaultProps {
-    data: PartialUser[];
-    authUser: ClerkUser;
+    data: UserWithAccount[];
+    user: ClerkUser;
+    roles: Role[];
 }
 
-function UsersTable({ data, authUser }: PageProps) {
+function UsersTable({ data, user, roles }: PageProps) {
+    const [columns, setColumns] = useState<Column[]>(rawColumns);
+
+    useEffect(() => {
+        const hasPerms = hasPermission(
+            user.privateMetadata.permissions,
+            BitFieldPermissions.Administrator
+        );
+        if (!hasPerms) {
+            setColumns((prev) =>
+                prev.filter((column) => column.uid !== "email")
+            );
+        }
+    }, [user.privateMetadata.permissions]);
+
     const [filterValue, setFilterValue] = useState("");
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -88,14 +98,14 @@ function UsersTable({ data, authUser }: PageProps) {
         return columns.filter((column) =>
             Array.from(visibleColumns).includes(column.uid)
         );
-    }, [visibleColumns]);
+    }, [columns, visibleColumns]);
 
     const filteredItems = useMemo(() => {
         let filteredUsers = [...data];
 
         if (hasSearchFilter) {
-            filteredUsers = filteredUsers.filter((user) => {
-                return user.username
+            filteredUsers = filteredUsers.filter((u) => {
+                return u.username
                     .toLowerCase()
                     .includes(filterValue.toLowerCase());
             });
@@ -118,62 +128,113 @@ function UsersTable({ data, authUser }: PageProps) {
         return [...items].sort((a, b) => {
             const sorter = sortDescriptor.column!;
 
-            const first = a[sorter as keyof PartialUser] as unknown as number;
-            const second = b[sorter as keyof PartialUser] as unknown as number;
+            const first = a[
+                sorter as keyof UserWithAccount
+            ] as unknown as number;
+            const second = b[
+                sorter as keyof UserWithAccount
+            ] as unknown as number;
 
             const cmp = first < second ? -1 : first > second ? 1 : 0;
             return sortDescriptor.direction === "descending" ? -cmp : cmp;
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = useCallback((user: PartialUser, columnKey: Key) => {
-        const cellValue = user[columnKey as keyof PartialUser];
+    const renderCell = useCallback(
+        (target: UserWithAccount, columnKey: Key) => {
+            const cellValue = target[columnKey as keyof UserWithAccount];
+            const targetRoles = roles
+                .filter((role) => target.account.roles.includes(role.key))
+                .sort((a, b) => b.permissions - a.permissions);
 
-        switch (columnKey) {
-            case "username": {
-                return (
-                    <User
-                        avatarProps={{
-                            radius: "sm",
-                            src: user.image ?? defaultUserPFP.src,
-                        }}
-                        name={cellValue}
-                    />
-                );
-            }
+            switch (columnKey) {
+                case "username": {
+                    return (
+                        <User
+                            avatarProps={{
+                                radius: "sm",
+                                src: target.image ?? DEFAULT_USER_IMAGE.src,
+                            }}
+                            name={cellValue as string}
+                        />
+                    );
+                }
 
-            case "id": {
-                return <span>{cellValue}</span>;
-            }
+                case "id": {
+                    return <span>{cellValue as string}</span>;
+                }
 
-            case "email": {
-                return <span>{cellValue}</span>;
-            }
+                case "email": {
+                    return <span>{cellValue as string}</span>;
+                }
 
-            case "role": {
-                return <span>{cellValue?.toUpperCase()}</span>;
-            }
+                case "roles": {
+                    return (
+                        <div className="flex flex-wrap items-center gap-2">
+                            {targetRoles.map((role) => (
+                                <Chip
+                                    key={role.key}
+                                    color={
+                                        role.permissions &
+                                        BitFieldPermissions.Administrator
+                                            ? "success"
+                                            : role.permissions &
+                                              BitFieldPermissions.ManagePages
+                                            ? "warning"
+                                            : role.permissions &
+                                              (BitFieldPermissions.ManageRoles |
+                                                  BitFieldPermissions.ManageBlogs |
+                                                  BitFieldPermissions.ManageUsers)
+                                            ? "primary"
+                                            : role.permissions &
+                                              BitFieldPermissions.ViewPrivatePages
+                                            ? "secondary"
+                                            : "default"
+                                    }
+                                    variant="dot"
+                                    size="sm"
+                                >
+                                    {role.name}
+                                </Chip>
+                            ))}
+                        </div>
+                    );
+                }
 
-            case "created": {
-                return (
-                    <span>{formatDate(new Date(cellValue!).getTime())}</span>
-                );
-            }
+                case "strikes": {
+                    return <span>{target.account.strikes}</span>;
+                }
 
-            case "actions": {
-                return (
-                    <div className="flex items-center justify-end">
-                        <UsersOperation data={user} authUser={authUser} />
-                    </div>
-                );
-            }
+                case "createdAt": {
+                    return (
+                        <span>
+                            {formatDate(
+                                new Date(cellValue as string).getTime()
+                            )}
+                        </span>
+                    );
+                }
 
-            default: {
-                return null;
+                case "actions": {
+                    return (
+                        <div className="flex items-center justify-end">
+                            <UsersOperation
+                                target={target}
+                                user={user}
+                                roles={roles}
+                            />
+                        </div>
+                    );
+                }
+
+                default: {
+                    return null;
+                }
             }
-        }
+        },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        []
+    );
 
     const onNextPage = useCallback(() => {
         if (page < pages) {
@@ -217,7 +278,7 @@ function UsersTable({ data, authUser }: PageProps) {
                         isClearable
                         className="w-full sm:max-w-[44%]"
                         placeholder="Search by username..."
-                        startContent={<Icons.search />}
+                        startContent={<Icons.search className="h-4 w-4" />}
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
@@ -225,13 +286,13 @@ function UsersTable({ data, authUser }: PageProps) {
                     />
 
                     <div className="flex items-center gap-2">
-                        <UsersMassManage keys={selectedKeys} />
+                        <UsersMassManageButton keys={selectedKeys} />
 
                         <Dropdown>
-                            <DropdownTrigger className="sm:flex">
+                            <DropdownTrigger>
                                 <Button
                                     endContent={
-                                        <Icons.chevronDown className="text-small" />
+                                        <Icons.chevronDown className="h-4 w-4" />
                                     }
                                     variant="flat"
                                     radius="sm"
@@ -306,15 +367,16 @@ function UsersTable({ data, authUser }: PageProps) {
                         ? "All items selected"
                         : `${selectedKeys.size} of ${filteredItems.length} selected`}
                 </span>
+
                 <Pagination
                     isCompact
                     showControls
                     showShadow
-                    color="primary"
                     page={page}
                     total={pages}
                     onChange={setPage}
                 />
+
                 <div className="hidden w-[30%] justify-end gap-2 sm:flex">
                     <Button
                         isDisabled={pages === 1}
@@ -341,7 +403,7 @@ function UsersTable({ data, authUser }: PageProps) {
     return (
         <Table
             radius="sm"
-            aria-label="Example table with custom cells, pagination and sorting"
+            aria-label="Users Table"
             isHeaderSticky
             bottomContent={bottomContent}
             bottomContentPlacement="outside"

@@ -1,7 +1,7 @@
 "use client";
 
-import { SiteFooter } from "@/src/components/global/footer";
-import HomeNavbar from "@/src/components/global/navbar-home";
+import FooterHome from "@/src/components/global/footer/footer-home";
+import NavbarHome from "@/src/components/global/navbar/navbar-home";
 import About from "@/src/components/home/about";
 import Landing from "@/src/components/home/landing";
 import Newsletter from "@/src/components/home/newsletter";
@@ -65,7 +65,8 @@ function Page() {
                 </p>
             </div>
 
-            <HomeNavbar />
+            <NavbarHome />
+
             <main
                 className="flex-1"
                 style={{
@@ -79,7 +80,8 @@ function Page() {
                 <Projects className="mb-20 flex min-h-screen items-center p-5 md:mb-0" />
                 <Newsletter className="mb-40 flex items-center justify-center p-5 py-40" />
             </main>
-            <SiteFooter />
+
+            <FooterHome />
         </div>
     );
 }

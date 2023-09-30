@@ -115,9 +115,9 @@ function Landing({ className }: DefaultProps) {
                     variants={item}
                 >
                     <motion.div className="ml-1 h-2 w-2 rounded-md bg-white drop-shadow-xl" />
-                    <motion.div className="ml-1 h-2 w-8 rounded-md bg-accent-foreground drop-shadow-xl" />
+                    <motion.div className="ml-1 h-2 w-8 rounded-md bg-accent drop-shadow-xl" />
                     <motion.div className="ml-1 h-2 w-20 rounded-md bg-blue-600 drop-shadow-xl" />
-                    <motion.div className="ml-1 h-2 w-8 rounded-md bg-accent-foreground drop-shadow-xl" />
+                    <motion.div className="ml-1 h-2 w-8 rounded-md bg-accent drop-shadow-xl" />
                     <motion.div className="ml-1 h-2 w-2 rounded-md bg-white drop-shadow-xl" />
                 </motion.div>
 

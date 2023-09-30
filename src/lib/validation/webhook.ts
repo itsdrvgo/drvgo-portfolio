@@ -16,10 +16,9 @@ export const userWebhookSchema = z.object({
         })
     ),
     private_metadata: z.object({
-        role: z
-            .enum(["user", "guest", "moderator", "admin", "owner"])
-            .default("user")
-            .optional(),
+        roles: z.array(z.string()),
+        permissions: z.number(),
+        strikes: z.number(),
     }),
 });
 

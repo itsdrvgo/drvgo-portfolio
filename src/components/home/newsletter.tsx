@@ -1,17 +1,14 @@
 import { DefaultProps } from "@/src/types";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Card, CardBody, Input } from "@nextui-org/react";
 import { motion, Variants } from "framer-motion";
-import { useToast } from "../ui/use-toast";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 function Newsletter({ className }: DefaultProps) {
-    const { toast } = useToast();
+    const [value, setValue] = useState("");
 
     const handleNewsLetter = () => {
-        toast({
-            title: "Oops!",
-            description: "This feature is not available yet!",
-            variant: "destructive",
-        });
+        toast.error("This feature is not yet available!");
     };
 
     const fadeInContainer: Variants = {
@@ -52,32 +49,35 @@ function Newsletter({ className }: DefaultProps) {
                     </p>
                 </div>
 
-                <motion.div
-                    className="w-full space-y-3 rounded-md bg-gradient-to-r from-accent via-card to-card p-5 md:p-10"
-                    variants={fadeInContainer}
-                >
-                    <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:gap-5">
-                        <Input
-                            placeholder="ryomensukuna@jjk.jp"
-                            radius="sm"
-                            variant="bordered"
-                            classNames={{
-                                inputWrapper: "bg-background",
-                            }}
-                        />
-                        <Button
-                            radius="sm"
-                            color="danger"
-                            className="bg-destructive uppercase"
-                            onClick={handleNewsLetter}
-                        >
-                            Subscribe
-                        </Button>
-                    </div>
-                    <p className="text-xs text-gray-400 md:text-sm">
-                        We&apos;ll be sending you updates about our latest
-                        projects, opportunities, and more.
-                    </p>
+                <motion.div variants={fadeInContainer} className="w-full">
+                    <Card>
+                        <CardBody className="gap-4 p-6 md:p-10 md:px-8">
+                            <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:gap-5">
+                                <Input
+                                    isClearable
+                                    variant="underlined"
+                                    className="w-full"
+                                    placeholder="ryomensukuna@jjk.jp"
+                                    value={value}
+                                    onClear={() => setValue("")}
+                                    onValueChange={setValue}
+                                    radius="sm"
+                                />
+
+                                <Button
+                                    radius="sm"
+                                    color="primary"
+                                    onClick={handleNewsLetter}
+                                >
+                                    Subscribe
+                                </Button>
+                            </div>
+                            <p className="text-xs text-gray-400 md:text-sm">
+                                We&apos;ll be sending you updates about our
+                                latest projects, opportunities, and more.
+                            </p>
+                        </CardBody>
+                    </Card>
                 </motion.div>
             </motion.div>
         </motion.section>

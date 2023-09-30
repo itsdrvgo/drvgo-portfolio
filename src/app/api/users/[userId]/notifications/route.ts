@@ -6,7 +6,9 @@ import {
 import { handleError } from "@/src/lib/utils";
 import { UserContext, userContextSchema } from "@/src/lib/validation/route";
 import { Notification } from "@/src/types/notification";
+import { currentUser } from "@clerk/nextjs";
 import { eq, lt } from "drizzle-orm";
+import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, context: UserContext) {
@@ -22,7 +24,14 @@ export async function POST(req: NextRequest, context: UserContext) {
             })
             .parse(body);
 
-        const notificationId = crypto.randomUUID();
+        const user = await currentUser();
+        if (!user || user.id !== notifierId)
+            return NextResponse.json({
+                code: 403,
+                message: "Unauthorized!",
+            });
+
+        const notificationId = nanoid();
 
         await db.insert(notifications).values({
             id: notificationId,
@@ -45,13 +54,20 @@ export async function POST(req: NextRequest, context: UserContext) {
             data: notificationId,
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }
 
 export async function PATCH(req: NextRequest, context: UserContext) {
     try {
         const { params } = userContextSchema.parse(context);
+
+        const user = await currentUser();
+        if (!user || user.id !== params.userId)
+            return NextResponse.json({
+                code: 403,
+                message: "Unauthorized!",
+            });
 
         await db
             .update(notifications)
@@ -65,6 +81,6 @@ export async function PATCH(req: NextRequest, context: UserContext) {
             message: "Ok",
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }

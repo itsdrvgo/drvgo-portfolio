@@ -1,3 +1,4 @@
+import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import { images } from "@/src/lib/drizzle/schema";
 import { getAuthorizedUser } from "@/src/lib/utils";
@@ -36,7 +37,10 @@ export const customFileRouter = {
         }),
     blogThumbnail: f({ image: { maxFileSize: "2MB", maxFileCount: 1 } })
         .middleware(async () => {
-            const user = await getAuthorizedUser();
+            const user = await getAuthorizedUser(
+                BitFieldPermissions.ManageBlogs |
+                    BitFieldPermissions.ManagePages
+            );
             if (!user) throw new Error("Unauthorized!");
 
             return { userId: user.id };

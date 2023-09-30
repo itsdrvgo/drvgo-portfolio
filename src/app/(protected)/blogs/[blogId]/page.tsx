@@ -1,7 +1,6 @@
-import { env } from "@/env.mjs";
-import BlogNav from "@/src/components/blogs/blogs-nav";
-import BlogViewPage from "@/src/components/blogs/blogs-view-page";
-import BlogViewSkeleton from "@/src/components/skeletons/blog-view-skeleton";
+import BlogViewFetch from "@/src/components/blogs/blog/blog-view-fetch";
+import BlogNav from "@/src/components/blogs/blog/blogs-nav";
+import BlogViewSkeleton from "@/src/components/blogs/skeletons/blog-view";
 import { siteConfig } from "@/src/config/site";
 import { db } from "@/src/lib/drizzle";
 import { blogs } from "@/src/lib/drizzle/schema";
@@ -23,8 +22,6 @@ export async function generateMetadata({
         return {
             title: `Blogs | ${params.blogId}`,
         };
-
-    const url = env.NEXT_PUBLIC_APP_URL;
 
     return {
         title: blog.title,
@@ -53,11 +50,11 @@ export async function generateMetadata({
 
 function Page({ params }: PageProps) {
     return (
-        <section className="m-5 my-10 flex min-h-[calc(100vh-5rem)]">
+        <section className="flex p-5 py-10">
             <div className="container relative flex max-w-[65rem] flex-col gap-4 p-0">
                 <Suspense fallback={<BlogViewSkeleton />}>
                     <BlogNav params={params} />
-                    <BlogViewPage params={params} />
+                    <BlogViewFetch params={params} />
                 </Suspense>
             </div>
         </section>

@@ -4,7 +4,7 @@ import { music } from "@/src/config/music";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Card, CardBody, CardFooter, Divider } from "@nextui-org/react";
-import IFrame from "../global/iframe";
+import IFrame from "../ui/iframe";
 
 function MusicViewPage({ className }: DefaultProps) {
     return (

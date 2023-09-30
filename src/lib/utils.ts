@@ -4,12 +4,10 @@ import { clsx, type ClassValue } from "clsx";
 import { NextResponse } from "next/server";
 import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
-import { roleHierarchy } from "../config/const";
+import { BitFieldPermissions } from "../config/const";
 import { Notification } from "../types/notification";
-import { Blog } from "./drizzle/schema";
-import { UserUpdateData } from "./validation/auth";
+import { Blog, Role } from "./drizzle/schema";
 import { ResponseData } from "./validation/response";
-import { ClerkUser } from "./validation/user";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -42,8 +40,55 @@ export function handleError(err: unknown) {
     else
         return NextResponse.json({
             code: 500,
-            message: "Internal Server Error",
+            message: "Internal Server Error!",
         });
+}
+
+export function convertMsIntoDays(ms: number) {
+    const today = new Date();
+    const input = new Date(ms);
+
+    const todayYear = today.getFullYear();
+    const todayMonth = today.getMonth();
+    const todayDate = today.getDate();
+
+    const inputYear = input.getFullYear();
+    const inputMonth = input.getMonth();
+    const inputDate = input.getDate();
+
+    const todayTimestamp = Date.UTC(
+        todayYear,
+        todayMonth,
+        todayDate,
+        0,
+        0,
+        0,
+        0
+    );
+
+    const inputTimestamp = Date.UTC(
+        inputYear,
+        inputMonth,
+        inputDate,
+        0,
+        0,
+        0,
+        0
+    );
+
+    const elapsed = todayTimestamp - inputTimestamp;
+
+    if (elapsed < 0) {
+        const days = Math.ceil(elapsed / 86400000);
+        if (days === -1) return "Tomorrow";
+        else return `in ${-days} days`;
+    } else if (elapsed === 0) {
+        return "today";
+    } else {
+        const days = Math.floor(elapsed / 86400000);
+        if (days === 1) return "yesterday";
+        else return `${days} days ago`;
+    }
 }
 
 export function convertMstoTimeElapsed(input: number) {
@@ -75,65 +120,48 @@ export function shortenNumber(num: number): string {
 }
 
 export function checkRoleHierarchy(
-    userRole: ClerkUser["privateMetadata"]["role"],
-    targetRole: ClerkUser["privateMetadata"]["role"]
+    userRoles: string[],
+    targetRoles: string[],
+    roles: Role[]
 ) {
-    const userRoleIndex = roleHierarchy.indexOf(userRole);
-    const targetRoleIndex = roleHierarchy.indexOf(targetRole);
+    const userRolesRaw = userRoles.map((x) => {
+        const role = roles.find((r) => r.key === x);
+        if (!role) return null;
+        return role;
+    });
+    const targetRolesRaw = targetRoles.map((x) => {
+        const role = roles.find((r) => r.key === x);
+        if (!role) return null;
+        return role;
+    });
 
-    if (userRoleIndex === -1 || targetRoleIndex === -1) {
-        return false;
-    }
+    const userHighestRole = userRolesRaw.reduce((prev, curr) => {
+        if (!prev) return curr;
+        if (!curr) return prev;
+        return prev.position > curr.position ? curr : prev;
+    }, null);
 
-    if (userRole === "owner") {
-        if (targetRole === "owner") return false;
-        return true;
-    }
+    const targetHighestRole = targetRolesRaw.reduce((prev, curr) => {
+        if (!prev) return curr;
+        if (!curr) return prev;
+        return prev.position > curr.position ? curr : prev;
+    }, null);
 
-    return (
-        userRoleIndex > targetRoleIndex && userRoleIndex - targetRoleIndex > 1
-    );
-}
+    if (!userHighestRole || !targetHighestRole) return false;
 
-export function manageRole(
-    role: ClerkUser["privateMetadata"]["role"],
-    action: string
-): UserUpdateData["role"] {
-    const roleIndex = roleHierarchy.indexOf(role);
-
-    if (roleIndex === -1) {
-        return undefined;
-    }
-
-    if (action === "promote") {
-        const nextRoleIndex = roleIndex + 1;
-        if (nextRoleIndex < roleHierarchy.length) {
-            return roleHierarchy[nextRoleIndex];
-        } else {
-            return undefined;
-        }
-    } else if (action === "demote") {
-        const prevRoleIndex = roleIndex - 1;
-        if (prevRoleIndex >= 0) {
-            return roleHierarchy[prevRoleIndex];
-        } else {
-            return undefined;
-        }
-    } else {
-        return undefined;
-    }
+    return userHighestRole.position < targetHighestRole.position;
 }
 
 export function updateBlogViews(blogId: string) {
     axios
         .patch<ResponseData>(`/api/blogs/views/${blogId}`)
         .then(({ data: resData }) => {
-            if (resData.code !== 200) return console.log(resData.message);
-            console.log("Updated view");
+            if (resData.code !== 200) return console.error(resData.message);
+            console.info("Updated view");
         })
         .catch((err) => {
             console.error(err);
-            console.log("Couldn't update view");
+            console.error("Couldn't update view");
         });
 }
 
@@ -153,15 +181,15 @@ export async function addNotification(
         );
 
         if (data.code !== 201) {
-            console.log(data.message);
+            console.error(data.message);
             return false;
         }
 
-        console.log("Added notification");
+        console.info("Added notification");
         return true;
     } catch (err) {
         console.error(err);
-        console.log("Couldn't add notification");
+        console.error("Couldn't add notification");
         return false;
     }
 }
@@ -183,15 +211,15 @@ export async function markNotificationAsRead({
         const { data } = await axios.patch<ResponseData>(url);
 
         if (data.code !== 200) {
-            console.log(data.message);
+            console.error(data.message);
             return false;
         }
 
-        console.log("Marked notification as read");
+        console.info("Marked notification as read");
         return true;
     } catch (err) {
         console.error(err);
-        console.log("Couldn't mark notification as read");
+        console.error("Couldn't mark notification as read");
         return false;
     }
 }
@@ -201,22 +229,91 @@ export async function getBlog(blogId: string) {
         const { data } = await axios.get<ResponseData>(`/api/blogs/${blogId}`);
 
         if (data.code !== 200) {
-            console.log(data.message);
+            console.error(data.message);
             return null;
         }
 
         return data.data as Blog;
     } catch (err) {
         console.error(err);
-        console.log("Couldn't get blog");
+        console.error("Couldn't get blog");
         return null;
     }
 }
 
-export async function getAuthorizedUser() {
+export async function getAuthorizedUser(permissions: number) {
     const user = await currentUser();
+    if (!user) return null;
 
-    if (!user || !["owner", "admin"].includes(user.privateMetadata.role))
-        return null;
-    return user;
+    if (user.privateMetadata.permissions & BitFieldPermissions.Administrator)
+        return user;
+    if (user.privateMetadata.permissions & permissions) return user;
+    return null;
+}
+
+export function hasPermission(userPermission: number, permission: number) {
+    if (userPermission & BitFieldPermissions.Administrator) return true;
+    return (userPermission & permission) !== 0;
+}
+
+export async function verifyAndGetOwner() {
+    const user = await currentUser();
+    if (!user) return null;
+
+    if (user.privateMetadata.permissions & BitFieldPermissions.Administrator)
+        return user;
+
+    return null;
+}
+
+export function toPusherKey(key: string) {
+    return key.replace(/:/g, "__");
+}
+
+export function chatHrefConstructor(id1: string, id2: string) {
+    const sortedIds = [id1, id2].sort();
+    return `${sortedIds[0]}--${sortedIds[1]}`;
+}
+
+export async function updateMessage(
+    messageId: string,
+    chatId: string,
+    props: {
+        text?: string;
+        read?: boolean;
+    }
+) {
+    try {
+        const { data } = await axios.patch<ResponseData>(
+            `/api/chats/messages/${messageId}`,
+            JSON.stringify({
+                chatId,
+                ...props,
+            })
+        );
+
+        if (data.code !== 200) {
+            console.error(data.message);
+            return false;
+        }
+
+        console.info("Message updated");
+        return true;
+    } catch (err) {
+        console.error(err);
+        console.error("Couldn't update message");
+        return false;
+    }
+}
+
+export function reorder<TItem>(
+    list: TItem[],
+    startIndex: number,
+    endIndex: number
+): TItem[] {
+    const result = [...list];
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    return result;
 }

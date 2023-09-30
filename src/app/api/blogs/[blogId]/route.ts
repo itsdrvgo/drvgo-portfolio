@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, context: BlogContext) {
         if (!blog)
             return NextResponse.json({
                 code: 404,
-                message: "Blog not found",
+                message: "Blog not found!",
             });
 
         return NextResponse.json({
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, context: BlogContext) {
             data: JSON.stringify(blog),
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }
 
@@ -38,7 +38,7 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
         if (!(await verifyCurrentUserHasAccessToBlog(params.blogId)))
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
         await db.delete(blogs).where(eq(blogs.id, params.blogId));
@@ -47,7 +47,7 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
             message: "Ok",
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }
 
@@ -60,7 +60,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
         if (!(await verifyCurrentUserHasAccessToBlog(params.blogId)))
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
         const body = postPatchSchema.parse(json);
@@ -75,7 +75,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                     if (!blog)
                         return NextResponse.json({
                             code: 404,
-                            message: "Blog not found",
+                            message: "Blog not found!",
                         });
 
                     const updatedValues: Omit<NewBlog, "id"> = {
@@ -151,7 +151,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
             }
         }
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }
 

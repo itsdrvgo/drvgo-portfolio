@@ -28,7 +28,8 @@ export const signupSchema = z.object({
 export const userUpdateSchema = z.object({
     email: checkEmailSchema.shape.email.optional(),
     username: checkUsernameSchema.shape.username.optional(),
-    role: z.enum(["user", "guest", "moderator", "admin", "owner"]).optional(),
+    roles: z.array(z.string()).optional(),
+    strikes: z.number().optional(),
 });
 
 // TYPES

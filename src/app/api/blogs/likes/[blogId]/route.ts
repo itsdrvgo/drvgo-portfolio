@@ -4,6 +4,7 @@ import { handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { currentUser } from "@clerk/nextjs";
 import { and, eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, context: BlogContext) {
@@ -14,11 +15,11 @@ export async function POST(req: NextRequest, context: BlogContext) {
         if (!user)
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
         const newLike = await db.insert(likes).values({
-            id: crypto.randomUUID(),
+            id: nanoid(),
             userId: user.id,
             blogId: params.blogId,
         });
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest, context: BlogContext) {
             data: JSON.stringify(newLike.insertId),
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }
 
@@ -41,7 +42,7 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
         if (!user)
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
         await db
@@ -55,6 +56,6 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
             message: "Ok",
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }

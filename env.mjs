@@ -15,11 +15,19 @@ export const env = createEnv({
         UPLOADTHING_SECRET: z.string(),
         UPLOADTHING_APP_ID: z.string(),
 
+        PUSHER_APP_ID: z.string(),
+        PUSHER_APP_KEY: z.string(),
+        PUSHER_APP_SECRET: z.string(),
+        PUSHER_APP_CLUSTER: z.string(),
+
         NODE_ENV: z.enum(["development", "test", "production"]),
     },
     client: {
         NEXT_PUBLIC_APP_URL: z.string(),
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+
+        NEXT_PUBLIC_PUSHER_APP_KEY: z.string(),
+        NEXT_PUBLIC_PUSHER_APP_CLUSTER: z.string(),
     },
     runtimeEnv: {
         BASE_URL: process.env.BASE_URL,
@@ -31,6 +39,10 @@ export const env = createEnv({
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
             process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 
+        NEXT_PUBLIC_PUSHER_APP_KEY: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
+        NEXT_PUBLIC_PUSHER_APP_CLUSTER:
+            process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
+
         DATABASE_URL: process.env.DATABASE_URL,
         REDIS_URL: process.env.REDIS_URL,
         UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
@@ -38,6 +50,11 @@ export const env = createEnv({
 
         UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
         UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
+
+        PUSHER_APP_ID: process.env.PUSHER_APP_ID,
+        PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
+        PUSHER_APP_SECRET: process.env.PUSHER_APP_SECRET,
+        PUSHER_APP_CLUSTER: process.env.PUSHER_APP_CLUSTER,
 
         NODE_ENV: process.env.NODE_ENV,
     },

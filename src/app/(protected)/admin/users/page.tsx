@@ -1,5 +1,5 @@
+import UsersTableSkeleton from "@/src/components/admin/users/skeletons/users-table";
 import UsersView from "@/src/components/admin/users/users-view";
-import UsersTableSkeleton from "@/src/components/skeletons/users-table-skeleton";
 import { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -10,12 +10,13 @@ export const metadata: Metadata = {
 
 function Page() {
     return (
-        <section className="m-5 my-10 flex">
+        <section className="flex p-5 py-10">
             <div className="container max-w-[75rem] space-y-10 p-0 md:space-y-16">
                 <div className="flex flex-col items-center justify-center">
                     <p className="text-4xl font-bold">Users Table</p>
                     <p className="text-gray-400">Manage your users from here</p>
                 </div>
+
                 <Suspense fallback={<UsersTableSkeleton />}>
                     <UsersView />
                 </Suspense>

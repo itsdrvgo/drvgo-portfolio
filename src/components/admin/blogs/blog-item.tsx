@@ -1,11 +1,11 @@
 "use client";
 
-import { defaultBlogThumbnail } from "@/src/config/const";
+import { DEFAULT_BLOG_THUMBNAIL } from "@/src/config/const";
 import { formatDate } from "@/src/lib/utils";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
-import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Image, Link } from "@nextui-org/react";
 import NextImage from "next/image";
-import Link from "next/link";
+import NextLink from "next/link";
 import BlogOperations from "./blog-item-operations";
 
 interface PageProps extends DefaultProps {
@@ -19,7 +19,7 @@ function BlogItem({ blog, className }: PageProps) {
                 <Image
                     as={NextImage}
                     radius="sm"
-                    src={blog.thumbnailUrl ?? defaultBlogThumbnail.src}
+                    src={blog.thumbnailUrl ?? DEFAULT_BLOG_THUMBNAIL.src}
                     isZoomed
                     alt={blog.id.toString()}
                     width={500}
@@ -31,8 +31,11 @@ function BlogItem({ blog, className }: PageProps) {
             <CardFooter className="flex items-center justify-between gap-2 px-4 text-left">
                 <div className="space-y-2">
                     <Link
+                        as={NextLink}
                         href={`/admin/blogs/${blog.id}`}
-                        className="font-semibold hover:underline"
+                        underline="hover"
+                        color="foreground"
+                        className="font-semibold"
                     >
                         {blog.title}
                     </Link>

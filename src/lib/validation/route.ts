@@ -38,9 +38,21 @@ export const notificationContextSchema = z.object({
     }),
 });
 
-export const patchContextSchema = z.object({
+export const projectContextSchema = z.object({
     params: z.object({
-        patchId: z.string(),
+        projectId: z.string(),
+    }),
+});
+
+export const messageContextSchema = z.object({
+    params: z.object({
+        messageId: z.string(),
+    }),
+});
+
+export const roleContextSchema = z.object({
+    params: z.object({
+        roleId: z.string(),
     }),
 });
 
@@ -50,4 +62,6 @@ export type BlogContext = z.infer<typeof blogContextSchema>;
 export type CommentContext = z.infer<typeof commentContextSchema>;
 export type UsernameContext = z.infer<typeof usernameContextSchema>;
 export type NotificationContext = z.infer<typeof notificationContextSchema>;
-export type PatchContext = z.infer<typeof patchContextSchema>;
+export type ProjectContext = z.infer<typeof projectContextSchema>;
+export type MessageContext = z.infer<typeof messageContextSchema>;
+export type RoleContext = z.infer<typeof roleContextSchema>;

@@ -1,10 +1,10 @@
 import ProfilePage from "@/src/components/profile/settings/profile-page";
-import ProfileSkeleton from "@/src/components/skeletons/profile-skeleton";
+import ProfileSkeleton from "@/src/components/profile/settings/skeletons/profile-skeleton";
 import { Suspense } from "react";
 
 function Page() {
     return (
-        <section className="m-5 my-10 flex">
+        <section className="flex p-5 py-10">
             <div className="container max-w-[65rem] space-y-8 p-0">
                 <div className="flex w-full flex-col gap-5">
                     <div className="space-y-1 md:space-y-2">

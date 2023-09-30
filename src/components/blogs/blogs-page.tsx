@@ -1,9 +1,10 @@
 import { db } from "@/src/lib/drizzle";
 import { blogs, comments } from "@/src/lib/drizzle/schema";
+import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { desc, eq } from "drizzle-orm";
-import { EmptyPlaceholder } from "../global/empty-placeholder";
-import { GoBackButton } from "../global/go-back-button";
+import GoBackButton from "../global/buttons/go-back-button";
+import { EmptyPlaceholder } from "../ui/empty-placeholder";
 import BlogSearch from "./blog-search";
 
 async function BlogsPage({ className }: DefaultProps) {
@@ -28,18 +29,16 @@ async function BlogsPage({ className }: DefaultProps) {
     return (
         <>
             {blogData.length ? (
-                <BlogSearch blogData={blogData} />
+                <BlogSearch blogData={blogData} className={cn("", className)} />
             ) : (
-                <EmptyPlaceholder>
-                    <EmptyPlaceholder.Icon name="document" />
-                    <EmptyPlaceholder.Title>
-                        No blogs created
-                    </EmptyPlaceholder.Title>
-                    <EmptyPlaceholder.Description>
-                        No blogs have been written yet, come back later
-                    </EmptyPlaceholder.Description>
-                    <GoBackButton />
-                </EmptyPlaceholder>
+                <div className="flex items-center justify-center">
+                    <EmptyPlaceholder
+                        icon="document"
+                        title="No blogs created"
+                        description="No blogs have been written yet, come back later."
+                        endContent={<GoBackButton />}
+                    />
+                </div>
             )}
         </>
     );

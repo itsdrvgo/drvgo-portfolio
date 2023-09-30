@@ -1,17 +1,14 @@
 "use client";
 
-import { wait } from "@/src/lib/utils";
+import { cn, wait } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { Button, Divider, Input } from "@nextui-org/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
-import { EmptyPlaceholder } from "../global/empty-placeholder";
-import { GoBackButton } from "../global/go-back-button";
-import { Icons } from "../icons/icons";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Separator } from "../ui/separator";
+import GoBackButton from "../global/buttons/go-back-button";
+import { EmptyPlaceholder } from "../ui/empty-placeholder";
 import BlogItem from "./blog-item";
 
 interface PageProps extends DefaultProps {
@@ -26,7 +23,7 @@ const fetchBlogs = async (page: number) => {
     return (JSON.parse(data) as ExtendedBlog[]).slice((page - 1) * 6, page * 6);
 };
 
-function BlogSearch({ blogData }: PageProps) {
+function BlogSearch({ blogData, className }: PageProps) {
     const [searchText, setSearchText] = useState("");
     const [matchingIds, setMatchingIds] = useState<string[]>([]);
 
@@ -60,16 +57,22 @@ function BlogSearch({ blogData }: PageProps) {
     };
 
     return (
-        <>
+        <div className={cn("flex flex-col gap-5", className)}>
             <Input
-                type="search"
+                size="lg"
+                isClearable
+                radius="sm"
+                variant="faded"
+                classNames={{
+                    inputWrapper: "border border-gray-700 bg-background",
+                }}
+                onClear={() => handleSearch("")}
                 placeholder="Enter the Blog Title here"
-                className="h-14 p-4"
                 value={searchText}
                 onChange={(e) => handleSearch(e.target.value)}
             />
 
-            <Separator />
+            <Divider />
 
             {searchText === "" ? (
                 <>
@@ -97,20 +100,15 @@ function BlogSearch({ blogData }: PageProps) {
                         ) : null}
                         {blogData.length > 6 && (
                             <Button
-                                onClick={() => fetchNextPage()}
+                                onPress={() => fetchNextPage()}
                                 disabled={
                                     isFetchingNextPage ||
                                     !data?.pages[data?.pages.length - 1].length
                                 }
+                                isLoading={isFetchingNextPage}
+                                color="primary"
                             >
-                                {isFetchingNextPage ? (
-                                    <div className="flex items-center gap-2">
-                                        <Icons.spinner className="h-4 w-4 animate-spin" />
-                                        <p>Loading</p>
-                                    </div>
-                                ) : (
-                                    <p>Load More</p>
-                                )}
+                                {isFetchingNextPage ? "Loading" : "Load More"}
                             </Button>
                         )}
                     </div>
@@ -122,19 +120,16 @@ function BlogSearch({ blogData }: PageProps) {
                     ))}
                 </div>
             ) : (
-                <EmptyPlaceholder>
-                    <EmptyPlaceholder.Icon name="document" />
-                    <EmptyPlaceholder.Title>
-                        No blogs found
-                    </EmptyPlaceholder.Title>
-                    <EmptyPlaceholder.Description>
-                        Seems like DRVGO has not posted any blogs with this
-                        name.
-                    </EmptyPlaceholder.Description>
-                    <GoBackButton />
-                </EmptyPlaceholder>
+                <div className="flex items-center justify-center">
+                    <EmptyPlaceholder
+                        icon="document"
+                        title="No blogs found"
+                        description="Seems like DRVGO has not posted any blogs with this name."
+                        endContent={<GoBackButton />}
+                    />
+                </div>
             )}
-        </>
+        </div>
     );
 }
 

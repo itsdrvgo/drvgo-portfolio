@@ -1,3 +1,4 @@
+import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import { comments } from "@/src/lib/drizzle/schema";
 import { getAuthorizedUser, handleError } from "@/src/lib/utils";
@@ -12,11 +13,13 @@ export async function POST(req: NextRequest, context: CommentContext) {
     try {
         const { params } = commentContextSchema.parse(context);
 
-        const user = await getAuthorizedUser();
+        const user = await getAuthorizedUser(
+            BitFieldPermissions.ManageBlogs | BitFieldPermissions.ManagePages
+        );
         if (!user)
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
         await db
@@ -31,6 +34,6 @@ export async function POST(req: NextRequest, context: CommentContext) {
             message: "Ok",
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }

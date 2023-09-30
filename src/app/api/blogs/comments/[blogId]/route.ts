@@ -4,6 +4,7 @@ import { handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, context: BlogContext) {
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest, context: BlogContext) {
             data: JSON.stringify(filteredComments),
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }
 
@@ -44,10 +45,10 @@ export async function POST(req: NextRequest, context: BlogContext) {
         if (!user)
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
-        const commentId = crypto.randomUUID();
+        const commentId = nanoid();
 
         await db.insert(comments).values({
             id: commentId,
@@ -62,6 +63,6 @@ export async function POST(req: NextRequest, context: BlogContext) {
             data: JSON.stringify(commentId),
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }

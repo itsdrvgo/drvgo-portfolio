@@ -3,10 +3,12 @@ import { HTMLAttributes } from "react";
 import { WebhookRequiredHeaders } from "svix";
 import { Icons } from "../components/icons/icons";
 import {
+    Account,
     Blog,
     Comment,
     CommentLove,
     Like,
+    Project,
     User,
     View,
 } from "../lib/drizzle/schema";
@@ -38,10 +40,20 @@ export type MenuConfig = {
     subNav: NavItem[];
 };
 
+export interface Column {
+    name: string;
+    uid: string;
+    sortable?: boolean;
+}
+
 export type DefaultProps = HTMLAttributes<HTMLElement>;
 
 export interface RootLayoutProps {
     children: React.ReactNode;
+}
+
+export interface UserWithAccount extends User {
+    account: Account;
 }
 
 export interface ExtendedComment extends Comment {
@@ -60,5 +72,14 @@ export interface ExtendedBlog extends Blog {
 export interface ExtendedNotification extends Notification {
     notifier: User;
 }
+
+export interface ExtendedProject extends Project {
+    purchaser: User;
+}
+
+export type FAQ = {
+    question: string;
+    answer: string;
+};
 
 export type SvixHeaders = IncomingHttpHeaders & WebhookRequiredHeaders;

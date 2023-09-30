@@ -17,7 +17,7 @@ export async function POST(req: NextRequest, context: CommentContext) {
         if (!user)
             return NextResponse.json({
                 code: 403,
-                message: "Unauthorized",
+                message: "Unauthorized!",
             });
 
         await db
@@ -34,6 +34,6 @@ export async function POST(req: NextRequest, context: CommentContext) {
             message: "Ok",
         });
     } catch (err) {
-        handleError(err);
+        return handleError(err);
     }
 }

@@ -2,15 +2,13 @@
 
 import { env } from "@/env.mjs";
 import { isMagicLinkError, MagicLinkErrorCode, useClerk } from "@clerk/nextjs";
+import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Header } from "../global/header";
-import { Button } from "../ui/button";
-import { useToast } from "../ui/use-toast";
+import toast from "react-hot-toast";
+import { EmptyPlaceholder } from "../ui/empty-placeholder";
 
 function Verification() {
-    const { toast } = useToast();
-
     const router = useRouter();
     const [verificationStatus, setVerificationStatus] = useState("loading");
     const [isOtherDevice, setIsOtherDevice] = useState(false);
@@ -18,7 +16,7 @@ function Verification() {
     const { handleMagicLinkVerification } = useClerk();
 
     useEffect(() => {
-        const verify = async () => {
+        const verify = () => {
             handleMagicLinkVerification({
                 redirectUrl: env.NEXT_PUBLIC_APP_URL + "/",
                 redirectUrlComplete: env.NEXT_PUBLIC_APP_URL + "/profile",
@@ -28,10 +26,9 @@ function Verification() {
             })
                 .then(() => {
                     !isOtherDevice && setVerificationStatus("verified");
-                    toast({
-                        description:
-                            "Welcome to DRVGO! You have successfully signed in.",
-                    });
+                    toast.success(
+                        "Welcome to DRVGO! You have successfully signed in"
+                    );
                 })
                 .catch((err) => {
                     let status = "failed";
@@ -45,7 +42,7 @@ function Verification() {
                 });
         };
         verify();
-    }, [handleMagicLinkVerification, isOtherDevice, toast]);
+    }, [handleMagicLinkVerification, isOtherDevice]);
 
     let description: string;
 
@@ -71,22 +68,28 @@ function Verification() {
     }
 
     return (
-        <div className="w-full space-y-5 rounded-md border border-white bg-secondary p-6 md:p-10">
-            <Header
-                title="Verification"
-                description={
-                    isOtherDevice
-                        ? "You have successfully signed in. Check your device from where you signed in initially, to continue."
-                        : description
-                }
-                size="sm"
-            />
-            {!isOtherDevice && verificationStatus === "verified" && (
-                <Button size={"sm"} onClick={() => router.push("/profile")}>
-                    Go to Profile
-                </Button>
-            )}
-        </div>
+        <EmptyPlaceholder
+            icon="warning"
+            title="Verification"
+            description={
+                isOtherDevice
+                    ? "You have successfully signed in. Check your device from where you signed in initially, to continue."
+                    : description
+            }
+            className="max-w-md"
+            endContent={
+                !isOtherDevice &&
+                verificationStatus === "verified" && (
+                    <Button
+                        radius="sm"
+                        size="sm"
+                        onPress={() => router.push("/profile")}
+                    >
+                        Go to Profile
+                    </Button>
+                )
+            }
+        />
     );
 }
 

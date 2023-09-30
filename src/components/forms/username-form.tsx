@@ -1,17 +1,16 @@
 "use client";
 
-import { wait } from "@/src/lib/utils";
 import { UserUpdateData, userUpdateSchema } from "@/src/lib/validation/auth";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Icons } from "../icons/icons";
+import toast from "react-hot-toast";
 import {
     Form,
     FormControl,
@@ -19,16 +18,12 @@ import {
     FormItem,
     FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/input";
-import { useToast } from "../ui/use-toast";
 
 interface PageProps extends DefaultProps {
     user: ClerkUser;
 }
 
 function UsernameForm({ user }: PageProps) {
-    const { toast } = useToast();
-
     const router = useRouter();
     const [isLoading, setLoading] = useState(false);
 
@@ -39,7 +34,7 @@ function UsernameForm({ user }: PageProps) {
         },
     });
 
-    const onSubmit = async (data: UserUpdateData) => {
+    const onSubmit = (data: UserUpdateData) => {
         setLoading(true);
 
         axios
@@ -49,29 +44,18 @@ function UsernameForm({ user }: PageProps) {
                     username: data.username,
                 })
             )
-            .then(async ({ data: resData }) => {
-                setLoading(false);
-                if (resData.code !== 200)
-                    return toast({
-                        title: "Oops!",
-                        description: resData.message,
-                        variant: "destructive",
-                    });
+            .then(({ data: resData }) => {
+                if (resData.code !== 200) return toast.error(resData.message);
 
-                toast({
-                    description: "Username updated",
-                });
-                await wait(500);
-                router.refresh();
+                toast.success("Username updated");
             })
             .catch((err) => {
-                setLoading(false);
                 console.error(err);
-                toast({
-                    title: "Oops!",
-                    description: "Something went wrong, try again later",
-                    variant: "destructive",
-                });
+                toast.error("Something went wrong, try again later!");
+            })
+            .finally(() => {
+                setLoading(false);
+                router.refresh();
             });
     };
 
@@ -88,9 +72,15 @@ function UsernameForm({ user }: PageProps) {
                         <FormItem>
                             <FormControl>
                                 <Input
+                                    className="w-full lowercase md:w-2/5"
+                                    classNames={{
+                                        inputWrapper:
+                                            "border border-gray-700 bg-background",
+                                    }}
+                                    startContent={"@"}
+                                    radius="sm"
                                     placeholder="duckymomo60"
                                     disabled={isLoading}
-                                    className="w-full lowercase md:w-2/5"
                                     {...field}
                                 />
                             </FormControl>
@@ -105,21 +95,12 @@ function UsernameForm({ user }: PageProps) {
                             isLoading ||
                             form.getValues().username === user.username
                         }
-                        className="flex items-center gap-2 font-semibold"
+                        className="flex items-center gap-2 bg-secondary-900 font-semibold"
                         radius="sm"
-                        color="primary"
+                        color="success"
+                        isLoading={isLoading}
                     >
-                        {isLoading ? (
-                            <>
-                                <Icons.spinner
-                                    className="h-4 w-4 animate-spin"
-                                    aria-hidden="true"
-                                />
-                                <p>Updating</p>
-                            </>
-                        ) : (
-                            <p>Update</p>
-                        )}
+                        {isLoading ? "Updating" : "Update"}
                     </Button>
                 </div>
             </form>
@@ -127,4 +108,4 @@ function UsernameForm({ user }: PageProps) {
     );
 }
 
-export { UsernameForm };
+export default UsernameForm;
