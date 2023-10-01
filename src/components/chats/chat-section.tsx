@@ -47,7 +47,11 @@ function ChatSection({
     }, [chatId]);
 
     const scrollRef = useRef<HTMLDivElement | null>(null);
-    const scrollDownRef = useRef<HTMLDivElement | null>(null);
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
 
     const { scrollY } = useScroll({
         container: scrollRef,
@@ -60,10 +64,6 @@ function ChatSection({
             setIsSticky(false);
         }
     });
-
-    useEffect(() => {
-        scrollDownRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -105,6 +105,8 @@ function ChatSection({
                 .reverse()
                 .map(([date, messages]) => (
                     <div key={date} className="flex flex-col-reverse gap-2">
+                        <div ref={messagesEndRef} />
+
                         <div
                             className={cn(
                                 "sticky -top-full order-1 flex items-center justify-center py-5 text-sm transition-all ease-in-out",
@@ -144,14 +146,7 @@ function ChatSection({
                                 messages[index].senderId;
 
                             return (
-                                <div
-                                    key={`${message.id}-${message.timestamp}`}
-                                    ref={
-                                        index === messages.length - 1
-                                            ? scrollDownRef
-                                            : null
-                                    }
-                                >
+                                <div key={`${message.id}-${message.timestamp}`}>
                                     <div
                                         className={cn("flex items-end gap-2", {
                                             "justify-end": isCurrentUser,
