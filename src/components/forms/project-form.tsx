@@ -180,7 +180,7 @@ function ProjectForm({ project }: PageProps) {
                                         }}
                                         radius="sm"
                                         placeholder="Super Cool Project"
-                                        maxLength={50}
+                                        maxLength={100}
                                         disabled={isLoading}
                                         {...field}
                                     />
