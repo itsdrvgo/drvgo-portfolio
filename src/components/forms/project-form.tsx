@@ -345,6 +345,35 @@ function ProjectForm({ project }: PageProps) {
                                 </p>
 
                                 <h2 className="text-lg font-semibold">
+                                    Strikes and Cancelled Ongoing Projects
+                                </h2>
+                                <ul className="list-inside list-disc text-gray-400">
+                                    <li>
+                                        Canceling an ongoing project with DRVGO
+                                        results in receiving a strike.
+                                    </li>
+                                    <li>
+                                        Strikes are recorded to ensure fair and
+                                        reliable service.
+                                    </li>
+                                    <li>
+                                        For each strike, a 10% fee will be
+                                        applied to the total price of your next
+                                        order.
+                                    </li>
+                                    <li>
+                                        If you have accumulated strikes, one
+                                        strike will be deducted for every 10%
+                                        fee paid.
+                                    </li>
+                                    <li>
+                                        For example, if you have 1 strike and
+                                        pay a 10% fee on your new order, your
+                                        strike count will be reduced to 0.
+                                    </li>
+                                </ul>
+
+                                <h2 className="text-lg font-semibold">
                                     Changes
                                 </h2>
                                 <p className="text-gray-400">
