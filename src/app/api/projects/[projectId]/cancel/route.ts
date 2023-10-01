@@ -1,7 +1,7 @@
 import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import { projects } from "@/src/lib/drizzle/schema";
-import { handleError } from "@/src/lib/utils";
+import { handleError, hasPermission } from "@/src/lib/utils";
 import {
     ProjectContext,
     projectContextSchema,
@@ -40,7 +40,12 @@ export async function PATCH(req: NextRequest, context: ProjectContext) {
 async function hasAccessToProject(projectId: string) {
     const user = await currentUser();
     if (!user) return false;
-    if (user.privateMetadata.permissions & BitFieldPermissions.Administrator)
+    if (
+        hasPermission(
+            user.privateMetadata.permissions,
+            BitFieldPermissions.Administrator
+        )
+    )
         return true;
 
     const project = await db.query.projects.findFirst({
