@@ -6,7 +6,7 @@ import {
     ProjectContext,
     projectContextSchema,
 } from "@/src/lib/validation/route";
-import { currentUser } from "@clerk/nextjs";
+import { clerkClient, currentUser } from "@clerk/nextjs";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,11 +14,42 @@ export async function PATCH(req: NextRequest, context: ProjectContext) {
     try {
         const { params } = projectContextSchema.parse(context);
 
-        if (!(await hasAccessToProject(params.projectId)))
+        const user = await currentUser();
+        if (!user)
             return NextResponse.json({
                 code: 403,
                 message: "Unauthorized!",
             });
+
+        const isOwner = hasPermission(
+            user.privateMetadata.permissions,
+            BitFieldPermissions.Administrator
+        );
+
+        if (!isOwner) {
+            const existingProject = await db.query.projects.findFirst({
+                where: and(
+                    eq(projects.id, params.projectId),
+                    eq(projects.purchaserId, user.id)
+                ),
+            });
+            if (!existingProject)
+                return NextResponse.json({
+                    code: 403,
+                    message: "Unauthorized!",
+                });
+
+            const clerkUser = await clerkClient.users.getUser(
+                existingProject.purchaserId
+            );
+
+            await clerkClient.users.updateUserMetadata(clerkUser.id, {
+                privateMetadata: {
+                    ...clerkUser.privateMetadata,
+                    strikes: clerkUser.privateMetadata.strikes + 1,
+                },
+            });
+        }
 
         await db
             .update(projects)
@@ -35,26 +66,4 @@ export async function PATCH(req: NextRequest, context: ProjectContext) {
     } catch (err) {
         return handleError(err);
     }
-}
-
-async function hasAccessToProject(projectId: string) {
-    const user = await currentUser();
-    if (!user) return false;
-    if (
-        hasPermission(
-            user.privateMetadata.permissions,
-            BitFieldPermissions.Administrator
-        )
-    )
-        return true;
-
-    const project = await db.query.projects.findFirst({
-        where: and(
-            eq(projects.id, projectId),
-            eq(projects.purchaserId, user.id)
-        ),
-    });
-
-    if (!project) return false;
-    return false;
 }
