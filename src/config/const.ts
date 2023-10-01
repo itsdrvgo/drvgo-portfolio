@@ -1,5 +1,4 @@
 import drvgositepreview from "@/public/drvgo-website-preview.png";
-import ev0appPreview from "@/public/ev0.jpg";
 import ProfileImage from "@/public/no-image.png";
 import randomPattern from "@/public/pattern-wood.jpg";
 import BlogThumbnail from "@/public/pattern.jpg";
@@ -12,7 +11,6 @@ export const STRIPES = stripes;
 export const DRVGO_SITE_IMAGE = drvgositepreview;
 export const XAR_OS_IMAGE = xarospreview;
 export const DEFAULT_PATTERN = randomPattern;
-export const EV0_APP_IMAGE = ev0appPreview;
 
 export const BitFieldPermissions = {
     ViewPublicPages: 1 << 0, // 1
