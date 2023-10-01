@@ -288,7 +288,6 @@ function ProjectForm({ project }: PageProps) {
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
                 size="3xl"
-                placement="center"
                 scrollBehavior="inside"
                 radius="sm"
             >
@@ -318,6 +317,167 @@ function ProjectForm({ project }: PageProps) {
                                         purchase from us for illegal purposes.
                                     </li>
                                 </ul>
+
+                                <h2 className="text-lg font-semibold">
+                                    Technologies We Use
+                                </h2>
+                                <p className="text-gray-400">
+                                    At DRVGO, we specialize in web development
+                                    projects, specifically using Next.js (App
+                                    Router) as our primary framework. We
+                                    exclusively support the use of Next.js (App
+                                    Router) in its latest version to ensure the
+                                    best performance and functionality.
+                                </p>
+
+                                <p className="text-gray-400">
+                                    Here&apos;s a list of the technologies and
+                                    tools we utilize in our web development
+                                    projects:
+                                </p>
+
+                                <ul className="list-inside list-disc text-gray-400">
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Next.js (App Router):
+                                        </span>{" "}
+                                        A powerful framework for building
+                                        performant and SEO-friendly web
+                                        applications.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            TypeScript:
+                                        </span>{" "}
+                                        Ensuring robust and type-safe code for
+                                        enhanced development.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            React.js:
+                                        </span>{" "}
+                                        Creating dynamic and interactive user
+                                        interfaces for seamless navigation.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            ShadCN UI:
+                                        </span>{" "}
+                                        A library for manipulating the UI.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Next UI:
+                                        </span>{" "}
+                                        Another library for manipulating the UI.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Pusher:
+                                        </span>{" "}
+                                        Adding real-time functionality to the
+                                        application.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            React Hot Toast:
+                                        </span>{" "}
+                                        Adding toast notifications to the
+                                        application.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Tailwind CSS:
+                                        </span>{" "}
+                                        Designing responsive layouts with ease
+                                        and speed.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Zod:
+                                        </span>{" "}
+                                        Implementing strong data validation for
+                                        secure user interactions.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Clerk:
+                                        </span>{" "}
+                                        Facilitating authentication and user
+                                        management.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Tanstack Query:
+                                        </span>{" "}
+                                        Optimizing server-state synchronization
+                                        and caching.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            T3-Env:
+                                        </span>{" "}
+                                        Adding type-safe environment variables.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            UploadThing:
+                                        </span>{" "}
+                                        Uploading and storing files and images
+                                        of users.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Framer Motion:
+                                        </span>{" "}
+                                        Adding delightful animations to user
+                                        interactions.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Drizzle:
+                                        </span>{" "}
+                                        TypeScript ORM for SQL.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Planetscale MySQL:
+                                        </span>{" "}
+                                        Primary Database to save most of the
+                                        user, blogs, etc. data.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Upstash Redis:
+                                        </span>{" "}
+                                        Adding a ratelimiter to API routes.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Axios:
+                                        </span>{" "}
+                                        Manipulating data between Front-end &
+                                        Back-end.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Lucide Icons:
+                                        </span>{" "}
+                                        Adding interesting icons.
+                                    </li>
+                                    <li>
+                                        <span className="font-semibold text-gray-300">
+                                            Zustand:
+                                        </span>{" "}
+                                        State management for React.
+                                    </li>
+                                </ul>
+
+                                <p className="text-gray-400">
+                                    Please note that hosting for your project is
+                                    not provided by DRVGO. Hosting is solely
+                                    your responsibility.
+                                </p>
 
                                 <h2 className="text-lg font-semibold">
                                     Refunds
