@@ -124,8 +124,8 @@ function ProjectOperation({ project, ownerId }: PageProps) {
                             action cannot be undone.
                         </p>
                         <p className="italic text-gray-400">
-                            You will be charged a cancellation fee of 10% of
-                            your next project purchase.
+                            A 10% fee will be applied to the total price of your
+                            next order.
                         </p>
                     </>
                 }

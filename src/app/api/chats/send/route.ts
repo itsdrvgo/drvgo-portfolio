@@ -10,6 +10,8 @@ import { currentUser } from "@clerk/nextjs";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
+const messageQueue: { [key: string]: Message[] } = {};
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
@@ -43,6 +45,15 @@ export async function POST(req: NextRequest) {
 
         const message = messageValidator.parse(messageData);
 
+        if (!messageQueue[chatId]) messageQueue[chatId] = [message];
+        else messageQueue[chatId].push(message);
+
+        if (messageQueue[chatId].length > 5)
+            return NextResponse.json({
+                code: 429,
+                message: "Too many requests, go slower!",
+            });
+
         await pusherServer.trigger(
             toPusherKey(`chat:${chatId}`),
             "incoming_message",
@@ -63,6 +74,8 @@ export async function POST(req: NextRequest) {
             score: timestamp,
             member: JSON.stringify(message),
         });
+
+        messageQueue[chatId].shift();
 
         return NextResponse.json({
             code: 201,

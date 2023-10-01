@@ -5,7 +5,7 @@ import {
     comments,
     insertCommentSchema,
 } from "@/src/lib/drizzle/schema";
-import { handleError } from "@/src/lib/utils";
+import { handleError, hasPermission } from "@/src/lib/utils";
 import {
     CommentContext,
     commentContextSchema,
@@ -161,10 +161,12 @@ async function verifyCurrentUserHasAccessToDeleteComment(commentId: string) {
     if (!user) return false;
 
     if (
-        user.privateMetadata.permissions &
-        (BitFieldPermissions.Administrator |
-            BitFieldPermissions.ManagePages |
-            BitFieldPermissions.ManageBlogs)
+        hasPermission(
+            user.privateMetadata.permissions,
+            BitFieldPermissions.Administrator |
+                BitFieldPermissions.ManagePages |
+                BitFieldPermissions.ManageBlogs
+        )
     )
         return true;
 

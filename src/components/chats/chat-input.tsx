@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, wait } from "@/src/lib/utils";
+import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, UserWithAccount } from "@/src/types";
 import { Button, Textarea } from "@nextui-org/react";
@@ -15,13 +15,14 @@ interface PageProps extends DefaultProps {
 }
 
 function ChatInput({ className, chatPartner, chatId, ...props }: PageProps) {
-    const [isLoading, setIsLoading] = useState(false);
     const textareaRef = useRef<HTMLInputElement | null>(null);
     const [input, setInput] = useState("");
 
     const sendMessage = () => {
         if (input.length === 0) return;
-        setIsLoading(true);
+
+        setInput("");
+        textareaRef.current?.focus();
 
         const body = {
             text: input,
@@ -31,17 +32,11 @@ function ChatInput({ className, chatPartner, chatId, ...props }: PageProps) {
         axios
             .post<ResponseData>("/api/chats/send", JSON.stringify(body))
             .then(({ data: resData }) => {
-                if (resData.code !== 201) toast.error(resData.message);
-                setInput("");
+                if (resData.code !== 201) return toast.error(resData.message);
             })
             .catch((err) => {
                 console.error(err);
                 toast.error("Something went wrong, try again later!");
-            })
-            .finally(async () => {
-                setIsLoading(false);
-                await wait(100);
-                textareaRef.current?.focus();
             });
     };
 
@@ -57,6 +52,7 @@ function ChatInput({ className, chatPartner, chatId, ...props }: PageProps) {
                 ref={textareaRef}
                 variant="bordered"
                 radius="sm"
+                aria-label="Message"
                 minRows={1}
                 maxRows={6}
                 value={input}
@@ -65,7 +61,6 @@ function ChatInput({ className, chatPartner, chatId, ...props }: PageProps) {
                 classNames={{
                     inputWrapper: "bg-background border-1 border-border",
                 }}
-                isDisabled={isLoading}
                 onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
@@ -75,7 +70,7 @@ function ChatInput({ className, chatPartner, chatId, ...props }: PageProps) {
             />
             <Button
                 isIconOnly
-                isDisabled={isLoading || input.length === 0}
+                isDisabled={input.length === 0}
                 radius="sm"
                 color="primary"
                 className="bg-sky-300"
