@@ -18,7 +18,7 @@ export async function POST(req: NextRequest, context: BlogContext) {
                 message: "Unauthorized!",
             });
 
-        const newLike = await db.insert(likes).values({
+        await db.insert(likes).values({
             id: nanoid(),
             userId: user.id,
             blogId: params.blogId,
@@ -27,7 +27,6 @@ export async function POST(req: NextRequest, context: BlogContext) {
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(newLike.insertId),
         });
     } catch (err) {
         return handleError(err);
