@@ -250,6 +250,7 @@ function BlogWriteUp({ data, author }: PageProps) {
                         <Textarea
                             radius="sm"
                             minRows={3}
+                            aria-label="description"
                             defaultValue={blogDescription}
                             maxLength={150}
                             minLength={3}
@@ -270,6 +271,7 @@ function BlogWriteUp({ data, author }: PageProps) {
                         <Textarea
                             radius="sm"
                             minRows={10}
+                            aria-label="content"
                             maxRows={400}
                             defaultValue={blogContent}
                             placeholder="Enter the blog content"

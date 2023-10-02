@@ -208,6 +208,7 @@ function ProjectForm({ project }: PageProps) {
                                                     "border border-gray-700 bg-background pb-8",
                                                 input: "text-base",
                                             }}
+                                            aria-label="Project Description"
                                             minRows={3}
                                             isDisabled={isLoading}
                                             maxLength={450}
@@ -246,6 +247,7 @@ function ProjectForm({ project }: PageProps) {
                                                 "border border-gray-700 bg-background",
                                             input: "text-base",
                                         }}
+                                        aria-label="Project Requirements"
                                         minRows={8}
                                         maxRows={400}
                                         isDisabled={isLoading}

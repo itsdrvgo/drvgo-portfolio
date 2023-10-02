@@ -89,6 +89,7 @@ function ProjectRejectModal({
                                 radius="sm"
                                 variant="bordered"
                                 minRows={3}
+                                aria-label="Reason for rejection"
                                 maxLength={150}
                                 minLength={3}
                                 placeholder="Enter reason for rejection"

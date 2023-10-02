@@ -166,7 +166,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
                         </Button>
                     ) : null}
                 </DropdownTrigger>
-                <DropdownMenu>
+                <DropdownMenu aria-label="Dropdown menu for comment operations">
                     <DropdownSection showDivider title={"Action"}>
                         <DropdownItem
                             className={cn(
@@ -248,6 +248,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
                                     <Textarea
                                         id="edit_comment"
                                         radius="sm"
+                                        aria-label="Edit Comment"
                                         variant="underlined"
                                         minRows={1}
                                         value={commentText}

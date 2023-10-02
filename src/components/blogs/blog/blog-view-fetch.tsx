@@ -38,9 +38,9 @@ async function BlogViewFetch({ params, className }: PageProps) {
 
     const userData = user ? userSchema.parse(user) : null;
 
-    const blogIsLiked = user
-        ? !!blog.likes.find((like) => like.userId === user.id)
-        : false;
+    const blogIsLiked = !!(
+        user && blog.likes.find((like) => like.userId === user.id)
+    );
 
     return (
         <BlogViewPage

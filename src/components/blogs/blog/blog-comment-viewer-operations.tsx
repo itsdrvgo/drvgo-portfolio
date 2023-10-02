@@ -179,6 +179,7 @@ function BlogCommentViewerOperation({
                         <Textarea
                             radius="sm"
                             variant="underlined"
+                            aria-label="Reply"
                             minRows={1}
                             value={reply}
                             isDisabled={isPosting || !user}

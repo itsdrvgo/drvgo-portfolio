@@ -147,6 +147,7 @@ function RecursiveComment({
                         </Button>
                     )}
                 </div>
+
                 {user ? (
                     <BlogCommentOperation
                         user={user}
@@ -155,7 +156,8 @@ function RecursiveComment({
                     />
                 ) : null}
             </div>
-            {replies.length > 0 && showReply && (
+
+            {replies.length > 0 && showReply ? (
                 <div className="space-y-4">
                     {replies
                         .sort(
@@ -175,7 +177,7 @@ function RecursiveComment({
                             />
                         ))}
                 </div>
-            )}
+            ) : null}
         </div>
     );
 }

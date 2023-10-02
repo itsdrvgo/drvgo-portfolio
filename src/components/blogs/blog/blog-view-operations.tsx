@@ -26,20 +26,14 @@ import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 import BlogViewComments from "./blog-view-comments";
 
-interface PageProps extends DefaultProps {
+interface PageProps {
     params: { blogId: string };
     blog: ExtendedBlog;
     user: ClerkUser | null;
     blogIsLiked: boolean | false;
 }
 
-function BlogViewOperations({
-    className,
-    params,
-    blog,
-    user,
-    blogIsLiked,
-}: PageProps) {
+function BlogViewOperations({ params, blog, user, blogIsLiked }: PageProps) {
     const router = useRouter();
 
     const [comment, setComment] = useState("");
@@ -157,15 +151,19 @@ function BlogViewOperations({
                 className="sticky bottom-10 z-50 backdrop-blur-sm"
                 variant="flat"
             >
-                <Button onPress={handleLike}>
-                    <Icons.heart
-                        className={cn(
-                            "h-4 w-4 transition-all ease-in-out",
-                            isLiked
-                                ? "fill-red-500 text-red-500"
-                                : "fill-transparent"
-                        )}
-                    />
+                <Button
+                    onPress={handleLike}
+                    startContent={
+                        <Icons.heart
+                            className={cn(
+                                "h-4 w-4 transition-all ease-in-out",
+                                isLiked
+                                    ? "fill-red-500 text-red-500"
+                                    : "fill-transparent"
+                            )}
+                        />
+                    }
+                >
                     {shortenNumber(blog.likes.length)}
                 </Button>
 
@@ -175,15 +173,14 @@ function BlogViewOperations({
                     onPress={() =>
                         router.push(`/blogs/${params.blogId}#comment`)
                     }
+                    startContent={<Icons.comment className="h-4 w-4" />}
                 >
-                    <Icons.comment className="h-4 w-4" />
                     {shortenNumber(blog.comments.length)}
                 </Button>
 
                 <Divider orientation="vertical" />
 
-                <Button>
-                    <Icons.analytics className="h-4 w-4" />
+                <Button startContent={<Icons.analytics className="h-4 w-4" />}>
                     {shortenNumber(blog.views.length)}
                 </Button>
 
@@ -196,8 +193,8 @@ function BlogViewOperations({
                         );
                         toast.success("Copied to clipboard");
                     }}
+                    startContent={<Icons.share className="h-4 w-4" />}
                 >
-                    <Icons.share className="h-4 w-4" />
                     Share
                 </Button>
             </ButtonGroup>
@@ -225,6 +222,7 @@ function BlogViewOperations({
                             id="comment"
                             radius="sm"
                             variant="underlined"
+                            aria-label="Comment"
                             minRows={1}
                             value={comment}
                             isDisabled={isPosting || !user}
