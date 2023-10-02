@@ -11,7 +11,7 @@ import {
 } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { ExtendedBlog } from "@/src/types";
 import {
     Avatar,
     Button,
