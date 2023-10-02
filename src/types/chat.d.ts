@@ -8,6 +8,5 @@ export type Message = {
     senderId: string;
     receiverId: string;
     text: string;
-    read: boolean;
     timestamp: number;
 };

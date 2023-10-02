@@ -1,6 +1,12 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    Tooltip,
+} from "@nextui-org/react";
 import Link from "next/link";
 import { HTMLAttributes, ImgHTMLAttributes } from "react";
 import ReactMarkdown from "react-markdown";
@@ -11,6 +17,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
 import CopyButton from "../global/buttons/copy-button";
+import LinkPreviewButton from "../global/buttons/link-preview-button";
 import { Icons } from "../icons/icons";
 import MdImage from "./mdx-image";
 
@@ -52,18 +59,10 @@ const chatComponents: Partial<
             {...props}
         />
     ),
-    a: ({ className, ...props }) => (
-        <a
-            className={cn(
-                "font-semibold underline underline-offset-4",
-                className
-            )}
-            {...props}
-        />
+    a: ({ children, ...props }) => (
+        <LinkPreviewButton {...props}>{children}</LinkPreviewButton>
     ),
-    p: ({ className, ...props }) => (
-        <p className={cn("leading-7", className)} {...props} />
-    ),
+    p: ({ className, ...props }) => <p {...props} />,
     ul: ({ className, ...props }) => (
         <ul className={cn("list-inside list-disc", className)} {...props} />
     ),

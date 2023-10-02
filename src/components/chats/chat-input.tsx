@@ -73,12 +73,10 @@ function ChatInput({ className, chatPartner, chatId, ...props }: PageProps) {
                 isDisabled={input.length === 0}
                 radius="sm"
                 color="primary"
-                className="bg-sky-300"
                 type="submit"
                 onPress={sendMessage}
-            >
-                <Icons.sendHorizontal className="h-5 w-5" />
-            </Button>
+                startContent={<Icons.sendHorizontal className="h-5 w-5" />}
+            />
         </section>
     );
 }

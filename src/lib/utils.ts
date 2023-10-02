@@ -1,6 +1,7 @@
 import { currentUser } from "@clerk/nextjs";
 import axios, { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
+import { format } from "date-fns";
 import { NextResponse } from "next/server";
 import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
@@ -317,3 +318,11 @@ export function reorder<TItem>(
 
     return result;
 }
+
+export const formatTimestampIntoHourMinute = (timestamp: number) => {
+    return format(timestamp, "HH:mm");
+};
+
+export const formatTimestampIntoDate = (timestamp: number) => {
+    return format(timestamp, "dd/MM/yyyy");
+};
