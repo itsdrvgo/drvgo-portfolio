@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 };
 
 function Layout({ children }: RootLayoutProps) {
-    // return <SideBarFetch>{children}</SideBarFetch>;
     return (
         <Suspense fallback={<SidebarSkeleton />}>
             <SideBarFetch>{children}</SideBarFetch>

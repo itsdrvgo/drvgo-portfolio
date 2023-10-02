@@ -9,7 +9,7 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
     try {
         const { params } = blogContextSchema.parse(context);
 
-        const newView = await db.insert(views).values({
+        await db.insert(views).values({
             id: nanoid(),
             blogId: params.blogId,
         });
@@ -17,7 +17,6 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
         return NextResponse.json({
             code: 200,
             message: "Ok",
-            data: JSON.stringify(newView.insertId),
         });
     } catch (err) {
         return handleError(err);

@@ -53,8 +53,10 @@ function Page({ params }: PageProps) {
         <section className="flex p-5 py-10">
             <div className="container relative flex max-w-[65rem] flex-col gap-4 p-0">
                 <Suspense fallback={<BlogViewSkeleton />}>
-                    <BlogNav params={params} />
-                    <BlogViewFetch params={params} />
+                    <>
+                        <BlogNav params={params} />
+                        <BlogViewFetch params={params} />
+                    </>
                 </Suspense>
             </div>
         </section>
