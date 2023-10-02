@@ -1,12 +1,15 @@
 "use client";
 
-import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { pusherClient } from "@/src/lib/pusher/client";
-import { cn, toPusherKey } from "@/src/lib/utils";
+import {
+    cn,
+    formatTimestampIntoDate,
+    formatTimestampIntoHourMinute,
+    toPusherKey,
+} from "@/src/lib/utils";
 import { Message } from "@/src/lib/validation/messages";
 import { DefaultProps, UserWithAccount } from "@/src/types";
-import { Avatar } from "@nextui-org/react";
-import { format } from "date-fns";
+import { Card, CardBody } from "@nextui-org/react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { ChatMdx } from "../md/mdx-comp";
@@ -17,6 +20,20 @@ interface PageProps extends DefaultProps {
     userId: string;
     userImage?: string | null;
     chatPartner: UserWithAccount;
+}
+
+function groupMessagesByDate(messages: Message[]): Map<string, Message[]> {
+    const groups = new Map<string, Message[]>();
+    messages.forEach((message) => {
+        const date = new Date(message.timestamp);
+        const dateString = date.toDateString();
+        if (groups.has(dateString)) {
+            groups.get(dateString)?.push(message);
+        } else {
+            groups.set(dateString, [message]);
+        }
+    });
+    return groups;
 }
 
 function ChatSection({
@@ -30,6 +47,8 @@ function ChatSection({
 }: PageProps) {
     const [messages, setMessages] = useState<Message[]>(initialMessages);
     const [isSticky, setIsSticky] = useState(false);
+
+    const [isPressed, setIsPressed] = useState<string | null>(null);
 
     useEffect(() => {
         pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
@@ -58,11 +77,7 @@ function ChatSection({
     });
 
     useMotionValueEvent(scrollY, "change", (latest) => {
-        if (latest > 0) {
-            setIsSticky(true);
-        } else {
-            setIsSticky(false);
-        }
+        latest > 0 ? setIsSticky(true) : setIsSticky(false);
     });
 
     useEffect(() => {
@@ -70,28 +85,6 @@ function ChatSection({
             setIsSticky(false);
         }, 5000);
     }, [isSticky]);
-
-    const formatTimestamp = (timestamp: number) => {
-        return format(timestamp, "HH:mm");
-    };
-
-    const formatTimestampIntoDate = (timestamp: number) => {
-        return format(timestamp, "dd/MM/yyyy");
-    };
-
-    function groupMessagesByDate(messages: Message[]): Map<string, Message[]> {
-        const groups = new Map<string, Message[]>();
-        messages.forEach((message) => {
-            const date = new Date(message.timestamp);
-            const dateString = date.toDateString();
-            if (groups.has(dateString)) {
-                groups.get(dateString)?.push(message);
-            } else {
-                groups.set(dateString, [message]);
-            }
-        });
-        return groups;
-    }
 
     const groupedMessages = groupMessagesByDate(messages);
 
@@ -163,16 +156,26 @@ function ChatSection({
                                                 }
                                             )}
                                         >
-                                            <div
-                                                className={cn(
-                                                    "flex items-end gap-2 rounded-lg px-4 py-2 text-white",
-                                                    {
-                                                        "bg-indigo-600":
+                                            <Card
+                                                isPressable
+                                                onPress={() => {
+                                                    if (
+                                                        isPressed === message.id
+                                                    )
+                                                        setIsPressed(null);
+                                                    else
+                                                        setIsPressed(
+                                                            message.id
+                                                        );
+                                                }}
+                                                classNames={{
+                                                    base: cn({
+                                                        "bg-primary-400":
                                                             isCurrentUser &&
                                                             !message.text.includes(
                                                                 "```"
                                                             ),
-                                                        "bg-stone-700":
+                                                        "bg-default-200":
                                                             !isCurrentUser &&
                                                             !message.text.includes(
                                                                 "```"
@@ -183,66 +186,55 @@ function ChatSection({
                                                         "rounded-bl-none":
                                                             !hasNextMessageFromSameSender &&
                                                             !isCurrentUser,
-                                                        "flex-col gap-0":
-                                                            message.text
-                                                                .length > 100,
-                                                        "p-0": message.text.includes(
-                                                            "```"
-                                                        ),
+                                                    }),
+                                                    body: cn(
+                                                        "flex items-end gap-2 rounded-2xl px-4 py-2 text-white",
+                                                        {
+                                                            "bg-primary-400":
+                                                                isCurrentUser &&
+                                                                !message.text.includes(
+                                                                    "```"
+                                                                ),
+                                                            "bg-default-200":
+                                                                !isCurrentUser &&
+                                                                !message.text.includes(
+                                                                    "```"
+                                                                ),
+                                                            "flex-col gap-0":
+                                                                message.text
+                                                                    .length >
+                                                                100,
+                                                            "p-0": message.text.includes(
+                                                                "```"
+                                                            ),
+                                                        }
+                                                    ),
+                                                }}
+                                            >
+                                                <CardBody>
+                                                    <div className="overscroll-x-scroll max-w-[15rem] md:max-w-xl">
+                                                        <ChatMdx>
+                                                            {message.text}
+                                                        </ChatMdx>
+                                                    </div>
+                                                </CardBody>
+                                            </Card>
+
+                                            <p
+                                                className={cn(
+                                                    "text-xs text-gray-400",
+                                                    {
+                                                        hidden:
+                                                            hasNextMessageFromSameSender &&
+                                                            message.id !==
+                                                                isPressed,
                                                     }
                                                 )}
                                             >
-                                                <div className="overscroll-x-scroll max-w-[15rem] md:max-w-xl">
-                                                    <ChatMdx>
-                                                        {message.text}
-                                                    </ChatMdx>
-                                                </div>
-                                                <div
-                                                    className={cn(
-                                                        "text-xs text-gray-400"
-                                                    )}
-                                                >
-                                                    <p>
-                                                        {formatTimestamp(
-                                                            message.timestamp
-                                                        )}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            className={cn("relative h-6 w-6", {
-                                                "order-2": isCurrentUser,
-                                                "order-1": !isCurrentUser,
-                                                invisible:
-                                                    hasNextMessageFromSameSender,
-                                            })}
-                                        >
-                                            <Avatar
-                                                isBordered
-                                                color={
-                                                    isCurrentUser
-                                                        ? "primary"
-                                                        : "default"
-                                                }
-                                                src={
-                                                    isCurrentUser
-                                                        ? userImage ??
-                                                          DEFAULT_USER_IMAGE.src
-                                                        : chatPartner.image ??
-                                                          DEFAULT_USER_IMAGE.src
-                                                }
-                                                alt={
-                                                    isCurrentUser
-                                                        ? "Your profile picture"
-                                                        : `${chatPartner.username}'s profile picture`
-                                                }
-                                                size="sm"
-                                                classNames={{
-                                                    base: "h-6 w-6",
-                                                }}
-                                            />
+                                                {formatTimestampIntoHourMinute(
+                                                    message.timestamp
+                                                )}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
