@@ -150,24 +150,35 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
 
     return (
         <>
-            <Dropdown radius="sm">
+            <Dropdown
+                radius="sm"
+                classNames={{
+                    base:
+                        hasPermission(
+                            user.privateMetadata.permissions,
+                            BitFieldPermissions.ManageBlogs |
+                                BitFieldPermissions.ManagePages
+                        ) || user.id === comment.authorId
+                            ? "visible"
+                            : "hidden",
+                }}
+            >
                 <DropdownTrigger>
-                    {hasPermission(
-                        user.privateMetadata.permissions,
-                        BitFieldPermissions.ManageBlogs |
-                            BitFieldPermissions.ManagePages
-                    ) ? (
-                        <Button isIconOnly variant="flat" radius="sm" size="sm">
-                            <Icons.moreVert className="h-4 w-4" />
-                        </Button>
-                    ) : user.id === comment.authorId ? (
-                        <Button isIconOnly variant="flat" radius="sm" size="sm">
-                            <Icons.moreVert className="h-4 w-4" />
-                        </Button>
-                    ) : null}
+                    <Button isIconOnly variant="flat" radius="sm" size="sm">
+                        <Icons.moreVert className="h-4 w-4" />
+                    </Button>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Dropdown menu for comment operations">
-                    <DropdownSection showDivider title={"Action"}>
+                    <DropdownSection
+                        title={"Action"}
+                        showDivider={
+                            hasPermission(
+                                user.privateMetadata.permissions,
+                                BitFieldPermissions.ManageBlogs |
+                                    BitFieldPermissions.ManagePages
+                            ) || user.id === comment.authorId
+                        }
+                    >
                         <DropdownItem
                             className={cn(
                                 comment.parentId === null &&
@@ -206,17 +217,19 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
                         </DropdownItem>
                     </DropdownSection>
 
-                    <DropdownSection title={"Danger Zone"}>
+                    <DropdownSection
+                        title={"Danger Zone"}
+                        className={cn(
+                            hasPermission(
+                                user.privateMetadata.permissions,
+                                BitFieldPermissions.ManageBlogs |
+                                    BitFieldPermissions.ManagePages
+                            ) || user.id === comment.authorId
+                                ? "visible"
+                                : "hidden"
+                        )}
+                    >
                         <DropdownItem
-                            className={cn(
-                                hasPermission(
-                                    user.privateMetadata.permissions,
-                                    BitFieldPermissions.ManageBlogs |
-                                        BitFieldPermissions.ManagePages
-                                ) || user.id === comment.authorId
-                                    ? "visible"
-                                    : "hidden"
-                            )}
                             startContent={
                                 <Icons.trash className={cn("text-lg")} />
                             }
