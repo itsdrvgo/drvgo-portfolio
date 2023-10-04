@@ -220,6 +220,7 @@ function UploadPFP({ user }: PageProps) {
                                     variant="light"
                                     onPress={() => {
                                         onClose();
+                                        setImageFile(null);
                                         setIconURL(
                                             user.imageUrl ??
                                                 DEFAULT_USER_IMAGE.src
