@@ -14,13 +14,6 @@ async function SideBarFetch({ children }: DefaultProps) {
     const user = await currentUser();
     if (!user) redirect("/auth");
 
-    const ownerAccounts = await db.query.accounts.findMany({
-        where: like(accounts.roles, "%owner%"),
-        with: {
-            user: true,
-        },
-    });
-
     const chatters = hasPermission(
         user.privateMetadata.permissions,
         BitFieldPermissions.Administrator
