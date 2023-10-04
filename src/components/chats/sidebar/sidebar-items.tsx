@@ -104,6 +104,7 @@ function SidebarItems({ chatters }: PageProps) {
                     itemClasses={{
                         base: "p-3",
                     }}
+                    aria-label="Chats"
                     onAction={(key) => {
                         router.push(
                             `/chats/${chatHrefConstructor(
@@ -124,7 +125,6 @@ function SidebarItems({ chatters }: PageProps) {
                                 startContent={
                                     <Avatar
                                         isBordered
-                                        color="success"
                                         src={
                                             chatter.image ??
                                             DEFAULT_USER_IMAGE.src
