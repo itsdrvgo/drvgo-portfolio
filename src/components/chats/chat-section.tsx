@@ -9,9 +9,10 @@ import {
 } from "@/src/lib/utils";
 import { Message } from "@/src/lib/validation/messages";
 import { DefaultProps, UserWithAccount } from "@/src/types";
-import { Card, CardBody } from "@nextui-org/react";
+import { Button, Card, CardBody } from "@nextui-org/react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { Icons } from "../icons/icons";
 import { ChatMdx } from "../md/mdx-comp";
 
 interface PageProps extends DefaultProps {
@@ -48,6 +49,8 @@ function ChatSection({
     const [messages, setMessages] = useState<Message[]>(initialMessages);
     const [isSticky, setIsSticky] = useState(false);
 
+    const [scrollButtonIsVisible, setScrollButtonIsVisible] = useState(false);
+
     const [isPressed, setIsPressed] = useState<string | null>(null);
 
     useEffect(() => {
@@ -78,6 +81,10 @@ function ChatSection({
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         latest > 0 ? setIsSticky(true) : setIsSticky(false);
+        scrollRef.current?.scrollHeight! - scrollRef.current?.scrollTop! ===
+        scrollRef.current?.clientHeight
+            ? setScrollButtonIsVisible(false)
+            : setScrollButtonIsVisible(true);
     });
 
     useEffect(() => {
@@ -242,6 +249,21 @@ function ChatSection({
                         })}
                     </div>
                 ))}
+
+            <Button
+                className={cn("fixed bottom-20 right-5 bg-default-200", {
+                    hidden: !scrollButtonIsVisible,
+                })}
+                variant="shadow"
+                radius="full"
+                onPress={() => {
+                    messagesEndRef.current?.scrollIntoView({
+                        behavior: "smooth",
+                    });
+                }}
+                isIconOnly
+                startContent={<Icons.chevronDown className="h-4 w-4" />}
+            />
         </section>
     );
 }

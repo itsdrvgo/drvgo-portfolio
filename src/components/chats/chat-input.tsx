@@ -5,7 +5,7 @@ import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, UserWithAccount } from "@/src/types";
 import { Button, Textarea } from "@nextui-org/react";
 import axios from "axios";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { Icons } from "../icons/icons";
 
@@ -17,6 +17,10 @@ interface PageProps extends DefaultProps {
 function ChatInput({ className, chatPartner, chatId, ...props }: PageProps) {
     const textareaRef = useRef<HTMLInputElement | null>(null);
     const [input, setInput] = useState("");
+
+    useEffect(() => {
+        textareaRef.current?.focus();
+    }, []);
 
     const sendMessage = () => {
         if (input.length === 0) return;

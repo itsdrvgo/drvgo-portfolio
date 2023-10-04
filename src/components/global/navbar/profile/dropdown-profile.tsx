@@ -48,9 +48,9 @@ function DropdownProfile({ user, className, ...props }: PageProps) {
                     <Avatar
                         isBordered
                         showFallback
-                        as="button"
                         className="transition-transform"
                         size="sm"
+                        color="primary"
                         src={user.imageUrl || DEFAULT_USER_IMAGE.src}
                     />
                 </DropdownTrigger>

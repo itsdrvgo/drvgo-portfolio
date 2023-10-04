@@ -147,51 +147,36 @@ export async function PATCH(req: NextRequest, context: UserContext) {
 }
 
 export async function PUT(req: NextRequest, context: UserContext) {
-    return NextResponse.json({
-        code: 501,
-        message: "Feature not implemented yet!",
-    });
+    try {
+        const body = await req.formData();
 
-    // try {
-    //     const body = await req.json();
+        const { params } = userContextSchema.parse(context);
 
-    //     const authUser = await currentUser();
+        const user = await currentUser();
+        if (!user)
+            return NextResponse.json({
+                code: 401,
+                message: "Unauthorized!",
+            });
 
-    //     if (!authUser)
-    //         return NextResponse.json({
-    //             code: 401,
-    //             message: "Unauthorized",
-    //         });
+        const image = body.get("image");
+        if (!image)
+            return NextResponse.json({
+                code: 400,
+                message: "Bad Request!",
+            });
 
-    //     const byteCharacters = atob(body.image);
-    //     const byteArrays: Uint8Array[] = [];
+        await clerkClient.users.updateUserProfileImage(params.userId, {
+            file: image as File,
+        });
 
-    //     for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-    //         const slice = byteCharacters.slice(offset, offset + 512);
-
-    //         const byteNumbers = new Array(slice.length);
-    //         for (let i = 0; i < slice.length; i++) {
-    //             byteNumbers[i] = slice.charCodeAt(i);
-    //         }
-
-    //         const byteArray = new Uint8Array(byteNumbers);
-    //         byteArrays.push(byteArray);
-    //     }
-
-    //     const blob = new Blob(byteArrays, { type: "image/jpeg" });
-
-    //     const formdata = new FormData();
-    //     formdata.append("file", blob, "profile-image.jpg");
-
-    //     await clerkClient.users.updateUserProfileImage(authUser.id, formdata);
-
-    //     return NextResponse.json({
-    //         code: 200,
-    //         message: "Ok",
-    //     });
-    // } catch (err) {
-    //     return handleError(err);
-    // }
+        return NextResponse.json({
+            code: 200,
+            message: "Ok",
+        });
+    } catch (err) {
+        return handleError(err);
+    }
 }
 
 export async function DELETE(req: NextRequest, context: UserContext) {
