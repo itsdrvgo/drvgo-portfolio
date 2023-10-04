@@ -11,12 +11,21 @@ export async function GET() {
     try {
         const filteredBlogs = await db.query.blogs.findMany({
             with: {
-                author: true,
+                author: {
+                    with: {
+                        account: true,
+                    },
+                },
                 comments: {
                     orderBy: [desc(comments.createdAt)],
                     with: {
-                        user: true,
+                        user: {
+                            with: {
+                                account: true,
+                            },
+                        },
                         loves: true,
+                        blog: true,
                     },
                 },
                 likes: true,

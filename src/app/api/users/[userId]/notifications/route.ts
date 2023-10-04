@@ -17,12 +17,13 @@ export async function POST(req: NextRequest, context: UserContext) {
 
         const { params } = userContextSchema.parse(context);
 
-        const { content, title, notifierId, props } = insertNotificationSchema
-            .omit({
-                userId: true,
-                id: true,
-            })
-            .parse(body);
+        const { content, title, notifierId, props, type } =
+            insertNotificationSchema
+                .omit({
+                    userId: true,
+                    id: true,
+                })
+                .parse(body);
 
         const user = await currentUser();
         if (!user || user.id !== notifierId)
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest, context: UserContext) {
             title,
             notifierId,
             props: props as Notification["props"],
+            type,
         });
 
         await db

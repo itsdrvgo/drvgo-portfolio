@@ -140,6 +140,7 @@ function ProjectForm({ project }: PageProps) {
                         purchaserImage: result.purchaserImage,
                         sellerId: result.sellerId,
                     },
+                    type: "newProject"
                 });
             })
             .catch((err) => {

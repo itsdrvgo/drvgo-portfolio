@@ -15,10 +15,18 @@ async function BlogNav({ params }: PageProps) {
         limit: 6,
         where: and(eq(blogs.published, true), ne(blogs.id, params.blogId)),
         with: {
-            author: true,
+            author: {
+                with: {
+                    account: true,
+                },
+            },
             comments: {
                 with: {
-                    user: true,
+                    user: {
+                        with: {
+                            account: true,
+                        },
+                    },
                     loves: true,
                     blog: true,
                 },

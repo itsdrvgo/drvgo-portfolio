@@ -108,6 +108,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
                             blogThumbnailUrl: comment.blog.thumbnailUrl!,
                             commentContent: comment.content,
                         },
+                        type: "blogCommentPin",
                     });
                 }
             })

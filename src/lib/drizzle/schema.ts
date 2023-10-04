@@ -76,6 +76,7 @@ export const notifications = mysqlTable(
         notifierId: varchar("notifierId", { length: 191 }).notNull(),
         read: boolean("read").default(false).notNull(),
         props: json("props").$type<TypedNotification["props"]>().notNull(),
+        type: varchar("type", { length: 191 }).notNull(),
         createdAt: timestamp("created_at")
             .default(sql`current_timestamp()`)
             .notNull(),

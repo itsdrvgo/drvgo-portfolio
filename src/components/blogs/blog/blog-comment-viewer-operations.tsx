@@ -84,6 +84,7 @@ function BlogCommentViewerOperation({
                         replyContent: reply,
                         replyId,
                     },
+                    type: "blogCommentReply",
                 });
             })
             .catch((err) => {
@@ -125,6 +126,7 @@ function BlogCommentViewerOperation({
                             blogThumbnailUrl: blog.thumbnailUrl!,
                             commentContent: comment.content,
                         },
+                        type: "blogCommentLove",
                     });
                 }
             })

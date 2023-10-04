@@ -3,8 +3,8 @@
 import BlogCreation from "@/public/blog_creation.jpg";
 import CourseCreation from "@/public/course_creation.jpg";
 import ProjectManager from "@/public/project_manager.jpg";
-import UsersPanel from "@/public/users_panel.jpg";
 import RoleManager from "@/public/role_manager.jpg";
+import UsersPanel from "@/public/users_panel.jpg";
 import { DefaultProps } from "@/src/types";
 import { Card, Image } from "@nextui-org/react";
 import { StaticImageData } from "next/image";
@@ -26,9 +26,9 @@ const adminTabItems: AdminTabItem[] = [
         image: BlogCreation,
     },
     {
-        name: "Course Manager",
-        icon: "bookopencheck",
-        href: "/admin/courses",
+        name: "Announcement Manager",
+        icon: "flag",
+        href: "/admin/announcements",
         image: CourseCreation,
     },
     {

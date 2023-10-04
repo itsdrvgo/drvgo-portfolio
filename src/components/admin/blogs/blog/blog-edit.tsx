@@ -12,17 +12,23 @@ interface PageProps extends DefaultProps {
 }
 
 async function BlogEditPage({ params }: PageProps) {
-    const blog = await db.query.blogs.findFirst({
-        where: eq(blogs.id, params.blogId),
-    });
+    const [roles, blog] = await Promise.all([
+        db.query.roles.findMany(),
+        db.query.blogs.findFirst({
+            where: eq(blogs.id, params.blogId),
+            with: {
+                author: {
+                    with: {
+                        account: true,
+                    },
+                },
+            },
+        }),
+    ]);
+
     if (!blog) notFound();
 
-    const author = await db.query.users.findFirst({
-        where: eq(users.id, blog.authorId),
-    });
-    if (!author) redirect("/");
-
-    return <BlogWriteUp params={params} data={blog} author={author} />;
+    return <BlogWriteUp params={params} data={blog} roles={roles} />;
 }
 
 export default BlogEditPage;

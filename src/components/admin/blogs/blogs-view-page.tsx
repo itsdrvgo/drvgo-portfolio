@@ -12,14 +12,22 @@ async function BlogsPage({ className }: DefaultProps) {
     const data = await db.query.blogs.findMany({
         orderBy: [desc(blogs.createdAt)],
         with: {
-            author: true,
+            author: {
+                with: {
+                    account: true,
+                },
+            },
             likes: true,
             views: true,
             comments: {
                 with: {
                     blog: true,
                     loves: true,
-                    user: true,
+                    user: {
+                        with: {
+                            account: true,
+                        },
+                    },
                 },
             },
         },

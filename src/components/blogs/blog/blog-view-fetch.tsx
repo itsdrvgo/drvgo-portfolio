@@ -17,22 +17,33 @@ interface PageProps extends DefaultProps {
 async function BlogViewFetch({ params, className }: PageProps) {
     const user = await currentUser();
 
-    const blog = await db.query.blogs.findFirst({
-        with: {
-            author: true,
-            comments: {
-                orderBy: [desc(comments.createdAt)],
-                with: {
-                    user: true,
-                    loves: true,
-                    blog: true,
+    const [roles, blog] = await Promise.all([
+        db.query.roles.findMany(),
+        db.query.blogs.findFirst({
+            with: {
+                author: {
+                    with: {
+                        account: true,
+                    },
                 },
+                comments: {
+                    orderBy: [desc(comments.createdAt)],
+                    with: {
+                        user: {
+                            with: {
+                                account: true,
+                            },
+                        },
+                        loves: true,
+                        blog: true,
+                    },
+                },
+                likes: true,
+                views: true,
             },
-            likes: true,
-            views: true,
-        },
-        where: eq(blogs.id, params.blogId),
-    });
+            where: eq(blogs.id, params.blogId),
+        }),
+    ]);
 
     if (!blog) notFound();
 
@@ -49,6 +60,7 @@ async function BlogViewFetch({ params, className }: PageProps) {
             user={userData}
             blogIsLiked={blogIsLiked}
             params={params}
+            roles={roles}
         />
     );
 }

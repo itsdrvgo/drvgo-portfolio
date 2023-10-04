@@ -1,8 +1,9 @@
-import { DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { cn, convertMstoTimeElapsed } from "@/src/lib/utils";
+import { BitFieldPermissions, DEFAULT_USER_IMAGE } from "@/src/config/const";
+import { Role } from "@/src/lib/drizzle/schema";
+import { cn, convertMstoTimeElapsed, hasPermission } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
-import { Avatar, Button } from "@nextui-org/react";
+import { Avatar, Button, Chip } from "@nextui-org/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Icons } from "../../icons/icons";
@@ -19,6 +20,7 @@ interface PageProps extends DefaultProps {
     allComments: ExtendedComment[];
     isReply: boolean;
     isPinned: boolean;
+    roles: Role[];
 }
 
 function RecursiveComment({
@@ -31,6 +33,7 @@ function RecursiveComment({
     isPinned = false,
     className,
     id,
+    roles,
 }: PageProps) {
     const [showReply, setShowReply] = useState(false);
     const [isHighlighted, setIsHighlighted] = useState(false);
@@ -57,6 +60,18 @@ function RecursiveComment({
 
     const replies = allComments.filter((c) => c.parentId === comment.id);
     const isLoved = comment.loves.find((love) => love.userId === user?.id);
+
+    const commenterRolesRaw = comment.user.account.roles.map((x) => {
+        const role = roles.find((r) => r.key === x);
+        if (!role) return null;
+        return role;
+    });
+
+    const commenterHighestRole = commenterRolesRaw.reduce((prev, curr) => {
+        if (!prev) return curr;
+        if (!curr) return prev;
+        return prev.position > curr.position ? curr : prev;
+    }, null);
 
     return (
         <div
@@ -97,9 +112,37 @@ function RecursiveComment({
                         >
                             @{comment.user.username}
                         </p>
+
+                        {commenterHighestRole?.key !== "user" && (
+                            <Chip
+                                color={
+                                    hasPermission(
+                                        comment.user.account.permissions,
+                                        BitFieldPermissions.Administrator
+                                    )
+                                        ? "primary"
+                                        : hasPermission(
+                                              comment.user.account.permissions,
+                                              BitFieldPermissions.ManagePages
+                                          )
+                                        ? "success"
+                                        : hasPermission(
+                                              comment.user.account.permissions,
+                                              BitFieldPermissions.ManageBlogs
+                                          )
+                                        ? "danger"
+                                        : "default"
+                                }
+                                size="sm"
+                            >
+                                {commenterHighestRole?.name ?? "User"}
+                            </Chip>
+                        )}
+
                         {comment.edited && (
                             <p className="text-xs text-gray-400">(edited)</p>
                         )}
+
                         <p className="text-xs text-gray-500">
                             {convertMstoTimeElapsed(
                                 comment.createdAt.getTime()
@@ -174,6 +217,7 @@ function RecursiveComment({
                                 allComments={allComments}
                                 isReply={true}
                                 isPinned={false}
+                                roles={roles}
                             />
                         ))}
                 </div>

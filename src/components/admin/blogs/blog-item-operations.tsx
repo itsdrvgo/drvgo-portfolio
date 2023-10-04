@@ -119,6 +119,7 @@ function BlogOperations({ blog, className }: PageProps) {
                         blogThumbnailUrl: blog.thumbnailUrl!,
                         blogTitle: blog.title,
                     },
+                    type: "newBlog",
                 });
             })
             .catch((err) => {

@@ -1,9 +1,10 @@
 "use client";
 
-import { Blog, User } from "@/src/lib/drizzle/schema";
+import { DEFAULT_USER_IMAGE } from "@/src/config/const";
+import { Blog, Role } from "@/src/lib/drizzle/schema";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
-import { DefaultProps } from "@/src/types";
+import { DefaultProps, UserWithAccount } from "@/src/types";
 import {
     Accordion,
     AccordionItem,
@@ -23,19 +24,23 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import BlogAuthor from "../../../global/blogs/blog-author";
 import BlogImage from "../../../global/blogs/blog-image";
-import { UploadDropzone } from "../../../global/uploadthing";
+import { UploadDropzone } from "../../../global/uploadthing/client";
 import { Icons } from "../../../icons/icons";
 import { Mdx } from "../../../md/mdx-comp";
+
+interface BlogWithUserAccount extends Blog {
+    author: UserWithAccount;
+}
 
 interface PageProps extends DefaultProps {
     params: {
         blogId: string;
     };
-    data: Blog;
-    author: User;
+    data: BlogWithUserAccount;
+    roles: Role[];
 }
 
-function BlogWriteUp({ data, author }: PageProps) {
+function BlogWriteUp({ data, roles }: PageProps) {
     const router = useRouter();
 
     const [isSaving, setIsSaving] = useState(false);
@@ -74,6 +79,18 @@ function BlogWriteUp({ data, author }: PageProps) {
             .finally(() => setIsSaving(false));
     };
 
+    const authorRolesRaw = data.author.account.roles.map((x) => {
+        const role = roles.find((r) => r.key === x);
+        if (!role) return null;
+        return role;
+    });
+
+    const authorHighestRole = authorRolesRaw.reduce((prev, curr) => {
+        if (!prev) return curr;
+        if (!curr) return prev;
+        return prev.position > curr.position ? curr : prev;
+    }, null);
+
     return (
         <div className="relative flex w-full flex-col items-center gap-10">
             {previewEnabled ? (
@@ -85,10 +102,12 @@ function BlogWriteUp({ data, author }: PageProps) {
                     <Divider />
 
                     <BlogAuthor
-                        authorName={author.username}
+                        authorName={data.author.username}
                         createdAt={data.createdAt}
-                        image={author.image ?? undefined}
+                        image={data.author.image ?? DEFAULT_USER_IMAGE.src}
+                        authorRole={authorHighestRole}
                     />
+
                     {thumbnailURL ? <BlogImage src={thumbnailURL} /> : null}
 
                     {blogContent.split("\n").length! > 1 ? (
