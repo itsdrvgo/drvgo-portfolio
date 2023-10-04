@@ -17,7 +17,8 @@ import {
 } from "@nextui-org/react";
 import axios from "axios";
 import "cropperjs/dist/cropper.css";
-import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { Cropper, ReactCropperElement } from "react-cropper";
 import Dropzone from "react-dropzone";
 import toast from "react-hot-toast";
@@ -28,7 +29,10 @@ interface PageProps extends DefaultProps {
 }
 
 function UploadPFP({ user }: PageProps) {
+    const router = useRouter();
     const cropperRef = useRef<ReactCropperElement>(null);
+
+    const [isDisabled, setIsDisabled] = useState(true);
     const [isLoading, setLoading] = useState(false);
     const [iconURL, setIconURL] = useState(
         user.imageUrl ?? DEFAULT_USER_IMAGE.src
@@ -37,6 +41,10 @@ function UploadPFP({ user }: PageProps) {
     const [isDragActive, setIsDragActive] = useState(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
 
+    useEffect(() => {
+        setIsDisabled(!isLoading && !imageFile);
+    }, [imageFile, isLoading]);
+
     const {
         isOpen: isCropOpen,
         onOpen: onCropOpen,
@@ -44,46 +52,79 @@ function UploadPFP({ user }: PageProps) {
         onClose: onCropClose,
     } = useDisclosure();
 
-    const handlePFPUpdate = () => {
-        setLoading(true);
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const binaryString = event.target?.result;
-            const base64String = btoa(binaryString as string);
-
-            const jsonData = {
-                image: base64String,
-            };
-
-            axios
-                .put<ResponseData>(`/api/users/${user.id}`, jsonData)
-                .then(({ data: resData }) => {
-                    setLoading(false);
-                    if (resData.code !== 200)
-                        return toast.error(resData.message);
-
-                    toast.success("Profile picture updated");
-                })
-                .catch((err) => {
-                    setLoading(false);
-                    toast.error(err.message);
-                });
-        };
-        reader.readAsDataURL(imageFile!);
-    };
-
     const handleFileUpload = (file: File) => {
-        toast.success("Upload complete");
-
         setImageFile(file);
         setSelectedImage(URL.createObjectURL(file));
         onCropOpen();
+
+        toast.success("Upload complete");
     };
 
     const handleCrop = () => {
         const cropper = cropperRef.current?.cropper;
-        setIconURL(cropper?.getCroppedCanvas().toDataURL()!);
+        if (!cropper) return toast.error("No image selected!");
+
+        const croppedImage = cropper.getCroppedCanvas().toDataURL();
+
+        const byteString = atob(croppedImage.split(",")[1]);
+        const mimeString = croppedImage
+            .split(",")[0]
+            .split(":")[1]
+            .split(";")[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        const croppedImageBlob = new Blob([ab], { type: mimeString });
+
+        const file = new File([croppedImageBlob], "cropped-image", {
+            type: mimeString,
+        });
+
+        setImageFile(file);
+        setIconURL(croppedImage);
+    };
+
+    const handlePFPUpdate = () => {
+        setLoading(true);
+
+        const toastId = toast.loading("Updating image");
+
+        if (!imageFile)
+            return toast.error("No image selected!", {
+                id: toastId,
+            });
+
+        const formData = new FormData();
+        formData.append("image", imageFile);
+
+        axios
+            .put<ResponseData>(`/api/users/${user.id}`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+            .then(({ data: resData }) => {
+                if (resData.code !== 200)
+                    return toast.error(resData.message, {
+                        id: toastId,
+                    });
+
+                toast.success("Profile picture updated", {
+                    id: toastId,
+                });
+            })
+            .catch((err) => {
+                toast.error(err.message, {
+                    id: toastId,
+                });
+            })
+            .finally(() => {
+                setLoading(false);
+                setImageFile(null);
+                router.refresh();
+            });
     };
 
     return (
@@ -144,15 +185,11 @@ function UploadPFP({ user }: PageProps) {
             <Modal
                 isOpen={isCropOpen}
                 onOpenChange={onCropOpenChange}
-                onClose={() => {
-                    if (
-                        selectedImage !== DEFAULT_USER_IMAGE.src ||
-                        selectedImage !== user.imageUrl
-                    ) {
-                        setIconURL(user.imageUrl ?? DEFAULT_USER_IMAGE.src);
-                    }
-                }}
+                onClose={onCropClose}
                 radius="sm"
+                isDismissable={false}
+                isKeyboardDismissDisabled={true}
+                hideCloseButton={true}
             >
                 <ModalContent>
                     {(onClose) => (
@@ -197,6 +234,9 @@ function UploadPFP({ user }: PageProps) {
                                     color="primary"
                                     variant="flat"
                                     className="font-semibold"
+                                    onPress={() => {
+                                        onClose();
+                                    }}
                                 >
                                     Continue
                                 </Button>
@@ -209,27 +249,14 @@ function UploadPFP({ user }: PageProps) {
             <div className="flex w-full items-center justify-center md:justify-start">
                 <Button
                     type="submit"
-                    isDisabled={
-                        isLoading ||
-                        iconURL === user.imageUrl ||
-                        iconURL === DEFAULT_USER_IMAGE.src
-                    }
-                    className="flex w-max items-center gap-2 bg-secondary-900 font-semibold"
+                    isDisabled={isDisabled || isLoading}
+                    className="bg-secondary-900 font-semibold"
                     onClick={handlePFPUpdate}
                     radius="sm"
                     color="success"
+                    isLoading={isLoading}
                 >
-                    {isLoading ? (
-                        <>
-                            <Icons.spinner
-                                className="h-4 w-4 animate-spin"
-                                aria-hidden="true"
-                            />
-                            <p>Updating</p>
-                        </>
-                    ) : (
-                        <p>Update</p>
-                    )}
+                    {isLoading ? "Updating" : "Update"}
                 </Button>
             </div>
         </div>
