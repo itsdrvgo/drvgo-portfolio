@@ -31,6 +31,7 @@ export default authMiddleware({
         "/tos(.*)",
         "/privacy(.*)",
         "/auth(.*)",
+        "/announcements(.*)",
         "/sso-callback(.*)",
         "/verification(.*)",
         "/api/uploadthing(.*)",
