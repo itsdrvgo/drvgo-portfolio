@@ -27,6 +27,12 @@ export const homeMenuConfig: MenuConfig = {
             icon: "command",
         },
         {
+            title: "Announcements",
+            description: "Read our latest announcements.",
+            href: "/announcements",
+            icon: "flag",
+        },
+        {
             title: "Report a Bug",
             description: "Found a bug? Let us know so we can fix it.",
             href: "/bug",

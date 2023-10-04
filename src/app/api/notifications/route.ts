@@ -22,13 +22,14 @@ export async function POST(req: NextRequest) {
                 message: "Unauthorized!",
             });
 
-        const { content, notifierId, props, title } = insertNotificationSchema
-            .omit({
-                id: true,
-                read: true,
-                userId: true,
-            })
-            .parse(body);
+        const { content, notifierId, props, title, type } =
+            insertNotificationSchema
+                .omit({
+                    id: true,
+                    read: true,
+                    userId: true,
+                })
+                .parse(body);
 
         const data = await db.query.users.findMany({
             where: ne(users.id, notifierId),
@@ -41,6 +42,7 @@ export async function POST(req: NextRequest) {
             title,
             notifierId,
             props: props as Notification["props"],
+            type,
         }));
 
         await db.insert(notifications).values(notificationsToInsert);

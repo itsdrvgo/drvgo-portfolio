@@ -21,7 +21,10 @@ export type Notification = {
         | BlogCommentReplyLoveProps
         | BlogCommenPinProps
         | NewMessageProps
-        | NewProjectProps;
+        | NewProjectProps
+        | CustomNotificationProps;
+    /** The notification type */
+    type: Notification["props"]["type"] | string;
     /** The notification creation date */
     createdAt: Date;
 };
@@ -100,4 +103,11 @@ export type NewProjectProps = {
     purchaserUsername: string;
     purchaserImage: string | null;
     sellerId: string;
+};
+
+export type CustomNotificationProps = {
+    type: "custom";
+    title: string;
+    content: string;
+    imageUrl?: string | null;
 };

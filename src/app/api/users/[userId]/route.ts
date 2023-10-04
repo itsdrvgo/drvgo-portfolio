@@ -159,6 +159,12 @@ export async function PUT(req: NextRequest, context: UserContext) {
                 message: "Unauthorized!",
             });
 
+        if (user.id !== params.userId)
+            return NextResponse.json({
+                code: 403,
+                message: "Unauthorized!",
+            });
+
         const image = body.get("image");
         if (!image)
             return NextResponse.json({

@@ -1,3 +1,4 @@
+import { Role } from "@/src/lib/drizzle/schema";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
 import RecursiveComment from "./blog-recursive-comments";
@@ -8,9 +9,10 @@ interface PageProps extends DefaultProps {
     params: {
         blogId: string;
     };
+    roles: Role[];
 }
 
-function BlogViewComments({ className, user, params, blog }: PageProps) {
+function BlogViewComments({ className, user, params, blog, roles }: PageProps) {
     const allComments = blog.comments;
     const rootComments = allComments.filter(
         (comment) => !comment.parentId && !comment.pinned
@@ -30,6 +32,7 @@ function BlogViewComments({ className, user, params, blog }: PageProps) {
                     isReply={false}
                     isPinned={true}
                     id={pinnedComment.id}
+                    roles={roles}
                 />
             )}
             {rootComments.map((comment) => (
@@ -43,6 +46,7 @@ function BlogViewComments({ className, user, params, blog }: PageProps) {
                     isReply={false}
                     isPinned={false}
                     id={comment.id}
+                    roles={roles}
                 />
             ))}
         </div>

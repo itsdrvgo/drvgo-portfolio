@@ -2,7 +2,7 @@
 
 import { env } from "@/env.mjs";
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { NewComment } from "@/src/lib/drizzle/schema";
+import { NewComment, Role } from "@/src/lib/drizzle/schema";
 import {
     addNotification,
     cn,
@@ -31,9 +31,16 @@ interface PageProps {
     blog: ExtendedBlog;
     user: ClerkUser | null;
     blogIsLiked: boolean | false;
+    roles: Role[];
 }
 
-function BlogViewOperations({ params, blog, user, blogIsLiked }: PageProps) {
+function BlogViewOperations({
+    params,
+    blog,
+    user,
+    blogIsLiked,
+    roles,
+}: PageProps) {
     const router = useRouter();
 
     const [comment, setComment] = useState("");
@@ -92,6 +99,7 @@ function BlogViewOperations({ params, blog, user, blogIsLiked }: PageProps) {
                     blogThumbnailUrl: blog.thumbnailUrl!,
                     blogTitle: blog.title,
                 },
+                type: "blogLike",
             });
         }
     };
@@ -133,6 +141,7 @@ function BlogViewOperations({ params, blog, user, blogIsLiked }: PageProps) {
                         commentContent: comment,
                         commentId,
                     },
+                    type: "blogComment",
                 });
             })
             .catch((err) => {
@@ -264,6 +273,7 @@ function BlogViewOperations({ params, blog, user, blogIsLiked }: PageProps) {
                     className="space-y-6"
                     user={user}
                     params={params}
+                    roles={roles}
                 />
             </div>
         </>

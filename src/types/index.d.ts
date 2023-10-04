@@ -57,7 +57,7 @@ export interface UserWithAccount extends User {
 }
 
 export interface ExtendedComment extends Comment {
-    user: User;
+    user: UserWithAccount;
     loves: CommentLove[];
     blog: Blog;
 }
@@ -66,7 +66,7 @@ export interface ExtendedBlog extends Blog {
     likes: Like[];
     views: View[];
     comments: ExtendedComment[];
-    author: User;
+    author: UserWithAccount;
 }
 
 export interface ExtendedNotification extends Notification {

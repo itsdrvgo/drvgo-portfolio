@@ -1,15 +1,17 @@
 "use client";
 
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
+import { Role } from "@/src/lib/drizzle/schema";
 import { cn, formatDate } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
-import { Avatar, Tooltip } from "@nextui-org/react";
+import { Avatar, Chip, Tooltip } from "@nextui-org/react";
 
 interface PageProps extends DefaultProps {
     image?: string;
     authorName: string;
     createdAt: Date;
     updatedAt?: Date;
+    authorRole: Role | null;
 }
 
 function BlogAuthor({
@@ -18,6 +20,7 @@ function BlogAuthor({
     authorName,
     createdAt,
     updatedAt,
+    authorRole,
     ...props
 }: PageProps) {
     return (
@@ -29,8 +32,15 @@ function BlogAuthor({
                 size="md"
                 src={image || DEFAULT_USER_IMAGE.src}
             />
+
             <div className="space-y-1">
-                <p>@{authorName}</p>
+                <div className="flex items-center gap-2">
+                    <p>@{authorName}</p>
+
+                    <Chip color="primary" size="sm">
+                        {authorRole?.name ?? "User"}
+                    </Chip>
+                </div>
 
                 <div className="flex gap-1 text-sm text-gray-600">
                     <p>Published on {formatDate(createdAt.getTime())}</p>

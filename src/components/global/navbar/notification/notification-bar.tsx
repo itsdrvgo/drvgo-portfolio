@@ -36,9 +36,10 @@ function NotificationBar({ className, data, user, ...props }: PageProps) {
                             isIconOnly
                             as="button"
                             variant="bordered"
-                        >
-                            <Icons.notification className="h-4 w-4" />
-                        </Button>
+                            startContent={
+                                <Icons.notification className="h-4 w-4" />
+                            }
+                        />
                     </PopoverTrigger>
                 </Badge>
 

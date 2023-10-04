@@ -1,5 +1,6 @@
 "use client";
 
+import { Role } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedBlog } from "@/src/types";
@@ -17,6 +18,7 @@ interface PageProps extends DefaultProps {
     params: {
         blogId: string;
     };
+    roles: Role[];
 }
 
 function BlogViewPage({
@@ -24,8 +26,21 @@ function BlogViewPage({
     blog,
     user,
     blogIsLiked,
+    roles,
     params,
 }: PageProps) {
+    const authorRolesRaw = blog.author.account.roles.map((x) => {
+        const role = roles.find((r) => r.key === x);
+        if (!role) return null;
+        return role;
+    });
+
+    const authorHighestRole = authorRolesRaw.reduce((prev, curr) => {
+        if (!prev) return curr;
+        if (!curr) return prev;
+        return prev.position > curr.position ? curr : prev;
+    }, null);
+
     return (
         <article
             className={cn(
@@ -45,6 +60,7 @@ function BlogViewPage({
                     createdAt={blog.createdAt}
                     image={blog.author.image ?? undefined}
                     updatedAt={blog.updatedAt ?? undefined}
+                    authorRole={authorHighestRole}
                 />
                 <BlogImage src={blog.thumbnailUrl!} />
 
@@ -111,6 +127,7 @@ function BlogViewPage({
                 blog={blog}
                 user={user}
                 blogIsLiked={blogIsLiked}
+                roles={roles}
             />
         </article>
     );
