@@ -4,7 +4,7 @@ import { Icons } from "@/src/components/icons/icons";
 import { addNotification } from "@/src/lib/utils";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
-import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { ExtendedBlog } from "@/src/types";
 import {
     Button,
     Dropdown,
@@ -24,11 +24,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-interface PageProps extends DefaultProps {
+interface PageProps {
     blog: ExtendedBlog;
 }
 
-function BlogOperations({ blog, className }: PageProps) {
+function BlogOperations({ blog }: PageProps) {
     const router = useRouter();
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -51,7 +51,7 @@ function BlogOperations({ blog, className }: PageProps) {
     const deleteBlog = () => {
         setIsDeleting(true);
 
-        const toastId = toast.loading("Deleting blog...");
+        const toastId = toast.loading("Deleting blog");
 
         axios
             .delete<ResponseData>(`/api/blogs/${blog.id}`)
@@ -83,7 +83,7 @@ function BlogOperations({ blog, className }: PageProps) {
         setIsPublishing(true);
 
         const toastId = toast.loading(
-            blog.published ? "Unpublishing blog..." : "Publishing blog..."
+            blog.published ? "Unpublishing blog" : "Publishing blog"
         );
 
         const body: BlogPatchData = {

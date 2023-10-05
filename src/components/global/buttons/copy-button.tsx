@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
-import { Badge, Button, Tooltip } from "@nextui-org/react";
+import { Button, Tooltip } from "@nextui-org/react";
 import { ButtonHTMLAttributes, useEffect, useState } from "react";
 import { Icons } from "../../icons/icons";
 

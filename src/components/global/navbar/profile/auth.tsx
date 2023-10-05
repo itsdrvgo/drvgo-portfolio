@@ -1,5 +1,5 @@
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps, ExtendedNotification } from "@/src/types";
+import { ExtendedNotification } from "@/src/types";
 import NotificationBar from "../notification/notification-bar";
 import DropdownProfile from "./dropdown-profile";
 

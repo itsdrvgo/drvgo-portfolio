@@ -1,6 +1,5 @@
 "use client";
 
-import { DefaultProps } from "@/src/types";
 import {
     Card,
     CardBody,
@@ -9,7 +8,7 @@ import {
     Skeleton,
 } from "@nextui-org/react";
 
-function ProfileSkeleton({ className }: DefaultProps) {
+function ProfileSkeleton() {
     return (
         <>
             <Card>

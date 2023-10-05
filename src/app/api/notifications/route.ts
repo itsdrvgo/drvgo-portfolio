@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
-        const user = await getAuthorizedUser(BitFieldPermissions.Administrator);
+        const user = await getAuthorizedUser(BitFieldPermissions.ManagePages);
         if (!user)
             return NextResponse.json({
                 code: 403,

@@ -1,6 +1,6 @@
 /** @type {import("eslint").Linter.Config} */
 const config = {
-    plugins: ["tailwindcss"],
+    plugins: ["tailwindcss", "unused-imports"],
     extends: [
         "next/core-web-vitals",
         "prettier",
@@ -9,6 +9,8 @@ const config = {
     rules: {
         semi: "error",
         "tailwindcss/no-custom-classname": "off",
+        "unused-imports/no-unused-imports": "warn",
+        "unused-imports/no-unused-vars": "warn",
     },
     settings: {
         tailwindcss: {

@@ -14,7 +14,7 @@ const rolesPatchSchema = z.array(
     })
 );
 
-export async function POST(req: NextRequest) {
+export async function POST() {
     try {
         const user = await getAuthorizedUser(
             BitFieldPermissions.ManageRoles | BitFieldPermissions.ManagePages

@@ -1,5 +1,5 @@
 import { DefaultProps } from "@/src/types";
-import { Badge, Button, Card, CardBody, Divider } from "@nextui-org/react";
+import { Card, CardBody, Divider } from "@nextui-org/react";
 import { motion, Variants } from "framer-motion";
 import { Icons } from "../icons/icons";
 

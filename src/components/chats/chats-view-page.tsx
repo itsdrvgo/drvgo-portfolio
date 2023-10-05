@@ -140,8 +140,6 @@ async function ChatsViewPage({ params }: PageProps) {
                     chatId={chatId}
                     initialMessages={initialMessages}
                     userId={parsedUser.id}
-                    userImage={parsedUser.imageUrl}
-                    chatPartner={chatPartner}
                 />
 
                 <ChatInput chatPartner={chatPartner} chatId={chatId} />

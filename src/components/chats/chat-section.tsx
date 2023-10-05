@@ -8,7 +8,7 @@ import {
     toPusherKey,
 } from "@/src/lib/utils";
 import { Message } from "@/src/lib/validation/messages";
-import { DefaultProps, UserWithAccount } from "@/src/types";
+import { DefaultProps } from "@/src/types";
 import { Button, Card, CardBody } from "@nextui-org/react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -19,8 +19,6 @@ interface PageProps extends DefaultProps {
     chatId: string;
     initialMessages: Message[];
     userId: string;
-    userImage?: string | null;
-    chatPartner: UserWithAccount;
 }
 
 function groupMessagesByDate(messages: Message[]): Map<string, Message[]> {
@@ -40,10 +38,8 @@ function groupMessagesByDate(messages: Message[]): Map<string, Message[]> {
 function ChatSection({
     className,
     chatId,
-    chatPartner,
     initialMessages,
     userId,
-    userImage,
     ...props
 }: PageProps) {
     const [messages, setMessages] = useState<Message[]>(initialMessages);
@@ -97,7 +93,7 @@ function ChatSection({
 
     return (
         <section
-            className={cn("z-50 h-full overflow-y-auto px-4 pb-4")}
+            className={cn("z-50 h-full overflow-y-auto px-4 pb-4", className)}
             ref={scrollRef}
             {...props}
         >

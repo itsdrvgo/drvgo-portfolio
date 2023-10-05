@@ -1,7 +1,6 @@
 import { db } from "@/src/lib/drizzle";
 import { notifications } from "@/src/lib/drizzle/schema";
 import { userSchema } from "@/src/lib/validation/user";
-import { ExtendedNotification } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
 import { NavbarProps } from "@nextui-org/react";
 import { and, desc, eq } from "drizzle-orm";

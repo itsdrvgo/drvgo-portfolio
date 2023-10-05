@@ -1,8 +1,8 @@
 import { db } from "@/src/lib/drizzle";
-import { blogs, users } from "@/src/lib/drizzle/schema";
+import { blogs } from "@/src/lib/drizzle/schema";
 import { DefaultProps } from "@/src/types";
 import { eq } from "drizzle-orm";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import BlogWriteUp from "./blog-edit-writeup";
 
 interface PageProps extends DefaultProps {

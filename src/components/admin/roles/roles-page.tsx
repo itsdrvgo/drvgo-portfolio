@@ -18,7 +18,13 @@ async function RolesPage({ className }: DefaultProps) {
     if (!user) redirect("/auth");
     let parsedUser = userSchema.parse(user);
 
-    return <RolesManagePage initialRoles={initialRoles} user={parsedUser} />;
+    return (
+        <RolesManagePage
+            initialRoles={initialRoles}
+            user={parsedUser}
+            className={className}
+        />
+    );
 }
 
 export default RolesPage;

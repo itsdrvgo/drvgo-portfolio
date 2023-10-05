@@ -12,13 +12,11 @@ import {
 import { HTMLAttributes } from "react";
 
 function LinkPreviewButton({
-    className,
     children,
     ...props
 }: HTMLAttributes<HTMLSpanElement>) {
     const {
         isOpen: redirectIsOpen,
-        onClose: redirectOnClose,
         onOpen: redirectOnOpen,
         onOpenChange: redirectOnOpenChange,
     } = useDisclosure();

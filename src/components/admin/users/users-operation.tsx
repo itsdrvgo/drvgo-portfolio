@@ -72,7 +72,7 @@ function UsersOperation({ target, user, roles }: PageProps) {
 
         setIsDeleting(true);
 
-        const toastId = toast.loading("Deleting user...");
+        const toastId = toast.loading("Deleting user");
 
         axios
             .delete<ResponseData>(`/api/users/${target.id}`)
@@ -107,7 +107,7 @@ function UsersOperation({ target, user, roles }: PageProps) {
 
         setIsUpdating(true);
 
-        const toastId = toast.loading("Updating user role...");
+        const toastId = toast.loading("Updating user role");
 
         axios
             .patch<ResponseData>(

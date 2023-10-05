@@ -2,7 +2,7 @@ import { db } from "@/src/lib/drizzle";
 import { blogs } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
-import { desc, eq } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 import BlogCreateButton from "../../global/buttons/blog-create-button";
 import { EmptyPlaceholder } from "../../ui/empty-placeholder";
 import BlogItem from "./blog-item";
