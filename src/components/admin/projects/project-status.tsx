@@ -42,7 +42,7 @@ function ProjectStatus({ projectState }: PageProps) {
     const handleUpdateState = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Updating status...");
+        const toastId = toast.loading("Updating status");
 
         const body = {
             state: isActive,
@@ -69,7 +69,7 @@ function ProjectStatus({ projectState }: PageProps) {
                 setIsActive(projectState);
 
                 console.error(err);
-                toast.error("Something went wrong, try again later", {
+                toast.error("Something went wrong, try again later!", {
                     id: toastId,
                 });
             })

@@ -1,5 +1,7 @@
-import AnnouncementForm from "@/src/components/forms/announcement-form";
+import AnnouncementPage from "@/src/components/admin/announcements/announcement-page";
+import AnnouncementFormSkeleton from "@/src/components/admin/announcements/skeletons/announcement-page";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
     title: "Announcements",
@@ -17,7 +19,9 @@ function Page() {
                     </p>
                 </div>
 
-                <AnnouncementForm />
+                <Suspense fallback={<AnnouncementFormSkeleton />}>
+                    <AnnouncementPage />
+                </Suspense>
             </div>
         </section>
     );

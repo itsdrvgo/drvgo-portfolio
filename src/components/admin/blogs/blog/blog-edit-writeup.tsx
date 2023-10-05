@@ -2,6 +2,7 @@
 
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { Blog, Role } from "@/src/lib/drizzle/schema";
+import { cn } from "@/src/lib/utils";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, UserWithAccount } from "@/src/types";
@@ -14,6 +15,7 @@ import {
     Image,
     Input,
     Link,
+    Progress,
     Textarea,
 } from "@nextui-org/react";
 import axios from "axios";
@@ -21,10 +23,12 @@ import NextImage from "next/image";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Dropzone from "react-dropzone";
 import toast from "react-hot-toast";
+import { generateClientDropzoneAccept } from "uploadthing/client";
 import BlogAuthor from "../../../global/blogs/blog-author";
 import BlogImage from "../../../global/blogs/blog-image";
-import { UploadDropzone } from "../../../global/uploadthing/client";
+import { useUploadThing } from "../../../global/uploadthing";
 import { Icons } from "../../../icons/icons";
 import { Mdx } from "../../../md/mdx-comp";
 
@@ -51,6 +55,9 @@ function BlogWriteUp({ data, roles }: PageProps) {
         data.description ?? ""
     );
     const [thumbnailURL, setThumbnailURL] = useState(data.thumbnailUrl);
+
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [isDragActive, setIsDragActive] = useState(false);
 
     const handleSave = () => {
         setIsSaving(true);
@@ -90,6 +97,37 @@ function BlogWriteUp({ data, roles }: PageProps) {
         if (!curr) return prev;
         return prev.position > curr.position ? curr : prev;
     }, null);
+
+    const { startUpload, isUploading, permittedFileInfo } = useUploadThing(
+        "blogThumbnail",
+        {
+            onUploadBegin: () => {
+                return toast.success(
+                    "Uploading image, this may take a while..."
+                );
+            },
+            onUploadProgress: (p) => {
+                setUploadProgress(p);
+            },
+            onUploadError: (err) => {
+                console.error(err);
+                return toast.error(err.message);
+            },
+            onClientUploadComplete: (res) => {
+                if (!res) return toast.error("Something went wrong!");
+                const upload = res[0];
+
+                const { url } = upload;
+                console.log(url);
+                setThumbnailURL(url);
+                return toast.success("Image uploaded");
+            },
+        }
+    );
+
+    const fileTypes = permittedFileInfo?.config
+        ? Object.keys(permittedFileInfo?.config)
+        : [];
 
     return (
         <div className="relative flex w-full flex-col items-center gap-10">
@@ -195,70 +233,97 @@ function BlogWriteUp({ data, roles }: PageProps) {
                         title="Thumbnail"
                         aria-label="thumbnail"
                     >
-                        <UploadDropzone
-                            endpoint="blogThumbnail"
-                            appearance={{
-                                label: "text-xl font-semibold",
-                                allowedContent: "text-base",
-                                uploadIcon: "text-accent-foreground",
-                                container({ isDragActive }) {
-                                    return `min-h-[250px] ${
-                                        isDragActive
-                                            ? "bg-sky-900"
-                                            : "bg-background"
-                                    } rounded-md border-gray-500 overflow-hidden`;
-                                },
-                            }}
-                            content={{
-                                label({ isUploading, ready }) {
-                                    return isUploading
-                                        ? "Uploading..."
-                                        : ready
-                                        ? "Drop your thumbnail here"
-                                        : "Please wait...";
-                                },
-                                uploadIcon() {
-                                    return (
-                                        thumbnailURL && (
-                                            <Image
-                                                as={NextImage}
-                                                radius="sm"
-                                                src={thumbnailURL}
-                                                alt="thumbnail"
-                                                width={2000}
-                                                height={2000}
-                                                className="rounded"
-                                            />
-                                        )
-                                    );
-                                },
-                                button({ ready, isUploading }) {
-                                    return (
-                                        <Button>
-                                            {isUploading
-                                                ? "Uploading..."
-                                                : ready
-                                                ? thumbnailURL
-                                                    ? "Change Thumbnail"
-                                                    : "Upload Thumbnail"
-                                                : "Loading..."}
-                                        </Button>
-                                    );
-                                },
-                            }}
-                            onClientUploadComplete={(res) => {
-                                if (!res)
-                                    return toast.error(
-                                        "Error uploading your image!"
-                                    );
+                        <Dropzone
+                            onDrop={(acceptedFiles) =>
+                                startUpload(acceptedFiles)
+                            }
+                            accept={
+                                fileTypes && fileTypes.length
+                                    ? generateClientDropzoneAccept(fileTypes)
+                                    : undefined
+                            }
+                            disabled={isUploading || isSaving}
+                            maxFiles={
+                                permittedFileInfo?.config.image?.maxFileCount ??
+                                1
+                            }
+                            onDragEnter={() => setIsDragActive(true)}
+                            onDragLeave={() => setIsDragActive(false)}
+                            onDropAccepted={() => setIsDragActive(false)}
+                            onDropRejected={(fileRejections) =>
+                                toast.error(fileRejections[0].errors[0].message)
+                            }
+                        >
+                            {({ getRootProps, getInputProps, open }) => (
+                                <div
+                                    {...getRootProps()}
+                                    className={cn(
+                                        "flex min-h-[25rem] w-full cursor-pointer flex-col items-center justify-center gap-5 rounded-md border border-dashed border-gray-500 bg-background p-3 text-center md:p-12",
+                                        isDragActive && "bg-sky-900"
+                                    )}
+                                >
+                                    <input {...getInputProps()} />
 
-                                setThumbnailURL(res[0].url);
-                                toast.success("Thumbnail uploaded");
-                            }}
-                            onUploadError={(err: Error) => {
-                                toast.error(err.message);
-                            }}
-                        />
+                                    {thumbnailURL && (
+                                        <Image
+                                            src={thumbnailURL}
+                                            alt="Blog thumbnail"
+                                            classNames={{
+                                                wrapper: "border",
+                                            }}
+                                            radius="sm"
+                                            as={NextImage}
+                                            className="h-full w-full"
+                                            width={1000}
+                                            height={1000}
+                                        />
+                                    )}
+
+                                    {isUploading ? (
+                                        <div className="w-1/2">
+                                            <Progress
+                                                radius="sm"
+                                                showValueLabel
+                                                value={uploadProgress}
+                                                label="Uploading"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <p>Drop your image here</p>
+                                    )}
+
+                                    {!isUploading && (
+                                        <div className="flex flex-col items-center gap-2">
+                                            <Button
+                                                type="button"
+                                                className="border font-semibold"
+                                                radius="sm"
+                                                startContent={
+                                                    !isUploading && (
+                                                        <Icons.upload className="h-4 w-4" />
+                                                    )
+                                                }
+                                                onPress={open}
+                                                isDisabled={
+                                                    isSaving || isUploading
+                                                }
+                                                isLoading={isUploading}
+                                            >
+                                                Upload Image
+                                            </Button>
+
+                                            <p className="text-xs text-gray-400">
+                                                (
+                                                {permittedFileInfo?.config.image
+                                                    ?.maxFileSize ??
+                                                    "Loading..."}
+                                                )
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </Dropzone>
                     </AccordionItem>
 
                     <AccordionItem

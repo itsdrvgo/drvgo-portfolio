@@ -17,6 +17,8 @@ function BlogCreateButton({ className, ...props }: ButtonProps) {
     const handleBlogCreate = () => {
         setIsLoading(true);
 
+        const toastId = toast.loading("Creating blog");
+
         const data: Pick<NewBlog, "title"> = {
             title: "Untitled Blog",
         };
@@ -24,18 +26,26 @@ function BlogCreateButton({ className, ...props }: ButtonProps) {
         axios
             .post<ResponseData>("/api/blogs", JSON.stringify(data))
             .then(({ data: resData }) => {
-                setIsLoading(false);
+                if (resData.code !== 200)
+                    return toast.error(resData.message, {
+                        id: toastId,
+                    });
 
-                if (resData.code !== 200) return toast.error(resData.message);
+                toast.success("Blog created successfully!", {
+                    id: toastId,
+                });
 
-                const blogId = JSON.parse(resData.data);
+                const blogId = JSON.parse(resData.data) as string;
                 router.push(`/admin/blogs/${blogId}`);
             })
             .catch((err) => {
                 console.error(err);
-
+                toast.error("Something went wrong, try again later!", {
+                    id: toastId,
+                });
+            })
+            .finally(() => {
                 setIsLoading(false);
-                toast.error("Something went wrong, try again later");
             });
     };
 

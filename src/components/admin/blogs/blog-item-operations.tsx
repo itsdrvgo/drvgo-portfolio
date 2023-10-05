@@ -51,7 +51,7 @@ function BlogOperations({ blog, className }: PageProps) {
     const deleteBlog = () => {
         setIsDeleting(true);
 
-        const toastId = toast.loading("Deleting blog...");
+        const toastId = toast.loading("Deleting blog");
 
         axios
             .delete<ResponseData>(`/api/blogs/${blog.id}`)
@@ -83,7 +83,7 @@ function BlogOperations({ blog, className }: PageProps) {
         setIsPublishing(true);
 
         const toastId = toast.loading(
-            blog.published ? "Unpublishing blog..." : "Publishing blog..."
+            blog.published ? "Unpublishing blog" : "Publishing blog"
         );
 
         const body: BlogPatchData = {

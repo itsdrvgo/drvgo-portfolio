@@ -1,35 +1,30 @@
 "use client";
 
 import { addNotification, cn } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
-import { useAuth } from "@clerk/nextjs";
-import { Button, Image, Input, Textarea } from "@nextui-org/react";
-import axios from "axios";
+import { Button, Image, Input, Progress, Textarea } from "@nextui-org/react";
 import NextImage from "next/image";
 import { useState } from "react";
 import Dropzone from "react-dropzone";
 import toast from "react-hot-toast";
-import { z } from "zod";
-import { Icons } from "../icons/icons";
+import { generateClientDropzoneAccept } from "uploadthing/client";
+import { useUploadThing } from "../../global/uploadthing";
+import { Icons } from "../../icons/icons";
 
-const uploadDataParser = z.object({
-    url: z.string(),
-    key: z.string(),
-    name: z.string(),
-    size: z.number(),
-});
+interface PageProps extends DefaultProps {
+    user: ClerkUser;
+}
 
-function NotificationForm({ className, ...props }: DefaultProps) {
-    const { userId } = useAuth();
-
-    const [isImageUploading, setIsImageUploading] = useState(false);
+function AnnouncementForm({ className, user, ...props }: PageProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isDragActive, setIsDragActive] = useState(false);
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     const handleSend = () => {
         setIsLoading(true);
@@ -40,7 +35,7 @@ function NotificationForm({ className, ...props }: DefaultProps) {
             title: "New Announcement!",
             content:
                 "You just received a new announcement from the admin! Check it out!",
-            notifierId: userId!,
+            notifierId: user.id,
             props: {
                 type: "custom",
                 title,
@@ -65,43 +60,38 @@ function NotificationForm({ className, ...props }: DefaultProps) {
             });
     };
 
-    const handleFileUpload = (file: File) => {
-        setIsImageUploading(true);
-
-        const toastId = toast.loading("Uploading image");
-
-        const formData = new FormData();
-        formData.append("file", file);
-
-        axios
-            .post<ResponseData>("/api/upload", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            })
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                const { url } = uploadDataParser.parse(resData.data);
-                setImageUrl(url);
-
-                toast.success("Image uploaded", {
-                    id: toastId,
-                });
-            })
-            .catch((err) => {
+    const { startUpload, isUploading, permittedFileInfo } = useUploadThing(
+        "announcementThumbnail",
+        {
+            onUploadBegin: () => {
+                return toast.success(
+                    "Uploading image, this may take a while..."
+                );
+            },
+            onUploadProgress: (p) => {
+                setUploadProgress(p);
+            },
+            onUploadError: (err) => {
                 console.error(err);
-                toast.error(err.message, {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsImageUploading(false);
-            });
-    };
+                return toast.error(err.message);
+            },
+            onClientUploadComplete: (res) => {
+                if (!res) return toast.error("Something went wrong!");
+                const upload = res[0];
+
+                if (!upload || !upload.url)
+                    return toast.error("Something went wrong!");
+
+                const { url } = upload;
+                setImageUrl(url);
+                return toast.success("Image uploaded");
+            },
+        }
+    );
+
+    const fileTypes = permittedFileInfo?.config
+        ? Object.keys(permittedFileInfo?.config)
+        : [];
 
     return (
         <div className={cn("space-y-5", className)} {...props}>
@@ -124,29 +114,28 @@ function NotificationForm({ className, ...props }: DefaultProps) {
                 <p className="text-lg font-semibold">Image</p>
 
                 <Dropzone
-                    onDrop={(acceptedFiles) =>
-                        handleFileUpload(acceptedFiles[0])
+                    onDrop={(acceptedFiles) => startUpload(acceptedFiles)}
+                    disabled={isLoading || isUploading}
+                    maxFiles={
+                        permittedFileInfo?.config.image?.maxFileCount ?? 1
                     }
-                    accept={{
-                        "image/png": [".png"],
-                        "image/jpeg": [".jpeg"],
-                        "image/jpg": [".jpg"],
-                    }}
-                    disabled={isLoading || isImageUploading}
-                    maxFiles={1}
                     onDragEnter={() => setIsDragActive(true)}
                     onDragLeave={() => setIsDragActive(false)}
                     onDropAccepted={() => setIsDragActive(false)}
-                    maxSize={2 * 1024 * 1024}
-                    onDropRejected={(fileRejections) =>
-                        toast.error(fileRejections[0].errors[0].message)
+                    onDropRejected={(fileRejections) => {
+                        return toast.error(fileRejections[0].errors[0].message);
+                    }}
+                    accept={
+                        fileTypes && fileTypes.length
+                            ? generateClientDropzoneAccept(fileTypes)
+                            : undefined
                     }
                 >
                     {({ getRootProps, getInputProps, open }) => (
                         <div
                             {...getRootProps()}
                             className={cn(
-                                "flex min-h-[25rem] w-full cursor-pointer flex-col items-center justify-center gap-7 rounded-md border border-dashed border-gray-500 bg-background p-3 text-center md:p-12",
+                                "flex min-h-[25rem] w-full cursor-pointer flex-col items-center justify-center gap-5 rounded-md border border-dashed border-gray-500 bg-background p-3 text-center md:p-12",
                                 isDragActive && "bg-sky-900"
                             )}
                         >
@@ -167,23 +156,45 @@ function NotificationForm({ className, ...props }: DefaultProps) {
                                 />
                             )}
 
-                            <p>Drag & drop your image here</p>
+                            {isUploading ? (
+                                <div className="w-1/2">
+                                    <Progress
+                                        radius="sm"
+                                        showValueLabel
+                                        value={uploadProgress}
+                                        label="Uploading"
+                                    />
+                                </div>
+                            ) : (
+                                <p>Drop your image here</p>
+                            )}
 
-                            <Button
-                                type="button"
-                                className="border font-semibold"
-                                radius="sm"
-                                startContent={
-                                    !isImageUploading && (
-                                        <Icons.upload className="h-4 w-4" />
-                                    )
-                                }
-                                onPress={open}
-                                isDisabled={isLoading || isImageUploading}
-                                isLoading={isImageUploading}
-                            >
-                                Upload Image
-                            </Button>
+                            {!isUploading && (
+                                <div className="flex flex-col items-center gap-2">
+                                    <Button
+                                        type="button"
+                                        className="border font-semibold"
+                                        radius="sm"
+                                        startContent={
+                                            !isUploading && (
+                                                <Icons.upload className="h-4 w-4" />
+                                            )
+                                        }
+                                        onPress={open}
+                                        isDisabled={isLoading || isUploading}
+                                        isLoading={isUploading}
+                                    >
+                                        Upload Image
+                                    </Button>
+
+                                    <p className="text-xs text-gray-400">
+                                        (
+                                        {permittedFileInfo?.config.image
+                                            ?.maxFileSize ?? "Loading..."}
+                                        )
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </Dropzone>
@@ -213,6 +224,7 @@ function NotificationForm({ className, ...props }: DefaultProps) {
                     onPress={handleSend}
                     radius="sm"
                     isLoading={isLoading}
+                    isDisabled={isLoading || (!title && !content && !imageUrl)}
                 >
                     Send
                 </Button>
@@ -221,4 +233,4 @@ function NotificationForm({ className, ...props }: DefaultProps) {
     );
 }
 
-export default NotificationForm;
+export default AnnouncementForm;

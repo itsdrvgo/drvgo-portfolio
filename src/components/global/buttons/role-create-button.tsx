@@ -16,7 +16,7 @@ function RoleCreateButton({ className, ...props }: ButtonProps) {
     const handleRoleCreate = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Creating role...");
+        const toastId = toast.loading("Creating role");
 
         axios
             .post<ResponseData>("/api/roles")
@@ -38,7 +38,7 @@ function RoleCreateButton({ className, ...props }: ButtonProps) {
                 console.error(err);
 
                 setIsLoading(false);
-                toast.error("Something went wrong, try again later", {
+                toast.error("Something went wrong, try again later!", {
                     id: toastId,
                 });
             });
