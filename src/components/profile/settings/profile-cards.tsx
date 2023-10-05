@@ -1,17 +1,16 @@
 "use client";
 
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps } from "@/src/types";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import UsernameForm from "../../forms/username-form";
 import DeleteAccount from "./delete-account";
 import UploadPFP from "./upload-pfp";
 
-interface PageProps extends DefaultProps {
+interface PageProps {
     user: ClerkUser;
 }
 
-function ProfileCards({ className, user }: PageProps) {
+function ProfileCards({ user }: PageProps) {
     return (
         <>
             <Card>

@@ -2,17 +2,17 @@
 
 import { DEFAULT_BLOG_THUMBNAIL } from "@/src/config/const";
 import { formatDate } from "@/src/lib/utils";
-import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { ExtendedBlog } from "@/src/types";
 import { Card, CardBody, CardFooter, Image, Link } from "@nextui-org/react";
 import NextImage from "next/image";
 import NextLink from "next/link";
 import BlogOperations from "./blog-item-operations";
 
-interface PageProps extends DefaultProps {
+interface PageProps {
     blog: ExtendedBlog;
 }
 
-function BlogItem({ blog, className }: PageProps) {
+function BlogItem({ blog }: PageProps) {
     return (
         <Card radius="sm" isPressable className="h-full">
             <CardBody className="p-3">

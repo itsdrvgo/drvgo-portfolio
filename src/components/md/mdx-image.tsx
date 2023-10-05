@@ -5,8 +5,6 @@ import NextImage from "next/image";
 import { ImgHTMLAttributes } from "react";
 
 function MdImage({
-    alt,
-    className,
     ...props
 }: ImageProps & ImgHTMLAttributes<HTMLImageElement>) {
     return (

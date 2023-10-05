@@ -36,7 +36,6 @@ async function ProjectView({ className, params, ...props }: PageProps) {
     return (
         <ProjectRead
             project={project}
-            params={params}
             className={className}
             isOwner={isOwner}
             {...props}

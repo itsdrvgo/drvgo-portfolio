@@ -1,11 +1,12 @@
 "use client";
 
+import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Skeleton } from "@nextui-org/react";
 
 function BlogEditSkeleton({ className, ...props }: DefaultProps) {
     return (
-        <div className="flex w-full flex-col gap-4">
+        <div className={cn("flex w-full flex-col gap-4", className)} {...props}>
             <Skeleton className="h-14 w-full rounded-md" />
 
             <div className="flex items-center gap-3 text-xs md:text-sm">

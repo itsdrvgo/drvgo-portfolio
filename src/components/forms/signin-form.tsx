@@ -46,8 +46,7 @@ function SignInForm() {
             </div>
         );
 
-    const { startMagicLinkFlow, cancelMagicLinkFlow } =
-        signIn.createMagicLinkFlow();
+    const { startMagicLinkFlow } = signIn.createMagicLinkFlow();
 
     const onSubmit = async (data: LoginData) => {
         setAuthLoading(true);

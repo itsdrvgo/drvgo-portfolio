@@ -1,3 +1,4 @@
+// eslint-disable-next-line unused-imports/no-unused-imports
 import { User } from "../lib/drizzle/schema";
 
 declare global {

@@ -8,7 +8,6 @@ import { Column, DefaultProps, UserWithAccount } from "@/src/types";
 import {
     Button,
     Chip,
-    ChipProps,
     Dropdown,
     DropdownItem,
     DropdownMenu,

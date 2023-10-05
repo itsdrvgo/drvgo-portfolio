@@ -1,5 +1,5 @@
 import { db } from "@/src/lib/drizzle";
-import { accounts, projects, users } from "@/src/lib/drizzle/schema";
+import { accounts, projects } from "@/src/lib/drizzle/schema";
 import { currentUser } from "@clerk/nextjs";
 import { desc, eq, like } from "drizzle-orm";
 import { redirect } from "next/navigation";

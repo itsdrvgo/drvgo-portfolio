@@ -1,8 +1,8 @@
 "use client";
 
+import UploadZone from "@/src/components/ui/uploadzone";
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { Blog, Role } from "@/src/lib/drizzle/schema";
-import { cn } from "@/src/lib/utils";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps, UserWithAccount } from "@/src/types";
@@ -15,7 +15,6 @@ import {
     Image,
     Input,
     Link,
-    Progress,
     Textarea,
 } from "@nextui-org/react";
 import axios from "axios";
@@ -23,9 +22,7 @@ import NextImage from "next/image";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Dropzone from "react-dropzone";
 import toast from "react-hot-toast";
-import { generateClientDropzoneAccept } from "uploadthing/client";
 import BlogAuthor from "../../../global/blogs/blog-author";
 import BlogImage from "../../../global/blogs/blog-image";
 import { useUploadThing } from "../../../global/uploadthing";
@@ -54,10 +51,11 @@ function BlogWriteUp({ data, roles }: PageProps) {
     const [blogDescription, setBlogDescription] = useState(
         data.description ?? ""
     );
-    const [thumbnailURL, setThumbnailURL] = useState(data.thumbnailUrl);
+    const [thumbnailURL, setThumbnailURL] = useState<string | null>(
+        data.thumbnailUrl
+    );
 
     const [uploadProgress, setUploadProgress] = useState(0);
-    const [isDragActive, setIsDragActive] = useState(false);
 
     const handleSave = () => {
         setIsSaving(true);
@@ -233,97 +231,37 @@ function BlogWriteUp({ data, roles }: PageProps) {
                         title="Thumbnail"
                         aria-label="thumbnail"
                     >
-                        <Dropzone
+                        <UploadZone
+                            isUploading={isUploading}
+                            fileTypes={fileTypes}
+                            maxFiles={
+                                permittedFileInfo?.config.image?.maxFileCount
+                            }
+                            maxFileSize={
+                                permittedFileInfo?.config.image?.maxFileSize
+                            }
+                            isDisabled={isSaving}
+                            uploadProgress={uploadProgress}
                             onDrop={(acceptedFiles) =>
                                 startUpload(acceptedFiles)
                             }
-                            accept={
-                                fileTypes && fileTypes.length
-                                    ? generateClientDropzoneAccept(fileTypes)
-                                    : undefined
+                            content={
+                                thumbnailURL ? (
+                                    <Image
+                                        src={thumbnailURL}
+                                        alt="Blog thumbnail"
+                                        classNames={{
+                                            wrapper: "border",
+                                        }}
+                                        radius="sm"
+                                        as={NextImage}
+                                        className="h-full w-full"
+                                        width={1000}
+                                        height={1000}
+                                    />
+                                ) : null
                             }
-                            disabled={isUploading || isSaving}
-                            maxFiles={
-                                permittedFileInfo?.config.image?.maxFileCount ??
-                                1
-                            }
-                            onDragEnter={() => setIsDragActive(true)}
-                            onDragLeave={() => setIsDragActive(false)}
-                            onDropAccepted={() => setIsDragActive(false)}
-                            onDropRejected={(fileRejections) =>
-                                toast.error(fileRejections[0].errors[0].message)
-                            }
-                        >
-                            {({ getRootProps, getInputProps, open }) => (
-                                <div
-                                    {...getRootProps()}
-                                    className={cn(
-                                        "flex min-h-[25rem] w-full cursor-pointer flex-col items-center justify-center gap-5 rounded-md border border-dashed border-gray-500 bg-background p-3 text-center md:p-12",
-                                        isDragActive && "bg-sky-900"
-                                    )}
-                                >
-                                    <input {...getInputProps()} />
-
-                                    {thumbnailURL && (
-                                        <Image
-                                            src={thumbnailURL}
-                                            alt="Blog thumbnail"
-                                            classNames={{
-                                                wrapper: "border",
-                                            }}
-                                            radius="sm"
-                                            as={NextImage}
-                                            className="h-full w-full"
-                                            width={1000}
-                                            height={1000}
-                                        />
-                                    )}
-
-                                    {isUploading ? (
-                                        <div className="w-1/2">
-                                            <Progress
-                                                radius="sm"
-                                                showValueLabel
-                                                value={uploadProgress}
-                                                label="Uploading"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <p>Drop your image here</p>
-                                    )}
-
-                                    {!isUploading && (
-                                        <div className="flex flex-col items-center gap-2">
-                                            <Button
-                                                type="button"
-                                                className="border font-semibold"
-                                                radius="sm"
-                                                startContent={
-                                                    !isUploading && (
-                                                        <Icons.upload className="h-4 w-4" />
-                                                    )
-                                                }
-                                                onPress={open}
-                                                isDisabled={
-                                                    isSaving || isUploading
-                                                }
-                                                isLoading={isUploading}
-                                            >
-                                                Upload Image
-                                            </Button>
-
-                                            <p className="text-xs text-gray-400">
-                                                (
-                                                {permittedFileInfo?.config.image
-                                                    ?.maxFileSize ??
-                                                    "Loading..."}
-                                                )
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </Dropzone>
+                        />
                     </AccordionItem>
 
                     <AccordionItem

@@ -49,7 +49,7 @@ function SidebarSkeleton({ className, ...props }: DefaultProps) {
 
 function ChatSectionSkeleton({ className, ...props }: DefaultProps) {
     return (
-        <main className="flex-1 overflow-hidden">
+        <main className={cn("flex-1 overflow-hidden", className)} {...props}>
             <div className="relative flex h-screen flex-1 flex-col justify-between bg-stone-950">
                 <header
                     className={cn(

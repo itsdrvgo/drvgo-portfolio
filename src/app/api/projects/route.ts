@@ -1,5 +1,5 @@
 import { db } from "@/src/lib/drizzle";
-import { accounts, projects, users } from "@/src/lib/drizzle/schema";
+import { accounts, projects } from "@/src/lib/drizzle/schema";
 import { handleError } from "@/src/lib/utils";
 import { projectCreateSchema } from "@/src/lib/validation/project";
 import { NewProjectProps } from "@/src/types/notification";

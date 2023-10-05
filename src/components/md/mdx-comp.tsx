@@ -1,12 +1,6 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-    Tooltip,
-} from "@nextui-org/react";
 import Link from "next/link";
 import { HTMLAttributes, ImgHTMLAttributes } from "react";
 import ReactMarkdown from "react-markdown";
@@ -30,15 +24,16 @@ const chatComponents: Partial<
             {...props}
         />
     ),
-    h2: ({ className, id, ...props }) => (
+    h2: ({ className, ...props }) => (
         <h2
             className={cn("text-3xl font-semibold tracking-tight", className)}
             {...props}
         />
     ),
-    h3: ({ className, id, ...props }) => (
+    h3: ({ className, ...props }) => (
         <h3
             className={cn("text-2xl font-semibold tracking-tight", className)}
+            {...props}
         />
     ),
     h4: ({ className, ...props }) => (
@@ -62,7 +57,7 @@ const chatComponents: Partial<
     a: ({ children, ...props }) => (
         <LinkPreviewButton {...props}>{children}</LinkPreviewButton>
     ),
-    p: ({ className, ...props }) => <p {...props} />,
+    p: ({ ...props }) => <p {...props} />,
     ul: ({ className, ...props }) => (
         <ul className={cn("list-inside list-disc", className)} {...props} />
     ),
@@ -81,11 +76,7 @@ const chatComponents: Partial<
             {...props}
         />
     ),
-    img: ({
-        className,
-        alt,
-        ...props
-    }: ImgHTMLAttributes<HTMLImageElement>) => (
+    img: ({ alt, ...props }: ImgHTMLAttributes<HTMLImageElement>) => (
         // @ts-ignore
         <MdImage alt={alt} {...props} />
     ),
@@ -128,7 +119,7 @@ const chatComponents: Partial<
             {...props}
         />
     ),
-    code: ({ className, node, inline, children, ...props }) => {
+    code: ({ className, inline, children, ...props }) => {
         const match = /language-(\w+)/.exec(className || "");
 
         return !inline && match ? (
@@ -178,7 +169,7 @@ const articleComponents: Partial<
             {...props}
         />
     ),
-    h2: ({ className, id, ...props }) => (
+    h2: ({ className, ...props }) => (
         <h2
             className={cn(
                 "mt-8 border-b pb-1 text-3xl font-semibold tracking-tight",
@@ -209,7 +200,7 @@ const articleComponents: Partial<
             </Link>
         </h2>
     ),
-    h3: ({ className, id, ...props }) => (
+    h3: ({ className, ...props }) => (
         <h3
             className={cn(
                 "mt-8 text-2xl font-semibold tracking-tight",
@@ -296,11 +287,7 @@ const articleComponents: Partial<
             {...props}
         />
     ),
-    img: ({
-        className,
-        alt,
-        ...props
-    }: ImgHTMLAttributes<HTMLImageElement>) => (
+    img: ({ alt, ...props }: ImgHTMLAttributes<HTMLImageElement>) => (
         // @ts-ignore
         <MdImage alt={alt} {...props} />
     ),
@@ -343,7 +330,7 @@ const articleComponents: Partial<
             {...props}
         />
     ),
-    code: ({ className, node, inline, children, ...props }) => {
+    code: ({ className, inline, children, ...props }) => {
         const match = /language-(\w+)/.exec(className || "");
 
         return !inline && match ? (

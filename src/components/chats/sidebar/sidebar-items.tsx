@@ -2,7 +2,7 @@
 
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { pusherClient } from "@/src/lib/pusher/client";
-import { chatHrefConstructor, cn, toPusherKey } from "@/src/lib/utils";
+import { chatHrefConstructor, toPusherKey } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Message } from "@/src/types/chat";
 import { useAuth } from "@clerk/nextjs";

@@ -1,11 +1,12 @@
 "use client";
 
+import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Skeleton } from "@nextui-org/react";
 
 function AnnouncementFormSkeleton({ className, ...props }: DefaultProps) {
     return (
-        <div className="space-y-5">
+        <div className={cn("space-y-5", className)} {...props}>
             <div className="space-y-2">
                 <Skeleton className="h-8 w-20 rounded-md" />
                 <Skeleton className="h-10 w-full rounded-md" />

@@ -12,18 +12,9 @@ import ProjectOperations from "./project-operations";
 interface PageProps extends DefaultProps {
     project: ExtendedProject;
     isOwner: boolean;
-    params: {
-        projectId: string;
-    };
 }
 
-function ProjectRead({
-    className,
-    project,
-    params,
-    isOwner,
-    ...props
-}: PageProps) {
+function ProjectRead({ className, project, isOwner, ...props }: PageProps) {
     return (
         <div
             className={cn(
