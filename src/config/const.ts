@@ -15,11 +15,13 @@ export const DEFAULT_PATTERN = randomPattern;
 export const BitFieldPermissions = {
     ViewPublicPages: 1 << 0, // 1
     ViewPrivatePages: 1 << 1, // 2
-    ManageRoles: 1 << 2, // 4
-    ManageUsers: 1 << 3, // 8
-    ManageBlogs: 1 << 4, // 16
-    ManagePages: 1 << 5, // 32
-    Administrator: 1 << 6, // 64
+    SendMessages: 1 << 2, // 4
+    ManageRoles: 1 << 3, // 8
+    ManageUsers: 1 << 4, // 16
+    ManageBlogs: 1 << 5, // 32
+    ManagePages: 1 << 6, // 64
+    Administrator: 1 << 7, // 128
+    // Total = 255
 };
 
 export type PermissionKey = keyof typeof BitFieldPermissions;
@@ -49,6 +51,13 @@ export const Permissions: Permission[] = [
         bit: BitFieldPermissions.ViewPrivatePages,
         description:
             "Anyone with this permission will be able to view private pages.",
+    },
+    {
+        name: "Send Messages",
+        key: "SendMessages",
+        bit: BitFieldPermissions.SendMessages,
+        description:
+            "Anyone with this permission will be able to send messages.",
     },
     {
         name: "Manage Roles",

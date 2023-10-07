@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
         if (!messageQueue[chatId]) messageQueue[chatId] = [message];
         else messageQueue[chatId].push(message);
 
-        if (messageQueue[chatId].length > 5)
+        if (messageQueue[chatId].length > 3)
             return NextResponse.json({
                 code: 429,
                 message: "Too many requests, go slower!",

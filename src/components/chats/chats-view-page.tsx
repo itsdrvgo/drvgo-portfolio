@@ -79,7 +79,7 @@ async function ChatsViewPage({ params }: PageProps) {
         !userProject &&
         !hasPermission(
             parsedUser.privateMetadata.permissions,
-            BitFieldPermissions.Administrator
+            BitFieldPermissions.SendMessages
         )
     )
         return (
