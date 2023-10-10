@@ -6,8 +6,8 @@ import { NextResponse } from "next/server";
 import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
 import { BitFieldPermissions } from "../config/const";
+import { CachedRole } from "../types/cache";
 import { Notification } from "../types/notification";
-import { Blog, Role } from "./drizzle/schema";
 import { ResponseData } from "./validation/response";
 
 export function cn(...inputs: ClassValue[]) {
@@ -123,7 +123,7 @@ export function shortenNumber(num: number): string {
 export function checkRoleHierarchy(
     userRoles: string[],
     targetRoles: string[],
-    roles: Role[]
+    roles: CachedRole[]
 ) {
     const userRolesRaw = userRoles.map((x) => {
         const role = roles.find((r) => r.key === x);
@@ -225,23 +225,6 @@ export async function markNotificationAsRead({
     }
 }
 
-export async function getBlog(blogId: string) {
-    try {
-        const { data } = await axios.get<ResponseData>(`/api/blogs/${blogId}`);
-
-        if (data.code !== 200) {
-            console.error(data.message);
-            return null;
-        }
-
-        return data.data as Blog;
-    } catch (err) {
-        console.error(err);
-        console.error("Couldn't get blog");
-        return null;
-    }
-}
-
 export async function getAuthorizedUser(permissions: number) {
     const user = await currentUser();
     if (!user) return null;
@@ -255,16 +238,6 @@ export async function getAuthorizedUser(permissions: number) {
 export function hasPermission(userPermission: number, permission: number) {
     if (userPermission & BitFieldPermissions.Administrator) return true;
     return (userPermission & permission) !== 0;
-}
-
-export async function verifyAndGetOwner() {
-    const user = await currentUser();
-    if (!user) return null;
-
-    if (user.privateMetadata.permissions & BitFieldPermissions.Administrator)
-        return user;
-
-    return null;
 }
 
 export function toPusherKey(key: string) {
@@ -326,3 +299,7 @@ export const formatTimestampIntoHourMinute = (timestamp: number) => {
 export const formatTimestampIntoDate = (timestamp: number) => {
     return format(timestamp, "dd/MM/yyyy");
 };
+
+export function parseJSONToObject<T>(data: string): T {
+    return JSON.parse(data) as T;
+}

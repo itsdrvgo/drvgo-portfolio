@@ -5,6 +5,10 @@ import {
     comments,
     insertCommentSchema,
 } from "@/src/lib/drizzle/schema";
+import {
+    getBlogFromCache,
+    updateBlogInCache,
+} from "@/src/lib/redis/methods/blog";
 import { handleError, hasPermission } from "@/src/lib/utils";
 import {
     CommentContext,
@@ -30,9 +34,18 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
                 message: "Unauthorized!",
             });
 
-        const comment = await db.query.comments.findFirst({
-            where: eq(comments.id, params.commentId),
-        });
+        const [blog, comment] = await Promise.all([
+            getBlogFromCache(params.blogId),
+            db.query.comments.findFirst({
+                where: eq(comments.id, params.commentId),
+            }),
+        ]);
+
+        if (!blog)
+            return NextResponse.json({
+                code: 404,
+                message: "Blog not found!",
+            });
 
         if (!comment)
             return NextResponse.json({
@@ -41,7 +54,7 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
             });
 
         if (comment.parentId === null) {
-            const [allReplies] = await Promise.all([
+            const [replies] = await Promise.all([
                 // Finding all the child/replies of the comment
                 db.query.comments.findMany({
                     where: eq(comments.parentId, params.commentId),
@@ -58,14 +71,18 @@ export async function DELETE(req: NextRequest, context: CommentContext) {
                     .where(eq(commentLoves.commentId, params.commentId)),
             ]);
 
-            await Promise.all(
+            await Promise.all([
                 // Deleting all the comment loves of the replies
-                allReplies.map((reply) =>
+                replies.map((reply) =>
                     db
                         .delete(commentLoves)
                         .where(eq(commentLoves.commentId, reply.id))
-                )
-            );
+                ),
+                updateBlogInCache({
+                    ...blog,
+                    comments: blog.comments - replies.length - 1,
+                }),
+            ]);
         } else {
             await Promise.all([
                 db.delete(comments).where(eq(comments.id, params.commentId)),
@@ -91,22 +108,38 @@ export async function POST(req: NextRequest, context: CommentContext) {
         const { params } = commentContextSchema.parse(context);
         const { content } = replySchema.parse(body);
 
-        const user = await currentUser();
+        const [user, blog] = await Promise.all([
+            currentUser(),
+            getBlogFromCache(params.blogId),
+        ]);
+
         if (!user)
             return NextResponse.json({
                 code: 403,
                 message: "Unauthorized!",
             });
 
+        if (!blog)
+            return NextResponse.json({
+                code: 404,
+                message: "Blog not found!",
+            });
+
         const replyId = nanoid();
 
-        await db.insert(comments).values({
-            id: replyId,
-            authorId: user.id,
-            blogId: params.blogId,
-            content,
-            parentId: params.commentId,
-        });
+        await Promise.all([
+            db.insert(comments).values({
+                id: replyId,
+                authorId: user.id,
+                blogId: params.blogId,
+                content,
+                parentId: params.commentId,
+            }),
+            updateBlogInCache({
+                ...blog,
+                comments: blog.comments + 1,
+            }),
+        ]);
 
         return NextResponse.json({
             code: 200,

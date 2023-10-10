@@ -1,6 +1,11 @@
 import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import { roles } from "@/src/lib/drizzle/schema";
+import { redis } from "@/src/lib/redis";
+import {
+    addRoleToCache,
+    getAllRolesFromCache,
+} from "@/src/lib/redis/methods/roles";
 import { getAuthorizedUser, handleError } from "@/src/lib/utils";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
@@ -27,16 +32,27 @@ export async function POST() {
 
         const roleId = nanoid();
 
-        const currentRoles = await db.query.roles.findMany();
+        const currentRoles = await getAllRolesFromCache();
         const maxPosition = Math.max(...currentRoles.map((r) => r.position));
 
-        await db.insert(roles).values({
-            id: roleId,
-            name: "new_role_" + roleId,
-            key: "new_role_" + roleId,
-            permissions: 1,
-            position: maxPosition + 1,
-        });
+        await Promise.all([
+            db.insert(roles).values({
+                id: roleId,
+                name: "new_role_" + roleId,
+                key: "new_role_" + roleId,
+                permissions: 1,
+                position: maxPosition + 1,
+            }),
+            addRoleToCache({
+                id: roleId,
+                name: "new_role_" + roleId,
+                key: "new_role_" + roleId,
+                permissions: 1,
+                position: maxPosition + 1,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            }),
+        ]);
 
         return NextResponse.json({
             code: 200,
@@ -62,34 +78,63 @@ export async function PATCH(req: NextRequest) {
             });
 
         const updatedRoles = rolesPatchSchema.parse(body);
-        const exisingRoles = await db.query.roles.findMany();
+        const existingRoles = await getAllRolesFromCache();
 
-        const deletedRoles = exisingRoles.filter(
+        const deletedRoles = existingRoles.filter(
             (role) => !updatedRoles.find((r) => r.id === role.id)
         );
 
-        if (deletedRoles.length > 0) {
-            for (const role of deletedRoles) {
-                await db.delete(roles).where(eq(roles.id, role.id));
-            }
+        const pipeline = redis.pipeline();
 
-            for (const role of updatedRoles) {
+        if (deletedRoles.length > 0) {
+            deletedRoles.forEach(async (role) => {
+                pipeline.del(`role:${role.id}`);
+                await db.delete(roles).where(eq(roles.id, role.id));
+            });
+
+            updatedRoles.forEach(async (role) => {
+                const roleToBeUpdated = existingRoles.find(
+                    (r) => r.id === role.id
+                );
+                pipeline.set(
+                    `role:${role.id}`,
+                    JSON.stringify({
+                        ...roleToBeUpdated,
+                        position: role.position,
+                    })
+                );
+
                 await db
                     .update(roles)
                     .set({
                         position: role.position,
                     })
                     .where(eq(roles.id, role.id));
-            }
+            });
+
+            await pipeline.exec();
         } else {
-            for (const role of updatedRoles) {
+            updatedRoles.forEach(async (role) => {
+                const roleToBeUpdated = existingRoles.find(
+                    (r) => r.id === role.id
+                );
+                pipeline.set(
+                    `role:${role.id}`,
+                    JSON.stringify({
+                        ...roleToBeUpdated,
+                        position: role.position,
+                    })
+                );
+
                 await db
                     .update(roles)
                     .set({
                         position: role.position,
                     })
                     .where(eq(roles.id, role.id));
-            }
+            });
+
+            await pipeline.exec();
         }
 
         return NextResponse.json({

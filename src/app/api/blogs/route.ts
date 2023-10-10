@@ -1,39 +1,25 @@
 import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
-import { blogs, comments } from "@/src/lib/drizzle/schema";
+import { blogs } from "@/src/lib/drizzle/schema";
+import {
+    addBlogToCache,
+    getAllBlogsFromCache,
+} from "@/src/lib/redis/methods/blog";
 import { getAuthorizedUser, handleError } from "@/src/lib/utils";
 import { blogCreateSchema } from "@/src/lib/validation/blogs";
-import { desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
     try {
-        const filteredBlogs = await db.query.blogs.findMany({
-            with: {
-                author: {
-                    with: {
-                        account: true,
-                    },
-                },
-                comments: {
-                    orderBy: [desc(comments.createdAt)],
-                    with: {
-                        user: {
-                            with: {
-                                account: true,
-                            },
-                        },
-                        loves: true,
-                        blog: true,
-                    },
-                },
-                likes: true,
-                views: true,
-            },
-            where: eq(blogs.published, true),
-            orderBy: [desc(blogs.createdAt)],
-        });
+        const allBlogs = await getAllBlogsFromCache();
+        const filteredBlogs = allBlogs
+            .filter((blog) => blog.published)
+            .sort(
+                (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+            );
 
         return NextResponse.json({
             code: 200,
@@ -63,14 +49,30 @@ export async function POST(req: NextRequest) {
 
         const blogId = nanoid();
 
-        await db.insert(blogs).values({
-            id: blogId,
-            title: title,
-            content: content,
-            thumbnailUrl: thumbnailUrl,
-            authorId: user.id,
-            description: description ?? "No description",
-        });
+        await Promise.all([
+            db.insert(blogs).values({
+                id: blogId,
+                title: title,
+                content: content,
+                thumbnailUrl: thumbnailUrl,
+                authorId: user.id,
+                description: description ?? "No description",
+            }),
+            addBlogToCache({
+                id: blogId,
+                title: title,
+                content: content ?? null,
+                thumbnailUrl: thumbnailUrl ?? null,
+                authorId: user.id,
+                description: description ?? "No description",
+                createdAt: new Date().toISOString(),
+                updatedAt: null,
+                published: false,
+                likes: 0,
+                views: 0,
+                comments: 0,
+            }),
+        ]);
 
         return NextResponse.json({
             code: 200,

@@ -1,5 +1,9 @@
 import { db } from "@/src/lib/drizzle";
 import { comments, insertCommentSchema } from "@/src/lib/drizzle/schema";
+import {
+    getBlogFromCache,
+    updateBlogInCache,
+} from "@/src/lib/redis/methods/blog";
 import { handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { currentUser } from "@clerk/nextjs";
@@ -41,21 +45,37 @@ export async function POST(req: NextRequest, context: BlogContext) {
             .parse(body);
         const { params } = blogContextSchema.parse(context);
 
-        const user = await currentUser();
+        const [user, blog] = await Promise.all([
+            currentUser(),
+            getBlogFromCache(params.blogId),
+        ]);
+
         if (!user)
             return NextResponse.json({
                 code: 403,
                 message: "Unauthorized!",
             });
 
+        if (!blog)
+            return NextResponse.json({
+                code: 404,
+                message: "Blog not found!",
+            });
+
         const commentId = nanoid();
 
-        await db.insert(comments).values({
-            id: commentId,
-            blogId: params.blogId,
-            authorId,
-            content,
-        });
+        await Promise.all([
+            db.insert(comments).values({
+                id: commentId,
+                blogId: params.blogId,
+                authorId,
+                content,
+            }),
+            updateBlogInCache({
+                ...blog,
+                comments: blog.comments + 1,
+            }),
+        ]);
 
         return NextResponse.json({
             code: 200,

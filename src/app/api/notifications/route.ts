@@ -3,11 +3,10 @@ import { db } from "@/src/lib/drizzle";
 import {
     insertNotificationSchema,
     notifications,
-    users,
 } from "@/src/lib/drizzle/schema";
+import { getAllUsersFromCache } from "@/src/lib/redis/methods/user";
 import { getAuthorizedUser, handleError } from "@/src/lib/utils";
 import { Notification } from "@/src/types/notification";
-import { ne } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -31,11 +30,10 @@ export async function POST(req: NextRequest) {
                 })
                 .parse(body);
 
-        const data = await db.query.users.findMany({
-            where: ne(users.id, notifierId),
-        });
+        const users = await getAllUsersFromCache();
+        const filteredUsers = users.filter((user) => user.id !== notifierId);
 
-        const notificationsToInsert = data.map((user) => ({
+        const notificationsToInsert = filteredUsers.map((user) => ({
             id: nanoid(),
             userId: user.id,
             content,

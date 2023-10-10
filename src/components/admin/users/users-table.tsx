@@ -1,10 +1,10 @@
 "use client";
 
 import { BitFieldPermissions, DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { Role } from "@/src/lib/drizzle/schema";
 import { formatDate, hasPermission } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { Column, DefaultProps, UserWithAccount } from "@/src/types";
+import { Column, DefaultProps } from "@/src/types";
+import { CachedRole, CachedUser } from "@/src/types/cache";
 import {
     Button,
     Chip,
@@ -58,12 +58,12 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 interface PageProps extends DefaultProps {
-    data: UserWithAccount[];
+    users: CachedUser[];
     user: ClerkUser;
-    roles: Role[];
+    roles: CachedRole[];
 }
 
-function UsersTable({ data, user, roles }: PageProps) {
+function UsersTable({ users, user, roles }: PageProps) {
     const [columns, setColumns] = useState<Column[]>(rawColumns);
 
     useEffect(() => {
@@ -100,7 +100,7 @@ function UsersTable({ data, user, roles }: PageProps) {
     }, [columns, visibleColumns]);
 
     const filteredItems = useMemo(() => {
-        let filteredUsers = [...data];
+        let filteredUsers = [...users];
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((u) => {
@@ -112,7 +112,7 @@ function UsersTable({ data, user, roles }: PageProps) {
 
         return filteredUsers;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data, filterValue]);
+    }, [users, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -127,12 +127,8 @@ function UsersTable({ data, user, roles }: PageProps) {
         return [...items].sort((a, b) => {
             const sorter = sortDescriptor.column!;
 
-            const first = a[
-                sorter as keyof UserWithAccount
-            ] as unknown as number;
-            const second = b[
-                sorter as keyof UserWithAccount
-            ] as unknown as number;
+            const first = a[sorter as keyof CachedUser] as unknown as number;
+            const second = b[sorter as keyof CachedUser] as unknown as number;
 
             const cmp = first < second ? -1 : first > second ? 1 : 0;
             return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -140,10 +136,10 @@ function UsersTable({ data, user, roles }: PageProps) {
     }, [sortDescriptor, items]);
 
     const renderCell = useCallback(
-        (target: UserWithAccount, columnKey: Key) => {
-            const cellValue = target[columnKey as keyof UserWithAccount];
+        (target: CachedUser, columnKey: Key) => {
+            const cellValue = target[columnKey as keyof CachedUser];
             const targetRoles = roles
-                .filter((role) => target.account.roles.includes(role.key))
+                .filter((role) => target.roles.includes(role.key))
                 .sort((a, b) => b.permissions - a.permissions);
 
             switch (columnKey) {
@@ -201,7 +197,7 @@ function UsersTable({ data, user, roles }: PageProps) {
                 }
 
                 case "strikes": {
-                    return <span>{target.account.strikes}</span>;
+                    return <span>{target.strikes}</span>;
                 }
 
                 case "createdAt": {
@@ -323,7 +319,7 @@ function UsersTable({ data, user, roles }: PageProps) {
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-small text-default-400">
-                            Total {data.length} users
+                            Total {users.length} users
                         </p>
                     </div>
                     <div className="w-full max-w-[44%] md:max-w-[20%]">
@@ -354,7 +350,7 @@ function UsersTable({ data, user, roles }: PageProps) {
         visibleColumns,
         onSearchChange,
         onRowsPerPageChange,
-        data.length,
+        users.length,
         hasSearchFilter,
     ]);
 

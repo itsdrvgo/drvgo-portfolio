@@ -1,9 +1,9 @@
 "use client";
 
-import { Role } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { DefaultProps, ExtendedComment } from "@/src/types";
+import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import { Divider, Link } from "@nextui-org/react";
 import NextLink from "next/link";
 import BlogAuthor from "../../global/blogs/blog-author";
@@ -12,13 +12,12 @@ import { Mdx } from "../../md/mdx-comp";
 import BlogViewOperations from "./blog-view-operations";
 
 interface PageProps extends DefaultProps {
-    blog: ExtendedBlog;
+    blog: CachedBlog;
     user: ClerkUser | null;
     blogIsLiked: boolean;
-    params: {
-        blogId: string;
-    };
-    roles: Role[];
+    roles: CachedRole[];
+    comments: ExtendedComment[];
+    author: CachedUser;
 }
 
 function BlogViewPage({
@@ -27,9 +26,10 @@ function BlogViewPage({
     user,
     blogIsLiked,
     roles,
-    params,
+    comments,
+    author,
 }: PageProps) {
-    const authorRolesRaw = blog.author.account.roles.map((x) => {
+    const authorRolesRaw = author.roles.map((x) => {
         const role = roles.find((r) => r.key === x);
         if (!role) return null;
         return role;
@@ -56,9 +56,9 @@ function BlogViewPage({
                 <Divider />
 
                 <BlogAuthor
-                    authorName={blog.author.username}
+                    authorName={author.username}
                     createdAt={blog.createdAt}
-                    image={blog.author.image ?? undefined}
+                    image={author.image ?? undefined}
                     updatedAt={blog.updatedAt ?? undefined}
                     authorRole={authorHighestRole}
                 />
@@ -123,11 +123,12 @@ function BlogViewPage({
             <Divider />
 
             <BlogViewOperations
-                params={params}
                 blog={blog}
                 user={user}
                 blogIsLiked={blogIsLiked}
                 roles={roles}
+                comments={comments}
+                author={author}
             />
         </article>
     );

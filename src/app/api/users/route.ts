@@ -10,6 +10,15 @@ import {
     projects,
     users,
 } from "@/src/lib/drizzle/schema";
+import {
+    addUsernameToCache,
+    addUserToCache,
+    deleteUserFromCache,
+    deleteUsernameFromCache,
+    getUserFromCache,
+    updateUserInCache,
+    updateUsernameInCache,
+} from "@/src/lib/redis/methods/user";
 import { handleError } from "@/src/lib/utils";
 import {
     userDeleteSchema,
@@ -18,7 +27,7 @@ import {
     webhookSchema,
 } from "@/src/lib/validation/webhook";
 import { SvixHeaders } from "@/src/types";
-import { and, eq, or } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { Webhook } from "svix";
 
@@ -68,6 +77,18 @@ export async function POST(req: NextRequest) {
                         roles: ["user"],
                         strikes: 0,
                     }),
+                    addUserToCache({
+                        id,
+                        username,
+                        image: profile_image_url,
+                        email: email_addresses[0].email_address,
+                        permissions: 1,
+                        roles: ["user"],
+                        strikes: 0,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+                    }),
+                    addUsernameToCache(username),
                 ]);
 
                 return NextResponse.json({
@@ -88,31 +109,12 @@ export async function POST(req: NextRequest) {
                 private_metadata,
             } = userWebhookSchema.parse(data);
 
-            const [existingUser, existingAccount] = await Promise.all([
-                db.query.users.findFirst({
-                    where: eq(users.id, id),
-                }),
-                db.query.accounts.findFirst({
-                    where: eq(accounts.id, id),
-                }),
-            ]);
-
-            if (!existingUser || !existingAccount)
+            const existingUser = await getUserFromCache(id);
+            if (!existingUser)
                 return NextResponse.json({
                     code: 404,
                     message: "Account doesn't exist!",
                 });
-
-            if (existingUser.image) {
-                await db
-                    .delete(images)
-                    .where(
-                        and(
-                            eq(images.url, existingUser.image),
-                            eq(images.uploaderId, existingUser.id)
-                        )
-                    );
-            }
 
             await Promise.all([
                 db
@@ -130,28 +132,40 @@ export async function POST(req: NextRequest) {
                     .set({
                         permissions:
                             private_metadata.permissions ??
-                            existingAccount.permissions,
-                        roles: private_metadata.roles ?? existingAccount.roles,
+                            existingUser.permissions,
+                        roles: private_metadata.roles ?? existingUser.roles,
                         strikes:
-                            private_metadata.strikes ?? existingAccount.strikes,
+                            private_metadata.strikes ?? existingUser.strikes,
                     })
-                    .where(eq(accounts.id, existingAccount.id)),
+                    .where(eq(accounts.id, existingUser.id)),
+                updateUserInCache({
+                    id,
+                    username: username ?? existingUser.username,
+                    image: profile_image_url ?? existingUser.image,
+                    email:
+                        email_addresses[0].email_address ?? existingUser.email,
+                    permissions:
+                        private_metadata.permissions ??
+                        existingUser.permissions,
+                    roles: private_metadata.roles ?? existingUser.roles,
+                    strikes: private_metadata.strikes ?? existingUser.strikes,
+                    createdAt: existingUser.createdAt,
+                    updatedAt: new Date().toISOString(),
+                }),
+                username !== existingUser.username &&
+                    updateUsernameInCache(existingUser.username, username),
             ]);
 
             return NextResponse.json({
                 code: 200,
                 message: "Ok",
-                data: JSON.stringify(id),
             });
         }
 
         case "user.deleted": {
             const { id } = userDeleteSchema.parse(data);
 
-            const existingUser = await db.query.users.findFirst({
-                where: eq(users.id, id),
-            });
-
+            const existingUser = await getUserFromCache(id);
             if (!existingUser)
                 return NextResponse.json({
                     code: 404,
@@ -174,6 +188,8 @@ export async function POST(req: NextRequest) {
                     ),
                 db.delete(commentLoves).where(eq(commentLoves.userId, id)),
                 db.delete(projects).where(eq(projects.purchaserId, id)),
+                deleteUserFromCache(id),
+                deleteUsernameFromCache(existingUser.username),
             ]);
 
             return NextResponse.json({

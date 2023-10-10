@@ -1,8 +1,9 @@
 "use client";
 
-import { cn, wait } from "@/src/lib/utils";
+import { cn, parseJSONToObject, wait } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
-import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { DefaultProps } from "@/src/types";
+import { CachedBlog } from "@/src/types/cache";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -12,7 +13,7 @@ import { EmptyPlaceholder } from "../ui/empty-placeholder";
 import BlogItem from "./blog-item";
 
 interface PageProps extends DefaultProps {
-    blogData: ExtendedBlog[];
+    blogs: CachedBlog[];
 }
 
 const fetchBlogs = async (page: number) => {
@@ -20,10 +21,13 @@ const fetchBlogs = async (page: number) => {
     const {
         data: { data },
     } = await axios.get<ResponseData>("/api/blogs");
-    return (JSON.parse(data) as ExtendedBlog[]).slice((page - 1) * 6, page * 6);
+    return parseJSONToObject<CachedBlog[]>(data).slice(
+        (page - 1) * 6,
+        page * 6
+    );
 };
 
-function BlogSearch({ blogData, className }: PageProps) {
+function BlogSearch({ blogs, className }: PageProps) {
     const [searchText, setSearchText] = useState("");
     const [matchingIds, setMatchingIds] = useState<string[]>([]);
 
@@ -39,7 +43,7 @@ function BlogSearch({ blogData, className }: PageProps) {
                 return pages.length + 1;
             },
             initialData: {
-                pages: [blogData.slice(0, 6)],
+                pages: [blogs.slice(0, 6)],
                 pageParams: [1],
             },
         }
@@ -48,7 +52,7 @@ function BlogSearch({ blogData, className }: PageProps) {
     const handleSearch = (text: string) => {
         setSearchText(text);
 
-        const matching = blogData
+        const matching = blogs
             .filter((blog) =>
                 blog.title.toLowerCase().includes(text.toLowerCase())
             )
@@ -82,13 +86,14 @@ function BlogSearch({ blogData, className }: PageProps) {
                                 key={index}
                                 className="grid grid-cols-1 justify-items-stretch gap-5 md:grid-cols-3"
                             >
-                                {page.map((blog) => (
-                                    <BlogItem
-                                        blogData={blogData}
-                                        blogId={blog.id}
-                                        key={blog.id}
-                                    />
-                                ))}
+                                {page.map((p) => {
+                                    const blog = blogs.find(
+                                        (x) => x.id === p.id
+                                    );
+                                    if (!blog) return null;
+
+                                    return <BlogItem blog={blog} key={p.id} />;
+                                })}
                             </div>
                         );
                     })}
@@ -98,7 +103,7 @@ function BlogSearch({ blogData, className }: PageProps) {
                                 Nothing more to show
                             </p>
                         ) : null}
-                        {blogData.length > 6 && (
+                        {blogs.length > 6 && (
                             <Button
                                 onPress={() => fetchNextPage()}
                                 disabled={
@@ -115,9 +120,12 @@ function BlogSearch({ blogData, className }: PageProps) {
                 </>
             ) : matchingIds.length > 0 ? (
                 <div className="grid grid-cols-1 justify-items-stretch gap-5 md:grid-cols-3">
-                    {matchingIds.map((id) => (
-                        <BlogItem blogData={blogData} blogId={id} key={id} />
-                    ))}
+                    {matchingIds.map((id) => {
+                        const blog = blogs.find((x) => x.id === id);
+                        if (!blog) return null;
+
+                        return <BlogItem blog={blog} key={id} />;
+                    })}
                 </div>
             ) : (
                 <div className="flex items-center justify-center">

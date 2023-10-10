@@ -2,10 +2,10 @@
 
 import UploadZone from "@/src/components/ui/uploadzone";
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { Blog, Role } from "@/src/lib/drizzle/schema";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
-import { DefaultProps, UserWithAccount } from "@/src/types";
+import { DefaultProps } from "@/src/types";
+import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import {
     Accordion,
     AccordionItem,
@@ -29,30 +29,24 @@ import { useUploadThing } from "../../../global/uploadthing";
 import { Icons } from "../../../icons/icons";
 import { Mdx } from "../../../md/mdx-comp";
 
-interface BlogWithUserAccount extends Blog {
-    author: UserWithAccount;
-}
-
 interface PageProps extends DefaultProps {
-    params: {
-        blogId: string;
-    };
-    data: BlogWithUserAccount;
-    roles: Role[];
+    blog: CachedBlog;
+    author: CachedUser;
+    roles: CachedRole[];
 }
 
-function BlogWriteUp({ data, roles }: PageProps) {
+function BlogWriteUp({ blog, roles, author }: PageProps) {
     const router = useRouter();
 
     const [isSaving, setIsSaving] = useState(false);
     const [previewEnabled, setPreviewEnable] = useState(false);
-    const [blogTitle, setBlogTitle] = useState(data.title);
-    const [blogContent, setBlogContent] = useState(data.content ?? "");
+    const [blogTitle, setBlogTitle] = useState(blog.title);
+    const [blogContent, setBlogContent] = useState(blog.content ?? "");
     const [blogDescription, setBlogDescription] = useState(
-        data.description ?? ""
+        blog.description ?? ""
     );
     const [thumbnailURL, setThumbnailURL] = useState<string | null>(
-        data.thumbnailUrl
+        blog.thumbnailUrl
     );
 
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -64,17 +58,17 @@ function BlogWriteUp({ data, roles }: PageProps) {
             thumbnailUrl: thumbnailURL,
             title: blogTitle,
             content: blogContent,
-            published: data.published,
+            published: blog.published,
             description: blogDescription,
             action: "edit",
         };
 
         axios
-            .patch<ResponseData>(`/api/blogs/${data.id}`, JSON.stringify(body))
+            .patch<ResponseData>(`/api/blogs/${blog.id}`, JSON.stringify(body))
             .then(({ data: resData }) => {
                 if (resData.code !== 200) return toast.error(resData.message);
 
-                toast.success(resData.message);
+                toast.success("Blog saved successfully");
                 router.push("/admin/blogs");
             })
             .catch((err) => {
@@ -84,7 +78,7 @@ function BlogWriteUp({ data, roles }: PageProps) {
             .finally(() => setIsSaving(false));
     };
 
-    const authorRolesRaw = data.author.account.roles.map((x) => {
+    const authorRolesRaw = author.roles.map((x) => {
         const role = roles.find((r) => r.key === x);
         if (!role) return null;
         return role;
@@ -138,9 +132,9 @@ function BlogWriteUp({ data, roles }: PageProps) {
                     <Divider />
 
                     <BlogAuthor
-                        authorName={data.author.username}
-                        createdAt={data.createdAt}
-                        image={data.author.image ?? DEFAULT_USER_IMAGE.src}
+                        authorName={author.username}
+                        createdAt={blog.createdAt}
+                        image={author.image ?? DEFAULT_USER_IMAGE.src}
                         authorRole={authorHighestRole}
                     />
 
@@ -318,7 +312,7 @@ function BlogWriteUp({ data, roles }: PageProps) {
                     }
                     isLoading={isSaving}
                 >
-                    {data.published ? "Save & Publish" : "Save as Draft"}
+                    {blog.published ? "Save & Publish" : "Save as Draft"}
                 </Button>
 
                 <Button

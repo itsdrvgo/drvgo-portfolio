@@ -1,7 +1,8 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
-import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { DefaultProps } from "@/src/types";
+import { CachedBlog } from "@/src/types/cache";
 import {
     Button,
     Card,
@@ -17,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { Icons } from "../../icons/icons";
 
 interface PageProps extends DefaultProps {
-    data: ExtendedBlog[];
+    data: CachedBlog[];
 }
 
 function BlogNavItems({ className, data }: PageProps) {
@@ -72,7 +73,7 @@ function BlogNavItems({ className, data }: PageProps) {
                     >
                         {data.length ? (
                             data
-                                .sort((a, b) => b.likes.length - a.likes.length)
+                                .sort((a, b) => b.likes - a.likes)
                                 .map((blog) => (
                                     <Card
                                         key={blog.id}
@@ -98,15 +99,15 @@ function BlogNavItems({ className, data }: PageProps) {
                                         <CardFooter className="flex items-center gap-4 text-sm text-gray-500">
                                             <div className="flex items-center gap-1">
                                                 <Icons.thumbsup className="h-4 w-4" />
-                                                <p>{blog.likes.length}</p>
+                                                <p>{blog.likes}</p>
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 <Icons.comment className="h-4 w-4" />
-                                                <p>{blog.comments.length}</p>
+                                                <p>{blog.comments}</p>
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 <Icons.view className="h-4 w-4" />
-                                                <p>{blog.views.length}</p>
+                                                <p>{blog.views}</p>
                                             </div>
                                         </CardFooter>
                                     </Card>

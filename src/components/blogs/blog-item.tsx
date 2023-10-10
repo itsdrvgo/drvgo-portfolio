@@ -1,6 +1,6 @@
 import { DEFAULT_BLOG_THUMBNAIL } from "@/src/config/const";
 import { formatDate, shortenNumber } from "@/src/lib/utils";
-import { ExtendedBlog } from "@/src/types";
+import { CachedBlog } from "@/src/types/cache";
 import { Card, CardBody, CardFooter, Divider, Image } from "@nextui-org/react";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,31 +9,27 @@ import { Icons } from "../icons/icons";
 
 interface PageProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-    blogId: string;
-    blogData: ExtendedBlog[];
+    blog: CachedBlog;
 }
 
-function BlogItem({ blogId, blogData, ref }: PageProps) {
+function BlogItem({ blog, ref }: PageProps) {
     const router = useRouter();
 
     return (
-        <div key={blogId} ref={ref}>
+        <div key={blog.id} ref={ref}>
             <Card
                 radius="sm"
                 isPressable
                 className="h-full"
-                onPress={() => router.push(`/blogs/${blogId}`)}
+                onPress={() => router.push(`/blogs/${blog.id}`)}
             >
                 <CardBody className="p-3">
                     <Image
                         as={NextImage}
                         radius="sm"
-                        src={
-                            blogData.find((x) => x.id === blogId)
-                                ?.thumbnailUrl ?? DEFAULT_BLOG_THUMBNAIL.src
-                        }
+                        src={blog.thumbnailUrl ?? DEFAULT_BLOG_THUMBNAIL.src}
                         isZoomed
-                        alt={blogId.toString()}
+                        alt={blog.id}
                         width={500}
                         height={500}
                         className="aspect-video object-cover"
@@ -42,42 +38,18 @@ function BlogItem({ blogId, blogData, ref }: PageProps) {
 
                 <CardFooter className="flex flex-col items-start gap-4 px-4 text-start">
                     <div className="space-y-2">
-                        <p className="font-semibold">
-                            {blogData.find((x) => x.id === blogId)?.title}
-                        </p>
+                        <p className="font-semibold">{blog.title}</p>
                         <p className="text-sm text-gray-400">
-                            {formatDate(
-                                blogData
-                                    .find((x) => x.id === blogId)
-                                    ?.createdAt.getTime()!
-                            )}
+                            {formatDate(blog.createdAt)}
                         </p>
                     </div>
 
                     <Divider />
 
-                    <div className="grid w-full grid-cols-3 justify-items-stretch text-sm text-gray-400">
-                        <div className="flex items-center justify-center gap-2">
-                            <Icons.heart className="h-4 w-4 cursor-pointer" />
-                            {shortenNumber(
-                                blogData.find((x) => x.id === blogId)?.likes
-                                    .length!
-                            )}
-                        </div>
-                        <div className="flex items-center justify-center gap-2">
-                            <Icons.comment className="h-4 w-4 cursor-pointer" />
-                            {shortenNumber(
-                                blogData.find((x) => x.id === blogId)?.comments
-                                    .length!
-                            )}
-                        </div>
-                        <div className="flex items-center justify-center gap-2">
-                            <Icons.analytics className="h-4 w-4" />
-                            {shortenNumber(
-                                blogData.find((x) => x.id === blogId)?.views
-                                    .length!
-                            )}
-                        </div>
+                    <div className="grid w-full grid-flow-col justify-items-stretch text-sm text-gray-400">
+                        <BlogStats icon="heart" count={blog.likes} />
+                        <BlogStats icon="comment" count={blog.comments} />
+                        <BlogStats icon="analytics" count={blog.views} />
                     </div>
                 </CardFooter>
             </Card>
@@ -86,3 +58,19 @@ function BlogItem({ blogId, blogData, ref }: PageProps) {
 }
 
 export default BlogItem;
+
+interface BlogStats {
+    icon: keyof typeof Icons;
+    count: number;
+}
+
+function BlogStats({ icon, count }: BlogStats) {
+    const Icon = Icons[icon];
+
+    return (
+        <div className="flex items-center justify-center gap-2">
+            <Icon className="h-4 w-4 cursor-pointer" />
+            {shortenNumber(count)}
+        </div>
+    );
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { Project } from "@/src/lib/drizzle/schema";
-import { addNotification } from "@/src/lib/utils";
+import { addNotification, parseJSONToObject } from "@/src/lib/utils";
 import {
     ProjectCreateData,
     projectCreateSchema,
@@ -119,10 +119,9 @@ function ProjectForm({ project }: PageProps) {
                     id: toastId,
                 });
 
-                const result = JSON.parse(resData.data) as Omit<
-                    NewProjectProps,
-                    "type"
-                >;
+                const result = parseJSONToObject<Omit<NewProjectProps, "type">>(
+                    resData.data
+                );
 
                 router.push(`/projects/${result.projectId}`);
 
@@ -140,7 +139,7 @@ function ProjectForm({ project }: PageProps) {
                         purchaserImage: result.purchaserImage,
                         sellerId: result.sellerId,
                     },
-                    type: "newProject"
+                    type: "newProject",
                 });
             })
             .catch((err) => {

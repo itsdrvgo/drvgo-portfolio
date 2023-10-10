@@ -1,5 +1,6 @@
 "use client";
 
+import { parseJSONToObject } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import {
     Button,
@@ -54,7 +55,9 @@ function ProjectStatus({ projectState }: PageProps) {
                 if (resData.code !== 200)
                     return toast.error(resData.message, { id: toastId });
 
-                const result = JSON.parse(resData.data) as ProjectResponseData;
+                const result = parseJSONToObject<ProjectResponseData>(
+                    resData.data
+                );
 
                 toast.success(
                     `${

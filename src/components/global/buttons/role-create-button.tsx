@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/src/lib/utils";
+import { cn, parseJSONToObject } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { Button, ButtonProps } from "@nextui-org/react";
 import axios from "axios";
@@ -31,7 +31,7 @@ function RoleCreateButton({ className, ...props }: ButtonProps) {
                     id: toastId,
                 });
 
-                const roleId = JSON.parse(resData.data);
+                const roleId = parseJSONToObject<string>(resData.data);
                 router.push(`/admin/roles/${roleId}`);
             })
             .catch((err) => {

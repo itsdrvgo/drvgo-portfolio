@@ -2,16 +2,18 @@
 
 import { env } from "@/env.mjs";
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { NewComment, Role } from "@/src/lib/drizzle/schema";
+import { NewComment } from "@/src/lib/drizzle/schema";
 import {
     addNotification,
     cn,
+    parseJSONToObject,
     shortenNumber,
     updateBlogViews,
 } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { ExtendedBlog } from "@/src/types";
+import { ExtendedComment } from "@/src/types";
+import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import {
     Avatar,
     Button,
@@ -19,6 +21,7 @@ import {
     Divider,
     Textarea,
 } from "@nextui-org/react";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -27,19 +30,21 @@ import { Icons } from "../../icons/icons";
 import BlogViewComments from "./blog-view-comments";
 
 interface PageProps {
-    params: { blogId: string };
-    blog: ExtendedBlog;
+    blog: CachedBlog;
     user: ClerkUser | null;
     blogIsLiked: boolean | false;
-    roles: Role[];
+    roles: CachedRole[];
+    comments: ExtendedComment[];
+    author: CachedUser;
 }
 
 function BlogViewOperations({
-    params,
     blog,
     user,
     blogIsLiked,
     roles,
+    comments,
+    author,
 }: PageProps) {
     const router = useRouter();
 
@@ -47,6 +52,7 @@ function BlogViewOperations({
     const [isActive, setIsActive] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [isLiked, setIsLiked] = useState(blogIsLiked);
+    const [likesLength, setLikesLength] = useState(blog.likes);
 
     useEffect(() => {
         updateBlogViews(blog.id);
@@ -58,41 +64,40 @@ function BlogViewOperations({
         else setIsActive(false);
     }, [comment.length]);
 
-    const handleLike = () => {
-        if (!user) return toast.error("You're not logged in!");
+    const { mutate: handleLike } = useMutation({
+        mutationFn: async () => {
+            const response = !isLiked
+                ? await axios.delete<ResponseData>(
+                      `/api/blogs/likes/${blog.id}`
+                  )
+                : await axios.post<ResponseData>(`/api/blogs/likes/${blog.id}`);
 
-        setIsLiked(!isLiked);
+            if (response.data.code !== 200)
+                throw new Error(response.data.message);
 
-        if (isLiked) {
-            axios
-                .delete<ResponseData>(`/api/blogs/likes/${blog.id}`)
-                .then(({ data: resData }) => {
-                    if (resData.code !== 200)
-                        return toast.error(resData.message);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    toast.error("Something went wrong, try again later!");
-                })
-                .finally(() => router.refresh());
-        } else {
-            axios
-                .post<ResponseData>(`/api/blogs/likes/${blog.id}`)
-                .then(({ data: resData }) => {
-                    if (resData.code !== 200)
-                        return toast.error(resData.message);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    toast.error("Something went wrong, try again later!");
-                })
-                .finally(() => router.refresh());
+            return response.data;
+        },
+        onMutate: async () => {
+            const previousLikes = likesLength;
 
+            setLikesLength((previousLikes || 0) + (isLiked ? -1 : 1));
+            setIsLiked(!isLiked);
+
+            return { previousLikes };
+        },
+        onError: (err, _, context) => {
+            console.error(err);
+            setLikesLength(context!.previousLikes);
+            setIsLiked(!isLiked);
+
+            return toast.error("Something went wrong, try again later!");
+        },
+        onSuccess: () => {
             addNotification({
                 userId: blog.authorId,
-                content: `@${user.username} liked your blog`,
+                content: `@${user!.username} liked your blog`,
                 title: "New like",
-                notifierId: user.id,
+                notifierId: user!.id,
                 props: {
                     type: "blogLike",
                     blogId: blog.id,
@@ -101,14 +106,16 @@ function BlogViewOperations({
                 },
                 type: "blogLike",
             });
-        }
-    };
+        },
+    });
 
     const addComment = () => {
         if (!user) return toast.error("You're not logged in!");
 
         setIsActive(false);
         setIsPosting(true);
+
+        const toastId = toast.loading("Posting comment...");
 
         const body: Omit<NewComment, "id"> = {
             authorId: user.id,
@@ -122,12 +129,17 @@ function BlogViewOperations({
                 JSON.stringify(body)
             )
             .then(({ data: resData }) => {
-                if (resData.code !== 200) return toast.error(resData.message);
+                if (resData.code !== 200)
+                    return toast.error(resData.message, {
+                        id: toastId,
+                    });
 
                 setComment("");
-                toast.success("Comment published");
+                toast.success("Comment published", {
+                    id: toastId,
+                });
 
-                const commentId = JSON.parse(resData.data) as string;
+                const commentId = parseJSONToObject<string>(resData.data);
 
                 addNotification({
                     userId: blog.authorId,
@@ -146,7 +158,9 @@ function BlogViewOperations({
             })
             .catch((err) => {
                 console.error(err);
-                toast.error("Something went wrong, try again later!");
+                toast.error("Something went wrong, try again later!", {
+                    id: toastId,
+                });
             })
             .finally(() => {
                 setIsPosting(false);
@@ -161,7 +175,7 @@ function BlogViewOperations({
                 variant="flat"
             >
                 <Button
-                    onPress={handleLike}
+                    onPress={() => handleLike()}
                     startContent={
                         <Icons.heart
                             className={cn(
@@ -172,25 +186,25 @@ function BlogViewOperations({
                             )}
                         />
                     }
+                    disabled={!user}
                 >
-                    {shortenNumber(blog.likes.length)}
+                    {shortenNumber(likesLength)}
                 </Button>
 
                 <Divider orientation="vertical" />
 
                 <Button
-                    onPress={() =>
-                        router.push(`/blogs/${params.blogId}#comment`)
-                    }
+                    onPress={() => router.push(`/blogs/${blog.id}#comment`)}
                     startContent={<Icons.comment className="h-4 w-4" />}
+                    disabled={!user}
                 >
-                    {shortenNumber(blog.comments.length)}
+                    {shortenNumber(blog.comments)}
                 </Button>
 
                 <Divider orientation="vertical" />
 
                 <Button startContent={<Icons.analytics className="h-4 w-4" />}>
-                    {shortenNumber(blog.views.length)}
+                    {shortenNumber(blog.views)}
                 </Button>
 
                 <Divider orientation="vertical" />
@@ -198,7 +212,7 @@ function BlogViewOperations({
                 <Button
                     onPress={() => {
                         navigator.clipboard.writeText(
-                            env.NEXT_PUBLIC_APP_URL + "/blogs/" + params.blogId
+                            env.NEXT_PUBLIC_APP_URL + "/blogs/" + blog.id
                         );
                         toast.success("Copied to clipboard");
                     }}
@@ -272,8 +286,9 @@ function BlogViewOperations({
                     blog={blog}
                     className="space-y-6"
                     user={user}
-                    params={params}
                     roles={roles}
+                    comments={comments}
+                    author={author}
                 />
             </div>
         </>

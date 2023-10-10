@@ -1,12 +1,14 @@
 import { BitFieldPermissions } from "@/src/config/const";
-import { db } from "@/src/lib/drizzle";
-import { accounts, users } from "@/src/lib/drizzle/schema";
 import { fetchRedis } from "@/src/lib/redis";
-import { chatHrefConstructor, hasPermission } from "@/src/lib/utils";
+import { getAllUsersFromCache } from "@/src/lib/redis/methods/user";
+import {
+    chatHrefConstructor,
+    hasPermission,
+    parseJSONToObject,
+} from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Message } from "@/src/types/chat";
 import { currentUser } from "@clerk/nextjs";
-import { like, ne } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import SideBar from "./sidebar";
 
@@ -14,19 +16,18 @@ async function SideBarFetch({ children }: DefaultProps) {
     const user = await currentUser();
     if (!user) redirect("/auth");
 
-    const chatters = hasPermission(
+    const isOwner = hasPermission(
         user.privateMetadata.permissions,
         BitFieldPermissions.Administrator
-    )
-        ? await db.select().from(users).where(ne(users.id, user.id))
-        : (
-              await db.query.accounts.findMany({
-                  where: like(accounts.roles, "%owner%"),
-                  with: {
-                      user: true,
-                  },
-              })
-          ).map((account) => account.user);
+    );
+
+    const users = await getAllUsersFromCache();
+
+    const chatters = isOwner
+        ? users.filter((u) => u.id !== user.id)
+        : users.filter((u) =>
+              hasPermission(u.permissions, BitFieldPermissions.Administrator)
+          );
 
     const chattersWithLastMessageAndUnseen = await Promise.all(
         chatters.map(async (chatter) => {
@@ -39,7 +40,7 @@ async function SideBarFetch({ children }: DefaultProps) {
 
             const lastMessage = result.length > 0 ? result[0] : null;
             const parsedMessage = lastMessage
-                ? (JSON.parse(lastMessage) as Message)
+                ? parseJSONToObject<Message>(lastMessage)
                 : null;
 
             return {

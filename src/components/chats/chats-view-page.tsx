@@ -1,8 +1,9 @@
 import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
-import { notifications, projects, users } from "@/src/lib/drizzle/schema";
+import { notifications, projects } from "@/src/lib/drizzle/schema";
 import { fetchRedis } from "@/src/lib/redis";
-import { hasPermission } from "@/src/lib/utils";
+import { getUserFromCache } from "@/src/lib/redis/methods/user";
+import { hasPermission, parseJSONToObject } from "@/src/lib/utils";
 import { messageArrayValidator } from "@/src/lib/validation/messages";
 import { userSchema } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
@@ -26,8 +27,8 @@ async function getChatMessages(chatId: string) {
             -1
         );
 
-        const dbMessages = results.map(
-            (message) => JSON.parse(message) as Message
+        const dbMessages = results.map((message) =>
+            parseJSONToObject<Message>(message)
         );
         const reversedMessages = dbMessages.reverse();
 
@@ -79,7 +80,7 @@ async function ChatsViewPage({ params }: PageProps) {
         !userProject &&
         !hasPermission(
             parsedUser.privateMetadata.permissions,
-            BitFieldPermissions.Administrator
+            BitFieldPermissions.SendMessages
         )
     )
         return (
@@ -105,12 +106,7 @@ async function ChatsViewPage({ params }: PageProps) {
         if (![userId1, userId2].includes(parsedUser.id)) redirect("/chats");
 
         const chatPartnerId = userId1 === parsedUser.id ? userId2 : userId1;
-        const chatPartner = await db.query.users.findFirst({
-            where: eq(users.id, chatPartnerId),
-            with: {
-                account: true,
-            },
-        });
+        const chatPartner = await getUserFromCache(chatPartnerId);
         if (!chatPartner) notFound();
 
         const hasManagePagesPerms = hasPermission(
@@ -119,7 +115,7 @@ async function ChatsViewPage({ params }: PageProps) {
         );
 
         const chatPartnerHasManagePagesPerms = hasPermission(
-            chatPartner.account.permissions,
+            chatPartner.permissions,
             BitFieldPermissions.ManagePages
         );
 

@@ -1,10 +1,8 @@
 import { BitFieldPermissions } from "@/src/config/const";
-import { db } from "@/src/lib/drizzle";
-import { roles } from "@/src/lib/drizzle/schema";
+import { getAllRolesFromCache } from "@/src/lib/redis/methods/roles";
 import { checkRoleHierarchy, hasPermission } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
-import { eq } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import RoleForm from "./role-form";
 
@@ -15,15 +13,16 @@ interface PageProps extends DefaultProps {
 }
 
 async function RolePage({ className, params, ...props }: PageProps) {
-    const [user, role, allRoles] = await Promise.all([
+    const [user, roles] = await Promise.all([
         currentUser(),
-        db.query.roles.findFirst({
-            where: eq(roles.id, params.roleId),
-        }),
-        db.query.roles.findMany(),
+        getAllRolesFromCache(),
     ]);
-    if (!role) notFound();
+
+    if (!roles.length) notFound();
     if (!user) redirect("/auth");
+
+    const role = roles.find((role) => role.id === params.roleId);
+    if (!role) notFound();
 
     const hasUserPermission = hasPermission(
         user.privateMetadata.permissions,
@@ -33,7 +32,7 @@ async function RolePage({ className, params, ...props }: PageProps) {
     const isUserRoleHigherThanTargettedRole = checkRoleHierarchy(
         user.privateMetadata.roles,
         [role.key],
-        allRoles
+        roles
     );
 
     const isOwner = hasPermission(

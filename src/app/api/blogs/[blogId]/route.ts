@@ -1,20 +1,23 @@
 import { db } from "@/src/lib/drizzle";
-import { blogs, NewBlog } from "@/src/lib/drizzle/schema";
+import { blogs } from "@/src/lib/drizzle/schema";
+import {
+    deleteBlogFromCache,
+    getAllBlogsFromCache,
+    getBlogFromCache,
+    updateBlogInCache,
+} from "@/src/lib/redis/methods/blog";
 import { handleError } from "@/src/lib/utils";
 import { postPatchSchema, publishSchema } from "@/src/lib/validation/blogs";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { currentUser } from "@clerk/nextjs";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, context: BlogContext) {
     try {
         const { params } = blogContextSchema.parse(context);
 
-        const blog = await db.query.blogs.findFirst({
-            where: eq(blogs.id, params.blogId),
-        });
-
+        const blog = await getBlogFromCache(params.blogId);
         if (!blog)
             return NextResponse.json({
                 code: 404,
@@ -41,7 +44,11 @@ export async function DELETE(req: NextRequest, context: BlogContext) {
                 message: "Unauthorized!",
             });
 
-        await db.delete(blogs).where(eq(blogs.id, params.blogId));
+        await Promise.all([
+            db.delete(blogs).where(eq(blogs.id, params.blogId)),
+            deleteBlogFromCache(params.blogId),
+        ]);
+
         return NextResponse.json({
             code: 204,
             message: "Ok",
@@ -65,28 +72,17 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
 
         const body = postPatchSchema.parse(json);
 
+        const blog = await getBlogFromCache(params.blogId);
+        if (!blog)
+            return NextResponse.json({
+                code: 404,
+                message: "Blog not found!",
+            });
+
         switch (body.action) {
             case "edit": {
                 try {
-                    const blog = await db.query.blogs.findFirst({
-                        where: eq(blogs.id, params.blogId),
-                    });
-
-                    if (!blog)
-                        return NextResponse.json({
-                            code: 404,
-                            message: "Blog not found!",
-                        });
-
-                    const updatedValues: Omit<NewBlog, "id"> = {
-                        authorId: blog.authorId,
-                        title: body.title ?? "Untitled Blog",
-                        content: body.content,
-                        thumbnailUrl: body.thumbnailUrl,
-                        description: body.description ?? "No description",
-                    };
-
-                    if (
+                    const isBlogPublishedAndHasChanges =
                         blog.published &&
                         (JSON.stringify(blog.content) !==
                             JSON.stringify(body.content) ||
@@ -96,26 +92,40 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                             JSON.stringify(blog.thumbnailUrl) !==
                                 JSON.stringify(body.thumbnailUrl) ||
                             JSON.stringify(blog.description) !==
-                                JSON.stringify(body.description))
-                    ) {
-                        await db
+                                JSON.stringify(body.description));
+
+                    await Promise.all([
+                        db
                             .update(blogs)
                             .set({
-                                updatedAt: new Date(),
-                                ...updatedValues,
+                                title: body.title,
+                                content: body.content,
+                                thumbnailUrl: body.thumbnailUrl,
+                                description: body.description,
+                                updatedAt: isBlogPublishedAndHasChanges
+                                    ? new Date()
+                                    : blog.updatedAt
+                                    ? new Date(blog.updatedAt)
+                                    : null,
                             })
-                            .where(eq(blogs.id, params.blogId));
-                    }
-
-                    await db
-                        .update(blogs)
-                        .set({
-                            title: body.title,
-                            content: body.content,
-                            thumbnailUrl: body.thumbnailUrl,
-                            description: body.description,
-                        })
-                        .where(eq(blogs.id, params.blogId));
+                            .where(eq(blogs.id, params.blogId)),
+                        updateBlogInCache({
+                            id: blog.id,
+                            title: body.title!,
+                            content: body.content ?? null,
+                            thumbnailUrl: body.thumbnailUrl ?? null,
+                            description: body.description ?? "No description",
+                            createdAt: blog.createdAt,
+                            updatedAt: isBlogPublishedAndHasChanges
+                                ? new Date().toISOString()
+                                : blog.updatedAt ?? null,
+                            authorId: blog.authorId,
+                            published: blog.published,
+                            likes: blog.likes,
+                            views: blog.views,
+                            comments: blog.comments,
+                        }),
+                    ]);
 
                     return NextResponse.json({
                         code: 200,
@@ -130,16 +140,33 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                 try {
                     const publishBody = publishSchema.parse(body);
 
-                    await db
-                        .update(blogs)
-                        .set({
+                    await Promise.all([
+                        db
+                            .update(blogs)
+                            .set({
+                                title: publishBody.title,
+                                content: publishBody.content,
+                                thumbnailUrl: publishBody.thumbnailUrl,
+                                published: publishBody.published,
+                                description: publishBody.description,
+                            })
+                            .where(eq(blogs.id, params.blogId)),
+                        updateBlogInCache({
+                            id: params.blogId,
                             title: publishBody.title,
-                            content: publishBody.content,
-                            thumbnailUrl: publishBody.thumbnailUrl,
+                            content: publishBody.content ?? null,
+                            thumbnailUrl: publishBody.thumbnailUrl ?? null,
+                            description:
+                                publishBody.description ?? "No description",
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString(),
+                            authorId: blog.authorId,
                             published: publishBody.published,
-                            description: publishBody.description,
-                        })
-                        .where(eq(blogs.id, params.blogId));
+                            likes: blog.likes,
+                            views: blog.views,
+                            comments: blog.comments,
+                        }),
+                    ]);
 
                     return NextResponse.json({
                         code: 200,
@@ -156,12 +183,13 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
 }
 
 async function verifyCurrentUserHasAccessToBlog(blogId: string) {
-    const authUser = await currentUser();
-    if (!authUser) return false;
+    const user = await currentUser();
+    if (!user) return false;
 
-    const data = await db.query.blogs.findMany({
-        where: and(eq(blogs.authorId, authUser.id), eq(blogs.id, blogId)),
-    });
+    const data = await getAllBlogsFromCache();
+    const filteredBlogs = data.filter(
+        (blog) => blog.authorId === user.id && blog.id === blogId
+    );
 
-    return data.length > 0;
+    return filteredBlogs.length > 0;
 }
