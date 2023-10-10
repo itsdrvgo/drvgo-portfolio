@@ -1,23 +1,28 @@
-import { Role } from "@/src/lib/drizzle/schema";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps, ExtendedBlog } from "@/src/types";
+import { DefaultProps, ExtendedComment } from "@/src/types";
+import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import RecursiveComment from "./blog-recursive-comments";
 
 interface PageProps extends DefaultProps {
-    blog: ExtendedBlog;
+    blog: CachedBlog;
+    comments: ExtendedComment[];
     user: ClerkUser | null;
-    params: {
-        blogId: string;
-    };
-    roles: Role[];
+    roles: CachedRole[];
+    author: CachedUser;
 }
 
-function BlogViewComments({ className, user, params, blog, roles }: PageProps) {
-    const allComments = blog.comments;
-    const rootComments = allComments.filter(
+function BlogViewComments({
+    className,
+    user,
+    blog,
+    roles,
+    comments,
+    author,
+}: PageProps) {
+    const rootComments = comments.filter(
         (comment) => !comment.parentId && !comment.pinned
     );
-    const pinnedComment = allComments.find((comment) => comment.pinned);
+    const pinnedComment = comments.find((comment) => comment.pinned);
 
     return (
         <div className={className}>
@@ -25,28 +30,28 @@ function BlogViewComments({ className, user, params, blog, roles }: PageProps) {
                 <RecursiveComment
                     key={pinnedComment.id}
                     comment={pinnedComment}
-                    allComments={allComments}
+                    comments={comments}
                     user={user}
-                    params={params}
                     blog={blog}
                     isReply={false}
                     isPinned={true}
                     id={pinnedComment.id}
                     roles={roles}
+                    author={author}
                 />
             )}
             {rootComments.map((comment) => (
                 <RecursiveComment
                     key={comment.id}
                     comment={comment}
-                    allComments={allComments}
+                    comments={comments}
                     user={user}
-                    params={params}
                     blog={blog}
                     isReply={false}
                     isPinned={false}
                     id={comment.id}
                     roles={roles}
+                    author={author}
                 />
             ))}
         </div>

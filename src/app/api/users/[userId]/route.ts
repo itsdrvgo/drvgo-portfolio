@@ -1,25 +1,18 @@
 import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import { users } from "@/src/lib/drizzle/schema";
+import { getAllRolesFromCache } from "@/src/lib/redis/methods/roles";
+import {
+    checkExistingUsernameInCache,
+    getUserFromCache,
+} from "@/src/lib/redis/methods/user";
 import { getAuthorizedUser, handleError } from "@/src/lib/utils";
 import { userUpdateSchema } from "@/src/lib/validation/auth";
 import { UserContext, userContextSchema } from "@/src/lib/validation/route";
+import { CachedUser } from "@/src/types/cache";
 import { clerkClient, currentUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-
-const parsedUserSchema = z.object({
-    id: z.string(),
-    username: z.string(),
-    image: z.string().nullable(),
-    createdAt: z.date(),
-    account: z.object({
-        roles: z.array(z.string()),
-        permissions: z.number(),
-        strikes: z.number(),
-    }),
-});
 
 export async function GET(req: NextRequest, context: UserContext) {
     try {
@@ -38,7 +31,15 @@ export async function GET(req: NextRequest, context: UserContext) {
                 data: JSON.stringify(null),
             });
 
-        const parsedUser = parsedUserSchema.parse(user);
+        const parsedUser: Omit<CachedUser, "email" | "updatedAt"> = {
+            id: user.id,
+            username: user.username,
+            image: user.image,
+            createdAt: user.createdAt.toISOString(),
+            permissions: user.account.permissions,
+            roles: user.account.roles,
+            strikes: user.account.strikes,
+        };
 
         return NextResponse.json({
             code: 200,
@@ -57,25 +58,28 @@ export async function PATCH(req: NextRequest, context: UserContext) {
         const { params } = userContextSchema.parse(context);
 
         const {
-            roles: userRoles,
+            roles: targetRoles,
             username,
             strikes,
         } = userUpdateSchema.parse(body);
 
-        const roles = await db.query.roles.findMany();
+        const roles = await getAllRolesFromCache();
 
-        if ((userRoles && userRoles.length) || strikes) {
-            const user = await getAuthorizedUser(
-                BitFieldPermissions.ManageUsers |
-                    BitFieldPermissions.ManagePages
-            );
+        if ((targetRoles && targetRoles.length) || strikes) {
+            const [user, target] = await Promise.all([
+                getAuthorizedUser(
+                    BitFieldPermissions.ManageUsers |
+                        BitFieldPermissions.ManagePages
+                ),
+                getUserFromCache(params.userId),
+            ]);
+
             if (!user)
                 return NextResponse.json({
-                    code: 403,
+                    code: 401,
                     message: "Unauthorized!",
                 });
 
-            const target = await clerkClient.users.getUser(params.userId);
             if (!target)
                 return NextResponse.json({
                     code: 404,
@@ -84,23 +88,21 @@ export async function PATCH(req: NextRequest, context: UserContext) {
 
             let permissions = 0;
 
-            if (userRoles && userRoles.length) {
+            if (targetRoles && targetRoles.length) {
                 permissions = roles
-                    .filter((role) => userRoles.includes(role.key))
+                    .filter((role) => targetRoles.includes(role.key))
                     .reduce((acc, role) => acc | role.permissions, 0);
             }
 
             await clerkClient.users.updateUserMetadata(target.id, {
                 privateMetadata: {
                     roles:
-                        userRoles && userRoles.length
-                            ? userRoles
-                            : target.privateMetadata.roles,
+                        targetRoles && targetRoles.length
+                            ? targetRoles
+                            : target.roles,
                     permissions:
-                        permissions !== 0
-                            ? permissions
-                            : target.privateMetadata.permissions,
-                    strikes: strikes || target.privateMetadata.strikes,
+                        permissions !== 0 ? permissions : target.permissions,
+                    strikes: strikes || target.strikes,
                 },
             });
 
@@ -118,9 +120,8 @@ export async function PATCH(req: NextRequest, context: UserContext) {
                     message: "Unauthorized!",
                 });
 
-            const existingUsername = await db.query.users.findFirst({
-                where: eq(users.username, username),
-            });
+            const existingUsername =
+                await checkExistingUsernameInCache(username);
             if (existingUsername)
                 return NextResponse.json({
                     code: 409,

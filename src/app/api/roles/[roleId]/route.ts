@@ -1,10 +1,16 @@
 import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
-import { accounts, insertRoleSchema, roles } from "@/src/lib/drizzle/schema";
-import { getAuthorizedUser, handleError, wait } from "@/src/lib/utils";
+import { insertRoleSchema, roles } from "@/src/lib/drizzle/schema";
+import { redis } from "@/src/lib/redis";
+import {
+    getAllRolesFromCache,
+    updateRoleInCache,
+} from "@/src/lib/redis/methods/roles";
+import { getAllUsersFromCache } from "@/src/lib/redis/methods/user";
+import { getAuthorizedUser, handleError } from "@/src/lib/utils";
 import { RoleContext, roleContextSchema } from "@/src/lib/validation/route";
 import { clerkClient } from "@clerk/nextjs";
-import { eq, like } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(req: NextRequest, context: RoleContext) {
@@ -29,26 +35,24 @@ export async function PATCH(req: NextRequest, context: RoleContext) {
             .partial()
             .parse(body);
 
-        const [role, allRoles] = await Promise.all([
-            db.query.roles.findFirst({
-                where: eq(roles.id, params.roleId),
-            }),
-            db.query.roles.findMany(),
-        ]);
+        const allRoles = await getAllRolesFromCache();
+        const role = allRoles.find((x) => x.id === params.roleId);
+
         if (!role)
             return NextResponse.json({
                 code: 404,
                 message: "Role not found!",
             });
 
-        const roleAccounts = await db.query.accounts.findMany({
-            where: like(accounts.roles, `%${role.key}%`),
-        });
+        const users = await getAllUsersFromCache();
+        const usersWithRole = users.filter((x) => x.roles.includes(role.key));
 
-        if (roleAccounts.length > 0) {
+        if (usersWithRole.length > 0) {
             if (permissions && permissions !== role.permissions) {
-                roleAccounts.map(async (account) => {
-                    const accountRoles = account.roles.map((x) => {
+                const pipeline = redis.pipeline();
+
+                usersWithRole.map(async (u) => {
+                    const accountRoles = u.roles.map((x) => {
                         const r = allRoles.find((y) => y.key === x);
                         if (!r) return null;
                         return r;
@@ -64,48 +68,76 @@ export async function PATCH(req: NextRequest, context: RoleContext) {
                     );
                     if (!accountHighestRole) return;
 
-                    if (role.position <= accountHighestRole.position)
-                        await clerkClient.users.updateUserMetadata(account.id, {
+                    if (role.position <= accountHighestRole.position) {
+                        await clerkClient.users.updateUserMetadata(u.id, {
                             privateMetadata: {
                                 permissions,
-                                roles: account.roles,
-                                strikes: account.strikes,
+                                roles: u.roles,
+                                strikes: u.strikes,
                             },
                         });
+
+                        pipeline.set(
+                            `user:${u.id}`,
+                            JSON.stringify({
+                                ...u,
+                                permissions,
+                            })
+                        );
+                    }
                 });
+
+                await pipeline.exec();
             }
 
             if (name && name !== role.name) {
-                roleAccounts.forEach(async (account) => {
-                    const accountRoles = account.roles;
+                const pipeline = redis.pipeline();
 
-                    const newRoles = accountRoles.map((x) =>
+                usersWithRole.forEach(async (u) => {
+                    const newRoles = u.roles.map((x) =>
                         x === role.key
                             ? name.toLowerCase().replace(/\s/g, "_")
                             : x
                     );
 
-                    await clerkClient.users.updateUserMetadata(account.id, {
+                    await clerkClient.users.updateUserMetadata(u.id, {
                         privateMetadata: {
                             roles: newRoles,
-                            permissions: account.permissions,
-                            strikes: account.strikes,
+                            permissions: u.permissions,
+                            strikes: u.strikes,
                         },
                     });
 
-                    await wait(750);
+                    pipeline.set(
+                        `user:${u.id}`,
+                        JSON.stringify({
+                            ...u,
+                            roles: newRoles,
+                        })
+                    );
                 });
+
+                await pipeline.exec();
             }
         }
 
-        await db
-            .update(roles)
-            .set({
+        await Promise.all([
+            db
+                .update(roles)
+                .set({
+                    name: name ?? role.name,
+                    key: name?.toLowerCase().replace(/\s/g, "_") ?? role.key,
+                    permissions: permissions ?? role.permissions,
+                })
+                .where(eq(roles.id, params.roleId)),
+            updateRoleInCache({
+                ...role,
                 name: name ?? role.name,
                 key: name?.toLowerCase().replace(/\s/g, "_") ?? role.key,
                 permissions: permissions ?? role.permissions,
-            })
-            .where(eq(roles.id, params.roleId));
+                updatedAt: new Date().toISOString(),
+            }),
+        ]);
 
         return NextResponse.json({
             code: 200,

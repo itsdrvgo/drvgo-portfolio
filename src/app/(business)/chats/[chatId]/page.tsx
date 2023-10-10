@@ -1,9 +1,7 @@
 import ChatsViewPage from "@/src/components/chats/chats-view-page";
-import { db } from "@/src/lib/drizzle";
-import { users } from "@/src/lib/drizzle/schema";
+import { getUserFromCache } from "@/src/lib/redis/methods/user";
 import { chatHrefConstructor } from "@/src/lib/utils";
 import { currentUser } from "@clerk/nextjs";
-import { eq } from "drizzle-orm";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -20,14 +18,12 @@ export async function generateMetadata({
 
     const chatPartnerId = userId1 === user.id ? userId2 : userId1;
 
-    const partner = await db.query.users.findFirst({
-        where: eq(users.id, chatPartnerId),
-    });
+    const partner = await getUserFromCache(chatPartnerId);
     if (!partner) return { title: "Chats" };
 
     return {
-        title: "Chat with @" + partner?.username,
-        description: "Chat with @" + partner?.username,
+        title: "Chat with @" + partner,
+        description: "Chat with @" + partner.username,
     };
 }
 

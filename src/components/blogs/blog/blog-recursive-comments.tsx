@@ -1,8 +1,8 @@
 import { BitFieldPermissions, DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { Role } from "@/src/lib/drizzle/schema";
 import { cn, convertMstoTimeElapsed, hasPermission } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
+import { DefaultProps, ExtendedComment } from "@/src/types";
+import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import { Avatar, Button, Chip } from "@nextui-org/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,29 +11,27 @@ import BlogCommentOperation from "./blog-comment-operation";
 import BlogCommentViewerOperation from "./blog-comment-viewer-operations";
 
 interface PageProps extends DefaultProps {
-    blog: ExtendedBlog;
+    blog: CachedBlog;
     user: ClerkUser | null;
-    params: {
-        blogId: string;
-    };
     comment: ExtendedComment;
-    allComments: ExtendedComment[];
+    comments: ExtendedComment[];
     isReply: boolean;
     isPinned: boolean;
-    roles: Role[];
+    roles: CachedRole[];
+    author: CachedUser;
 }
 
 function RecursiveComment({
     comment,
     user,
-    params,
     blog,
-    allComments,
+    comments,
     isReply = false,
     isPinned = false,
     className,
     id,
     roles,
+    author,
 }: PageProps) {
     const [showReply, setShowReply] = useState(false);
     const [isHighlighted, setIsHighlighted] = useState(false);
@@ -58,7 +56,7 @@ function RecursiveComment({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [commentId, comment.id]);
 
-    const replies = allComments.filter((c) => c.parentId === comment.id);
+    const replies = comments.filter((c) => c.parentId === comment.id);
     const isLoved = comment.loves.find((love) => love.userId === user?.id);
 
     const commenterRolesRaw = comment.user.account.roles.map((x) => {
@@ -99,7 +97,7 @@ function RecursiveComment({
                     {isPinned && (
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                             <Icons.pin className="h-4 w-4" />
-                            <p>Pinned by @{blog.author.username}</p>
+                            <p>Pinned by @{author.username}</p>
                         </div>
                     )}
                     <div className="flex items-center gap-2">
@@ -154,7 +152,7 @@ function RecursiveComment({
                             <span className="mr-1 rounded-sm bg-gray-800 p-[2px] px-1 text-sm text-gray-300">
                                 @
                                 {
-                                    allComments.find(
+                                    comments.find(
                                         (c) => c.id === comment.parentId
                                     )?.user.username
                                 }
@@ -164,7 +162,6 @@ function RecursiveComment({
                     </p>
                     <BlogCommentViewerOperation
                         user={user}
-                        params={params}
                         blog={blog}
                         comment={comment}
                         commentLoved={!!isLoved}
@@ -193,8 +190,8 @@ function RecursiveComment({
 
                 {user ? (
                     <BlogCommentOperation
+                        blog={blog}
                         user={user}
-                        params={params}
                         comment={comment}
                     />
                 ) : null}
@@ -212,12 +209,12 @@ function RecursiveComment({
                                 key={reply.id}
                                 comment={reply}
                                 user={user}
-                                params={params}
                                 blog={blog}
-                                allComments={allComments}
+                                comments={comments}
                                 isReply={true}
                                 isPinned={false}
                                 roles={roles}
+                                author={author}
                             />
                         ))}
                 </div>

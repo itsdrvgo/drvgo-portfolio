@@ -2,10 +2,11 @@
 
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { NewComment } from "@/src/lib/drizzle/schema";
-import { addNotification, cn } from "@/src/lib/utils";
+import { addNotification, cn, parseJSONToObject } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps, ExtendedBlog, ExtendedComment } from "@/src/types";
+import { DefaultProps, ExtendedComment } from "@/src/types";
+import { CachedBlog } from "@/src/types/cache";
 import { Avatar, Button, Textarea } from "@nextui-org/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -15,10 +16,7 @@ import { Icons } from "../../icons/icons";
 
 interface PageProps extends DefaultProps {
     user: ClerkUser | null;
-    blog: ExtendedBlog;
-    params: {
-        blogId: string;
-    };
+    blog: CachedBlog;
     comment: ExtendedComment;
     commentLoved: boolean;
 }
@@ -26,7 +24,6 @@ interface PageProps extends DefaultProps {
 function BlogCommentViewerOperation({
     user,
     blog,
-    params,
     comment,
     commentLoved,
 }: PageProps) {
@@ -58,7 +55,7 @@ function BlogCommentViewerOperation({
 
         axios
             .post<ResponseData>(
-                `/api/blogs/comments/${params.blogId}/${
+                `/api/blogs/comments/${blog.id}/${
                     comment.parentId === null ? comment.id : comment.parentId
                 }`,
                 JSON.stringify(body)
@@ -68,7 +65,7 @@ function BlogCommentViewerOperation({
 
                 toast.success("Reply added");
 
-                const replyId = JSON.parse(resData.data) as string;
+                const replyId = parseJSONToObject<string>(resData.data);
 
                 addNotification({
                     userId: comment.authorId,

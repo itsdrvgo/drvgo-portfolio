@@ -1,7 +1,7 @@
 "use client";
 
 import { NewBlog } from "@/src/lib/drizzle/schema";
-import { cn } from "@/src/lib/utils";
+import { cn, parseJSONToObject } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { Button, ButtonProps } from "@nextui-org/react";
 import axios from "axios";
@@ -35,7 +35,7 @@ function BlogCreateButton({ className, ...props }: ButtonProps) {
                     id: toastId,
                 });
 
-                const blogId = JSON.parse(resData.data) as string;
+                const blogId = parseJSONToObject<string>(resData.data);
                 router.push(`/admin/blogs/${blogId}`);
             })
             .catch((err) => {

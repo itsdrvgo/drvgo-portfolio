@@ -6,6 +6,7 @@ import { addNotification, cn, hasPermission } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
+import { CachedBlog } from "@/src/types/cache";
 import {
     Button,
     Dropdown,
@@ -29,13 +30,11 @@ import { Icons } from "../../icons/icons";
 
 interface PageProps extends DefaultProps {
     user: ClerkUser;
-    params: {
-        blogId: string;
-    };
+    blog: CachedBlog;
     comment: ExtendedComment;
 }
 
-function BlogCommentOperation({ user, params, comment }: PageProps) {
+function BlogCommentOperation({ user, blog, comment }: PageProps) {
     const router = useRouter();
 
     const [isPinned, setIsPinned] = useState(comment.pinned);
@@ -65,7 +64,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
     const handleCommentDelete = () => {
         axios
             .delete<ResponseData>(
-                `/api/blogs/comments/${params.blogId}/${comment.id}`
+                `/api/blogs/comments/${blog.id}/${comment.id}`
             )
             .then(({ data: resData }) => {
                 if (resData.code !== 200) return toast.error(resData.message);
@@ -85,7 +84,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
     const handleCommentPin = () => {
         axios
             .post<ResponseData>(
-                `/api/blogs/comments/${params.blogId}/${comment.id}/${
+                `/api/blogs/comments/${blog.id}/${comment.id}/${
                     isPinned ? "unpin" : "pin"
                 }`
             )
@@ -131,7 +130,7 @@ function BlogCommentOperation({ user, params, comment }: PageProps) {
 
         axios
             .patch<ResponseData>(
-                `/api/blogs/comments/${params.blogId}/${comment.id}`,
+                `/api/blogs/comments/${blog.id}/${comment.id}`,
                 JSON.stringify(body)
             )
             .then(({ data: resData }) => {

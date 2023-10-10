@@ -2,9 +2,7 @@ import BlogViewFetch from "@/src/components/blogs/blog/blog-view-fetch";
 import BlogNav from "@/src/components/blogs/blog/blogs-nav";
 import BlogViewSkeleton from "@/src/components/blogs/skeletons/blog-view";
 import { siteConfig } from "@/src/config/site";
-import { db } from "@/src/lib/drizzle";
-import { blogs } from "@/src/lib/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { getBlogFromCache } from "@/src/lib/redis/methods/blog";
 import { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -15,9 +13,7 @@ interface PageProps {
 export async function generateMetadata({
     params,
 }: PageProps): Promise<Metadata> {
-    const blog = await db.query.blogs.findFirst({
-        where: eq(blogs.id, params.blogId),
-    });
+    const blog = await getBlogFromCache(params.blogId);
     if (!blog)
         return {
             title: `Blogs | ${params.blogId}`,

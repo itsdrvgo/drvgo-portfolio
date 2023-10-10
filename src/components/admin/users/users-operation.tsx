@@ -1,11 +1,11 @@
 "use client";
 
 import { BitFieldPermissions } from "@/src/config/const";
-import { Role } from "@/src/lib/drizzle/schema";
 import { checkRoleHierarchy, hasPermission } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
-import { DefaultProps, UserWithAccount } from "@/src/types";
+import { DefaultProps } from "@/src/types";
+import { CachedRole, CachedUser } from "@/src/types/cache";
 import {
     Button,
     Chip,
@@ -31,9 +31,9 @@ import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 
 interface PageProps extends DefaultProps {
-    target: UserWithAccount;
+    target: CachedUser;
     user: ClerkUser;
-    roles: Role[];
+    roles: CachedRole[];
 }
 
 function UsersOperation({ target, user, roles }: PageProps) {
@@ -57,7 +57,7 @@ function UsersOperation({ target, user, roles }: PageProps) {
     } = useDisclosure();
 
     const userRoles = user.privateMetadata.roles;
-    const targetRoles = target.account.roles;
+    const targetRoles = target.roles;
 
     const [finalRoles, setFinalRoles] = useState<string[]>(targetRoles);
 
@@ -155,7 +155,7 @@ function UsersOperation({ target, user, roles }: PageProps) {
                             ? "copy_email"
                             : "",
                         hasPermission(
-                            target.account.permissions,
+                            target.permissions,
                             BitFieldPermissions.ManageUsers
                         )
                             ? "delete"
@@ -255,7 +255,7 @@ function UsersOperation({ target, user, roles }: PageProps) {
                                         setFinalRoles(selectedRoles);
                                     }}
                                     renderValue={(
-                                        items: SelectedItems<Role>
+                                        items: SelectedItems<CachedRole>
                                     ) => {
                                         return (
                                             <div className="flex flex-wrap gap-1">

@@ -1,22 +1,20 @@
-import { db } from "@/src/lib/drizzle";
-import { roles } from "@/src/lib/drizzle/schema";
+import { getAllRolesFromCache } from "@/src/lib/redis/methods/roles";
 import { userSchema } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
-import { asc } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import RolesManagePage from "./roles-manage-page";
 
 async function RolesPage({ className }: DefaultProps) {
-    const [initialRoles, user] = await Promise.all([
-        db.query.roles.findMany({
-            orderBy: [asc(roles.position)],
-        }),
+    const [roles, user] = await Promise.all([
+        getAllRolesFromCache(),
         currentUser(),
     ]);
 
     if (!user) redirect("/auth");
     let parsedUser = userSchema.parse(user);
+
+    const initialRoles = roles.sort((a, b) => a.position - b.position);
 
     return (
         <RolesManagePage

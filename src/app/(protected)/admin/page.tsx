@@ -14,7 +14,7 @@ function Page() {
                         </p>
                     </div>
 
-                    <AdminButtons className="grid w-full grid-cols-1 items-center justify-items-stretch gap-10 text-center md:grid-cols-2" />
+                    <AdminButtons />
                 </div>
 
                 <AdminFAQ />

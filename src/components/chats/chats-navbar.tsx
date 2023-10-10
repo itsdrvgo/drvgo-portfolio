@@ -4,18 +4,15 @@ import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import useSidebarStore from "@/src/lib/store/sidebar";
 import { cn } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
-import {
-    DefaultProps,
-    ExtendedNotification,
-    UserWithAccount,
-} from "@/src/types";
+import { DefaultProps, ExtendedNotification } from "@/src/types";
+import { CachedUser } from "@/src/types/cache";
 import { Button, User } from "@nextui-org/react";
 import Auth from "../global/navbar/profile/auth";
 import { Icons } from "../icons/icons";
 
 interface PageProps extends DefaultProps {
     user: ClerkUser;
-    partner?: UserWithAccount;
+    partner?: CachedUser;
     data: ExtendedNotification[];
 }
 

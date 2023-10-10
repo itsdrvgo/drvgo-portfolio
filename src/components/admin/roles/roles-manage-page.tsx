@@ -1,7 +1,6 @@
 "use client";
 
 import { BitFieldPermissions } from "@/src/config/const";
-import { Role } from "@/src/lib/drizzle/schema";
 import {
     checkRoleHierarchy,
     cn,
@@ -10,6 +9,7 @@ import {
 } from "@/src/lib/utils";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
+import { CachedRole } from "@/src/types/cache";
 import {
     DragDropContext,
     Draggable,
@@ -23,7 +23,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 
-function isOwnerRoleActionable(user: ClerkUser, role: Role) {
+function isOwnerRoleActionable(user: ClerkUser, role: CachedRole) {
     const hasOwnerPerms = hasPermission(
         user.privateMetadata.permissions,
         BitFieldPermissions.Administrator
@@ -33,7 +33,7 @@ function isOwnerRoleActionable(user: ClerkUser, role: Role) {
     return false;
 }
 
-function isActionable(user: ClerkUser, roles: Role[], role: Role) {
+function isActionable(user: ClerkUser, roles: CachedRole[], role: CachedRole) {
     const hasUserPermission = hasPermission(
         user.privateMetadata.permissions,
         BitFieldPermissions.ManagePages | BitFieldPermissions.ManageRoles
@@ -49,14 +49,14 @@ function isActionable(user: ClerkUser, roles: Role[], role: Role) {
 }
 
 interface PageProps extends DefaultProps {
-    initialRoles: Role[];
+    initialRoles: CachedRole[];
     user: ClerkUser;
 }
 
 function RolesManagePage({ className, initialRoles, user }: PageProps) {
     const router = useRouter();
 
-    const [roles, setRoles] = useState<Role[]>(initialRoles);
+    const [roles, setRoles] = useState<CachedRole[]>(initialRoles);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleDragStart = () => {
@@ -75,7 +75,7 @@ function RolesManagePage({ className, initialRoles, user }: PageProps) {
         }
 
         if (result.combine) {
-            const newRoles: Role[] = [...roles];
+            const newRoles: CachedRole[] = [...roles];
             newRoles.splice(result.source.index, 1);
             setRoles(newRoles);
             return;
@@ -98,7 +98,7 @@ function RolesManagePage({ className, initialRoles, user }: PageProps) {
 
         const toastId = toast.loading("Updating roles...");
 
-        const body: Partial<Role>[] = roles.map((role, index) => ({
+        const body: Partial<CachedRole>[] = roles.map((role, index) => ({
             id: role.id,
             position: index + 1,
         }));
@@ -229,7 +229,7 @@ function RolesManagePage({ className, initialRoles, user }: PageProps) {
                                                                 ))
                                                         }
                                                         onPress={() => {
-                                                            const newRoles: Role[] =
+                                                            const newRoles: CachedRole[] =
                                                                 [...roles];
                                                             newRoles.splice(
                                                                 index,

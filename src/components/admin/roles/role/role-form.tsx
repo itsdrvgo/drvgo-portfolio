@@ -1,9 +1,9 @@
 "use client";
 
 import { BitFieldPermissions, Permissions } from "@/src/config/const";
-import { Role } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
+import { CachedRole } from "@/src/types/cache";
 import {
     Button,
     ButtonGroup,
@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface PageProps extends DefaultProps {
-    roleData: Role;
+    roleData: CachedRole;
     hasAccessToEdit: boolean;
     isOwner: boolean;
 }
@@ -66,7 +66,7 @@ function RoleForm({
 
         const toastId = toast.loading("Updating role");
 
-        const body: Partial<Role> = {
+        const body: Partial<CachedRole> = {
             name: roleName,
             permissions: rolePermissions,
         };

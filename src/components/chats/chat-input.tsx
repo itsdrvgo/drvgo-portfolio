@@ -2,7 +2,8 @@
 
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
-import { DefaultProps, UserWithAccount } from "@/src/types";
+import { DefaultProps } from "@/src/types";
+import { CachedUser } from "@/src/types/cache";
 import { Button, Textarea } from "@nextui-org/react";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
@@ -10,7 +11,7 @@ import toast from "react-hot-toast";
 import { Icons } from "../icons/icons";
 
 interface PageProps extends DefaultProps {
-    chatPartner: UserWithAccount;
+    chatPartner: CachedUser;
     chatId: string;
 }
 

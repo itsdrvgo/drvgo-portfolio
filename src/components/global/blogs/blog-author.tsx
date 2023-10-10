@@ -1,17 +1,17 @@
 "use client";
 
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { Role } from "@/src/lib/drizzle/schema";
 import { cn, formatDate } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
+import { CachedRole } from "@/src/types/cache";
 import { Avatar, Chip, Tooltip } from "@nextui-org/react";
 
 interface PageProps extends DefaultProps {
     image?: string;
     authorName: string;
-    createdAt: Date;
-    updatedAt?: Date;
-    authorRole: Role | null;
+    createdAt: string;
+    updatedAt?: string;
+    authorRole: CachedRole | null;
 }
 
 function BlogAuthor({
@@ -43,13 +43,10 @@ function BlogAuthor({
                 </div>
 
                 <div className="flex gap-1 text-sm text-gray-600">
-                    <p>Published on {formatDate(createdAt.getTime())}</p>
+                    <p>Published on {formatDate(createdAt)}</p>
 
                     {updatedAt ? (
-                        <Tooltip
-                            content={formatDate(updatedAt.getTime())}
-                            radius="sm"
-                        >
+                        <Tooltip content={formatDate(updatedAt)} radius="sm">
                             <p>(Updated)</p>
                         </Tooltip>
                     ) : null}

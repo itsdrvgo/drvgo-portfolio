@@ -4,7 +4,8 @@ import { Icons } from "@/src/components/icons/icons";
 import { addNotification } from "@/src/lib/utils";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
-import { ExtendedBlog } from "@/src/types";
+import { ClerkUser } from "@/src/lib/validation/user";
+import { CachedBlog } from "@/src/types/cache";
 import {
     Button,
     Dropdown,
@@ -25,10 +26,11 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface PageProps {
-    blog: ExtendedBlog;
+    user: ClerkUser;
+    blog: CachedBlog;
 }
 
-function BlogOperations({ blog }: PageProps) {
+function BlogOperations({ blog, user }: PageProps) {
     const router = useRouter();
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -112,7 +114,7 @@ function BlogOperations({ blog }: PageProps) {
                 addNotification({
                     notifierId: blog.authorId,
                     title: "New Blog",
-                    content: `@${blog.author.username} published a new blog`,
+                    content: `@${user.username} published a new blog`,
                     props: {
                         type: "newBlog",
                         blogId: blog.id,

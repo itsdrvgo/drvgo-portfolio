@@ -15,28 +15,22 @@ async function BlogNav({ params }: PageProps) {
         limit: 6,
         where: and(eq(blogs.published, true), ne(blogs.id, params.blogId)),
         with: {
-            author: {
-                with: {
-                    account: true,
-                },
-            },
-            comments: {
-                with: {
-                    user: {
-                        with: {
-                            account: true,
-                        },
-                    },
-                    loves: true,
-                    blog: true,
-                },
-            },
+            comments: true,
             likes: true,
             views: true,
         },
     });
 
-    return <BlogNavItems data={allBlogs} />;
+    const data = allBlogs.map((blog) => ({
+        ...blog,
+        likes: blog.likes.length,
+        comments: blog.comments.length,
+        views: blog.views.length,
+        createdAt: blog.createdAt.toISOString(),
+        updatedAt: blog.updatedAt ? blog.updatedAt.toISOString() : null,
+    }));
+
+    return <BlogNavItems data={data} />;
 }
 
 export default BlogNav;

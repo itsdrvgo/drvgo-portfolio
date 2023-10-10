@@ -1,10 +1,13 @@
 import { db } from "@/src/lib/drizzle";
-import { blogs, comments } from "@/src/lib/drizzle/schema";
+import { comments, likes } from "@/src/lib/drizzle/schema";
+import { getBlogFromCache } from "@/src/lib/redis/methods/blog";
+import { getAllRolesFromCache } from "@/src/lib/redis/methods/roles";
+import { getUserFromCache } from "@/src/lib/redis/methods/user";
 import { cn } from "@/src/lib/utils";
 import { userSchema } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import BlogViewPage from "./blog-view-page";
 
@@ -17,49 +20,47 @@ interface PageProps extends DefaultProps {
 async function BlogViewFetch({ params, className }: PageProps) {
     const user = await currentUser();
 
-    const [roles, blog] = await Promise.all([
-        db.query.roles.findMany(),
-        db.query.blogs.findFirst({
+    const [roles, blog, likedBlog, blogComments] = await Promise.all([
+        getAllRolesFromCache(),
+        getBlogFromCache(params.blogId),
+        user &&
+            db.query.likes.findFirst({
+                where: and(
+                    eq(likes.userId, user.id),
+                    eq(likes.blogId, params.blogId)
+                ),
+            }),
+        db.query.comments.findMany({
+            where: eq(comments.blogId, params.blogId),
+            orderBy: [desc(comments.createdAt)],
             with: {
-                author: {
+                user: {
                     with: {
                         account: true,
                     },
                 },
-                comments: {
-                    orderBy: [desc(comments.createdAt)],
-                    with: {
-                        user: {
-                            with: {
-                                account: true,
-                            },
-                        },
-                        loves: true,
-                        blog: true,
-                    },
-                },
-                likes: true,
-                views: true,
+                loves: true,
+                blog: true,
             },
-            where: eq(blogs.id, params.blogId),
         }),
     ]);
 
     if (!blog) notFound();
 
-    const userData = user ? userSchema.parse(user) : null;
+    const author = await getUserFromCache(blog.authorId);
+    if (!author) notFound();
 
-    const blogIsLiked = !!(
-        user && blog.likes.find((like) => like.userId === user.id)
-    );
+    const parsedUser = user ? userSchema.parse(user) : null;
+    const blogIsLiked = likedBlog ? true : false;
 
     return (
         <BlogViewPage
             className={cn("", className)}
             blog={blog}
-            user={userData}
+            comments={blogComments}
+            author={author}
+            user={parsedUser}
             blogIsLiked={blogIsLiked}
-            params={params}
             roles={roles}
         />
     );
