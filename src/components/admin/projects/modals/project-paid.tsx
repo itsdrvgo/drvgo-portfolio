@@ -38,7 +38,7 @@ function ProjectPaidModal({
     const handleProjectPaid = () => {
         setIsPaying(true);
 
-        const toastId = toast.loading("Marking project as paid");
+        const toastId = toast.loading("Marking project as paid...");
 
         axios
             .patch<ResponseData>(`/api/projects/${data.id}/paid`)

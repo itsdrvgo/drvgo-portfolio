@@ -1,3 +1,4 @@
+import { env } from "@/env.mjs";
 import { currentUser } from "@clerk/nextjs";
 import axios, { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
@@ -172,12 +173,14 @@ export async function addNotification(
     try {
         let url: string;
 
+        const BASE_URL = env.BASE_URL;
+
         if (notification.userId)
             url = `/api/users/${notification.userId}/notifications`;
         else url = `/api/notifications`;
 
         const { data } = await axios.post<ResponseData>(
-            url,
+            `${BASE_URL}${url}`,
             JSON.stringify(notification)
         );
 

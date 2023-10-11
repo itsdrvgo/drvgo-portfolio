@@ -78,7 +78,7 @@ function ProjectUpdateModal({
     const handleProjectUpdate = () => {
         setIsUpdating(true);
 
-        const toastId = toast.loading("Updating project");
+        const toastId = toast.loading("Updating project...");
 
         const body: Pick<ProjectPatchData, "price" | "deadline"> = {
             price,

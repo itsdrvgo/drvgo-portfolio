@@ -1,7 +1,7 @@
 "use client";
 
 import { Project } from "@/src/lib/drizzle/schema";
-import { addNotification, parseJSONToObject } from "@/src/lib/utils";
+import { parseJSONToObject } from "@/src/lib/utils";
 import {
     ProjectCreateData,
     projectCreateSchema,
@@ -62,7 +62,7 @@ function ProjectForm({ project }: PageProps) {
     const handleUpdateProject = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Updating Project");
+        const toastId = toast.loading("Updating Project...");
 
         const body: ProjectPatchData = {
             name: form.getValues("name"),
@@ -99,7 +99,7 @@ function ProjectForm({ project }: PageProps) {
     const handleCreateProject = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Creating Project");
+        const toastId = toast.loading("Creating Project...");
 
         const body: ProjectCreateData = {
             name: form.getValues("name"),
@@ -124,27 +124,9 @@ function ProjectForm({ project }: PageProps) {
                 );
 
                 router.push(`/projects/${result.projectId}`);
-
-                addNotification({
-                    title: "New Project",
-                    content: `@${result.purchaserUsername} has requested a new project`,
-                    notifierId: result.purchaserId,
-                    userId: result.sellerId,
-                    props: {
-                        type: "newProject",
-                        projectId: result.projectId,
-                        projectTitle: result.projectTitle,
-                        purchaserId: result.purchaserId,
-                        purchaserUsername: result.purchaserUsername,
-                        purchaserImage: result.purchaserImage,
-                        sellerId: result.sellerId,
-                    },
-                    type: "newProject",
-                });
             })
             .catch((err) => {
                 console.error(err);
-
                 toast.error("Something went wrong, try again later!", {
                     id: toastId,
                 });

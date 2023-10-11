@@ -2,7 +2,7 @@
 
 import { BitFieldPermissions } from "@/src/config/const";
 import { NewComment } from "@/src/lib/drizzle/schema";
-import { addNotification, cn, hasPermission } from "@/src/lib/utils";
+import { cn, hasPermission } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
@@ -93,23 +93,6 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
 
                 setIsPinned(!isPinned);
                 toast.success(`Comment ${isPinned ? "unpinned" : "pinned"}`);
-
-                if (!isPinned) {
-                    addNotification({
-                        userId: comment.authorId,
-                        notifierId: user.id,
-                        title: "Comment Pinned",
-                        content: `Your comment on '${comment.blog.title}' has been pinned`,
-                        props: {
-                            type: "blogCommentPin",
-                            blogId: comment.blogId,
-                            commentId: comment.id,
-                            blogThumbnailUrl: comment.blog.thumbnailUrl!,
-                            commentContent: comment.content,
-                        },
-                        type: "blogCommentPin",
-                    });
-                }
             })
             .catch((err) => {
                 console.error(err);

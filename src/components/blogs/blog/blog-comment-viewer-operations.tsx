@@ -2,12 +2,13 @@
 
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { NewComment } from "@/src/lib/drizzle/schema";
-import { addNotification, cn, parseJSONToObject } from "@/src/lib/utils";
+import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
 import { CachedBlog } from "@/src/types/cache";
 import { Avatar, Button, Textarea } from "@nextui-org/react";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -34,6 +35,7 @@ function BlogCommentViewerOperation({
     const [isActive, setIsActive] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [isLoved, setIsLoved] = useState(commentLoved);
+    const [lovesLength, setLovesLength] = useState(comment.loves.length);
 
     useEffect(() => {
         if (reply.length) setIsActive(true);
@@ -62,27 +64,7 @@ function BlogCommentViewerOperation({
             )
             .then(({ data: resData }) => {
                 if (resData.code !== 200) return toast.error(resData.message);
-
                 toast.success("Reply added");
-
-                const replyId = parseJSONToObject<string>(resData.data);
-
-                addNotification({
-                    userId: comment.authorId,
-                    notifierId: user?.id!,
-                    title: "Comment replied",
-                    content: `@${user?.username} replied to your comment`,
-                    props: {
-                        type: "blogCommentReply",
-                        blogId: blog.id,
-                        commentId: comment.id,
-                        blogThumbnailUrl: blog.thumbnailUrl!,
-                        commentContent: comment.content,
-                        replyContent: reply,
-                        replyId,
-                    },
-                    type: "blogCommentReply",
-                });
             })
             .catch((err) => {
                 console.error(err);
@@ -96,52 +78,42 @@ function BlogCommentViewerOperation({
             });
     };
 
-    const handleCommentLove = () => {
-        if (!user) return toast.error("You're not logged in!");
-
-        setIsLoved(!isLoved);
-
-        axios
-            .post<ResponseData>(
+    const { mutate: handleCommentLove } = useMutation({
+        mutationFn: async () => {
+            const response = await axios.post<ResponseData>(
                 `/api/blogs/comments/${blog.id}/${comment.id}/${
-                    isLoved ? "unlove" : "love"
+                    !isLoved ? "unlove" : "love"
                 }`
-            )
-            .then(({ data: resData }) => {
-                if (resData.code !== 200) return toast.error(resData.message);
+            );
 
-                if (!isLoved) {
-                    addNotification({
-                        userId: comment.authorId,
-                        notifierId: user.id,
-                        title: "Comment loved",
-                        content: `@${user.username} loved your comment`,
-                        props: {
-                            type: "blogCommentLove",
-                            blogId: blog.id,
-                            commentId: comment.id,
-                            blogThumbnailUrl: blog.thumbnailUrl!,
-                            commentContent: comment.content,
-                        },
-                        type: "blogCommentLove",
-                    });
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!");
-            })
-            .finally(() => {
-                router.refresh();
-            });
-    };
+            return response.data;
+        },
+        onMutate: async () => {
+            const previousLoves = lovesLength;
+
+            setLovesLength((previousLoves || 0) + (isLoved ? -1 : 1));
+            setIsLoved(!isLoved);
+
+            return { previousLoves };
+        },
+        onError: (err, _, context) => {
+            console.error(err);
+            setLovesLength(context!.previousLoves);
+            setIsLoved(!isLoved);
+
+            return toast.error("Something went wrong, try again later!");
+        },
+        onSuccess: (res) => {
+            if (res.code !== 200) return toast.error(res.message);
+        },
+    });
 
     return (
         <>
             <div className="flex items-center gap-2 text-gray-400">
                 <button
                     className="flex cursor-pointer items-center gap-2"
-                    onClick={handleCommentLove}
+                    onClick={() => handleCommentLove()}
                 >
                     <Icons.heart
                         className={cn(

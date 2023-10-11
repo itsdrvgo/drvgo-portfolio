@@ -64,7 +64,7 @@ function RoleForm({
     const handleSubmit = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Updating role");
+        const toastId = toast.loading("Updating role...");
 
         const body: Partial<CachedRole> = {
             name: roleName,

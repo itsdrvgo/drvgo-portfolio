@@ -1,12 +1,16 @@
 import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import { comments } from "@/src/lib/drizzle/schema";
-import { getAuthorizedUser, handleError } from "@/src/lib/utils";
+import {
+    addNotification,
+    getAuthorizedUser,
+    handleError,
+} from "@/src/lib/utils";
 import {
     CommentContext,
     commentContextSchema,
 } from "@/src/lib/validation/route";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, context: CommentContext) {
@@ -22,8 +26,23 @@ export async function POST(req: NextRequest, context: CommentContext) {
                 message: "Unauthorized!",
             });
 
+        const comment = await db.query.comments.findFirst({
+            where: eq(comments.id, params.commentId),
+            with: {
+                blog: true,
+            },
+        });
+        if (!comment)
+            return NextResponse.json({
+                code: 404,
+                message: "Comment not found!",
+            });
+
         const existingPin = await db.query.comments.findFirst({
-            where: eq(comments.pinned, true),
+            where: and(
+                eq(comments.pinned, true),
+                eq(comments.blogId, params.blogId)
+            ),
         });
 
         if (existingPin) {
@@ -41,6 +60,21 @@ export async function POST(req: NextRequest, context: CommentContext) {
                 pinned: true,
             })
             .where(eq(comments.id, params.commentId));
+
+        addNotification({
+            userId: comment.authorId,
+            notifierId: user.id,
+            title: "Comment Pinned",
+            content: `Your comment on '${comment.blog.title}' has been pinned`,
+            props: {
+                type: "blogCommentPin",
+                blogId: comment.blogId,
+                commentId: comment.id,
+                blogThumbnailUrl: comment.blog.thumbnailUrl!,
+                commentContent: comment.content,
+            },
+            type: "blogCommentPin",
+        });
 
         return NextResponse.json({
             code: 200,

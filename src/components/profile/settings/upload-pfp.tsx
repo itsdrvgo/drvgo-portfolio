@@ -89,7 +89,7 @@ function UploadPFP({ user }: PageProps) {
     const handlePFPUpdate = () => {
         setLoading(true);
 
-        const toastId = toast.loading("Updating image");
+        const toastId = toast.loading("Updating image...");
 
         if (!imageFile)
             return toast.error("No image selected!", {

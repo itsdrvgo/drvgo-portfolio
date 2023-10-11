@@ -40,7 +40,7 @@ function ProjectCancelModal({
     const handleProjectCancel = () => {
         setIsCanceling(true);
 
-        const toastId = toast.loading("Canceling project");
+        const toastId = toast.loading("Canceling project...");
 
         axios
             .patch<ResponseData>(`/api/projects/${data.id}/cancel`)

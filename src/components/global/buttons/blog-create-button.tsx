@@ -17,7 +17,7 @@ function BlogCreateButton({ className, ...props }: ButtonProps) {
     const handleBlogCreate = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Creating blog");
+        const toastId = toast.loading("Creating blog...");
 
         const data: Pick<NewBlog, "title"> = {
             title: "Untitled Blog",

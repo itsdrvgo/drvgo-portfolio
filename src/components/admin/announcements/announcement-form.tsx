@@ -1,9 +1,12 @@
 "use client";
 
-import { addNotification, cn } from "@/src/lib/utils";
+import { cn } from "@/src/lib/utils";
+import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
+import { Notification } from "@/src/types/notification";
 import { Button, Image, Input, Textarea } from "@nextui-org/react";
+import axios from "axios";
 import NextImage from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -36,7 +39,7 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
     const handleSend = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Sending notification");
+        const toastId = toast.loading("Sending notification...");
 
         try {
             const parsedData = announcementSchema.parse({
@@ -45,7 +48,10 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
                 imageUrl,
             });
 
-            addNotification({
+            const notification: Omit<
+                Notification,
+                "id" | "read" | "createdAt"
+            > = {
                 title: "New Announcement!",
                 content: "You just received a new announcement from the admin!",
                 notifierId: user.id,
@@ -56,7 +62,13 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
                     imageUrl: parsedData.imageUrl,
                 },
                 type: "custom",
-            })
+            };
+
+            axios
+                .post<ResponseData>(
+                    "/api/notifications",
+                    JSON.stringify(notification)
+                )
                 .then(() => {
                     toast.success("Notification sent", {
                         id: toastId,

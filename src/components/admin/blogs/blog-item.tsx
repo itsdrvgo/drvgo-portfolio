@@ -2,7 +2,6 @@
 
 import { DEFAULT_BLOG_THUMBNAIL } from "@/src/config/const";
 import { formatDate } from "@/src/lib/utils";
-import { ClerkUser } from "@/src/lib/validation/user";
 import { CachedBlog } from "@/src/types/cache";
 import { Card, CardBody, CardFooter, Image, Link } from "@nextui-org/react";
 import NextImage from "next/image";
@@ -10,11 +9,10 @@ import NextLink from "next/link";
 import BlogOperations from "./blog-item-operations";
 
 interface PageProps {
-    user: ClerkUser;
     blog: CachedBlog;
 }
 
-function BlogItem({ blog, user }: PageProps) {
+function BlogItem({ blog }: PageProps) {
     return (
         <Card radius="sm" isPressable className="h-full">
             <CardBody className="p-3">
@@ -47,7 +45,7 @@ function BlogItem({ blog, user }: PageProps) {
                     </p>
                 </div>
 
-                <BlogOperations blog={blog} user={user} />
+                <BlogOperations blog={blog} />
             </CardFooter>
         </Card>
     );

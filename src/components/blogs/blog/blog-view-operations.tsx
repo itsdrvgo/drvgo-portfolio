@@ -3,13 +3,7 @@
 import { env } from "@/env.mjs";
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { NewComment } from "@/src/lib/drizzle/schema";
-import {
-    addNotification,
-    cn,
-    parseJSONToObject,
-    shortenNumber,
-    updateBlogViews,
-} from "@/src/lib/utils";
+import { cn, shortenNumber, updateBlogViews } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUser } from "@/src/lib/validation/user";
 import { ExtendedComment } from "@/src/types";
@@ -72,9 +66,6 @@ function BlogViewOperations({
                   )
                 : await axios.post<ResponseData>(`/api/blogs/likes/${blog.id}`);
 
-            if (response.data.code !== 200)
-                throw new Error(response.data.message);
-
             return response.data;
         },
         onMutate: async () => {
@@ -92,20 +83,8 @@ function BlogViewOperations({
 
             return toast.error("Something went wrong, try again later!");
         },
-        onSuccess: () => {
-            addNotification({
-                userId: blog.authorId,
-                content: `@${user!.username} liked your blog`,
-                title: "New like",
-                notifierId: user!.id,
-                props: {
-                    type: "blogLike",
-                    blogId: blog.id,
-                    blogThumbnailUrl: blog.thumbnailUrl!,
-                    blogTitle: blog.title,
-                },
-                type: "blogLike",
-            });
+        onSuccess: (res) => {
+            if (res.code !== 200) return toast.error(res.message);
         },
     });
 
@@ -137,23 +116,6 @@ function BlogViewOperations({
                 setComment("");
                 toast.success("Comment published", {
                     id: toastId,
-                });
-
-                const commentId = parseJSONToObject<string>(resData.data);
-
-                addNotification({
-                    userId: blog.authorId,
-                    content: `@${user.username} commented on your blog`,
-                    title: "New comment",
-                    notifierId: user.id,
-                    props: {
-                        type: "blogComment",
-                        blogId: blog.id,
-                        blogThumbnailUrl: blog.thumbnailUrl!,
-                        commentContent: comment,
-                        commentId,
-                    },
-                    type: "blogComment",
                 });
             })
             .catch((err) => {

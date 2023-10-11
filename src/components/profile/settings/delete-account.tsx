@@ -32,7 +32,7 @@ function DeleteAccount({ user, className }: PageProps) {
     const handleAccountDeletion = () => {
         setLoading(true);
 
-        const toastId = toast.loading("Deleting account");
+        const toastId = toast.loading("Deleting account...");
 
         axios
             .delete<ResponseData>(`/api/users/${user.id}`)

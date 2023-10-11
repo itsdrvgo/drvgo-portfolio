@@ -4,7 +4,7 @@ import {
     getBlogFromCache,
     updateBlogInCache,
 } from "@/src/lib/redis/methods/blog";
-import { handleError } from "@/src/lib/utils";
+import { addNotification, handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { currentUser } from "@clerk/nextjs";
 import { and, eq } from "drizzle-orm";
@@ -43,6 +43,20 @@ export async function POST(req: NextRequest, context: BlogContext) {
                 likes: blog.likes + 1,
             }),
         ]);
+
+        addNotification({
+            userId: blog.authorId,
+            content: `@${user.username} liked your blog`,
+            title: "New like",
+            notifierId: user.id,
+            props: {
+                type: "blogLike",
+                blogId: blog.id,
+                blogThumbnailUrl: blog.thumbnailUrl!,
+                blogTitle: blog.title,
+            },
+            type: "blogLike",
+        });
 
         return NextResponse.json({
             code: 200,

@@ -9,7 +9,7 @@ import {
     getBlogFromCache,
     updateBlogInCache,
 } from "@/src/lib/redis/methods/blog";
-import { handleError, hasPermission } from "@/src/lib/utils";
+import { addNotification, handleError, hasPermission } from "@/src/lib/utils";
 import {
     CommentContext,
     commentContextSchema,
@@ -108,9 +108,12 @@ export async function POST(req: NextRequest, context: CommentContext) {
         const { params } = commentContextSchema.parse(context);
         const { content } = replySchema.parse(body);
 
-        const [user, blog] = await Promise.all([
+        const [user, blog, comment] = await Promise.all([
             currentUser(),
             getBlogFromCache(params.blogId),
+            db.query.comments.findFirst({
+                where: eq(comments.id, params.commentId),
+            }),
         ]);
 
         if (!user)
@@ -123,6 +126,12 @@ export async function POST(req: NextRequest, context: CommentContext) {
             return NextResponse.json({
                 code: 404,
                 message: "Blog not found!",
+            });
+
+        if (!comment)
+            return NextResponse.json({
+                code: 404,
+                message: "Comment not found!",
             });
 
         const replyId = nanoid();
@@ -140,6 +149,23 @@ export async function POST(req: NextRequest, context: CommentContext) {
                 comments: blog.comments + 1,
             }),
         ]);
+
+        addNotification({
+            userId: comment.authorId,
+            notifierId: user.id,
+            title: "Comment replied",
+            content: `@${user.username} replied to your comment`,
+            props: {
+                type: "blogCommentReply",
+                blogId: blog.id,
+                commentId: comment.id,
+                blogThumbnailUrl: blog.thumbnailUrl!,
+                commentContent: comment.content,
+                replyContent: content,
+                replyId,
+            },
+            type: "blogCommentReply",
+        });
 
         return NextResponse.json({
             code: 200,

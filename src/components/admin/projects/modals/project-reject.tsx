@@ -41,7 +41,7 @@ function ProjectRejectModal({
     const handleProjectReject = () => {
         setIsRejecting(true);
 
-        const toastId = toast.loading("Rejecting project");
+        const toastId = toast.loading("Rejecting project...");
 
         const body: Pick<ProjectPatchData, "rejectedReason"> = {
             rejectedReason: rejectedReason || "No reason provided",

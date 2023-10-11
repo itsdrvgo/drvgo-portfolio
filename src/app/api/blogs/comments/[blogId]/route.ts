@@ -4,7 +4,7 @@ import {
     getBlogFromCache,
     updateBlogInCache,
 } from "@/src/lib/redis/methods/blog";
-import { handleError } from "@/src/lib/utils";
+import { addNotification, handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
@@ -76,6 +76,21 @@ export async function POST(req: NextRequest, context: BlogContext) {
                 comments: blog.comments + 1,
             }),
         ]);
+
+        addNotification({
+            userId: blog.authorId,
+            content: `@${user.username} commented on your blog`,
+            title: "New comment",
+            notifierId: user.id,
+            props: {
+                type: "blogComment",
+                blogId: blog.id,
+                blogThumbnailUrl: blog.thumbnailUrl!,
+                commentContent: content,
+                commentId,
+            },
+            type: "blogComment",
+        });
 
         return NextResponse.json({
             code: 200,

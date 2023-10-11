@@ -38,7 +38,7 @@ function ProjectCompleteModal({
     const handleProjectComplete = () => {
         setIsCompleting(true);
 
-        const toastId = toast.loading("Marking project as completed");
+        const toastId = toast.loading("Marking project as completed...");
 
         axios
             .patch<ResponseData>(`/api/projects/${data.id}/complete`)

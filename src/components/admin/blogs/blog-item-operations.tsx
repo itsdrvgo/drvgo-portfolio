@@ -1,10 +1,8 @@
 "use client";
 
 import { Icons } from "@/src/components/icons/icons";
-import { addNotification } from "@/src/lib/utils";
 import { BlogPatchData } from "@/src/lib/validation/blogs";
 import { ResponseData } from "@/src/lib/validation/response";
-import { ClerkUser } from "@/src/lib/validation/user";
 import { CachedBlog } from "@/src/types/cache";
 import {
     Button,
@@ -26,11 +24,10 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface PageProps {
-    user: ClerkUser;
     blog: CachedBlog;
 }
 
-function BlogOperations({ blog, user }: PageProps) {
+function BlogOperations({ blog }: PageProps) {
     const router = useRouter();
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -53,7 +50,7 @@ function BlogOperations({ blog, user }: PageProps) {
     const deleteBlog = () => {
         setIsDeleting(true);
 
-        const toastId = toast.loading("Deleting blog");
+        const toastId = toast.loading("Deleting blog...");
 
         axios
             .delete<ResponseData>(`/api/blogs/${blog.id}`)
@@ -85,7 +82,7 @@ function BlogOperations({ blog, user }: PageProps) {
         setIsPublishing(true);
 
         const toastId = toast.loading(
-            blog.published ? "Unpublishing blog" : "Publishing blog"
+            blog.published ? "Unpublishing blog..." : "Publishing blog..."
         );
 
         const body: BlogPatchData = {
@@ -110,19 +107,6 @@ function BlogOperations({ blog, user }: PageProps) {
                         id: toastId,
                     }
                 );
-
-                addNotification({
-                    notifierId: blog.authorId,
-                    title: "New Blog",
-                    content: `@${user.username} published a new blog`,
-                    props: {
-                        type: "newBlog",
-                        blogId: blog.id,
-                        blogThumbnailUrl: blog.thumbnailUrl!,
-                        blogTitle: blog.title,
-                    },
-                    type: "newBlog",
-                });
             })
             .catch((err) => {
                 console.error(err);

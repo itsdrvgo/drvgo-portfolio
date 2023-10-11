@@ -43,7 +43,7 @@ function ProjectStatus({ projectState }: PageProps) {
     const handleUpdateState = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Updating status");
+        const toastId = toast.loading("Updating status...");
 
         const body = {
             state: isActive,

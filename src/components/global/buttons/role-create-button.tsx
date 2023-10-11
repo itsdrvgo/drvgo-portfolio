@@ -16,7 +16,7 @@ function RoleCreateButton({ className, ...props }: ButtonProps) {
     const handleRoleCreate = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Creating role");
+        const toastId = toast.loading("Creating role...");
 
         axios
             .post<ResponseData>("/api/roles")
