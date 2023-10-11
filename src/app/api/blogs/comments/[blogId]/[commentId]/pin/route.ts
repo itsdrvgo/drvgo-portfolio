@@ -1,11 +1,8 @@
 import { BitFieldPermissions } from "@/src/config/const";
 import { db } from "@/src/lib/drizzle";
 import { comments } from "@/src/lib/drizzle/schema";
-import {
-    addNotification,
-    getAuthorizedUser,
-    handleError,
-} from "@/src/lib/utils";
+import { addNotification } from "@/src/lib/notifications";
+import { getAuthorizedUser, handleError } from "@/src/lib/utils";
 import {
     CommentContext,
     commentContextSchema,

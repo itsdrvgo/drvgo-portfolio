@@ -1,6 +1,7 @@
 import { db } from "@/src/lib/drizzle";
 import { commentLoves, comments } from "@/src/lib/drizzle/schema";
-import { addNotification, handleError } from "@/src/lib/utils";
+import { addNotification } from "@/src/lib/notifications";
+import { handleError } from "@/src/lib/utils";
 import {
     CommentContext,
     commentContextSchema,
@@ -13,13 +14,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest, context: CommentContext) {
     try {
         const { params } = commentContextSchema.parse(context);
-
-        // const user = await currentUser();
-        // if (!user)
-        //     return NextResponse.json({
-        //         code: 403,
-        //         message: "Unauthorized!",
-        //     });
 
         const [user, comment] = await Promise.all([
             currentUser(),

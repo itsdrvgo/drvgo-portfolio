@@ -1,6 +1,7 @@
 import { db } from "@/src/lib/drizzle";
 import { accounts, projects } from "@/src/lib/drizzle/schema";
-import { addNotification, handleError } from "@/src/lib/utils";
+import { addNotification } from "@/src/lib/notifications";
+import { handleError } from "@/src/lib/utils";
 import { projectCreateSchema } from "@/src/lib/validation/project";
 import { NewProjectProps } from "@/src/types/notification";
 import { currentUser } from "@clerk/nextjs";

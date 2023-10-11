@@ -1,10 +1,11 @@
 import { db } from "@/src/lib/drizzle";
 import { comments, insertCommentSchema } from "@/src/lib/drizzle/schema";
+import { addNotification } from "@/src/lib/notifications";
 import {
     getBlogFromCache,
     updateBlogInCache,
 } from "@/src/lib/redis/methods/blog";
-import { addNotification, handleError } from "@/src/lib/utils";
+import { handleError } from "@/src/lib/utils";
 import { BlogContext, blogContextSchema } from "@/src/lib/validation/route";
 import { currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";

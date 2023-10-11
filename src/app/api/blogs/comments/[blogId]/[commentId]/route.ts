@@ -5,11 +5,12 @@ import {
     comments,
     insertCommentSchema,
 } from "@/src/lib/drizzle/schema";
+import { addNotification } from "@/src/lib/notifications";
 import {
     getBlogFromCache,
     updateBlogInCache,
 } from "@/src/lib/redis/methods/blog";
-import { addNotification, handleError, hasPermission } from "@/src/lib/utils";
+import { handleError, hasPermission } from "@/src/lib/utils";
 import {
     CommentContext,
     commentContextSchema,

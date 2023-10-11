@@ -1,4 +1,3 @@
-import { env } from "@/env.mjs";
 import { currentUser } from "@clerk/nextjs";
 import axios, { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
@@ -8,7 +7,6 @@ import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
 import { BitFieldPermissions } from "../config/const";
 import { CachedRole } from "../types/cache";
-import { Notification } from "../types/notification";
 import { ResponseData } from "./validation/response";
 
 export function cn(...inputs: ClassValue[]) {
@@ -165,37 +163,6 @@ export function updateBlogViews(blogId: string) {
             console.error(err);
             console.error("Couldn't update view");
         });
-}
-
-export async function addNotification(
-    notification: Omit<Notification, "id" | "read" | "createdAt">
-) {
-    try {
-        let url: string;
-
-        const BASE_URL = env.BASE_URL;
-
-        if (notification.userId)
-            url = `/api/users/${notification.userId}/notifications`;
-        else url = `/api/notifications`;
-
-        const { data } = await axios.post<ResponseData>(
-            `${BASE_URL}${url}`,
-            JSON.stringify(notification)
-        );
-
-        if (data.code !== 201) {
-            console.error(data.message);
-            return false;
-        }
-
-        console.info("Added notification");
-        return true;
-    } catch (err) {
-        console.error(err);
-        console.error("Couldn't add notification");
-        return false;
-    }
 }
 
 export async function markNotificationAsRead({
