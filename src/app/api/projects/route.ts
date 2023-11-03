@@ -1,5 +1,6 @@
 import { db } from "@/src/lib/drizzle";
 import { accounts, projects } from "@/src/lib/drizzle/schema";
+import { addNotification } from "@/src/lib/notifications";
 import { handleError } from "@/src/lib/utils";
 import { projectCreateSchema } from "@/src/lib/validation/project";
 import { NewProjectProps } from "@/src/types/notification";
@@ -76,6 +77,23 @@ export async function POST(req: NextRequest) {
             purchaserImage: user.imageUrl,
             sellerId: owner.id,
         };
+
+        addNotification({
+            title: "New Project",
+            content: `@${result.purchaserUsername} has requested a new project`,
+            notifierId: result.purchaserId,
+            userId: result.sellerId,
+            props: {
+                type: "newProject",
+                projectId: result.projectId,
+                projectTitle: result.projectTitle,
+                purchaserId: result.purchaserId,
+                purchaserUsername: result.purchaserUsername,
+                purchaserImage: result.purchaserImage,
+                sellerId: result.sellerId,
+            },
+            type: "newProject",
+        });
 
         return NextResponse.json({
             code: 201,

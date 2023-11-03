@@ -147,7 +147,6 @@ function UsersTable({ users, user, roles }: PageProps) {
                     return (
                         <User
                             avatarProps={{
-                                radius: "sm",
                                 src: target.image ?? DEFAULT_USER_IMAGE.src,
                             }}
                             name={cellValue as string}
@@ -277,7 +276,6 @@ function UsersTable({ users, user, roles }: PageProps) {
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                        radius="sm"
                     />
 
                     <div className="flex items-center gap-2">
@@ -290,7 +288,6 @@ function UsersTable({ users, user, roles }: PageProps) {
                                         <Icons.chevronDown className="h-4 w-4" />
                                     }
                                     variant="flat"
-                                    radius="sm"
                                 >
                                     Columns
                                 </Button>
@@ -324,9 +321,9 @@ function UsersTable({ users, user, roles }: PageProps) {
                     </div>
                     <div className="w-full max-w-[44%] md:max-w-[20%]">
                         <Select
+                            radius="lg"
                             label="Rows per page"
                             onChange={onRowsPerPageChange}
-                            radius="sm"
                             size="sm"
                         >
                             <SelectItem value={5} key={5}>
@@ -397,7 +394,6 @@ function UsersTable({ users, user, roles }: PageProps) {
 
     return (
         <Table
-            radius="sm"
             aria-label="Users Table"
             isHeaderSticky
             bottomContent={bottomContent}

@@ -1,13 +1,11 @@
-import drvgositepreview from "@/public/drvgo-website-preview.png";
-import ProfileImage from "@/public/no-image.png";
-import randomPattern from "@/public/pattern-wood.jpg";
-import BlogThumbnail from "@/public/pattern.jpg";
-import stripes from "@/public/stripes.svg";
-import xarospreview from "@/public/xar-os.png";
+import drvgositepreview from "@/public/drvgo-website-preview.webp";
+import ProfileImage from "@/public/no-image.webp";
+import randomPattern from "@/public/pattern-wood.webp";
+import BlogThumbnail from "@/public/pattern.webp";
+import xarospreview from "@/public/xar-os.webp";
 
 export const DEFAULT_USER_IMAGE = ProfileImage;
 export const DEFAULT_BLOG_THUMBNAIL = BlogThumbnail;
-export const STRIPES = stripes;
 export const DRVGO_SITE_IMAGE = drvgositepreview;
 export const XAR_OS_IMAGE = xarospreview;
 export const DEFAULT_PATTERN = randomPattern;

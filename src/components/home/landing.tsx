@@ -1,177 +1,133 @@
+"use client";
+
+import { siteConfig } from "@/src/config/site";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
-import { motion, useScroll, useTransform, Variants } from "framer-motion";
-import React, { useRef } from "react";
+import { Image } from "@nextui-org/react";
+import { motion, Variants } from "framer-motion";
+import NextImage from "next/image";
+import DRVGOBitMojiHi from "public/drvgo_bitmoji_hi.webp";
+import { Smiley } from "../global/svgs/Smiley";
+import { Sparkle } from "../global/svgs/Sparkle";
+import {
+    SurpriseSparkleLeft,
+    SurpriseSparkleRight,
+} from "../global/svgs/SurpriseSpark";
 
 function Landing({ className }: DefaultProps) {
-    const ref = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start start", "end start"],
-    });
-
-    const backgroundFullY = useTransform(
-        scrollYProgress,
-        [0, 1],
-        ["0%", "100%"]
-    );
-    const backgroundHalfY = useTransform(
-        scrollYProgress,
-        [0, 1],
-        ["0%", "50%"]
-    );
-    const backgroundQuarterY = useTransform(
-        scrollYProgress,
-        [0, 1],
-        ["0%", "25%"]
-    );
-
-    const textDiv = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-    const introText = useTransform(scrollYProgress, [0, 1], ["0%", "150%"]);
-    const introTextTitle = useTransform(
-        scrollYProgress,
-        [0, 1],
-        ["0%", "150%"]
-    );
-    const introTextUnderline = useTransform(
-        scrollYProgress,
-        [0, 1],
-        ["0%", "2000%"]
-    );
-    const descText = useTransform(scrollYProgress, [0, 1], ["0%", "400%"]);
-
-    const container: Variants = {
-        hide: {
-            opacity: 0,
+    const slideUp: Variants = {
+        hidden: {
+            y: 100,
         },
         show: {
-            opacity: 1,
-            transition: {
-                delay: 1.5,
-                staggerChildren: 0.1,
-                duration: 0.5,
-            },
-        },
-    };
-
-    const item: Variants = {
-        hide: {
-            opacity: 0,
-            y: 200,
-        },
-        show: {
-            opacity: 1,
             y: 0,
             transition: {
-                delay: 1.5,
-                duration: 0.5,
+                staggerChildren: 0.2,
                 ease: "easeInOut",
             },
         },
     };
 
+    const fadeIn: Variants = {
+        hidden: {
+            opacity: 0,
+        },
+        show: {
+            opacity: 1,
+        },
+    };
+
     return (
-        <div
-            className={cn("flex items-center justify-center", className)}
-            ref={ref}
+        <section
+            className={cn(
+                "relative flex h-full w-full cursor-default items-center justify-center",
+                className
+            )}
         >
             <motion.div
-                className="z-20 w-full bg-white/10 p-10 text-center backdrop-blur-sm"
-                style={{
-                    y: textDiv,
-                }}
-                variants={container}
-                initial="hide"
+                className="z-20 flex h-full w-full flex-col items-center justify-center gap-6 text-center md:gap-10"
+                variants={slideUp}
+                initial="hidden"
                 animate="show"
             >
-                <motion.p
-                    className="text-2xl font-bold text-white"
-                    style={{
-                        y: introText,
-                    }}
-                    variants={item}
+                <motion.div
+                    className="pointer-events-none select-none"
+                    variants={fadeIn}
                 >
-                    Welcome to
-                </motion.p>
-
-                <motion.h1
-                    className={cn(
-                        "text-7xl font-bold drop-shadow-xl md:text-9xl",
-                        "bg-gradient-to-r from-violet-200 to-pink-200 bg-clip-text text-transparent"
-                    )}
-                    style={{
-                        y: introTextTitle,
-                    }}
-                    variants={item}
-                >
-                    DRVGO
-                </motion.h1>
+                    <Image
+                        as={NextImage}
+                        src={DRVGOBitMojiHi.src}
+                        alt={siteConfig.name}
+                        width={100}
+                        height={100}
+                        radius="full"
+                        priority
+                    />
+                </motion.div>
 
                 <motion.div
-                    className="mt-5 flex items-center justify-center gap-1"
-                    style={{
-                        y: introTextUnderline,
-                    }}
-                    variants={item}
+                    className="flex items-end gap-0 md:gap-4"
+                    variants={fadeIn}
                 >
-                    <motion.div className="ml-1 h-2 w-2 rounded-md bg-white drop-shadow-xl" />
-                    <motion.div className="ml-1 h-2 w-8 rounded-md bg-accent drop-shadow-xl" />
-                    <motion.div className="ml-1 h-2 w-20 rounded-md bg-blue-600 drop-shadow-xl" />
-                    <motion.div className="ml-1 h-2 w-8 rounded-md bg-accent drop-shadow-xl" />
-                    <motion.div className="ml-1 h-2 w-2 rounded-md bg-white drop-shadow-xl" />
+                    <SurpriseSparkleLeft height={80} width={80} />
+
+                    <p className="bg-gradient-to-r from-yellow-400 via-blue-700 to-red-500 bg-clip-text text-5xl font-bold text-transparent md:text-7xl">
+                        Full Stack Developer
+                    </p>
+
+                    <SurpriseSparkleRight height={80} width={80} />
+                </motion.div>
+
+                <motion.div
+                    className="flex items-center gap-3"
+                    variants={fadeIn}
+                >
+                    <p className="text-lg md:text-xl">Ayo, I&apos;m DRVGO</p>
+                    <Smiley />
                 </motion.div>
 
                 <motion.p
-                    className="mt-10 text-base text-gray-300 md:mt-20 md:text-xl"
-                    style={{
-                        y: descText,
-                    }}
-                    variants={item}
+                    className="max-w-xs text-base text-gray-300 md:max-w-xl md:text-lg"
+                    variants={fadeIn}
                 >
-                    I design and code simple but beautiful things & I love what
-                    I do!
+                    A dedicated full-stack developer, I&apos;m passionate about
+                    crafting seamless web solutions. With expertise in Next.js,
+                    React, and more, I thrive on transforming complex ideas into
+                    user-friendly applications. My commitment to staying at the
+                    forefront of emerging technologies drives me to deliver
+                    excellence in every project I undertake. Whether it&apos;s a
+                    personal website or a robust web application, I take pride
+                    in exceeding expectations and ensuring top-notch quality in
+                    every endeavor.
                 </motion.p>
             </motion.div>
 
             <motion.div
-                className="absolute inset-0 z-0"
-                style={{
-                    backgroundImage: `url(/mountain-full.png)`,
-                    backgroundPosition: "bottom",
-                    backgroundSize: "cover",
-                    y: backgroundFullY,
-                    opacity: 0.7,
+                className="glow-bg absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                initial={{ opacity: 0 }}
+                animate={{
+                    opacity: 1,
+                    transition: {
+                        duration: 0.5,
+                    },
                 }}
             />
+
             <motion.div
-                className="absolute inset-0 z-10"
-                style={{
-                    backgroundImage: `url(/bottom-half.png)`,
-                    backgroundPosition: "bottom",
-                    backgroundSize: "cover",
-                    y: backgroundHalfY,
-                    opacity: 0.8,
+                initial={{ opacity: 0 }}
+                animate={{
+                    opacity: 1,
+                    transition: {
+                        duration: 0.5,
+                    },
                 }}
-            />
-            <motion.div
-                className="absolute inset-0 z-30"
-                style={{
-                    backgroundImage: `url(/bottom-quarter.png)`,
-                    backgroundPosition: "bottom",
-                    backgroundSize: "cover",
-                    y: backgroundQuarterY,
-                    opacity: 0.9,
-                }}
-            />
-            <div
-                className="absolute inset-0 z-40"
-                style={{
-                    backgroundImage: `url(/mountain-bottom.png)`,
-                    backgroundPosition: "bottom",
-                    backgroundSize: "cover",
-                }}
-            />
-        </div>
+            >
+                <Sparkle className="spark-spin-1 absolute left-[10%] top-[10%]" />
+                <Sparkle className="spark-spin-2 absolute left-[20%] top-[40%]" />
+                <Sparkle className="spark-spin-3 absolute right-[20%] top-[80%]" />
+                <Sparkle className="spark-spin-2 absolute right-[10%] top-[20%]" />
+            </motion.div>
+        </section>
     );
 }
 

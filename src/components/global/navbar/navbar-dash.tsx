@@ -22,7 +22,11 @@ async function NavbarDash({ ...props }: NavbarProps) {
         },
     });
 
-    const userData = userSchema.parse(user);
+    const userData = userSchema
+        .omit({
+            emailAddresses: true,
+        })
+        .parse(user);
 
     return <NavDashItems user={userData} notifications={data} {...props} />;
 }

@@ -267,13 +267,11 @@ function ProjectsTable({ data, ownerId }: PageProps) {
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                        radius="sm"
                     />
 
                     <div className="flex items-center gap-3">
                         <Button
                             startContent={<Icons.add className="h-4 w-4" />}
-                            radius="sm"
                             variant="faded"
                             onPress={() => router.push("/projects/create")}
                         >
@@ -287,7 +285,6 @@ function ProjectsTable({ data, ownerId }: PageProps) {
                                         <Icons.chevronDown className="h-4 w-4" />
                                     }
                                     variant="flat"
-                                    radius="sm"
                                 >
                                     Columns
                                 </Button>
@@ -321,9 +318,9 @@ function ProjectsTable({ data, ownerId }: PageProps) {
                     </div>
                     <div className="w-full max-w-[44%] md:max-w-[20%]">
                         <Select
+                            radius="lg"
                             label="Rows per page"
                             onChange={onRowsPerPageChange}
-                            radius="sm"
                             size="sm"
                         >
                             <SelectItem value={5} key={5}>
@@ -371,16 +368,16 @@ function ProjectsTable({ data, ownerId }: PageProps) {
                 <div className="hidden w-[30%] justify-end gap-2 sm:flex">
                     <Button
                         isDisabled={pages === 1}
-                        size="sm"
                         variant="flat"
+                        size="sm"
                         onPress={onPreviousPage}
                     >
                         Previous
                     </Button>
                     <Button
                         isDisabled={pages === 1}
-                        size="sm"
                         variant="flat"
+                        size="sm"
                         onPress={onNextPage}
                     >
                         Next
@@ -393,7 +390,6 @@ function ProjectsTable({ data, ownerId }: PageProps) {
 
     return (
         <Table
-            radius="sm"
             aria-label="Example table with custom cells, pagination and sorting"
             isHeaderSticky
             bottomContent={bottomContent}

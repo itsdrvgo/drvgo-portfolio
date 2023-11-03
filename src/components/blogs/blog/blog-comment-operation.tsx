@@ -2,9 +2,9 @@
 
 import { BitFieldPermissions } from "@/src/config/const";
 import { NewComment } from "@/src/lib/drizzle/schema";
-import { addNotification, cn, hasPermission } from "@/src/lib/utils";
+import { cn, hasPermission } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
 import { CachedBlog } from "@/src/types/cache";
 import {
@@ -29,7 +29,7 @@ import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 
 interface PageProps extends DefaultProps {
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
     blog: CachedBlog;
     comment: ExtendedComment;
 }
@@ -93,23 +93,6 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
 
                 setIsPinned(!isPinned);
                 toast.success(`Comment ${isPinned ? "unpinned" : "pinned"}`);
-
-                if (!isPinned) {
-                    addNotification({
-                        userId: comment.authorId,
-                        notifierId: user.id,
-                        title: "Comment Pinned",
-                        content: `Your comment on '${comment.blog.title}' has been pinned`,
-                        props: {
-                            type: "blogCommentPin",
-                            blogId: comment.blogId,
-                            commentId: comment.id,
-                            blogThumbnailUrl: comment.blog.thumbnailUrl!,
-                            commentContent: comment.content,
-                        },
-                        type: "blogCommentPin",
-                    });
-                }
             })
             .catch((err) => {
                 console.error(err);
@@ -151,7 +134,6 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
     return (
         <>
             <Dropdown
-                radius="sm"
                 classNames={{
                     base:
                         hasPermission(
@@ -164,9 +146,13 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
                 }}
             >
                 <DropdownTrigger>
-                    <Button isIconOnly variant="flat" radius="sm" size="sm">
-                        <Icons.moreVert className="h-4 w-4" />
-                    </Button>
+                    <Button
+                        isIconOnly
+                        variant="light"
+                        radius="full"
+                        size="sm"
+                        startContent={<Icons.moreVert className="h-4 w-4" />}
+                    />
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Dropdown menu for comment operations">
                     <DropdownSection
@@ -260,7 +246,6 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
                                 <div className="pt-3">
                                     <Textarea
                                         id="edit_comment"
-                                        radius="sm"
                                         aria-label="Edit Comment"
                                         variant="underlined"
                                         minRows={1}

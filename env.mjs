@@ -20,6 +20,9 @@ export const env = createEnv({
         PUSHER_APP_SECRET: z.string(),
         PUSHER_APP_CLUSTER: z.string(),
 
+        FRIENDS: z.string(),
+        LOCATION: z.string(),
+
         NODE_ENV: z.enum(["development", "test", "production"]),
     },
     client: {
@@ -55,6 +58,9 @@ export const env = createEnv({
         PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
         PUSHER_APP_SECRET: process.env.PUSHER_APP_SECRET,
         PUSHER_APP_CLUSTER: process.env.PUSHER_APP_CLUSTER,
+
+        FRIENDS: process.env.FRIENDS,
+        LOCATION: process.env.LOCATION,
 
         NODE_ENV: process.env.NODE_ENV,
     },

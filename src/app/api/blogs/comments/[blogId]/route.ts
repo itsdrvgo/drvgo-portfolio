@@ -1,5 +1,6 @@
 import { db } from "@/src/lib/drizzle";
 import { comments, insertCommentSchema } from "@/src/lib/drizzle/schema";
+import { addNotification } from "@/src/lib/notifications";
 import {
     getBlogFromCache,
     updateBlogInCache,
@@ -76,6 +77,21 @@ export async function POST(req: NextRequest, context: BlogContext) {
                 comments: blog.comments + 1,
             }),
         ]);
+
+        addNotification({
+            userId: blog.authorId,
+            content: `@${user.username} commented on your blog`,
+            title: "New comment",
+            notifierId: user.id,
+            props: {
+                type: "blogComment",
+                blogId: blog.id,
+                blogThumbnailUrl: blog.thumbnailUrl!,
+                commentContent: content,
+                commentId,
+            },
+            type: "blogComment",
+        });
 
         return NextResponse.json({
             code: 200,

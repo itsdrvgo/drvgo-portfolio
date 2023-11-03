@@ -3,7 +3,7 @@
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import {
     Avatar,
@@ -25,7 +25,7 @@ import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 
 interface PageProps extends DefaultProps {
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
 }
 
 function UploadPFP({ user }: PageProps) {
@@ -89,7 +89,7 @@ function UploadPFP({ user }: PageProps) {
     const handlePFPUpdate = () => {
         setLoading(true);
 
-        const toastId = toast.loading("Updating image");
+        const toastId = toast.loading("Updating image...");
 
         if (!imageFile)
             return toast.error("No image selected!", {
@@ -149,7 +149,7 @@ function UploadPFP({ user }: PageProps) {
                     <div
                         {...getRootProps()}
                         className={cn(
-                            "flex w-full cursor-pointer flex-col items-center justify-center gap-7 rounded-md border border-dashed border-gray-500 bg-background p-12 text-center",
+                            "flex w-full cursor-pointer flex-col items-center justify-center gap-5 rounded-lg border border-dashed border-gray-500 bg-background p-12 text-center md:gap-7",
                             isDragActive && "bg-sky-900"
                         )}
                     >
@@ -161,18 +161,20 @@ function UploadPFP({ user }: PageProps) {
                             isBordered
                             color="primary"
                             classNames={{
-                                base: "h-36 w-36",
+                                base: "h-24 w-24",
                             }}
                         />
 
                         <input {...getInputProps()} />
 
-                        <p>Drag & drop your image here</p>
+                        <p className="text-sm md:text-base">
+                            Drag & drop your image here
+                        </p>
 
                         <Button
-                            type="button"
-                            className="border font-semibold"
                             radius="sm"
+                            type="button"
+                            className="border bg-default-100 font-semibold"
                             startContent={<Icons.upload className="h-4 w-4" />}
                             onPress={open}
                         >
@@ -186,7 +188,6 @@ function UploadPFP({ user }: PageProps) {
                 isOpen={isCropOpen}
                 onOpenChange={onCropOpenChange}
                 onClose={onCropClose}
-                radius="sm"
                 isDismissable={false}
                 isKeyboardDismissDisabled={true}
                 hideCloseButton={true}
@@ -249,11 +250,11 @@ function UploadPFP({ user }: PageProps) {
 
             <div className="flex w-full items-center justify-center md:justify-start">
                 <Button
+                    radius="sm"
                     type="submit"
                     isDisabled={isDisabled || isLoading}
                     className="bg-secondary-900 font-semibold"
                     onClick={handlePFPUpdate}
-                    radius="sm"
                     color="success"
                     isLoading={isLoading}
                 >

@@ -50,7 +50,13 @@ async function BlogViewFetch({ params, className }: PageProps) {
     const author = await getUserFromCache(blog.authorId);
     if (!author) notFound();
 
-    const parsedUser = user ? userSchema.parse(user) : null;
+    const parsedUser = user
+        ? userSchema
+              .omit({
+                  emailAddresses: true,
+              })
+              .parse(user)
+        : null;
     const blogIsLiked = likedBlog ? true : false;
 
     return (

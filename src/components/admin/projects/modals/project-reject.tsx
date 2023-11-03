@@ -41,7 +41,7 @@ function ProjectRejectModal({
     const handleProjectReject = () => {
         setIsRejecting(true);
 
-        const toastId = toast.loading("Rejecting project");
+        const toastId = toast.loading("Rejecting project...");
 
         const body: Pick<ProjectPatchData, "rejectedReason"> = {
             rejectedReason: rejectedReason || "No reason provided",
@@ -86,7 +86,6 @@ function ProjectRejectModal({
                             <p>Are you sure you want to reject this project?</p>
 
                             <Textarea
-                                radius="sm"
                                 variant="bordered"
                                 minRows={3}
                                 aria-label="Reason for rejection"

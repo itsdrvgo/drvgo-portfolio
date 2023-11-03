@@ -1,6 +1,6 @@
 import { BitFieldPermissions, DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { cn, convertMstoTimeElapsed, hasPermission } from "@/src/lib/utils";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
 import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import { Avatar, Button, Chip } from "@nextui-org/react";
@@ -12,7 +12,7 @@ import BlogCommentViewerOperation from "./blog-comment-viewer-operations";
 
 interface PageProps extends DefaultProps {
     blog: CachedBlog;
-    user: ClerkUser | null;
+    user: ClerkUserWithoutEmail | null;
     comment: ExtendedComment;
     comments: ExtendedComment[];
     isReply: boolean;
@@ -77,7 +77,7 @@ function RecursiveComment({
                 "space-y-5 transition-all ease-in-out",
                 className,
                 isHighlighted &&
-                    "rounded-md border border-accent bg-gray-800 p-2"
+                    "rounded-lg border border-accent bg-gray-800 p-2"
             )}
             id={id}
         >

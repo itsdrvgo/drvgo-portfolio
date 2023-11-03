@@ -43,7 +43,7 @@ function ProjectStatus({ projectState }: PageProps) {
     const handleUpdateState = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Updating status");
+        const toastId = toast.loading("Updating status...");
 
         const body = {
             state: isActive,
@@ -85,7 +85,7 @@ function ProjectStatus({ projectState }: PageProps) {
 
     return (
         <>
-            <Card radius="sm">
+            <Card>
                 <CardBody className="flex flex-row items-center justify-between">
                     <div className="space-y-1">
                         <p className="text-xl font-semibold">Status</p>

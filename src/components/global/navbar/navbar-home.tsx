@@ -24,24 +24,27 @@ import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import LoginButton from "../buttons/login-button";
-import DRVGOLogo from "../DRVGOLogo";
+import DRVGOLogo from "../svgs/DRVGOLogo";
 
 function NavbarHome({ ...props }: NavbarProps) {
     const router = useRouter();
     const pathname = usePathname();
-
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
         <Navbar
-            maxWidth="2xl"
             onMenuOpenChange={setIsMenuOpen}
             shouldHideOnScroll
             classNames={{
                 item: "font-semibold uppercase",
                 base:
-                    "top-0 z-50 bg-transparent " +
-                    (pathname === "/" ? "fixed" : "sticky"),
+                    pathname === "/"
+                        ? "z-50 bg-transparent fixed backdrop-blur-sm md:backdrop-blur-0 backdrop-saturate-100 pt-0 md:pt-5 pointer-events-none px-0 md:px-5"
+                        : "z-50 bg-transparent border-b border-border md:bg-default-50",
+                wrapper:
+                    pathname === "/"
+                        ? "bg-transparent md:bg-default-100 rounded-none md:rounded-full pointer-events-auto"
+                        : "max-w-4xl 2xl:max-w-6xl lg:px-0 px-4",
             }}
             {...props}
         >
@@ -77,7 +80,12 @@ function NavbarHome({ ...props }: NavbarProps) {
                           </NavbarItem>
                       ))
                     : null}
-                <Dropdown>
+                <Dropdown
+                    classNames={{
+                        base: "bg-default-100",
+                        trigger: "min-w-unit-1",
+                    }}
+                >
                     <NavbarItem>
                         <DropdownTrigger>
                             <Button

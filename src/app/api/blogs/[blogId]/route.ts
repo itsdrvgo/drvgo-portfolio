@@ -1,5 +1,6 @@
 import { db } from "@/src/lib/drizzle";
 import { blogs } from "@/src/lib/drizzle/schema";
+import { addNotification } from "@/src/lib/notifications";
 import {
     deleteBlogFromCache,
     getAllBlogsFromCache,
@@ -64,7 +65,10 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
 
         const { params } = blogContextSchema.parse(context);
 
-        if (!(await verifyCurrentUserHasAccessToBlog(params.blogId)))
+        const { state, user } = await verifyCurrentUserHasAccessToBlog(
+            params.blogId
+        );
+        if (!state || !user)
             return NextResponse.json({
                 code: 403,
                 message: "Unauthorized!",
@@ -110,20 +114,14 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                             })
                             .where(eq(blogs.id, params.blogId)),
                         updateBlogInCache({
-                            id: blog.id,
+                            ...blog,
                             title: body.title!,
                             content: body.content ?? null,
                             thumbnailUrl: body.thumbnailUrl ?? null,
                             description: body.description ?? "No description",
-                            createdAt: blog.createdAt,
                             updatedAt: isBlogPublishedAndHasChanges
                                 ? new Date().toISOString()
                                 : blog.updatedAt ?? null,
-                            authorId: blog.authorId,
-                            published: blog.published,
-                            likes: blog.likes,
-                            views: blog.views,
-                            comments: blog.comments,
                         }),
                     ]);
 
@@ -144,29 +142,28 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
                         db
                             .update(blogs)
                             .set({
-                                title: publishBody.title,
-                                content: publishBody.content,
-                                thumbnailUrl: publishBody.thumbnailUrl,
                                 published: publishBody.published,
-                                description: publishBody.description,
                             })
                             .where(eq(blogs.id, params.blogId)),
                         updateBlogInCache({
-                            id: params.blogId,
-                            title: publishBody.title,
-                            content: publishBody.content ?? null,
-                            thumbnailUrl: publishBody.thumbnailUrl ?? null,
-                            description:
-                                publishBody.description ?? "No description",
-                            createdAt: new Date().toISOString(),
-                            updatedAt: new Date().toISOString(),
-                            authorId: blog.authorId,
+                            ...blog,
                             published: publishBody.published,
-                            likes: blog.likes,
-                            views: blog.views,
-                            comments: blog.comments,
                         }),
                     ]);
+
+                    if (publishBody.published)
+                        addNotification({
+                            notifierId: blog.authorId,
+                            title: "New Blog",
+                            content: `@${user.username} published a new blog`,
+                            props: {
+                                type: "newBlog",
+                                blogId: blog.id,
+                                blogThumbnailUrl: blog.thumbnailUrl!,
+                                blogTitle: blog.title,
+                            },
+                            type: "newBlog",
+                        });
 
                     return NextResponse.json({
                         code: 200,
@@ -184,12 +181,19 @@ export async function PATCH(req: NextRequest, context: BlogContext) {
 
 async function verifyCurrentUserHasAccessToBlog(blogId: string) {
     const user = await currentUser();
-    if (!user) return false;
+    if (!user)
+        return {
+            state: false,
+            user: null,
+        };
 
     const data = await getAllBlogsFromCache();
     const filteredBlogs = data.filter(
         (blog) => blog.authorId === user.id && blog.id === blogId
     );
 
-    return filteredBlogs.length > 0;
+    return {
+        state: filteredBlogs.length > 0,
+        user,
+    };
 }

@@ -1,4 +1,4 @@
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
 import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import RecursiveComment from "./blog-recursive-comments";
@@ -6,7 +6,7 @@ import RecursiveComment from "./blog-recursive-comments";
 interface PageProps extends DefaultProps {
     blog: CachedBlog;
     comments: ExtendedComment[];
-    user: ClerkUser | null;
+    user: ClerkUserWithoutEmail | null;
     roles: CachedRole[];
     author: CachedUser;
 }

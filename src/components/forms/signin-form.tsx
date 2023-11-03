@@ -139,7 +139,7 @@ function SignInForm() {
                                     }}
                                     radius="sm"
                                     placeholder="ryomensukuna@jjk.jp"
-                                    disabled={isAuthLoading}
+                                    isDisabled={isAuthLoading}
                                     {...field}
                                 />
                             </FormControl>

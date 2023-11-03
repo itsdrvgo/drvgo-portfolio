@@ -37,7 +37,6 @@ function ProjectRead({ className, project, isOwner, ...props }: PageProps) {
 
                 <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
                     <Card
-                        radius="sm"
                         fullWidth
                         classNames={{
                             body: "text-center items-center",
@@ -49,7 +48,6 @@ function ProjectRead({ className, project, isOwner, ...props }: PageProps) {
                         </CardBody>
                     </Card>
                     <Card
-                        radius="sm"
                         fullWidth
                         classNames={{
                             body: "text-center items-center",
@@ -76,7 +74,6 @@ function ProjectRead({ className, project, isOwner, ...props }: PageProps) {
                         </CardBody>
                     </Card>
                     <Card
-                        radius="sm"
                         fullWidth
                         classNames={{
                             body: "text-center items-center",
@@ -95,7 +92,6 @@ function ProjectRead({ className, project, isOwner, ...props }: PageProps) {
 
                 {project.rejectedReason ? (
                     <Card
-                        radius="sm"
                         fullWidth
                         classNames={{
                             body: "text-center items-center",
@@ -114,7 +110,7 @@ function ProjectRead({ className, project, isOwner, ...props }: PageProps) {
 
                 <Divider />
 
-                <Card radius="sm">
+                <Card>
                     <CardBody>{project.description}</CardBody>
                 </Card>
 

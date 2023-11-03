@@ -1,10 +1,10 @@
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { ExtendedNotification } from "@/src/types";
 import NotificationBar from "../notification/notification-bar";
 import DropdownProfile from "./dropdown-profile";
 
 interface PageProps {
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
     notifications: ExtendedNotification[];
 }
 

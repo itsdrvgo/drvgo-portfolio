@@ -38,7 +38,7 @@ function ProjectAcceptModal({
     const handleProjectAccept = () => {
         setIsAccepting(true);
 
-        const toastId = toast.loading("Accepting project");
+        const toastId = toast.loading("Accepting project...");
 
         axios
             .patch<ResponseData>(`/api/projects/${data.id}/accept`)

@@ -25,6 +25,12 @@ export default withUt({
                 background: "var(--background)",
                 code: "var(--code)",
                 accent: "var(--accent)",
+                chat: {
+                    DEFAULT: "var(--chat)",
+                    input: "var(--chat-input)",
+                    border: "var(--chat-border)",
+                    hover: "var(--chat-hover)",
+                },
             },
         },
     },

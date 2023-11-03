@@ -1,13 +1,11 @@
 "use client";
 
 import { env } from "@/env.mjs";
-import { cn } from "@/src/lib/utils";
-import { DefaultProps } from "@/src/types";
 import { useClerk } from "@clerk/nextjs";
+import { Spinner, SpinnerProps } from "@nextui-org/react";
 import { useEffect } from "react";
-import { Icons } from "../icons/icons";
 
-function SSOCallback({ className, ...props }: DefaultProps) {
+function SSOCallback({ ...props }: SpinnerProps) {
     const { handleRedirectCallback } = useClerk();
 
     useEffect(() => {
@@ -19,16 +17,12 @@ function SSOCallback({ className, ...props }: DefaultProps) {
     }, [handleRedirectCallback]);
 
     return (
-        <div
-            className={cn(
-                "flex min-h-screen flex-col items-center justify-center gap-4 p-5",
-                className
-            )}
+        <Spinner
+            size="lg"
+            color="white"
+            label="Validating, please wait..."
             {...props}
-        >
-            <Icons.spinner className="h-10 w-10 animate-spin" />
-            <p>Validating, please wait...</p>
-        </div>
+        />
     );
 }
 

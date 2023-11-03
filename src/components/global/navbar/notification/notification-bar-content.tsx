@@ -99,7 +99,7 @@ function NotificationBarContent({
         <div
             key={notification.id}
             className={cn(
-                "grid cursor-pointer grid-flow-col items-center gap-4 rounded-md p-2 transition-all ease-in-out hover:bg-gray-800",
+                "grid cursor-pointer grid-flow-col items-center gap-4 rounded-lg p-2 transition-all ease-in-out hover:bg-gray-800",
                 className
             )}
             onClick={handleNotificationClick}

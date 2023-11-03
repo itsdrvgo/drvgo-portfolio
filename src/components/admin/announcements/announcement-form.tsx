@@ -1,9 +1,12 @@
 "use client";
 
-import { addNotification, cn } from "@/src/lib/utils";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { cn } from "@/src/lib/utils";
+import { ResponseData } from "@/src/lib/validation/response";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
+import { Notification } from "@/src/types/notification";
 import { Button, Image, Input, Textarea } from "@nextui-org/react";
+import axios from "axios";
 import NextImage from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -21,7 +24,7 @@ const announcementSchema = z.object({
 });
 
 interface PageProps extends DefaultProps {
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
 }
 
 function AnnouncementForm({ className, user, ...props }: PageProps) {
@@ -36,7 +39,7 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
     const handleSend = () => {
         setIsLoading(true);
 
-        const toastId = toast.loading("Sending notification");
+        const toastId = toast.loading("Sending notification...");
 
         try {
             const parsedData = announcementSchema.parse({
@@ -45,7 +48,10 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
                 imageUrl,
             });
 
-            addNotification({
+            const notification: Omit<
+                Notification,
+                "id" | "read" | "createdAt"
+            > = {
                 title: "New Announcement!",
                 content: "You just received a new announcement from the admin!",
                 notifierId: user.id,
@@ -56,7 +62,13 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
                     imageUrl: parsedData.imageUrl,
                 },
                 type: "custom",
-            })
+            };
+
+            axios
+                .post<ResponseData>(
+                    "/api/notifications",
+                    JSON.stringify(notification)
+                )
                 .then(() => {
                     toast.success("Notification sent", {
                         id: toastId,
@@ -126,12 +138,11 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
                     inputWrapper: "bg-background border border-gray-700",
                     label: "font-semibold text-lg",
                 }}
-                radius="sm"
                 label="Title"
                 labelPlacement="outside"
                 placeholder="Title of the notification"
                 maxLength={200}
-                disabled={isLoading}
+                isDisabled={isLoading}
                 onValueChange={setTitle}
                 value={title}
             />
@@ -147,6 +158,7 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
                     isDisabled={isLoading}
                     uploadProgress={uploadProgress}
                     onDrop={(acceptedFiles) => startUpload(acceptedFiles)}
+                    className="rounded-xl border-gray-700"
                     content={
                         imageUrl ? (
                             <Image
@@ -168,7 +180,6 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
 
             <Textarea
                 placeholder="Content of the notification"
-                radius="sm"
                 classNames={{
                     inputWrapper: "border border-gray-700 bg-background",
                     label: "font-semibold text-lg",
@@ -185,10 +196,10 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
 
             <div className="sticky bottom-10 z-50 flex items-center justify-center">
                 <Button
-                    className=" font-semibold"
+                    className="font-semibold"
+                    radius="full"
                     color="primary"
                     onPress={handleSend}
-                    radius="sm"
                     isLoading={isLoading}
                     isDisabled={isLoading || (!title && !content && !imageUrl)}
                 >

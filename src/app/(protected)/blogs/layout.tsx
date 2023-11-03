@@ -4,7 +4,10 @@ import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Blogs",
+    title: {
+        default: "Blogs",
+        template: "Blogs | %s",
+    },
     description: "Read all the latest blogs",
 };
 

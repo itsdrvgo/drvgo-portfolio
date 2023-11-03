@@ -11,7 +11,7 @@ function ProjectViewSkeleton({ className, ...props }: DefaultProps) {
             {...props}
         >
             <div className="flex w-full flex-col gap-4">
-                <Skeleton className="h-14 w-full rounded-md" />
+                <Skeleton className="h-14 w-full rounded-lg" />
 
                 <Divider />
 
@@ -20,28 +20,28 @@ function ProjectViewSkeleton({ className, ...props }: DefaultProps) {
 
                     <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
-                            <Skeleton className="h-5 w-28 rounded-md" />
+                            <Skeleton className="h-5 w-28 rounded-lg" />
                             <Skeleton className="h-6 w-12 rounded-full" />
                         </div>
 
-                        <Skeleton className="h-5 w-52 rounded-md" />
+                        <Skeleton className="h-5 w-52 rounded-lg" />
                     </div>
                 </div>
 
-                <div className="grid grid-flow-row gap-4 md:grid-flow-col">
+                <div className="grid grid-flow-row gap-4 lg:grid-flow-col">
                     {Array.from({ length: 3 }).map((_, i) => (
-                        <Skeleton className="h-20 w-full rounded-md" key={i} />
+                        <Skeleton className="h-20 w-full rounded-lg" key={i} />
                     ))}
                 </div>
 
                 <Divider />
 
-                <Skeleton className="h-16 w-full rounded-md" />
-                <Skeleton className="h-96 w-full rounded-md" />
+                <Skeleton className="h-16 w-full rounded-lg" />
+                <Skeleton className="h-96 w-full rounded-lg" />
             </div>
 
             <div className="flex items-center justify-center">
-                <Skeleton className="h-10 w-40 rounded-md" />
+                <Skeleton className="h-10 w-40 rounded-lg" />
             </div>
         </div>
     );

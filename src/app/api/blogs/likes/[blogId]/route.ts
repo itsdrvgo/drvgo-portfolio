@@ -1,5 +1,6 @@
 import { db } from "@/src/lib/drizzle";
 import { likes } from "@/src/lib/drizzle/schema";
+import { addNotification } from "@/src/lib/notifications";
 import {
     getBlogFromCache,
     updateBlogInCache,
@@ -41,6 +42,19 @@ export async function POST(req: NextRequest, context: BlogContext) {
             updateBlogInCache({
                 ...blog,
                 likes: blog.likes + 1,
+            }),
+            addNotification({
+                userId: blog.authorId,
+                content: `@${user.username} liked your blog`,
+                title: "New like",
+                notifierId: user.id,
+                props: {
+                    type: "blogLike",
+                    blogId: blog.id,
+                    blogThumbnailUrl: blog.thumbnailUrl!,
+                    blogTitle: blog.title,
+                },
+                type: "blogLike",
             }),
         ]);
 

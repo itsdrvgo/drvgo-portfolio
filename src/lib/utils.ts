@@ -7,7 +7,6 @@ import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
 import { BitFieldPermissions } from "../config/const";
 import { CachedRole } from "../types/cache";
-import { Notification } from "../types/notification";
 import { ResponseData } from "./validation/response";
 
 export function cn(...inputs: ClassValue[]) {
@@ -166,35 +165,6 @@ export function updateBlogViews(blogId: string) {
         });
 }
 
-export async function addNotification(
-    notification: Omit<Notification, "id" | "read" | "createdAt">
-) {
-    try {
-        let url: string;
-
-        if (notification.userId)
-            url = `/api/users/${notification.userId}/notifications`;
-        else url = `/api/notifications`;
-
-        const { data } = await axios.post<ResponseData>(
-            url,
-            JSON.stringify(notification)
-        );
-
-        if (data.code !== 201) {
-            console.error(data.message);
-            return false;
-        }
-
-        console.info("Added notification");
-        return true;
-    } catch (err) {
-        console.error(err);
-        console.error("Couldn't add notification");
-        return false;
-    }
-}
-
 export async function markNotificationAsRead({
     userId,
     notificationId,
@@ -247,6 +217,11 @@ export function toPusherKey(key: string) {
 export function chatHrefConstructor(id1: string, id2: string) {
     const sortedIds = [id1, id2].sort();
     return `${sortedIds[0]}--${sortedIds[1]}`;
+}
+
+export function chatParamsGenerator(id1: string, id2: string) {
+    const sortedIds = [id1, id2].sort();
+    return `uId=${sortedIds[0]}&pId=${sortedIds[1]}`;
 }
 
 export async function updateMessage(

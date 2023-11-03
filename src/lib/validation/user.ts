@@ -21,3 +21,4 @@ export const userSchema = z.object({
 });
 
 export type ClerkUser = z.infer<typeof userSchema>;
+export type ClerkUserWithoutEmail = Omit<ClerkUser, "emailAddresses">;

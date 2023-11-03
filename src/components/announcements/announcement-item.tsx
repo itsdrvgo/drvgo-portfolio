@@ -28,7 +28,6 @@ function AnnouncementItem({ announcement }: PageProps) {
                         height={2000}
                         className="h-full w-full border"
                         as={NextImage}
-                        radius="sm"
                     />
 
                     <Divider />

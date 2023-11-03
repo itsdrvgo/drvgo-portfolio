@@ -5,7 +5,7 @@ import { Suspense } from "react";
 function Page() {
     return (
         <section className="flex p-5 py-10">
-            <div className="container max-w-[75rem] p-0">
+            <div className="container max-w-4xl space-y-8 p-0 2xl:max-w-6xl">
                 <Suspense fallback={<AnnouncementSkeleton />}>
                     <AnnouncementPage />
                 </Suspense>

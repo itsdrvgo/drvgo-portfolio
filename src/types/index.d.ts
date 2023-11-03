@@ -5,9 +5,11 @@ import { Icons } from "../components/icons/icons";
 import {
     Account,
     Blog,
+    Chat,
     Comment,
     CommentLove,
     Like,
+    Message,
     Project,
     User,
     View,
@@ -46,6 +48,7 @@ export interface Column {
     sortable?: boolean;
 }
 
+export type SvixHeaders = IncomingHttpHeaders & WebhookRequiredHeaders;
 export type DefaultProps = HTMLAttributes<HTMLElement>;
 
 export interface RootLayoutProps {
@@ -77,9 +80,32 @@ export interface ExtendedProject extends Project {
     purchaser: User;
 }
 
+export interface ChatWithMessages extends Chat {
+    messages: Message[];
+}
+
+export interface ExtendedChat extends Chat {
+    messages: Message[];
+    sender: User;
+    receiver: User;
+}
+
+export interface ChatWithExtendedMessages extends Chat {
+    messages: Message[];
+}
+
+export interface MessageWithSenderAndReceiver extends Message {
+    sender: User;
+    receiver: User;
+}
+
+export interface ExtendedMessage extends Message {
+    sender: User;
+    receiver: User;
+    chat: Chat;
+}
+
 export type FAQ = {
     question: string;
     answer: string;
 };
-
-export type SvixHeaders = IncomingHttpHeaders & WebhookRequiredHeaders;

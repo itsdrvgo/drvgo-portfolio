@@ -24,7 +24,7 @@ DRVGO Portfolio is a personal portfolio website built with Next.js, TypeScript, 
 
 <a href="http://itsdrvgo.me/" target="_blank">
     <p align="center">
-        <img src="https://github.com/itsdrvgo/drvgo-portfolio/blob/master/public/og.jpg?raw=true" alt="ev0" />
+        <img src="https://github.com/itsdrvgo/drvgo-portfolio/blob/master/public/og.webp?raw=true" alt="ev0" />
     </p>
 </a>
 

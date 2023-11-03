@@ -1,9 +1,11 @@
 function Page() {
     return (
         <section className="flex p-5 py-10">
-            <div className="container max-w-[75rem] space-y-8 p-0">
+            <div className="container max-w-4xl space-y-8 p-0 2xl:max-w-6xl">
                 <div>
-                    <p className="text-5xl font-bold">Terms of Services</p>
+                    <p className="text-4xl font-bold md:text-5xl">
+                        Terms of Services
+                    </p>
                 </div>
 
                 <div className="prose prose-base max-w-full text-white prose-headings:text-white prose-p:text-gray-200 prose-strong:text-white prose-li:text-gray-300">

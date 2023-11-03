@@ -8,7 +8,11 @@ async function AnnouncementPage({ ...props }: DefaultProps) {
     const user = await currentUser();
     if (!user) redirect("/auth");
 
-    const parsedUser = userSchema.parse(user);
+    const parsedUser = userSchema
+        .omit({
+            emailAddresses: true,
+        })
+        .parse(user);
 
     return <AnnouncementForm user={parsedUser} {...props} />;
 }

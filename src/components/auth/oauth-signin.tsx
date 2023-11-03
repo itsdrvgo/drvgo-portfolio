@@ -78,7 +78,6 @@ function OAuth({ className, ...props }: DefaultProps) {
                     <Button
                         fullWidth
                         aria-label={`Sign in with ${provider.name}`}
-                        radius="sm"
                         variant="light"
                         key={provider.provider}
                         className="border border-gray-700"

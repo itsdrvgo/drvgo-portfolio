@@ -3,12 +3,12 @@ import "./env.mjs";
 /** @type {import("next").NextConfig} */
 const nextConfig = {
     images: {
-        domains: [
-            "cdn.discordapp.com",
-            "i.scdn.co",
-            "uploadthing.com",
-            "images.clerk.dev",
-            "utfs.io",
+        remotePatterns: [
+            { hostname: "**.discordapp.com" },
+            { hostname: "**.scdn.co" },
+            { hostname: "uploadthing.com" },
+            { hostname: "**.clerk.dev" },
+            { hostname: "utfs.io" },
         ],
     },
     reactStrictMode: true,

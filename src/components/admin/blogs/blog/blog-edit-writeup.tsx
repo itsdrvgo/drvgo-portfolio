@@ -110,7 +110,6 @@ function BlogWriteUp({ blog, roles, author }: PageProps) {
                 const upload = res[0];
 
                 const { url } = upload;
-                console.log(url);
                 setThumbnailURL(url);
                 return toast.success("Image uploaded");
             },
@@ -141,7 +140,7 @@ function BlogWriteUp({ blog, roles, author }: PageProps) {
                     {thumbnailURL ? <BlogImage src={thumbnailURL} /> : null}
 
                     {blogContent.split("\n").length! > 1 ? (
-                        <div className="flex cursor-default flex-col gap-4 rounded-md border border-gray-400 bg-stone-950 p-5">
+                        <div className="flex cursor-default flex-col gap-4 rounded-lg border border-gray-400 bg-stone-950 p-5">
                             <p className="text-lg font-bold underline underline-offset-4 md:text-xl">
                                 Table of Contents
                             </p>
@@ -301,12 +300,10 @@ function BlogWriteUp({ blog, roles, author }: PageProps) {
                 </Accordion>
             )}
 
-            <ButtonGroup
-                className="sticky bottom-10 z-50 backdrop-blur-sm"
-                variant="flat"
-            >
+            <ButtonGroup className="sticky bottom-10 z-50" variant="flat">
                 <Button
                     onPress={handleSave}
+                    className="bg-default-100 first:rounded-l-full"
                     startContent={
                         !isSaving && <Icons.document className="h-4 w-4" />
                     }
@@ -317,6 +314,7 @@ function BlogWriteUp({ blog, roles, author }: PageProps) {
 
                 <Button
                     onPress={() => setPreviewEnable(!previewEnabled)}
+                    className="bg-default-100 last:rounded-r-full"
                     startContent={
                         previewEnabled ? (
                             <Icons.hide className="h-4 w-4" />

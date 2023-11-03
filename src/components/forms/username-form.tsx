@@ -2,7 +2,7 @@
 
 import { UserUpdateData, userUpdateSchema } from "@/src/lib/validation/auth";
 import { ResponseData } from "@/src/lib/validation/response";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input } from "@nextui-org/react";
@@ -20,7 +20,7 @@ import {
 } from "../ui/form";
 
 interface PageProps extends DefaultProps {
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
 }
 
 function UsernameForm({ user }: PageProps) {
@@ -72,15 +72,15 @@ function UsernameForm({ user }: PageProps) {
                         <FormItem>
                             <FormControl>
                                 <Input
+                                    radius="sm"
                                     className="w-full lowercase md:w-2/5"
                                     classNames={{
                                         inputWrapper:
-                                            "border border-gray-700 bg-background",
+                                            "border border-gray-700 bg-default-50",
                                     }}
                                     startContent={"@"}
-                                    radius="sm"
                                     placeholder="duckymomo60"
-                                    disabled={isLoading}
+                                    isDisabled={isLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -90,13 +90,13 @@ function UsernameForm({ user }: PageProps) {
                 />
                 <div className="flex w-full items-center justify-center md:justify-start">
                     <Button
+                        radius="sm"
                         type="submit"
                         isDisabled={
                             isLoading ||
                             form.getValues().username === user.username
                         }
                         className="flex items-center gap-2 bg-secondary-900 font-semibold"
-                        radius="sm"
                         color="success"
                         isLoading={isLoading}
                     >
