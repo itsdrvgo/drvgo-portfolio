@@ -230,7 +230,6 @@ function ProjectsTable({ className, data }: PageProps) {
                     return (
                         <User
                             avatarProps={{
-                                radius: "sm",
                                 src:
                                     project.purchaser.image ??
                                     DEFAULT_USER_IMAGE.src,
@@ -325,7 +324,6 @@ function ProjectsTable({ className, data }: PageProps) {
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
-                        radius="sm"
                     />
 
                     <div className="flex items-center gap-3">
@@ -336,7 +334,6 @@ function ProjectsTable({ className, data }: PageProps) {
                                         <Icons.chevronDown className="h-4 w-4" />
                                     }
                                     variant="flat"
-                                    radius="sm"
                                 >
                                     Status
                                 </Button>
@@ -367,7 +364,6 @@ function ProjectsTable({ className, data }: PageProps) {
                                         <Icons.chevronDown className="h-4 w-4" />
                                     }
                                     variant="flat"
-                                    radius="sm"
                                 >
                                     Columns
                                 </Button>
@@ -401,9 +397,9 @@ function ProjectsTable({ className, data }: PageProps) {
                     </div>
                     <div className="w-full max-w-[44%] md:max-w-[20%]">
                         <Select
+                            radius="lg"
                             label="Rows per page"
                             onChange={onRowsPerPageChange}
-                            radius="sm"
                             size="sm"
                         >
                             <SelectItem value={5} key={5}>
@@ -475,7 +471,6 @@ function ProjectsTable({ className, data }: PageProps) {
 
     return (
         <Table
-            radius="sm"
             aria-label="Projects Table"
             isHeaderSticky
             bottomContent={bottomContent}

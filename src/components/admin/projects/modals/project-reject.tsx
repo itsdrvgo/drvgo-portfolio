@@ -86,7 +86,6 @@ function ProjectRejectModal({
                             <p>Are you sure you want to reject this project?</p>
 
                             <Textarea
-                                radius="sm"
                                 variant="bordered"
                                 minRows={3}
                                 aria-label="Reason for rejection"

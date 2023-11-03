@@ -18,7 +18,6 @@ function BlogItem({ blog, ref }: PageProps) {
     return (
         <div key={blog.id} ref={ref}>
             <Card
-                radius="sm"
                 isPressable
                 className="h-full"
                 onPress={() => router.push(`/blogs/${blog.id}`)}

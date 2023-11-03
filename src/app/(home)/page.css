@@ -1,0 +1,99 @@
+.rotate-left {
+    animation: rotate-left 5s infinite linear;
+}
+
+.rotate-right {
+    animation: rotate-right 5s infinite linear;
+}
+
+.spark-spin-1 {
+    animation: spark-spin-1 20s infinite linear;
+}
+
+.spark-spin-2 {
+    animation: spark-spin-2 25s infinite linear;
+}
+
+.spark-spin-3 {
+    animation: spark-spin-3 30s infinite linear;
+}
+
+.glow-bg {
+    animation: glow-bg 5s infinite linear;
+}
+
+@keyframes rotate-left {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotate-right {
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes spark-spin-1 {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(25deg) scale(0.8);
+    }
+
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes spark-spin-2 {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(-25deg) scale(0.9);
+    }
+
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes spark-spin-3 {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(40deg) scale(0.7);
+    }
+
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes glow-bg {
+    0% {
+        box-shadow: 0 0 200px 200px rgba(131, 131, 230, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 200px 200px rgba(131, 131, 230, 0.35);
+    }
+
+    100% {
+        box-shadow: 0 0 200px 200px rgba(131, 131, 230, 0.2);
+    }
+}

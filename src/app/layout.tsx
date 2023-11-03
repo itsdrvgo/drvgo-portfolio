@@ -28,7 +28,6 @@ export const metadata: Metadata = {
         },
     ],
     creator: siteConfig.name,
-    themeColor: [{ color: "black" }],
     openGraph: {
         type: "website",
         locale: "en_US",

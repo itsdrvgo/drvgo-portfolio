@@ -5,7 +5,7 @@ import NextLink from "next/link";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 import { Icons } from "../../icons/icons";
 import ProjectStartButton from "../buttons/project-start-button";
-import DRVGOLogo from "../DRVGOLogo";
+import DRVGOLogo from "../svgs/DRVGOLogo";
 
 interface Social {
     name: string;
@@ -48,17 +48,17 @@ function FooterHome({
     return (
         <footer
             className={cn(
-                "relative flex w-full flex-col items-center justify-center space-y-20 border-t border-border bg-background py-10",
+                "relative flex w-full cursor-default flex-col items-center justify-center space-y-20 border-t border-border bg-default-50 py-10",
                 className
             )}
             {...props}
         >
-            <div className="absolute top-0 mx-5 grid max-w-[75rem] -translate-y-1/2 grid-cols-1 items-center gap-5 rounded-md bg-accent px-8 py-5 text-center md:grid-cols-3 md:gap-10 md:px-16 md:py-10">
+            <div className="absolute top-0 mx-5 grid max-w-4xl -translate-y-1/2 grid-cols-1 items-center gap-5 rounded-lg bg-accent px-8 py-5 text-center md:grid-cols-3  md:px-12 md:py-10">
                 <p className="text-2xl font-bold text-background md:text-4xl">
                     Start a Project
                 </p>
                 <p className="text-sm font-semibold text-background">
-                    Interested in working together? We can have a chat, and make
+                    Interested in working together? We can have a chat, & make
                     something unthinkable!
                 </p>
                 <div className="flex items-center justify-center md:justify-end">
@@ -82,8 +82,8 @@ function FooterHome({
                                 radius="full"
                                 key={social.name}
                                 href={social.href}
-                                color="secondary"
-                                className="bg-secondary-200"
+                                color="primary"
+                                className="bg-primary-200"
                                 target="_blank"
                             >
                                 <Icon className="h-4 w-4" />
@@ -118,11 +118,11 @@ function FooterHome({
                     Copyright © 2023{" "}
                     <Link
                         as={NextLink}
-                        href={siteConfig.url}
+                        href={"/"}
                         underline="always"
                         className="text-sm font-semibold text-accent"
                     >
-                        DRVGO
+                        {siteConfig.name}
                     </Link>
                     , All rights reserved.
                 </p>

@@ -1,20 +1,35 @@
 import { BitFieldPermissions } from "@/src/config/const";
-import { fetchRedis } from "@/src/lib/redis";
+import { db } from "@/src/lib/drizzle";
+import { messages, notifications } from "@/src/lib/drizzle/schema";
 import { getAllUsersFromCache } from "@/src/lib/redis/methods/user";
-import {
-    chatHrefConstructor,
-    hasPermission,
-    parseJSONToObject,
-} from "@/src/lib/utils";
+import { hasPermission } from "@/src/lib/utils";
+import { userSchema } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
-import { Message } from "@/src/types/chat";
 import { currentUser } from "@clerk/nextjs";
+import { and, desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import SideBar from "./sidebar";
 
 async function SideBarFetch({ children }: DefaultProps) {
     const user = await currentUser();
     if (!user) redirect("/auth");
+
+    const parsedUser = userSchema
+        .omit({
+            emailAddresses: true,
+        })
+        .parse(user);
+
+    const userNotifications = await db.query.notifications.findMany({
+        where: and(
+            eq(notifications.userId, user.id),
+            eq(notifications.read, false)
+        ),
+        orderBy: [desc(notifications.createdAt)],
+        with: {
+            notifier: true,
+        },
+    });
 
     const isOwner = hasPermission(
         user.privateMetadata.permissions,
@@ -29,38 +44,30 @@ async function SideBarFetch({ children }: DefaultProps) {
               hasPermission(u.permissions, BitFieldPermissions.Administrator)
           );
 
-    const chattersWithLastMessageAndUnseen = await Promise.all(
+    const lastMessages = await Promise.all(
         chatters.map(async (chatter) => {
-            const result: string[] = await fetchRedis(
-                "zrange",
-                `chat:${chatHrefConstructor(user.id, chatter.id)}:messages`,
-                -1,
-                -1
-            );
+            const lastMessage = await db.query.messages.findFirst({
+                where: and(
+                    eq(messages.senderId, user.id),
+                    eq(messages.receiverId, chatter.id)
+                ),
+                orderBy: [desc(messages.sentAt)],
+            });
 
-            const lastMessage = result.length > 0 ? result[0] : null;
-            const parsedMessage = lastMessage
-                ? parseJSONToObject<Message>(lastMessage)
-                : null;
-
-            return {
-                ...chatter,
-                lastMessage: parsedMessage,
-            };
+            return lastMessage;
         })
     );
 
-    const sortedChatters = chattersWithLastMessageAndUnseen.sort((a, b) => {
-        if (!a.lastMessage) return 1;
-        if (!b.lastMessage) return -1;
-
-        return (
-            new Date(b.lastMessage.timestamp).getTime() -
-            new Date(a.lastMessage.timestamp).getTime()
-        );
-    });
-
-    return <SideBar chatters={sortedChatters}>{children}</SideBar>;
+    return (
+        <SideBar
+            chatters={chatters}
+            notifications={userNotifications}
+            user={parsedUser}
+            lastMessages={lastMessages}
+        >
+            {children}
+        </SideBar>
+    );
 }
 
 export default SideBarFetch;

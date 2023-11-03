@@ -4,7 +4,6 @@ import { DefaultProps } from "@/src/types";
 import BlogCreateButton from "../../global/buttons/blog-create-button";
 import { EmptyPlaceholder } from "../../ui/empty-placeholder";
 import BlogItem from "./blog-item";
-import BlogFAQ from "./blogs-faq";
 
 async function BlogsPage({ className }: DefaultProps) {
     const blogs = await getAllBlogsFromCache();
@@ -34,8 +33,6 @@ async function BlogsPage({ className }: DefaultProps) {
                     endContent={<BlogCreateButton />}
                 />
             )}
-
-            <BlogFAQ />
         </>
     );
 }

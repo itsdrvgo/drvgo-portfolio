@@ -219,6 +219,11 @@ export function chatHrefConstructor(id1: string, id2: string) {
     return `${sortedIds[0]}--${sortedIds[1]}`;
 }
 
+export function chatParamsGenerator(id1: string, id2: string) {
+    const sortedIds = [id1, id2].sort();
+    return `uId=${sortedIds[0]}&pId=${sortedIds[1]}`;
+}
+
 export async function updateMessage(
     messageId: string,
     chatId: string,

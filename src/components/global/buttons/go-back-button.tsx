@@ -10,8 +10,7 @@ function GoBackButton({ className, ...props }: ButtonProps) {
     return (
         <Button
             aria-label="Go back to the previous page"
-            variant="faded"
-            className={cn("border border-gray-700", className)}
+            className={cn("border bg-default-100", className)}
             radius="sm"
             onPress={() => router.back()}
             {...props}

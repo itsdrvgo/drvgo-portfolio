@@ -7,7 +7,7 @@ import {
     hasPermission,
     reorder,
 } from "@/src/lib/utils";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { CachedRole } from "@/src/types/cache";
 import {
@@ -23,7 +23,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 
-function isOwnerRoleActionable(user: ClerkUser, role: CachedRole) {
+function isOwnerRoleActionable(user: ClerkUserWithoutEmail, role: CachedRole) {
     const hasOwnerPerms = hasPermission(
         user.privateMetadata.permissions,
         BitFieldPermissions.Administrator
@@ -33,7 +33,7 @@ function isOwnerRoleActionable(user: ClerkUser, role: CachedRole) {
     return false;
 }
 
-function isActionable(user: ClerkUser, roles: CachedRole[], role: CachedRole) {
+function isActionable(user: ClerkUserWithoutEmail, roles: CachedRole[], role: CachedRole) {
     const hasUserPermission = hasPermission(
         user.privateMetadata.permissions,
         BitFieldPermissions.ManagePages | BitFieldPermissions.ManageRoles
@@ -50,7 +50,7 @@ function isActionable(user: ClerkUser, roles: CachedRole[], role: CachedRole) {
 
 interface PageProps extends DefaultProps {
     initialRoles: CachedRole[];
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
 }
 
 function RolesManagePage({ className, initialRoles, user }: PageProps) {
@@ -161,7 +161,7 @@ function RolesManagePage({ className, initialRoles, user }: PageProps) {
                                         {(draggableProvided) => (
                                             <li
                                                 className={cn(
-                                                    "flex items-center justify-between gap-4 rounded-md bg-default-50 p-4",
+                                                    "flex items-center justify-between gap-4 rounded-xl bg-default-50 p-4",
                                                     isDragDisabled &&
                                                         !isOwnerRoleActionable(
                                                             user,
@@ -207,9 +207,10 @@ function RolesManagePage({ className, initialRoles, user }: PageProps) {
                                                                 `/admin/roles/${role.id}`
                                                             )
                                                         }
-                                                    >
-                                                        <Icons.pencil className="h-4 w-4" />
-                                                    </Button>
+                                                        startContent={
+                                                            <Icons.pencil className="h-4 w-4" />
+                                                        }
+                                                    />
 
                                                     <Button
                                                         isIconOnly
@@ -254,19 +255,22 @@ function RolesManagePage({ className, initialRoles, user }: PageProps) {
 
             <div className="sticky bottom-10 flex items-center justify-center">
                 <ButtonGroup
-                    className="z-50 backdrop-blur-sm"
+                    className="sticky bottom-10 z-50"
                     variant="flat"
                     isDisabled={
                         isLoading ||
                         JSON.stringify(initialRoles) === JSON.stringify(roles)
                     }
                 >
-                    <Button radius="sm" onPress={() => setRoles(initialRoles)}>
+                    <Button
+                        onPress={() => setRoles(initialRoles)}
+                        className="bg-default-100 first:rounded-l-full"
+                    >
                         Cancel
                     </Button>
 
                     <Button
-                        radius="sm"
+                        className="bg-default-100 last:rounded-r-full"
                         isLoading={isLoading}
                         onPress={handleSave}
                     >

@@ -14,7 +14,7 @@ interface PageProps {
 
 function BlogItem({ blog }: PageProps) {
     return (
-        <Card radius="sm" isPressable className="h-full">
+        <Card isPressable className="h-full">
             <CardBody className="p-3">
                 <Image
                     as={NextImage}

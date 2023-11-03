@@ -129,9 +129,9 @@ function BlogOperations({ blog }: PageProps) {
 
     return (
         <>
-            <Dropdown radius="sm">
+            <Dropdown>
                 <DropdownTrigger>
-                    <Button isIconOnly variant="bordered" radius="sm" size="sm">
+                    <Button isIconOnly variant="light" radius="full" size="sm">
                         <Icons.moreVert className="h-4 w-4" />
                     </Button>
                 </DropdownTrigger>

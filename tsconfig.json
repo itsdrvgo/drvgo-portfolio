@@ -39,6 +39,9 @@
         "tailwind.config.ts",
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
+        ".next",
+        "assets",
+        "public",
     ]
 }

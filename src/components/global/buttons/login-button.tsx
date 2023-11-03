@@ -15,7 +15,7 @@ function LoginButton({ className, ...props }: ButtonProps) {
                 className
             )}
             color="success"
-            radius="sm"
+            radius="full"
             onPress={() => router.push("/auth")}
             {...props}
         >

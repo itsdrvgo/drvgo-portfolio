@@ -85,7 +85,7 @@ function ProjectStatus({ projectState }: PageProps) {
 
     return (
         <>
-            <Card radius="sm">
+            <Card>
                 <CardBody className="flex flex-row items-center justify-between">
                     <div className="space-y-1">
                         <p className="text-xl font-semibold">Status</p>

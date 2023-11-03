@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
 import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import { Divider, Link } from "@nextui-org/react";
@@ -13,7 +13,7 @@ import BlogViewOperations from "./blog-view-operations";
 
 interface PageProps extends DefaultProps {
     blog: CachedBlog;
-    user: ClerkUser | null;
+    user: ClerkUserWithoutEmail | null;
     blogIsLiked: boolean;
     roles: CachedRole[];
     comments: ExtendedComment[];
@@ -65,7 +65,7 @@ function BlogViewPage({
                 <BlogImage src={blog.thumbnailUrl!} />
 
                 {blog.content?.split("\n").length! > 1 ? (
-                    <div className="flex cursor-default flex-col gap-4 rounded-md border border-gray-400 bg-stone-950 p-5">
+                    <div className="flex cursor-default flex-col gap-4 rounded-lg border border-gray-400 bg-stone-950 p-5">
                         <p className="text-lg font-bold underline underline-offset-4 md:text-xl">
                             Table of Contents
                         </p>
@@ -92,7 +92,10 @@ function BlogViewPage({
                                     );
                                 } else if (x.startsWith("### ")) {
                                     return (
-                                        <li key={index} className="ml-5">
+                                        <li
+                                            key={index}
+                                            className="ml-5 text-gray-500"
+                                        >
                                             <Link
                                                 as={NextLink}
                                                 color="foreground"

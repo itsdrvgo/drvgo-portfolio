@@ -2,7 +2,7 @@
 
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { Notification } from "@/src/types/notification";
 import { Button, Image, Input, Textarea } from "@nextui-org/react";
@@ -24,7 +24,7 @@ const announcementSchema = z.object({
 });
 
 interface PageProps extends DefaultProps {
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
 }
 
 function AnnouncementForm({ className, user, ...props }: PageProps) {
@@ -138,12 +138,11 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
                     inputWrapper: "bg-background border border-gray-700",
                     label: "font-semibold text-lg",
                 }}
-                radius="sm"
                 label="Title"
                 labelPlacement="outside"
                 placeholder="Title of the notification"
                 maxLength={200}
-                disabled={isLoading}
+                isDisabled={isLoading}
                 onValueChange={setTitle}
                 value={title}
             />
@@ -159,6 +158,7 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
                     isDisabled={isLoading}
                     uploadProgress={uploadProgress}
                     onDrop={(acceptedFiles) => startUpload(acceptedFiles)}
+                    className="rounded-xl border-gray-700"
                     content={
                         imageUrl ? (
                             <Image
@@ -180,7 +180,6 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
 
             <Textarea
                 placeholder="Content of the notification"
-                radius="sm"
                 classNames={{
                     inputWrapper: "border border-gray-700 bg-background",
                     label: "font-semibold text-lg",
@@ -197,10 +196,10 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
 
             <div className="sticky bottom-10 z-50 flex items-center justify-center">
                 <Button
-                    className=" font-semibold"
+                    className="font-semibold"
+                    radius="full"
                     color="primary"
                     onPress={handleSend}
-                    radius="sm"
                     isLoading={isLoading}
                     isDisabled={isLoading || (!title && !content && !imageUrl)}
                 >

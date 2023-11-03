@@ -45,7 +45,6 @@ function UsersMassManageButton({ className, keys, ...props }: PageProps) {
     return (
         <>
             <Button
-                radius="sm"
                 onPress={() => {
                     if (keys !== "all" && keys.size === 0)
                         return toast.error(

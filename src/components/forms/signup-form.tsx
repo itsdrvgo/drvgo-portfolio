@@ -128,7 +128,7 @@ function SignUpForm() {
                                     }}
                                     radius="sm"
                                     placeholder="duckymomo60"
-                                    disabled={isAuthLoading}
+                                    isDisabled={isAuthLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -152,7 +152,7 @@ function SignUpForm() {
                                     }}
                                     radius="sm"
                                     placeholder="ryomensukuna@jjk.jp"
-                                    disabled={isAuthLoading}
+                                    isDisabled={isAuthLoading}
                                     {...field}
                                 />
                             </FormControl>

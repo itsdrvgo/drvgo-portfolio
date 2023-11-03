@@ -4,7 +4,7 @@ import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { NewComment } from "@/src/lib/drizzle/schema";
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
 import { CachedBlog } from "@/src/types/cache";
 import { Avatar, Button, Textarea } from "@nextui-org/react";
@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 
 interface PageProps extends DefaultProps {
-    user: ClerkUser | null;
+    user: ClerkUserWithoutEmail | null;
     blog: CachedBlog;
     comment: ExtendedComment;
     commentLoved: boolean;
@@ -148,7 +148,6 @@ function BlogCommentViewerOperation({
                         </div>
 
                         <Textarea
-                            radius="sm"
                             variant="underlined"
                             aria-label="Reply"
                             minRows={1}

@@ -2,7 +2,7 @@
 
 import { cn } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import {
     Button,
@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 
 interface PageProps extends DefaultProps {
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
 }
 
 function DeleteAccount({ user, className }: PageProps) {
@@ -69,10 +69,10 @@ function DeleteAccount({ user, className }: PageProps) {
         >
             <Button
                 onPress={onOpen}
+                radius="sm"
                 color="danger"
                 isDisabled={isLoading}
-                radius="sm"
-                className="bg-danger-300"
+                className="bg-red-700"
                 startContent={<Icons.trash className="h-4 w-4" />}
             >
                 {isLoading ? <p>Deleting Account</p> : <p>Delete Account</p>}

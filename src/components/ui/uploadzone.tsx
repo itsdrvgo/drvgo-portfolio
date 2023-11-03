@@ -53,7 +53,7 @@ function UploadZone({
                 <div
                     {...getRootProps()}
                     className={cn(
-                        "flex min-h-[25rem] w-full cursor-pointer flex-col items-center justify-center gap-5 rounded-md border border-dashed border-gray-500 bg-background p-3 text-center md:p-12",
+                        "flex min-h-[25rem] w-full cursor-pointer flex-col items-center justify-center gap-5 rounded-lg border border-dashed border-gray-500 bg-background p-3 text-center md:p-12",
                         className,
                         isDragActive && "bg-sky-900"
                     )}
@@ -79,7 +79,7 @@ function UploadZone({
                         <div className="flex flex-col items-center gap-2">
                             <Button
                                 type="button"
-                                className="border font-semibold"
+                                className="border bg-default-100 font-semibold"
                                 radius="sm"
                                 startContent={
                                     !isUploading && (

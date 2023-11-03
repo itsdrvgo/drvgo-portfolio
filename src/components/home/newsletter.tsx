@@ -1,8 +1,11 @@
+"use client";
+
 import { DefaultProps } from "@/src/types";
 import { Button, Card, CardBody, Input } from "@nextui-org/react";
 import { motion, Variants } from "framer-motion";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Sparkle } from "../global/svgs/Sparkle";
 
 function Newsletter({ className }: DefaultProps) {
     const [value, setValue] = useState("");
@@ -11,45 +14,48 @@ function Newsletter({ className }: DefaultProps) {
         toast.error("This feature is not yet available!");
     };
 
-    const fadeInContainer: Variants = {
-        hide: {
-            opacity: 0,
+    const slideUp: Variants = {
+        hidden: {
             y: 100,
         },
         show: {
-            opacity: 1,
             y: 0,
             transition: {
                 staggerChildren: 0.2,
-                duration: 0.5,
+                ease: "easeInOut",
             },
         },
     };
 
+    const fadeIn: Variants = {
+        hidden: {
+            opacity: 0,
+        },
+        show: {
+            opacity: 1,
+        },
+    };
+
     return (
-        <motion.section
-            className={className}
-            variants={fadeInContainer}
-            initial="hide"
-            whileInView={"show"}
-            viewport={{ once: true }}
-            id="newsletter"
-        >
+        <section className={className} id="newsletter">
             <motion.div
-                className="container flex max-w-[75rem] flex-col items-center justify-center gap-10 p-0"
-                variants={fadeInContainer}
+                className="container flex max-w-4xl flex-col items-center justify-center gap-10 p-0"
+                variants={slideUp}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
             >
-                <div className="flex flex-col items-center gap-5 text-center">
-                    <p className="text-4xl font-bold md:text-5xl">
-                        Subscribe to Newsletter
+                <motion.div className="space-y-2 text-center" variants={fadeIn}>
+                    <p className="cursor-default text-4xl font-bold md:text-5xl">
+                        Newsletter
                     </p>
                     <p className="text-sm text-gray-400 md:text-base">
                         Subscribe to our Newsletter to receive updates about our
                         latest projects.
                     </p>
-                </div>
+                </motion.div>
 
-                <motion.div variants={fadeInContainer} className="w-full">
+                <motion.div variants={fadeIn} className="w-full">
                     <Card>
                         <CardBody className="gap-4 p-6 md:p-10 md:px-8">
                             <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:gap-5">
@@ -61,18 +67,19 @@ function Newsletter({ className }: DefaultProps) {
                                     value={value}
                                     onClear={() => setValue("")}
                                     onValueChange={setValue}
-                                    radius="sm"
                                 />
 
                                 <Button
-                                    radius="sm"
+                                    radius="full"
                                     color="primary"
+                                    className="bg-primary-200"
                                     onClick={handleNewsLetter}
                                 >
                                     Subscribe
                                 </Button>
                             </div>
-                            <p className="text-xs text-gray-400 md:text-sm">
+
+                            <p className="cursor-default text-xs text-gray-400 md:text-sm">
                                 We&apos;ll be sending you updates about our
                                 latest projects, opportunities, and more.
                             </p>
@@ -80,7 +87,24 @@ function Newsletter({ className }: DefaultProps) {
                     </Card>
                 </motion.div>
             </motion.div>
-        </motion.section>
+
+            <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{
+                    opacity: 1,
+                    transition: {
+                        duration: 0.5,
+                        delay: 0.5,
+                    },
+                }}
+                viewport={{ once: true }}
+            >
+                <Sparkle className="spark-spin-1 absolute left-[10%] top-[10%]" />
+                <Sparkle className="spark-spin-2 absolute left-[20%] top-[40%]" />
+                <Sparkle className="spark-spin-3 absolute right-[20%] top-[80%]" />
+                <Sparkle className="spark-spin-2 absolute right-[10%] top-[20%]" />
+            </motion.div>
+        </section>
     );
 }
 

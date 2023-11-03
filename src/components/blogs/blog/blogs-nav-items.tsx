@@ -25,33 +25,30 @@ function BlogNavItems({ className, data }: PageProps) {
     const router = useRouter();
 
     return (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between rounded-full bg-primary-50 p-1 px-3">
             <Button
-                radius="sm"
-                variant="flat"
-                className="border border-gray-700"
+                radius="full"
+                variant="light"
+                color="primary"
                 onPress={() => router.push("/blogs")}
                 startContent={<Icons.chevronLeft className="h-5 w-5" />}
-            >
-                Go Back
-            </Button>
+                isIconOnly
+            />
 
             <Popover
                 placement="bottom"
-                radius="sm"
                 classNames={{
                     base: "w-72 max-h-96",
                 }}
             >
                 <PopoverTrigger>
                     <Button
-                        radius="sm"
-                        variant="flat"
-                        className="border border-gray-700"
-                        startContent={<Icons.dashboard className="h-5 w-5" />}
-                    >
-                        More Blogs
-                    </Button>
+                        radius="full"
+                        variant="light"
+                        color="primary"
+                        startContent={<Icons.moreVert className="h-5 w-5" />}
+                        isIconOnly
+                    />
                 </PopoverTrigger>
                 <PopoverContent className="gap-2 pb-4 pt-2">
                     <h2
@@ -67,7 +64,8 @@ function BlogNavItems({ className, data }: PageProps) {
 
                     <div
                         className={cn(
-                            "flex flex-col gap-2 overflow-y-scroll",
+                            "flex flex-col gap-2",
+                            { "overflow-y-scroll": data.length },
                             className
                         )}
                     >
@@ -113,7 +111,7 @@ function BlogNavItems({ className, data }: PageProps) {
                                     </Card>
                                 ))
                         ) : (
-                            <p className="p-1 text-sm text-gray-400">
+                            <p className="text-sm text-gray-400">
                                 No blogs found
                             </p>
                         )}

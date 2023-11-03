@@ -56,6 +56,12 @@ export const roleContextSchema = z.object({
     }),
 });
 
+export const chatContextSchema = z.object({
+    params: z.object({
+        chatId: z.string(),
+    }),
+});
+
 export type UserContext = z.infer<typeof userContextSchema>;
 export type AccountContext = z.infer<typeof accountsContextSchema>;
 export type BlogContext = z.infer<typeof blogContextSchema>;
@@ -65,3 +71,4 @@ export type NotificationContext = z.infer<typeof notificationContextSchema>;
 export type ProjectContext = z.infer<typeof projectContextSchema>;
 export type MessageContext = z.infer<typeof messageContextSchema>;
 export type RoleContext = z.infer<typeof roleContextSchema>;
+export type ChatContext = z.infer<typeof chatContextSchema>;

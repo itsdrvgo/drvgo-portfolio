@@ -5,7 +5,7 @@ import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { NewComment } from "@/src/lib/drizzle/schema";
 import { cn, shortenNumber, updateBlogViews } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { ExtendedComment } from "@/src/types";
 import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import {
@@ -25,7 +25,7 @@ import BlogViewComments from "./blog-view-comments";
 
 interface PageProps {
     blog: CachedBlog;
-    user: ClerkUser | null;
+    user: ClerkUserWithoutEmail | null;
     blogIsLiked: boolean | false;
     roles: CachedRole[];
     comments: ExtendedComment[];
@@ -133,11 +133,13 @@ function BlogViewOperations({
     return (
         <>
             <ButtonGroup
-                className="sticky bottom-10 z-50 backdrop-blur-sm"
+                className="sticky bottom-10 z-50"
                 variant="flat"
+                id="user_opt"
             >
                 <Button
                     onPress={() => handleLike()}
+                    className="bg-default-100 first:rounded-l-full"
                     startContent={
                         <Icons.heart
                             className={cn(
@@ -148,7 +150,7 @@ function BlogViewOperations({
                             )}
                         />
                     }
-                    disabled={!user}
+                    isDisabled={!user}
                 >
                     {shortenNumber(likesLength)}
                 </Button>
@@ -156,22 +158,27 @@ function BlogViewOperations({
                 <Divider orientation="vertical" />
 
                 <Button
+                    className="bg-default-100"
                     onPress={() => router.push(`/blogs/${blog.id}#comment`)}
                     startContent={<Icons.comment className="h-4 w-4" />}
-                    disabled={!user}
+                    isDisabled={!user}
                 >
                     {shortenNumber(blog.comments)}
                 </Button>
 
                 <Divider orientation="vertical" />
 
-                <Button startContent={<Icons.analytics className="h-4 w-4" />}>
+                <Button
+                    className="bg-default-100"
+                    startContent={<Icons.analytics className="h-4 w-4" />}
+                >
                     {shortenNumber(blog.views)}
                 </Button>
 
                 <Divider orientation="vertical" />
 
                 <Button
+                    className="bg-default-100 last:rounded-r-full"
                     onPress={() => {
                         navigator.clipboard.writeText(
                             env.NEXT_PUBLIC_APP_URL + "/blogs/" + blog.id
@@ -205,7 +212,6 @@ function BlogViewOperations({
 
                         <Textarea
                             id="comment"
-                            radius="sm"
                             variant="underlined"
                             aria-label="Comment"
                             minRows={1}

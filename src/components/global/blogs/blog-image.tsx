@@ -7,7 +7,6 @@ function BlogImage({ src, ...props }: ImageProps) {
     return (
         <Image
             as={NextImage}
-            radius="sm"
             src={src}
             alt="thumbnail"
             width={1920}

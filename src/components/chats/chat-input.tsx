@@ -1,88 +1,109 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
 import { CachedUser } from "@/src/types/cache";
 import { Button, Textarea } from "@nextui-org/react";
-import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
+import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Icons } from "../icons/icons";
 
 interface PageProps extends DefaultProps {
     chatPartner: CachedUser;
-    chatId: string;
+    text: string;
+    setText: Dispatch<SetStateAction<string>>;
+    sendMessage: () => void;
+    textAreaRef: React.RefObject<HTMLInputElement>;
 }
 
-function ChatInput({ className, chatPartner, chatId, ...props }: PageProps) {
-    const textareaRef = useRef<HTMLInputElement | null>(null);
-    const [input, setInput] = useState("");
+function ChatInput({
+    className,
+    chatPartner,
+    text,
+    setText,
+    sendMessage,
+    textAreaRef,
+    ...props
+}: PageProps) {
+    const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
 
     useEffect(() => {
-        textareaRef.current?.focus();
+        textAreaRef.current?.focus();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const sendMessage = () => {
-        if (input.length === 0) return;
-
-        setInput("");
-        textareaRef.current?.focus();
-
-        const body = {
-            text: input,
-            chatId,
-        };
-
-        axios
-            .post<ResponseData>("/api/chats/send", JSON.stringify(body))
-            .then(({ data: resData }) => {
-                if (resData.code !== 201) return toast.error(resData.message);
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!");
-            });
-    };
-
     return (
-        <section
-            className={cn(
-                "flex items-center justify-between gap-3 px-4 py-2",
-                className
-            )}
-            {...props}
-        >
-            <Textarea
-                ref={textareaRef}
-                variant="bordered"
-                radius="sm"
-                aria-label="Message"
-                minRows={1}
-                maxRows={6}
-                value={input}
-                placeholder={`Message @${chatPartner.username}`}
-                onValueChange={(value) => setInput(value)}
-                classNames={{
-                    inputWrapper: "bg-background border-1 border-border",
-                }}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                }}
-            />
-            <Button
-                isIconOnly
-                isDisabled={input.length === 0}
-                radius="sm"
-                color="primary"
-                type="submit"
-                onPress={sendMessage}
-                startContent={<Icons.sendHorizontal className="h-5 w-5" />}
-            />
-        </section>
+        <>
+            <div className={cn(isEmojiPickerOpen ? "block" : "hidden")}>
+                <EmojiPicker
+                    theme={Theme.DARK}
+                    emojiStyle={EmojiStyle.TWITTER}
+                    width={"100%"}
+                    previewConfig={{
+                        showPreview: false,
+                    }}
+                    lazyLoadEmojis={true}
+                    onEmojiClick={(emoji) => {
+                        setText((prev) => prev + emoji.emoji);
+                        textAreaRef.current?.focus();
+                    }}
+                />
+            </div>
+
+            <section
+                className={cn("flex flex-col gap-2 bg-chat", className)}
+                {...props}
+            >
+                <div className="z-50 flex items-center justify-between gap-3 bg-chat px-4 py-2">
+                    <Button
+                        isIconOnly
+                        radius="full"
+                        variant="light"
+                        onPress={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}
+                        startContent={
+                            isEmojiPickerOpen ? (
+                                <Icons.close className="h-6 w-6 text-gray-400" />
+                            ) : (
+                                <Icons.smile className="h-6 w-6 text-gray-400" />
+                            )
+                        }
+                    />
+
+                    <Textarea
+                        ref={textAreaRef}
+                        variant="bordered"
+                        aria-label="Message"
+                        minRows={1}
+                        maxRows={6}
+                        value={text}
+                        placeholder={`Message @${chatPartner.username}`}
+                        onValueChange={setText}
+                        classNames={{
+                            inputWrapper:
+                                "bg-chat-input border border-gray-700 data-[hover=true]:bg-chat-input",
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        }}
+                    />
+
+                    <Button
+                        isIconOnly
+                        isDisabled={text.length === 0}
+                        radius="full"
+                        variant="light"
+                        type="submit"
+                        onPress={sendMessage}
+                        startContent={
+                            <Icons.sendHorizontal className="h-6 w-6 text-gray-400 data-[disabled=true]:text-gray-600" />
+                        }
+                    />
+                </div>
+            </section>
+        </>
     );
 }
 

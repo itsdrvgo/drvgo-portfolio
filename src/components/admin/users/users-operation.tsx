@@ -139,11 +139,17 @@ function UsersOperation({ target, user, roles }: PageProps) {
 
     return (
         <>
-            <Dropdown radius="sm">
+            <Dropdown>
                 <DropdownTrigger>
-                    <Button isIconOnly size="sm" variant="light">
-                        <Icons.moreVert className="h-4 w-4 text-gray-400" />
-                    </Button>
+                    <Button
+                        isIconOnly
+                        size="sm"
+                        radius="full"
+                        variant="light"
+                        startContent={
+                            <Icons.moreVert className="h-4 w-4 text-gray-400" />
+                        }
+                    />
                 </DropdownTrigger>
                 <DropdownMenu
                     disabledKeys={[

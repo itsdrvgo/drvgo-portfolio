@@ -5,6 +5,7 @@ import { siteConfig } from "@/src/config/site";
 import { getBlogFromCache } from "@/src/lib/redis/methods/blog";
 import { Metadata } from "next";
 import { Suspense } from "react";
+import "./page.css";
 
 interface PageProps {
     params: { blogId: string };
@@ -47,7 +48,7 @@ export async function generateMetadata({
 function Page({ params }: PageProps) {
     return (
         <section className="flex p-5 py-10">
-            <div className="container relative flex max-w-[65rem] flex-col gap-4 p-0">
+            <div className="container relative flex max-w-4xl flex-col gap-4 p-0 2xl:max-w-6xl">
                 <Suspense fallback={<BlogViewSkeleton />}>
                     <>
                         <BlogNav params={params} />

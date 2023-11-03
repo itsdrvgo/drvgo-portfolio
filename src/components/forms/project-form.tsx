@@ -160,10 +160,9 @@ function ProjectForm({ project }: PageProps) {
                                             inputWrapper:
                                                 "border border-gray-700 bg-background",
                                         }}
-                                        radius="sm"
                                         placeholder="Super Cool Project"
                                         maxLength={100}
-                                        disabled={isLoading}
+                                        isDisabled={isLoading}
                                         {...field}
                                     />
                                 </FormControl>
@@ -184,7 +183,6 @@ function ProjectForm({ project }: PageProps) {
                                     <>
                                         <Textarea
                                             placeholder="A short description of your project"
-                                            radius="sm"
                                             classNames={{
                                                 inputWrapper:
                                                     "border border-gray-700 bg-background pb-8",
@@ -223,7 +221,6 @@ function ProjectForm({ project }: PageProps) {
                                 <FormControl>
                                     <Textarea
                                         placeholder="State the requirements for your project"
-                                        radius="sm"
                                         classNames={{
                                             inputWrapper:
                                                 "border border-gray-700 bg-background",
@@ -242,9 +239,7 @@ function ProjectForm({ project }: PageProps) {
                     />
                     <Button
                         type="submit"
-                        radius="sm"
-                        color="success"
-                        className="bg-primary-700 font-semibold"
+                        className="bg-primary-700 font-semibold text-black"
                         isDisabled={
                             isLoading ||
                             !form.formState.isValid ||
@@ -273,7 +268,6 @@ function ProjectForm({ project }: PageProps) {
                 onOpenChange={onOpenChange}
                 size="3xl"
                 scrollBehavior="inside"
-                radius="sm"
             >
                 <ModalContent>
                     {(onClose) => (
@@ -442,12 +436,6 @@ function ProjectForm({ project }: PageProps) {
                                         </span>{" "}
                                         Manipulating data between Front-end &
                                         Back-end.
-                                    </li>
-                                    <li>
-                                        <span className="font-semibold text-gray-300">
-                                            Lucide Icons:
-                                        </span>{" "}
-                                        Adding interesting icons.
                                     </li>
                                     <li>
                                         <span className="font-semibold text-gray-300">

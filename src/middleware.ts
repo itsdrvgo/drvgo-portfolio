@@ -144,8 +144,8 @@ export default authMiddleware({
     ignoredRoutes: [
         "/api/auth",
         "/api/users",
-        "/og.jpg",
-        "/og-blogs.png",
+        "/og.webp",
+        "/og-blogs.webp",
         "/favicon.ico",
         "/",
     ],

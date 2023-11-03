@@ -1,0 +1,17 @@
+.glow-bg {
+    animation: glow-bg 5s infinite linear;
+}
+
+@keyframes glow-bg {
+    0% {
+        box-shadow: 0 0 200px 200px rgba(131, 131, 230, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 200px 200px rgba(131, 131, 230, 0.35);
+    }
+
+    100% {
+        box-shadow: 0 0 200px 200px rgba(131, 131, 230, 0.2);
+    }
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedNotification } from "@/src/types";
 import {
     Badge,
@@ -15,7 +15,7 @@ import NotificationBarContent from "./notification-bar-content";
 import NotificationMarkAllAsRead from "./notification-mark-all-read";
 
 interface PageProps extends DefaultProps {
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
     data: ExtendedNotification[];
 }
 
@@ -31,19 +31,19 @@ function NotificationBar({ className, data, user, ...props }: PageProps) {
                 >
                     <PopoverTrigger>
                         <Button
-                            radius="sm"
+                            radius="full"
                             size="sm"
                             isIconOnly
                             as="button"
-                            variant="bordered"
+                            variant="light"
                             startContent={
-                                <Icons.notification className="h-4 w-4" />
+                                <Icons.notification className="h-5 w-5 text-gray-400" />
                             }
                         />
                     </PopoverTrigger>
                 </Badge>
 
-                <PopoverContent className="h-96 w-72 px-2">
+                <PopoverContent className="max-h-96 w-72 px-2">
                     <div className="relative h-full w-full p-2">
                         {data.length > 0 ? (
                             <div className="h-80 overflow-y-scroll">
@@ -58,8 +58,8 @@ function NotificationBar({ className, data, user, ...props }: PageProps) {
                                 })}
                             </div>
                         ) : (
-                            <p className="text-center">
-                                No New Notifications Yet.
+                            <p className="text-center text-gray-400">
+                                No New Notifications Yet
                             </p>
                         )}
 

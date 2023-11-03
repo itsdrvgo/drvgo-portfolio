@@ -63,9 +63,7 @@ function BlogSearch({ blogs, className }: PageProps) {
     return (
         <div className={cn("flex flex-col gap-5", className)}>
             <Input
-                size="lg"
                 isClearable
-                radius="sm"
                 variant="faded"
                 classNames={{
                     inputWrapper: "border border-gray-700 bg-background",
@@ -84,7 +82,7 @@ function BlogSearch({ blogs, className }: PageProps) {
                         return (
                             <div
                                 key={index}
-                                className="grid grid-cols-1 justify-items-stretch gap-5 md:grid-cols-3"
+                                className="grid grid-cols-none justify-center gap-3 md:grid-cols-3"
                             >
                                 {page.map((p) => {
                                     const blog = blogs.find(
@@ -106,7 +104,7 @@ function BlogSearch({ blogs, className }: PageProps) {
                         {blogs.length > 6 && (
                             <Button
                                 onPress={() => fetchNextPage()}
-                                disabled={
+                                isDisabled={
                                     isFetchingNextPage ||
                                     !data?.pages[data?.pages.length - 1].length
                                 }

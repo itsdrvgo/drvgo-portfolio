@@ -4,7 +4,10 @@ import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Profile",
+    title: {
+        default: "Profile",
+        template: "Profile | %s",
+    },
     description: "Manage your profile",
 };
 

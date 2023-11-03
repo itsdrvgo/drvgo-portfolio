@@ -94,11 +94,13 @@ function RoleForm({
     };
 
     return (
-        <div className={cn("flex flex-col gap-5", className)} {...props}>
+        <div
+            className={cn("flex w-full flex-col items-center gap-5", className)}
+            {...props}
+        >
             <Input
                 value={roleName}
                 onValueChange={setRoleName}
-                radius="sm"
                 classNames={{
                     inputWrapper: "border border-gray-700 bg-background",
                     label: "text-base md:text-lg font-bold",
@@ -113,14 +115,13 @@ function RoleForm({
                 }
             />
 
-            <div className="flex flex-col gap-3">
+            <div className="flex w-full flex-col gap-3">
                 <div className="flex items-center justify-between gap-2">
                     <p className="text-base font-bold md:text-lg">
                         Permissions
                     </p>
 
                     <Button
-                        radius="sm"
                         variant="flat"
                         size="sm"
                         onPress={() =>
@@ -144,7 +145,7 @@ function RoleForm({
 
                 <div className="flex flex-col gap-4">
                     {filteredPermissions.map((permission) => (
-                        <Card key={permission.key} radius="sm">
+                        <Card key={permission.key}>
                             <CardBody>
                                 <div className="flex items-center justify-between gap-4">
                                     <div className="flex flex-col gap-1">
@@ -184,36 +185,34 @@ function RoleForm({
                 </div>
             </div>
 
-            <div className="sticky bottom-10 flex items-center justify-center">
-                <ButtonGroup
-                    className="z-50 backdrop-blur-sm"
-                    variant="flat"
-                    isDisabled={
-                        isLoading ||
-                        (JSON.stringify(roleData.permissions) ===
-                            JSON.stringify(rolePermissions) &&
-                            roleData.name === roleName)
-                    }
+            <ButtonGroup
+                className="sticky bottom-10 z-50"
+                variant="flat"
+                isDisabled={
+                    isLoading ||
+                    (JSON.stringify(roleData.permissions) ===
+                        JSON.stringify(rolePermissions) &&
+                        roleData.name === roleName)
+                }
+            >
+                <Button
+                    className="bg-default-100 first:rounded-l-full"
+                    onPress={() => {
+                        setRoleName(roleData.name);
+                        setRolePermissions(roleData.permissions);
+                    }}
                 >
-                    <Button
-                        radius="sm"
-                        onPress={() => {
-                            setRoleName(roleData.name);
-                            setRolePermissions(roleData.permissions);
-                        }}
-                    >
-                        Cancel
-                    </Button>
+                    Cancel
+                </Button>
 
-                    <Button
-                        radius="sm"
-                        isLoading={isLoading}
-                        onPress={handleSubmit}
-                    >
-                        Submit
-                    </Button>
-                </ButtonGroup>
-            </div>
+                <Button
+                    className="bg-default-100 last:rounded-r-full"
+                    isLoading={isLoading}
+                    onPress={handleSubmit}
+                >
+                    Submit
+                </Button>
+            </ButtonGroup>
         </div>
     );
 }

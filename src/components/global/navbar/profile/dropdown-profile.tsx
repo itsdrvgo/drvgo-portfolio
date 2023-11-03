@@ -2,7 +2,7 @@
 
 import { BitFieldPermissions, DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { cn, hasPermission } from "@/src/lib/utils";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { useClerk } from "@clerk/nextjs";
 import {
@@ -18,7 +18,7 @@ import toast from "react-hot-toast";
 import { Icons } from "../../../icons/icons";
 
 interface PageProps extends DefaultProps {
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
 }
 
 function DropdownProfile({ user, className, ...props }: PageProps) {
@@ -39,11 +39,7 @@ function DropdownProfile({ user, className, ...props }: PageProps) {
 
     return (
         <div className={cn("", className)} {...props}>
-            <Dropdown
-                placement="bottom-end"
-                radius="sm"
-                shouldBlockScroll={true}
-            >
+            <Dropdown radius="sm" shouldBlockScroll={true}>
                 <DropdownTrigger>
                     <Avatar
                         isBordered

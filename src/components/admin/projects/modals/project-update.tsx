@@ -131,7 +131,6 @@ function ProjectUpdateModal({
                                 type="number"
                                 label="Price"
                                 placeholder="Enter price"
-                                radius="sm"
                                 inputMode="numeric"
                                 labelPlacement="outside"
                                 classNames={{

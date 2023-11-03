@@ -1,19 +1,25 @@
 "use client";
 
-import { ClerkUser } from "@/src/lib/validation/user";
+import { cn } from "@/src/lib/utils";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
+import { DefaultProps } from "@/src/types";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import UsernameForm from "../../forms/username-form";
 import DeleteAccount from "./delete-account";
 import UploadPFP from "./upload-pfp";
 
-interface PageProps {
-    user: ClerkUser;
+interface PageProps extends DefaultProps {
+    user: ClerkUserWithoutEmail;
 }
 
-function ProfileCards({ user }: PageProps) {
+function ProfileCards({ user, className, ...props }: PageProps) {
     return (
-        <>
-            <Card>
+        <div className={cn("space-y-5", className)} {...props}>
+            <Card
+                classNames={{
+                    base: "bg-default-50",
+                }}
+            >
                 <CardHeader className="flex flex-col items-start gap-1 p-6 pb-2">
                     <p className="text-xl font-semibold md:text-2xl">
                         Profile Picture
@@ -27,7 +33,11 @@ function ProfileCards({ user }: PageProps) {
                 </CardBody>
             </Card>
 
-            <Card>
+            <Card
+                classNames={{
+                    base: "bg-default-50",
+                }}
+            >
                 <CardHeader className="flex flex-col items-start gap-1 p-6 pb-2">
                     <p className="text-xl font-semibold md:text-2xl">
                         Username
@@ -42,7 +52,11 @@ function ProfileCards({ user }: PageProps) {
                 </CardBody>
             </Card>
 
-            <Card>
+            <Card
+                classNames={{
+                    base: "bg-default-50",
+                }}
+            >
                 <CardHeader className="flex flex-col items-start gap-1 p-6 pb-2">
                     <p className="text-xl font-semibold md:text-2xl">
                         Danger Zone
@@ -55,7 +69,7 @@ function ProfileCards({ user }: PageProps) {
                     <DeleteAccount user={user} />
                 </CardBody>
             </Card>
-        </>
+        </div>
     );
 }
 

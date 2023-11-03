@@ -46,7 +46,7 @@ function BlogAuthor({
                     <p>Published on {formatDate(createdAt)}</p>
 
                     {updatedAt ? (
-                        <Tooltip content={formatDate(updatedAt)} radius="sm">
+                        <Tooltip content={formatDate(updatedAt)}>
                             <p>(Updated)</p>
                         </Tooltip>
                     ) : null}

@@ -50,7 +50,6 @@ function RoleCreateButton({ className, ...props }: ButtonProps) {
             isDisabled={isLoading}
             isLoading={isLoading}
             className={cn("font-semibold", className)}
-            radius="sm"
             startContent={!isLoading && <Icons.add className="h-4 w-4" />}
             {...props}
         >

@@ -51,7 +51,7 @@ function CacheOperations({ className, users, blogs, roles }: PageProps) {
 
     return (
         <div className={cn("flex flex-col gap-4", className)}>
-            <Card radius="sm">
+            <Card>
                 <CardBody className="flex-row items-center justify-between">
                     <div className="flex items-center gap-5">
                         <Icons.users className="h-5 w-5 text-green-600" />
@@ -68,7 +68,7 @@ function CacheOperations({ className, users, blogs, roles }: PageProps) {
                         isIconOnly
                         color="primary"
                         isDisabled={!!isFetching}
-                        radius="sm"
+                        radius="full"
                         onPress={() => handleFetch("users")}
                         startContent={
                             <Icons.refresh
@@ -81,7 +81,7 @@ function CacheOperations({ className, users, blogs, roles }: PageProps) {
                 </CardBody>
             </Card>
 
-            <Card radius="sm">
+            <Card>
                 <CardBody className="flex-row items-center justify-between">
                     <div className="flex items-center gap-5">
                         <Icons.page className="h-5 w-5 text-blue-600" />
@@ -98,7 +98,7 @@ function CacheOperations({ className, users, blogs, roles }: PageProps) {
                         isIconOnly
                         color="primary"
                         isDisabled={!!isFetching}
-                        radius="sm"
+                        radius="full"
                         onPress={() => handleFetch("blogs")}
                         startContent={
                             <Icons.refresh
@@ -111,7 +111,7 @@ function CacheOperations({ className, users, blogs, roles }: PageProps) {
                 </CardBody>
             </Card>
 
-            <Card radius="sm">
+            <Card>
                 <CardBody className="flex-row items-center justify-between">
                     <div className="flex items-center gap-5">
                         <Icons.barChart className="h-5 w-5 text-yellow-600" />
@@ -128,7 +128,7 @@ function CacheOperations({ className, users, blogs, roles }: PageProps) {
                         isIconOnly
                         color="primary"
                         isDisabled={!!isFetching}
-                        radius="sm"
+                        radius="full"
                         onPress={() => handleFetch("roles")}
                         startContent={
                             <Icons.refresh

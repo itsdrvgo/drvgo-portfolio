@@ -1,11 +1,11 @@
 "use client";
 
-import Pattern1 from "@/public/patterns/1.png";
-import Pattern2 from "@/public/patterns/2.png";
-import Pattern3 from "@/public/patterns/3.png";
-import Pattern4 from "@/public/patterns/4.png";
-import Pattern5 from "@/public/patterns/5.png";
-import Pattern6 from "@/public/patterns/6.png";
+import Pattern1 from "@/public/patterns/1.webp";
+import Pattern2 from "@/public/patterns/2.webp";
+import Pattern3 from "@/public/patterns/3.webp";
+import Pattern4 from "@/public/patterns/4.webp";
+import Pattern5 from "@/public/patterns/5.webp";
+import Pattern6 from "@/public/patterns/6.webp";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
@@ -89,6 +89,9 @@ function AdminButtons({ className, ...props }: DefaultProps) {
                                 alt={item.name}
                                 className="h-[140px] w-full object-cover"
                                 src={item.image.src}
+                                style={{
+                                    opacity: 0.8,
+                                }}
                             />
                         </CardBody>
 

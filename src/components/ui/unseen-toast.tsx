@@ -26,7 +26,7 @@ function UnseenChatToast({
     return (
         <div
             className={cn(
-                "pointer-events-auto flex w-full max-w-md rounded-md border bg-background text-white",
+                "pointer-events-auto flex w-full max-w-md rounded-lg border bg-background text-white",
                 { "animate-enter": t.visible, "animate-leave": !t.visible }
             )}
             {...props}
@@ -37,7 +37,7 @@ function UnseenChatToast({
                 className="w-0 flex-1 p-4"
             >
                 <div className="flex items-start">
-                    <div className="flex-shrink-0 pt-0.5">
+                    <div className="shrink-0 pt-0.5">
                         <div className="relative h-10 w-10">
                             <Avatar
                                 isBordered

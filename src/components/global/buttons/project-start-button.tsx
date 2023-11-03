@@ -10,7 +10,7 @@ function ProjectStartButton({ className, ...props }: ButtonProps) {
 
     return (
         <Button
-            radius="sm"
+            radius="full"
             className={cn("", className)}
             onPress={() => router.push("/projects/create")}
             startContent={<Icons.sparkles className="h-4 w-4" />}

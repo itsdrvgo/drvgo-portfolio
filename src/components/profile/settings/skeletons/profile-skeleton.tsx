@@ -21,14 +21,14 @@ function ProfileSkeleton() {
                     </p>
                 </CardHeader>
                 <CardBody>
-                    <div className="flex w-full flex-col items-center justify-center gap-7 rounded-md border border-dashed border-gray-500 p-12">
+                    <div className="flex w-full flex-col items-center justify-center gap-7 rounded-lg border border-dashed border-gray-500 p-12">
                         <Skeleton className="h-40 w-40 rounded-full" />
                         <p>Drag & drop your image here</p>
-                        <Skeleton className="h-9 w-36 rounded-md" />
+                        <Skeleton className="h-9 w-36 rounded-lg" />
                     </div>
                 </CardBody>
                 <CardFooter className="p-6 pt-2">
-                    <Skeleton className="h-10 w-28 rounded-md" />
+                    <Skeleton className="h-10 w-28 rounded-lg" />
                 </CardFooter>
             </Card>
 
@@ -43,10 +43,10 @@ function ProfileSkeleton() {
                     </p>
                 </CardHeader>
                 <CardBody>
-                    <Skeleton className="h-11 w-full rounded-md md:w-2/5" />
+                    <Skeleton className="h-11 w-full rounded-lg md:w-2/5" />
                 </CardBody>
                 <CardFooter className="p-6 pt-2">
-                    <Skeleton className="h-10 w-28 rounded-md" />
+                    <Skeleton className="h-10 w-28 rounded-lg" />
                 </CardFooter>
             </Card>
 
@@ -60,7 +60,7 @@ function ProfileSkeleton() {
                     </p>
                 </CardHeader>
                 <CardFooter className="justify-end p-6 pt-2">
-                    <Skeleton className="h-10 w-36 rounded-md" />
+                    <Skeleton className="h-10 w-36 rounded-lg" />
                 </CardFooter>
             </Card>
         </>

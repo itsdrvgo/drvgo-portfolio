@@ -17,6 +17,14 @@ import { createInsertSchema } from "drizzle-zod";
 
 // SCHEMAS
 
+export const birthdayParticipants2023 = mysqlTable(
+    "birthday_participants_2023",
+    {
+        id: varchar("id", { length: 191 }).notNull().primaryKey(),
+        isParticipating: boolean("isParticipating").default(false).notNull(),
+    }
+);
+
 export const users = mysqlTable(
     "users",
     {
@@ -37,6 +45,26 @@ export const users = mysqlTable(
         usernameIndex: uniqueIndex("name_idx").on(user.username),
     })
 );
+
+export const chats = mysqlTable("chats", {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    senderId: varchar("senderId", { length: 191 }).notNull(),
+    receiverId: varchar("receiverId", { length: 191 }).notNull(),
+});
+
+export const messages = mysqlTable("messages", {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    chatId: varchar("chatId", { length: 191 }).notNull(),
+    senderId: varchar("senderId", { length: 191 }).notNull(),
+    receiverId: varchar("receiverId", { length: 191 }).notNull(),
+    status: varchar("status", { length: 191 }).notNull(),
+    sentAt: timestamp("sentAt")
+        .notNull()
+        .default(sql`current_timestamp()`),
+    seenAt: timestamp("seenAt"),
+    editedAt: timestamp("editedAt"),
+    text: longtext("text").notNull(),
+});
 
 export const accounts = mysqlTable("accounts", {
     id: varchar("id", { length: 191 }).notNull().primaryKey(),
@@ -206,6 +234,27 @@ export const usersRelations = relations(users, ({ many, one }) => ({
         fields: [users.id],
         references: [accounts.id],
     }),
+    chats: many(chats),
+    sentMessages: many(messages),
+}));
+
+export const chatsRelations = relations(chats, ({ many, one }) => ({
+    messages: many(messages),
+    sender: one(users, {
+        fields: [chats.senderId],
+        references: [users.id],
+    }),
+}));
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+    chat: one(chats, {
+        fields: [messages.chatId],
+        references: [chats.id],
+    }),
+    sender: one(users, {
+        fields: [messages.senderId],
+        references: [users.id],
+    }),
 }));
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -289,11 +338,25 @@ export const commentLovesRelations = relations(commentLoves, ({ one }) => ({
 
 // TYPES
 
+export type BirthdayParticipant2023 = InferModel<
+    typeof birthdayParticipants2023
+>;
+export type NewBirthdayParticipant2023 = InferModel<
+    typeof birthdayParticipants2023,
+    "insert"
+>;
+
 export type User = InferModel<typeof users>;
 export type NewUser = InferModel<typeof users, "insert">;
 
 export type Account = InferModel<typeof accounts>;
 export type NewAccount = InferModel<typeof accounts, "insert">;
+
+export type Chat = InferModel<typeof chats>;
+export type NewChat = InferModel<typeof chats, "insert">;
+
+export type Message = InferModel<typeof messages>;
+export type NewMessage = InferModel<typeof messages, "insert">;
 
 export type Notification = InferModel<typeof notifications>;
 export type NewNotification = InferModel<typeof notifications, "insert">;
@@ -327,9 +390,17 @@ export type NewRole = InferModel<typeof roles, "insert">;
 
 // ZOD SCHEMA
 
+export const insertBirthdayParticipant2023Schema = createInsertSchema(
+    birthdayParticipants2023
+);
+
 export const insertUserSchema = createInsertSchema(users);
 
 export const insertAccountSchema = createInsertSchema(accounts);
+
+export const insertChatSchema = createInsertSchema(chats);
+
+export const insertMessageSchema = createInsertSchema(messages);
 
 export const insertNotificationSchema = createInsertSchema(notifications);
 

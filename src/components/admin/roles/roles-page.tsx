@@ -12,7 +12,11 @@ async function RolesPage({ className }: DefaultProps) {
     ]);
 
     if (!user) redirect("/auth");
-    let parsedUser = userSchema.parse(user);
+    let parsedUser = userSchema
+        .omit({
+            emailAddresses: true,
+        })
+        .parse(user);
 
     const initialRoles = roles.sort((a, b) => a.position - b.position);
 
