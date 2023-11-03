@@ -1,23 +1,21 @@
 "use client";
 
 import DRVGOLogo from "@/src/components/global/svgs/DRVGOLogo";
-import { cn, wait } from "@/src/lib/utils";
-import { DefaultProps } from "@/src/types";
-import { Button, Divider, Radio, RadioGroup } from "@nextui-org/react";
-import { useAnimate } from "framer-motion";
-import { useEffect, useState } from "react";
-import Confetti from "react-confetti";
-import { Friend } from "./page";
-import "./page.css";
-import BDayBG from "@/public/patterns/bday_bg.webp";
 import { Icons } from "@/src/components/icons/icons";
 import { NewBirthdayParticipant2023 } from "@/src/lib/drizzle/schema";
+import { cn, wait } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
+import { DefaultProps } from "@/src/types";
+import { Button, Divider, Radio, RadioGroup } from "@nextui-org/react";
 import axios from "axios";
-import Image from "next/image";
+import { useAnimate } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Confetti from "react-confetti";
 import toast from "react-hot-toast";
+import { Friend } from "./page";
+import "./page.css";
 
 interface PageProps extends DefaultProps {
     friend: Friend;
@@ -77,9 +75,6 @@ function BDayPage({
 
     useEffect(() => {
         const ani = async () => {
-            await animate("#bday_bg", {
-                opacity: 0.4,
-            });
             await animate("#glow_bg", {
                 opacity: 1,
             });
@@ -128,24 +123,13 @@ function BDayPage({
 
     return (
         <section
-            className={cn("h-screen w-full px-4", className)}
+            className={cn("h-full min-h-screen w-full px-4", className)}
             {...props}
             ref={scope}
         >
             <Confetti run={isShowing} numberOfPieces={500} recycle={false} />
 
-            <Image
-                id="bday_bg"
-                src={BDayBG}
-                alt="Birthday Background"
-                fill
-                style={{
-                    objectFit: "cover",
-                }}
-                className="fixed opacity-0"
-            />
-
-            <div className="relative h-screen w-full">
+            <div className="relative min-h-screen w-full">
                 <div
                     className="glow-bg absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0"
                     id="glow_bg"
@@ -251,11 +235,12 @@ function BDayPage({
                                 </p>
                             )}
 
-                            <div className="flex items-center justify-between gap-5">
+                            <div className="flex items-center justify-center gap-2">
                                 <RadioGroup
                                     value={selected}
                                     onValueChange={setSelected}
                                     isDisabled={isSubmitting}
+                                    className="w-full"
                                 >
                                     <Radio value={"yes"} size="sm">
                                         I will be attending your birthday party
