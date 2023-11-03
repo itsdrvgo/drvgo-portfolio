@@ -142,12 +142,14 @@ export default authMiddleware({
         return NextResponse.next();
     },
     ignoredRoutes: [
+        "/api/bday",
         "/api/auth",
         "/api/users",
         "/og.webp",
         "/og-blogs.webp",
         "/favicon.ico",
         "/",
+        "/bday(.*)",
     ],
 });
 

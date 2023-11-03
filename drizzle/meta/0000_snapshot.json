@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "44d98afc-b612-4b02-83b1-1a51c145aefd",
+  "id": "c2f3ec3f-a6ce-4c07-94be-f41fc8f6f2b9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "accounts": {
@@ -44,6 +44,37 @@
       "compositePrimaryKeys": {
         "accounts_id": {
           "name": "accounts_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "birthday_participants_2023": {
+      "name": "birthday_participants_2023",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "isParticipating": {
+          "name": "isParticipating",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "birthday_participants_2023_id": {
+          "name": "birthday_participants_2023_id",
           "columns": [
             "id"
           ]

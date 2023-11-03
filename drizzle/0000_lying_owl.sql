@@ -6,6 +6,12 @@ CREATE TABLE `accounts` (
 	CONSTRAINT `accounts_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
+CREATE TABLE `birthday_participants_2023` (
+	`id` varchar(191) NOT NULL,
+	`isParticipating` boolean NOT NULL DEFAULT false,
+	CONSTRAINT `birthday_participants_2023_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
 CREATE TABLE `blogs` (
 	`id` varchar(191) NOT NULL,
 	`title` varchar(191) NOT NULL,
