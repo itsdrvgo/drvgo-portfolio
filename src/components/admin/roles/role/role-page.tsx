@@ -1,6 +1,7 @@
 import { BitFieldPermissions } from "@/src/config/const";
 import { getAllRolesFromCache } from "@/src/lib/redis/methods/roles";
 import { checkRoleHierarchy, hasPermission } from "@/src/lib/utils";
+import { userSchema } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
 import { notFound, redirect } from "next/navigation";
@@ -40,15 +41,23 @@ async function RolePage({ className, params, ...props }: PageProps) {
         BitFieldPermissions.Administrator
     );
 
+    const parsedUser = userSchema
+        .omit({
+            emailAddresses: true,
+        })
+        .parse(user);
+
     const hasAccessToEdit =
         hasUserPermission && isUserRoleHigherThanTargettedRole;
 
     return (
         <RoleForm
-            roleData={role}
+            _role={role}
             className={className}
             hasAccessToEdit={hasAccessToEdit}
             isOwner={isOwner}
+            user={parsedUser}
+            initialRoles={roles}
             {...props}
         />
     );

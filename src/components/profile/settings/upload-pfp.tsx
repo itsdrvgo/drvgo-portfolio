@@ -1,8 +1,7 @@
 "use client";
 
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { cn } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import { cn, handleClientError } from "@/src/lib/utils";
 import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import {
@@ -15,10 +14,12 @@ import {
     ModalHeader,
     useDisclosure,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import "cropperjs/dist/cropper.css";
+import { ResponseData } from "@/src/lib/validation/response";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Cropper, ReactCropperElement } from "react-cropper";
 import Dropzone from "react-dropzone";
 import toast from "react-hot-toast";
@@ -32,18 +33,12 @@ function UploadPFP({ user }: PageProps) {
     const router = useRouter();
     const cropperRef = useRef<ReactCropperElement>(null);
 
-    const [isDisabled, setIsDisabled] = useState(true);
-    const [isLoading, setLoading] = useState(false);
     const [iconURL, setIconURL] = useState(
         user.imageUrl ?? DEFAULT_USER_IMAGE.src
     );
     const [selectedImage, setSelectedImage] = useState(iconURL);
     const [isDragActive, setIsDragActive] = useState(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
-
-    useEffect(() => {
-        setIsDisabled(!isLoading && !imageFile);
-    }, [imageFile, isLoading]);
 
     const {
         isOpen: isCropOpen,
@@ -86,46 +81,50 @@ function UploadPFP({ user }: PageProps) {
         setIconURL(croppedImage);
     };
 
-    const handlePFPUpdate = () => {
-        setLoading(true);
+    const { mutate: handlePFPUpdate, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Updating image...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            if (!imageFile) throw new Error("No image selected!");
 
-        const toastId = toast.loading("Updating image...");
+            const formData = new FormData();
+            formData.append("image", imageFile);
 
-        if (!imageFile)
-            return toast.error("No image selected!", {
-                id: toastId,
-            });
+            const { data } = await axios.put<ResponseData>(
+                `/api/users/${user.id}`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
 
-        const formData = new FormData();
-        formData.append("image", imageFile);
-
-        axios
-            .put<ResponseData>(`/api/users/${user.id}`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            })
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                toast.success("Profile picture updated", {
-                    id: toastId,
+            return data;
+        },
+        onSuccess(data, __, ctx) {
+            if (data.code !== 200)
+                return toast.error(data.message, {
+                    id: ctx?.toastId,
                 });
-            })
-            .catch((err) => {
-                toast.error(err.message, {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setLoading(false);
-                setImageFile(null);
-                router.refresh();
+
+            toast.success("Profile picture updated", {
+                id: ctx?.toastId,
             });
-    };
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+            setIconURL(user.imageUrl ?? DEFAULT_USER_IMAGE.src);
+        },
+        onSettled() {
+            setImageFile(null);
+        },
+    });
 
     return (
         <div className="space-y-10">
@@ -252,9 +251,9 @@ function UploadPFP({ user }: PageProps) {
                 <Button
                     radius="sm"
                     type="submit"
-                    isDisabled={isDisabled || isLoading}
+                    isDisabled={(!isLoading && !imageFile) || isLoading}
                     className="bg-secondary-900 font-semibold"
-                    onClick={handlePFPUpdate}
+                    onClick={() => handlePFPUpdate()}
                     color="success"
                     isLoading={isLoading}
                 >

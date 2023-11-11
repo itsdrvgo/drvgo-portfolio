@@ -1,57 +1,41 @@
 "use client";
 
-import { NewBlog } from "@/src/lib/drizzle/schema";
-import { cn, parseJSONToObject } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import { handleBlogCreate } from "@/src/actions/blogs";
+import { cn, handleClientError } from "@/src/lib/utils";
 import { Button, ButtonProps } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 
 function BlogCreateButton({ className, ...props }: ButtonProps) {
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const handleBlogCreate = () => {
-        setIsLoading(true);
-
-        const toastId = toast.loading("Creating blog...");
-
-        const data: Pick<NewBlog, "title"> = {
-            title: "Untitled Blog",
-        };
-
-        axios
-            .post<ResponseData>("/api/blogs", JSON.stringify(data))
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                toast.success("Blog created successfully!", {
-                    id: toastId,
-                });
-
-                const blogId = parseJSONToObject<string>(resData.data);
-                router.push(`/admin/blogs/${blogId}`);
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsLoading(false);
+    const { mutate: createBlog, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Creating blog...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            const { id } = await handleBlogCreate();
+            return { id };
+        },
+        onSuccess({ id }, __, ctx) {
+            toast.success("Blog created successfully", {
+                id: ctx?.toastId,
             });
-    };
+            router.push(`/admin/blogs/${id}`);
+        },
+        onError(err, __, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
 
     return (
         <Button
-            onPress={handleBlogCreate}
+            onPress={() => createBlog()}
             isDisabled={isLoading}
             isLoading={isLoading}
             className={cn("font-semibold", className)}

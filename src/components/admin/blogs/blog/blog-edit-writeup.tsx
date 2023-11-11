@@ -1,9 +1,11 @@
 "use client";
 
+import { handleBlogUpdate } from "@/src/actions/blogs";
 import UploadZone from "@/src/components/ui/uploadzone";
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { BlogPatchData } from "@/src/lib/validation/blogs";
-import { ResponseData } from "@/src/lib/validation/response";
+import { cn, handleClientError } from "@/src/lib/utils";
+import { blogUpdateSchema } from "@/src/lib/validation/blogs";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import {
@@ -17,10 +19,9 @@ import {
     Link,
     Textarea,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import NextImage from "next/image";
 import NextLink from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import BlogAuthor from "../../../global/blogs/blog-author";
@@ -33,12 +34,17 @@ interface PageProps extends DefaultProps {
     blog: CachedBlog;
     author: CachedUser;
     roles: CachedRole[];
+    user: ClerkUserWithoutEmail;
 }
 
-function BlogWriteUp({ blog, roles, author }: PageProps) {
-    const router = useRouter();
-
-    const [isSaving, setIsSaving] = useState(false);
+function BlogWriteUp({
+    blog,
+    roles,
+    author,
+    user,
+    className,
+    ...props
+}: PageProps) {
     const [previewEnabled, setPreviewEnable] = useState(false);
     const [blogTitle, setBlogTitle] = useState(blog.title);
     const [blogContent, setBlogContent] = useState(blog.content ?? "");
@@ -51,32 +57,43 @@ function BlogWriteUp({ blog, roles, author }: PageProps) {
 
     const [uploadProgress, setUploadProgress] = useState(0);
 
-    const handleSave = () => {
-        setIsSaving(true);
+    const { mutate: editAndSaveBlog, isLoading: isSaving } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Saving blog...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            if (blog.authorId !== user.id)
+                throw new Error("You are not the author of this blog!");
 
-        const body: BlogPatchData = {
-            thumbnailUrl: thumbnailURL,
-            title: blogTitle,
-            content: blogContent,
-            published: blog.published,
-            description: blogDescription,
-            action: "edit",
-        };
+            blogUpdateSchema.parse({
+                title: blogTitle,
+                description: blogDescription,
+                content: blogContent,
+                thumbnailUrl: thumbnailURL,
+            });
 
-        axios
-            .patch<ResponseData>(`/api/blogs/${blog.id}`, JSON.stringify(body))
-            .then(({ data: resData }) => {
-                if (resData.code !== 200) return toast.error(resData.message);
-
-                toast.success("Blog saved successfully");
-                router.push("/admin/blogs");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!");
-            })
-            .finally(() => setIsSaving(false));
-    };
+            await handleBlogUpdate({
+                blog,
+                props: {
+                    content: blogContent,
+                    description: blogDescription,
+                    title: blogTitle,
+                    thumbnailUrl: thumbnailURL,
+                },
+            });
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Blog saved successfully!", {
+                id: ctx?.toastId,
+            });
+        },
+        onError(err, __, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
 
     const authorRolesRaw = author.roles.map((x) => {
         const role = roles.find((r) => r.key === x);
@@ -121,7 +138,13 @@ function BlogWriteUp({ blog, roles, author }: PageProps) {
         : [];
 
     return (
-        <div className="relative flex w-full flex-col items-center gap-10">
+        <div
+            className={cn(
+                "relative flex w-full flex-col items-center gap-10",
+                className
+            )}
+            {...props}
+        >
             {previewEnabled ? (
                 <div className="flex w-full flex-col gap-4">
                     <p className="text-2xl font-bold md:text-5xl">
@@ -302,7 +325,7 @@ function BlogWriteUp({ blog, roles, author }: PageProps) {
 
             <ButtonGroup className="sticky bottom-10 z-50" variant="flat">
                 <Button
-                    onPress={handleSave}
+                    onPress={() => editAndSaveBlog()}
                     className="bg-default-100 first:rounded-l-full"
                     startContent={
                         !isSaving && <Icons.document className="h-4 w-4" />

@@ -2,7 +2,7 @@
 
 import { BitFieldPermissions, DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { formatDate, hasPermission } from "@/src/lib/utils";
-import { ClerkUser } from "@/src/lib/validation/user";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { Column, DefaultProps } from "@/src/types";
 import { CachedRole, CachedUser } from "@/src/types/cache";
 import {
@@ -59,7 +59,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 interface PageProps extends DefaultProps {
     users: CachedUser[];
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
     roles: CachedRole[];
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { ProjectPatchData } from "@/src/lib/validation/project";
-import { ResponseData } from "@/src/lib/validation/response";
+import { manageProjectStatus } from "@/src/actions/projects";
+import { handleClientError } from "@/src/lib/utils";
 import { ExtendedProject } from "@/src/types";
 import {
     Button,
@@ -13,13 +13,13 @@ import {
     Selection,
     Textarea,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
 
 interface PageProps {
-    data: ExtendedProject;
+    project: ExtendedProject;
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     onClose: () => void;
@@ -27,7 +27,7 @@ interface PageProps {
 }
 
 function ProjectRejectModal({
-    data,
+    project,
     isOpen,
     onOpenChange,
     onClose,
@@ -35,46 +35,42 @@ function ProjectRejectModal({
 }: PageProps) {
     const router = useRouter();
 
-    const [isRejecting, setIsRejecting] = useState(false);
-    const [rejectedReason, setRejectedReason] = useState(data.rejectedReason);
+    const [rejectedReason, setRejectedReason] = useState(
+        project.rejectedReason
+    );
 
-    const handleProjectReject = () => {
-        setIsRejecting(true);
-
-        const toastId = toast.loading("Rejecting project...");
-
-        const body: Pick<ProjectPatchData, "rejectedReason"> = {
-            rejectedReason: rejectedReason || "No reason provided",
-        };
-
-        axios
-            .patch<ResponseData>(
-                `/api/projects/${data.id}/reject`,
-                JSON.stringify(body)
-            )
-            .then(({ data }) => {
-                if (data.code !== 204)
-                    return toast.error(data.message, {
-                        id: toastId,
-                    });
-
+    const { mutate: handleProjectReject, isLoading: isRejecting } = useMutation(
+        {
+            onMutate() {
+                const toastId = toast.loading("Rejecting project...");
+                return {
+                    toastId,
+                };
+            },
+            async mutationFn() {
+                await manageProjectStatus({
+                    id: project.id,
+                    props: {
+                        status: "rejected",
+                        reason: rejectedReason || "No reason provided",
+                    },
+                });
+            },
+            onSuccess(_, __, ctx) {
                 toast.success("Project has been rejected", {
-                    id: toastId,
+                    id: ctx?.toastId,
                 });
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsRejecting(false);
+                router.refresh();
+            },
+            onError(err, _, ctx) {
+                handleClientError(err, ctx?.toastId);
+            },
+            onSettled() {
                 setSelected?.(new Set(["default"]));
                 onClose();
-                router.refresh();
-            });
-    };
+            },
+        }
+    );
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -117,7 +113,7 @@ function ProjectRejectModal({
                                 className="font-semibold"
                                 isDisabled={isRejecting}
                                 isLoading={isRejecting}
-                                onPress={handleProjectReject}
+                                onPress={() => handleProjectReject()}
                             >
                                 Reject
                             </Button>

@@ -7,7 +7,7 @@ import {
     formatTimestampIntoHourMinute,
 } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
-import { Button, Card, CardBody } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Icons } from "../icons/icons";
@@ -93,7 +93,7 @@ function ChatSection({
 
                             <div
                                 className={cn(
-                                    "sticky -top-full order-1 flex items-center justify-center py-5 text-sm transition-all ease-in-out",
+                                    "pointer-events-none sticky -top-full order-1 flex items-center justify-center py-5 text-sm transition-all ease-in-out",
                                     { "top-0": isSticky }
                                 )}
                             >
@@ -154,8 +154,8 @@ function ChatSection({
                                                     }
                                                 )}
                                             >
-                                                <Card
-                                                    onPress={() => {
+                                                <div
+                                                    onClick={() => {
                                                         if (
                                                             isPressed ===
                                                             message.id
@@ -166,60 +166,41 @@ function ChatSection({
                                                                 message.id
                                                             );
                                                     }}
-                                                    classNames={{
-                                                        base: cn(
-                                                            "cursor-default",
-                                                            {
-                                                                "bg-primary-400":
-                                                                    isCurrentUser &&
-                                                                    !message.text.includes(
-                                                                        "```"
-                                                                    ),
-                                                                "bg-default-200":
-                                                                    !isCurrentUser &&
-                                                                    !message.text.includes(
-                                                                        "```"
-                                                                    ),
-                                                                "rounded-br-none":
-                                                                    !hasNextMessageFromSameSender &&
-                                                                    isCurrentUser,
-                                                                "rounded-bl-none":
-                                                                    !hasNextMessageFromSameSender &&
-                                                                    !isCurrentUser,
-                                                            }
-                                                        ),
-                                                        body: cn(
-                                                            "flex cursor-text items-end gap-2 rounded-2xl px-4 py-2 text-white",
-                                                            {
-                                                                "bg-primary-400":
-                                                                    isCurrentUser &&
-                                                                    !message.text.includes(
-                                                                        "```"
-                                                                    ),
-                                                                "bg-default-200":
-                                                                    !isCurrentUser &&
-                                                                    !message.text.includes(
-                                                                        "```"
-                                                                    ),
-                                                                "flex-col gap-0":
-                                                                    message.text
-                                                                        .length >
-                                                                    100,
-                                                                "p-0": message.text.includes(
+                                                    className={cn(
+                                                        "flex items-end gap-2 rounded-2xl px-4 py-2 text-white",
+                                                        {
+                                                            "bg-primary-400":
+                                                                isCurrentUser &&
+                                                                !message.text.includes(
                                                                     "```"
                                                                 ),
-                                                            }
-                                                        ),
-                                                    }}
+                                                            "bg-default-200":
+                                                                !isCurrentUser &&
+                                                                !message.text.includes(
+                                                                    "```"
+                                                                ),
+                                                            "flex-col gap-0":
+                                                                message.text
+                                                                    .length >
+                                                                100,
+                                                            "p-0": message.text.includes(
+                                                                "```"
+                                                            ),
+                                                            "rounded-br-none":
+                                                                !hasNextMessageFromSameSender &&
+                                                                isCurrentUser,
+                                                            "rounded-bl-none":
+                                                                !hasNextMessageFromSameSender &&
+                                                                !isCurrentUser,
+                                                        }
+                                                    )}
                                                 >
-                                                    <CardBody>
-                                                        <div className="overscroll-x-scroll max-w-[15rem] md:max-w-xl">
-                                                            <ChatMdx>
-                                                                {message.text}
-                                                            </ChatMdx>
-                                                        </div>
-                                                    </CardBody>
-                                                </Card>
+                                                    <div className="overscroll-x-scroll max-w-[15rem] md:max-w-xl">
+                                                        <ChatMdx>
+                                                            {message.text}
+                                                        </ChatMdx>
+                                                    </div>
+                                                </div>
 
                                                 <div
                                                     className={cn(
@@ -302,27 +283,20 @@ function ChatSection({
                                         "order-1 mx-2 flex max-w-[15rem] flex-col items-end gap-2 text-sm md:max-w-xl md:text-base"
                                     )}
                                 >
-                                    <Card
-                                        classNames={{
-                                            base: "bg-primary-400 rounded-br-none opacity-60",
-                                            body: cn(
-                                                "flex items-end gap-2 rounded-2xl bg-primary-400 px-4 py-2 text-white opacity-60",
-                                                {
-                                                    "flex-col gap-0":
-                                                        message.length > 100,
-                                                    "p-0": message.includes(
-                                                        "```"
-                                                    ),
-                                                }
-                                            ),
-                                        }}
+                                    <div
+                                        className={cn(
+                                            "flex items-end gap-2 rounded-2xl rounded-br-none bg-primary-400 px-4 py-2 text-white opacity-60",
+                                            {
+                                                "flex-col gap-0":
+                                                    message.length > 100,
+                                                "p-0": message.includes("```"),
+                                            }
+                                        )}
                                     >
-                                        <CardBody>
-                                            <div className="overscroll-x-scroll max-w-[15rem] md:max-w-xl">
-                                                <ChatMdx>{message}</ChatMdx>
-                                            </div>
-                                        </CardBody>
-                                    </Card>
+                                        <div className="overscroll-x-scroll max-w-[15rem] md:max-w-xl">
+                                            <ChatMdx>{message}</ChatMdx>
+                                        </div>
+                                    </div>
 
                                     <p
                                         className={cn("text-xs text-gray-400", {

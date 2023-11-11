@@ -1,6 +1,7 @@
 "use client";
 
-import { ResponseData } from "@/src/lib/validation/response";
+import { manageProjectStatus } from "@/src/actions/projects";
+import { handleClientError } from "@/src/lib/utils";
 import { ExtendedProject } from "@/src/types";
 import {
     Button,
@@ -11,13 +12,13 @@ import {
     ModalHeader,
     Selection,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import toast from "react-hot-toast";
 
 interface PageProps {
-    data: ExtendedProject;
+    project: ExtendedProject;
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     onClose: () => void;
@@ -25,7 +26,7 @@ interface PageProps {
 }
 
 function ProjectPaidModal({
-    data,
+    project,
     isOpen,
     onOpenChange,
     onClose,
@@ -33,38 +34,35 @@ function ProjectPaidModal({
 }: PageProps) {
     const router = useRouter();
 
-    const [isPaying, setIsPaying] = useState(false);
-
-    const handleProjectPaid = () => {
-        setIsPaying(true);
-
-        const toastId = toast.loading("Marking project as paid...");
-
-        axios
-            .patch<ResponseData>(`/api/projects/${data.id}/paid`)
-            .then(({ data }) => {
-                if (data.code !== 204)
-                    return toast.error(data.message, {
-                        id: toastId,
-                    });
-
-                toast.success("Project has been marked as paid", {
-                    id: toastId,
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsPaying(false);
-                setSelected?.(new Set(["default"]));
-                onClose();
-                router.refresh();
+    const { mutate: handleProjectPaid, isLoading: isPaying } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Marking project as paid...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            await manageProjectStatus({
+                id: project.id,
+                props: {
+                    status: "paid",
+                },
             });
-    };
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Project has been marked as paid", {
+                id: ctx?.toastId,
+            });
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            setSelected?.(new Set(["default"]));
+            onClose();
+        },
+    });
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -94,7 +92,7 @@ function ProjectPaidModal({
                                 className="font-semibold"
                                 isDisabled={isPaying}
                                 isLoading={isPaying}
-                                onPress={handleProjectPaid}
+                                onPress={() => handleProjectPaid()}
                             >
                                 Complete
                             </Button>

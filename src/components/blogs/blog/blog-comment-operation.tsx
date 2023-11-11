@@ -1,9 +1,13 @@
 "use client";
 
+import {
+    deleteComment,
+    pinComment,
+    unpinComment,
+    updateComment,
+} from "@/src/actions/comments";
 import { BitFieldPermissions } from "@/src/config/const";
-import { NewComment } from "@/src/lib/drizzle/schema";
-import { cn, hasPermission } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import { cn, handleClientError, hasPermission } from "@/src/lib/utils";
 import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
 import { CachedBlog } from "@/src/types/cache";
@@ -22,7 +26,7 @@ import {
     Textarea,
     useDisclosure,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -40,7 +44,6 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
     const [isPinned, setIsPinned] = useState(comment.pinned);
     const [isEditing, setIsEditing] = useState(false);
     const [commentText, setCommentText] = useState(comment.content);
-    const [isPosting, setIsPosting] = useState(false);
 
     const {
         isOpen: isDeleteModalOpen,
@@ -61,75 +64,112 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
         else setIsEditing(true);
     }, [comment.content, commentText]);
 
-    const handleCommentDelete = () => {
-        axios
-            .delete<ResponseData>(
-                `/api/blogs/comments/${blog.id}/${comment.id}`
-            )
-            .then(({ data: resData }) => {
-                if (resData.code !== 200) return toast.error(resData.message);
+    const { mutate: handleCommentDelete, isLoading: isDeleting } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Deleting comment...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            const isAuthor = user.id === comment.authorId;
+            const isAdmin = hasPermission(
+                user.privateMetadata.permissions,
+                BitFieldPermissions.ManageBlogs |
+                    BitFieldPermissions.ManagePages
+            );
 
-                toast.success("Comment deleted");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!");
-            })
-            .finally(() => {
-                onDeleteModalClose();
-                router.refresh();
+            if (!isAuthor && !isAdmin)
+                throw new Error("You are not allowed to delete this comment");
+
+            await deleteComment({
+                blog,
+                comment,
             });
-    };
-
-    const handleCommentPin = () => {
-        axios
-            .post<ResponseData>(
-                `/api/blogs/comments/${blog.id}/${comment.id}/${
-                    isPinned ? "unpin" : "pin"
-                }`
-            )
-            .then(({ data: resData }) => {
-                if (resData.code !== 200) return toast.error(resData.message);
-
-                setIsPinned(!isPinned);
-                toast.success(`Comment ${isPinned ? "unpinned" : "pinned"}`);
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!");
-            })
-            .finally(() => {
-                router.refresh();
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Comment deleted", {
+                id: ctx?.toastId,
             });
-    };
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            onDeleteModalClose();
+        },
+    });
 
-    const handleCommentEdit = () => {
-        setIsPosting(true);
-        setIsEditing(false);
+    const { mutate: handleCommentPin } = useMutation({
+        onMutate() {
+            const toastId = toast.loading(
+                `${isPinned ? "Unpinning" : "Pinning"} comment...`
+            );
+            setIsPinned(!isPinned);
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            const isAuthorized = hasPermission(
+                user.privateMetadata.permissions,
+                BitFieldPermissions.ManageBlogs |
+                    BitFieldPermissions.ManagePages
+            );
+            if (!isAuthorized) throw new Error("You are not authorized!");
 
-        const body: Pick<NewComment, "content"> = {
-            content: commentText,
-        };
-
-        axios
-            .patch<ResponseData>(
-                `/api/blogs/comments/${blog.id}/${comment.id}`,
-                JSON.stringify(body)
-            )
-            .then(({ data: resData }) => {
-                if (resData.code !== 200) return toast.error(resData.message);
-                toast.success("Comment updated");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!");
-            })
-            .finally(() => {
-                setIsPosting(false);
-                onEditModalClose();
-                router.refresh();
+            isPinned
+                ? await pinComment({
+                      comment,
+                      user,
+                  })
+                : await unpinComment({
+                      comment,
+                  });
+        },
+        onSuccess(_, __, ctx) {
+            toast.success(`Comment ${isPinned ? "pinned" : "unpinned"}`, {
+                id: ctx?.toastId,
             });
-    };
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            setIsPinned(!isPinned);
+            handleClientError(err, ctx?.toastId);
+        },
+    });
+
+    const { mutate: handleCommentEdit, isLoading: isPosting } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Updating comment...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            const isAuthor = user.id === comment.authorId;
+            if (!isAuthor)
+                throw new Error("You are not allowed to edit this comment");
+
+            await updateComment({
+                comment,
+                content: commentText,
+            });
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Comment updated", {
+                id: ctx?.toastId,
+            });
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            onEditModalClose();
+        },
+    });
 
     return (
         <>
@@ -182,7 +222,7 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
                                     ? "Unpin this comment"
                                     : "Pin this comment"
                             }
-                            onPress={handleCommentPin}
+                            onPress={() => handleCommentPin()}
                         >
                             {isPinned ? "Unpin" : "Pin"}
                         </DropdownItem>
@@ -232,6 +272,8 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
             <Modal
                 isOpen={isEditModalOpen}
                 onOpenChange={onEditModalOpenChange}
+                isDismissable={!isPosting}
+                hideCloseButton={isPosting}
             >
                 <ModalContent>
                     {(onClose) => (
@@ -263,6 +305,7 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
                                     variant="light"
                                     onPress={onClose}
                                     className="font-semibold"
+                                    isDisabled={isPosting}
                                 >
                                     Close
                                 </Button>
@@ -270,9 +313,10 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
                                     radius="sm"
                                     color="primary"
                                     variant="flat"
-                                    onPress={handleCommentEdit}
+                                    onPress={() => handleCommentEdit()}
                                     className="font-semibold"
-                                    isDisabled={!isEditing}
+                                    isLoading={isPosting}
+                                    isDisabled={!isEditing || isPosting}
                                 >
                                     {isPosting && (
                                         <Icons.spinner className="h-4 w-4 animate-spin" />
@@ -288,6 +332,8 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
             <Modal
                 isOpen={isDeleteModalOpen}
                 onOpenChange={onDeleteModalOpenChange}
+                isDismissable={!isDeleting}
+                hideCloseButton={isDeleting}
             >
                 <ModalContent>
                     {(onClose) => (
@@ -309,6 +355,7 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
                                     color="danger"
                                     variant="light"
                                     onPress={onClose}
+                                    isDisabled={isDeleting}
                                     className="font-semibold"
                                 >
                                     Close
@@ -317,7 +364,9 @@ function BlogCommentOperation({ user, blog, comment }: PageProps) {
                                     radius="sm"
                                     color="primary"
                                     variant="flat"
-                                    onPress={handleCommentDelete}
+                                    isDisabled={isDeleting}
+                                    isLoading={isDeleting}
+                                    onPress={() => handleCommentDelete()}
                                     className="font-semibold"
                                 >
                                     Delete

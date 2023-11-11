@@ -1,10 +1,14 @@
 "use client";
 
 import { env } from "@/env.mjs";
+import {
+    addLikeToBlog,
+    removeLikeFromBlog,
+    updateBlogViews,
+} from "@/src/actions/blogs";
+import { createComment } from "@/src/actions/comments";
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { NewComment } from "@/src/lib/drizzle/schema";
-import { cn, shortenNumber, updateBlogViews } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import { cn, handleClientError, shortenNumber } from "@/src/lib/utils";
 import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { ExtendedComment } from "@/src/types";
 import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
@@ -16,7 +20,6 @@ import {
     Textarea,
 } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -44,12 +47,11 @@ function BlogViewOperations({
 
     const [comment, setComment] = useState("");
     const [isActive, setIsActive] = useState(false);
-    const [isPosting, setIsPosting] = useState(false);
     const [isLiked, setIsLiked] = useState(blogIsLiked);
     const [likesLength, setLikesLength] = useState(blog.likes);
 
     useEffect(() => {
-        updateBlogViews(blog.id);
+        updateBlogViews({ blog });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -59,76 +61,65 @@ function BlogViewOperations({
     }, [comment.length]);
 
     const { mutate: handleLike } = useMutation({
-        mutationFn: async () => {
-            const response = !isLiked
-                ? await axios.delete<ResponseData>(
-                      `/api/blogs/likes/${blog.id}`
-                  )
-                : await axios.post<ResponseData>(`/api/blogs/likes/${blog.id}`);
-
-            return response.data;
-        },
-        onMutate: async () => {
+        onMutate() {
             const previousLikes = likesLength;
 
-            setLikesLength((previousLikes || 0) + (isLiked ? -1 : 1));
+            setLikesLength((previousLikes || 0) + (blogIsLiked ? -1 : 1));
             setIsLiked(!isLiked);
 
-            return { previousLikes };
+            return {
+                previousLikes,
+            };
         },
-        onError: (err, _, context) => {
-            console.error(err);
-            setLikesLength(context!.previousLikes);
-            setIsLiked(!isLiked);
+        async mutationFn() {
+            if (!user) throw new Error("You're not logged in!");
 
-            return toast.error("Something went wrong, try again later!");
+            isLiked
+                ? await addLikeToBlog({
+                      blog,
+                      user,
+                  })
+                : await removeLikeFromBlog({
+                      blog,
+                      user,
+                  });
         },
-        onSuccess: (res) => {
-            if (res.code !== 200) return toast.error(res.message);
+        onError(err, _, ctx) {
+            setLikesLength(ctx?.previousLikes!);
+            setIsLiked(!isLiked);
+            handleClientError(err);
         },
     });
 
-    const addComment = () => {
-        if (!user) return toast.error("You're not logged in!");
+    const { mutate: handleCreateComment, isLoading: isPosting } = useMutation({
+        onMutate() {
+            setIsActive(false);
 
-        setIsActive(false);
-        setIsPosting(true);
+            const toastId = toast.loading("Posting comment...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            if (!user) throw new Error("You're not logged in!");
 
-        const toastId = toast.loading("Posting comment...");
-
-        const body: Omit<NewComment, "id"> = {
-            authorId: user.id,
-            blogId: blog.id,
-            content: comment,
-        };
-
-        axios
-            .post<ResponseData>(
-                `/api/blogs/comments/${blog.id}`,
-                JSON.stringify(body)
-            )
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                setComment("");
-                toast.success("Comment published", {
-                    id: toastId,
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsPosting(false);
-                router.refresh();
+            await createComment({
+                blog,
+                user,
+                content: comment,
             });
-    };
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Comment published", {
+                id: ctx?.toastId,
+            });
+            setComment("");
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
 
     return (
         <>
@@ -238,7 +229,7 @@ function BlogViewOperations({
                             </Button>
                             <Button
                                 isDisabled={!isActive}
-                                onPress={addComment}
+                                onPress={() => handleCreateComment()}
                                 variant="flat"
                                 color="primary"
                                 radius="sm"

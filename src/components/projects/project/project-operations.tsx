@@ -9,8 +9,9 @@ import {
     isRejectable,
     isUpdatable,
 } from "@/src/lib/projects";
+import { chatParamsGenerator } from "@/src/lib/utils";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { ExtendedProject } from "@/src/types";
-import { useAuth } from "@clerk/nextjs";
 import {
     Button,
     ButtonGroup,
@@ -85,11 +86,11 @@ const dropDownOptions: DropDownOption[] = [
 
 interface PageProps {
     project: ExtendedProject;
+    user: ClerkUserWithoutEmail;
 }
 
-function ProjectOperations({ project }: PageProps) {
+function ProjectOperations({ project, user }: PageProps) {
     const router = useRouter();
-    const { userId } = useAuth();
 
     const [selected, setSelected] = useState<Selection>(new Set(["default"]));
     const selectedOptionValue = Array.from(selected)[0];
@@ -165,7 +166,11 @@ function ProjectOperations({ project }: PageProps) {
                                 break;
                             case "message":
                                 router.push(
-                                    `/chats/${project.purchaser.id}--${userId}`
+                                    "/chats?" +
+                                        chatParamsGenerator(
+                                            project.purchaser.id,
+                                            user.id
+                                        )
                                 );
                                 break;
                         }
@@ -237,7 +242,7 @@ function ProjectOperations({ project }: PageProps) {
                 isOpen={isAcceptOpen}
                 onOpenChange={onAcceptOpenChange}
                 onClose={onAcceptClose}
-                data={project}
+                project={project}
                 setSelected={setSelected}
             />
 
@@ -245,7 +250,7 @@ function ProjectOperations({ project }: PageProps) {
                 isOpen={isRejectOpen}
                 onOpenChange={onRejectOpenChange}
                 onClose={onRejectClose}
-                data={project}
+                project={project}
                 setSelected={setSelected}
             />
 
@@ -253,7 +258,7 @@ function ProjectOperations({ project }: PageProps) {
                 isOpen={isCompleteOpen}
                 onOpenChange={onCompleteOpenChange}
                 onClose={onCompleteClose}
-                data={project}
+                project={project}
                 setSelected={setSelected}
             />
 
@@ -261,15 +266,16 @@ function ProjectOperations({ project }: PageProps) {
                 isOpen={isUpdateOpen}
                 onOpenChange={onUpdateOpenChange}
                 onClose={onUpdateClose}
-                data={project}
+                project={project}
                 setSelected={setSelected}
+                user={user}
             />
 
             <ProjectCancelModal
                 isOpen={isCancelOpen}
                 onOpenChange={onCancelOpenChange}
                 onClose={onCancelClose}
-                data={project}
+                project={project}
                 setSelected={setSelected}
             />
 
@@ -277,7 +283,7 @@ function ProjectOperations({ project }: PageProps) {
                 isOpen={isPaidOpen}
                 onOpenChange={onPaidOpenChange}
                 onClose={onPaidClose}
-                data={project}
+                project={project}
                 setSelected={setSelected}
             />
         </>

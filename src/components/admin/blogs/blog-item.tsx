@@ -2,19 +2,28 @@
 
 import { DEFAULT_BLOG_THUMBNAIL } from "@/src/config/const";
 import { formatDate } from "@/src/lib/utils";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { CachedBlog } from "@/src/types/cache";
-import { Card, CardBody, CardFooter, Image, Link } from "@nextui-org/react";
+import {
+    Card,
+    CardBody,
+    CardFooter,
+    CardProps,
+    Image,
+    Link,
+} from "@nextui-org/react";
 import NextImage from "next/image";
 import NextLink from "next/link";
 import BlogOperations from "./blog-item-operations";
 
-interface PageProps {
+interface PageProps extends CardProps {
     blog: CachedBlog;
+    user: ClerkUserWithoutEmail;
 }
 
-function BlogItem({ blog }: PageProps) {
+function BlogItem({ blog, user, key, ...props }: PageProps) {
     return (
-        <Card isPressable className="h-full">
+        <Card isPressable className="h-full" key={key} {...props}>
             <CardBody className="p-3">
                 <Image
                     as={NextImage}
@@ -45,7 +54,7 @@ function BlogItem({ blog }: PageProps) {
                     </p>
                 </div>
 
-                <BlogOperations blog={blog} />
+                <BlogOperations blog={blog} user={user} />
             </CardFooter>
         </Card>
     );

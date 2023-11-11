@@ -1,9 +1,13 @@
 "use client";
 
+import { deleteUser, updateUserRoles } from "@/src/actions/users";
 import { BitFieldPermissions } from "@/src/config/const";
-import { checkRoleHierarchy, hasPermission } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
-import { ClerkUser } from "@/src/lib/validation/user";
+import {
+    checkRoleHierarchy,
+    handleClientError,
+    hasPermission,
+} from "@/src/lib/utils";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { CachedRole, CachedUser } from "@/src/types/cache";
 import {
@@ -24,7 +28,7 @@ import {
     SelectItem,
     useDisclosure,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -32,15 +36,12 @@ import { Icons } from "../../icons/icons";
 
 interface PageProps extends DefaultProps {
     target: CachedUser;
-    user: ClerkUser;
+    user: ClerkUserWithoutEmail;
     roles: CachedRole[];
 }
 
 function UsersOperation({ target, user, roles }: PageProps) {
     const router = useRouter();
-
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [isUpdating, setIsUpdating] = useState(false);
 
     const {
         isOpen: isDeleteOpen,
@@ -61,81 +62,74 @@ function UsersOperation({ target, user, roles }: PageProps) {
 
     const [finalRoles, setFinalRoles] = useState<string[]>(targetRoles);
 
-    const handleUserDelete = () => {
-        if (user.id === target.id)
-            return toast.error("You cannot delete your own account!");
+    const { mutate: handleUserDelete, isLoading: isDeleting } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Deleting user...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            if (user.id === target.id)
+                throw new Error("You cannot delete your own account!");
 
-        if (!checkRoleHierarchy(userRoles, targetRoles, roles))
-            return toast.error(
-                "You don't have permission to execute this action!"
-            );
+            if (!checkRoleHierarchy(userRoles, targetRoles, roles))
+                throw new Error(
+                    "You don't have permission to execute this action!"
+                );
 
-        setIsDeleting(true);
-
-        const toastId = toast.loading("Deleting user...");
-
-        axios
-            .delete<ResponseData>(`/api/users/${target.id}`)
-            .then(({ data: resData }) => {
-                if (resData.code !== 204)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                toast.success("User has been deleted", {
-                    id: toastId,
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsDeleting(false);
-                onDeleteClose();
-                router.refresh();
+            await deleteUser({
+                id: target.id,
+                user,
             });
-    };
-
-    const handleRoleUpdate = () => {
-        if (!checkRoleHierarchy(userRoles, targetRoles, roles))
-            return toast.error(
-                "You don't have permission to execute this action!"
-            );
-
-        setIsUpdating(true);
-
-        const toastId = toast.loading("Updating user role...");
-
-        axios
-            .patch<ResponseData>(
-                `/api/users/${target.id}`,
-                JSON.stringify({ roles: finalRoles })
-            )
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                toast.success("User role has been updated", {
-                    id: toastId,
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsUpdating(false);
-                onUpdateClose();
-                router.refresh();
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("User has been deleted", {
+                id: ctx?.toastId,
             });
-    };
+            router.refresh();
+        },
+        onError(err, __, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            onDeleteClose();
+        },
+    });
+
+    const { mutate: handleRoleUpdate, isLoading: isUpdating } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Updating user role...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            if (!checkRoleHierarchy(userRoles, targetRoles, roles))
+                throw new Error(
+                    "You don't have permission to execute this action!"
+                );
+
+            await updateUserRoles({
+                target,
+                user,
+                updatedRoles: finalRoles,
+                allRoles: roles,
+            });
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("User role has been updated", {
+                id: ctx?.toastId,
+            });
+            router.refresh();
+        },
+        onError(err, __, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            onUpdateClose();
+        },
+    });
 
     return (
         <>
@@ -329,7 +323,7 @@ function UsersOperation({ target, user, roles }: PageProps) {
                                 <Button
                                     radius="sm"
                                     color="primary"
-                                    onPress={handleRoleUpdate}
+                                    onPress={() => handleRoleUpdate()}
                                     className="font-semibold"
                                     isDisabled={
                                         isUpdating ||
@@ -369,7 +363,7 @@ function UsersOperation({ target, user, roles }: PageProps) {
                                 <Button
                                     radius="sm"
                                     color="primary"
-                                    onPress={handleUserDelete}
+                                    onPress={() => handleUserDelete()}
                                     className="font-semibold"
                                     isDisabled={isDeleting}
                                     isLoading={isDeleting}

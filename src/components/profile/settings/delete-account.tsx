@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import { deleteUser } from "@/src/actions/users";
+import { cn, handleClientError } from "@/src/lib/utils";
 import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import {
@@ -13,9 +13,8 @@ import {
     ModalHeader,
     useDisclosure,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 
@@ -25,40 +24,34 @@ interface PageProps extends DefaultProps {
 
 function DeleteAccount({ user, className }: PageProps) {
     const router = useRouter();
-
-    const [isLoading, setLoading] = useState(false);
     const { onOpen, isOpen, onOpenChange, onClose } = useDisclosure();
 
-    const handleAccountDeletion = () => {
-        setLoading(true);
-
-        const toastId = toast.loading("Deleting account...");
-
-        axios
-            .delete<ResponseData>(`/api/users/${user.id}`)
-            .then(({ data: resData }) => {
-                if (resData.code !== 204)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                router.push("/");
-
-                toast.success(resData.message, {
-                    id: toastId,
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setLoading(false);
-                onClose();
+    const { mutate: deleteAccount, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Deleting account...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            await deleteUser({
+                id: user.id,
+                user,
             });
-    };
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Account deleted", {
+                id: ctx?.toastId,
+            });
+            router.push("/");
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            onClose();
+        },
+    });
 
     return (
         <div
@@ -102,7 +95,6 @@ function DeleteAccount({ user, className }: PageProps) {
                                     variant="light"
                                     className="font-semibold"
                                     isDisabled={isLoading}
-                                    isLoading={isLoading}
                                     onPress={onClose}
                                 >
                                     Close
@@ -112,7 +104,7 @@ function DeleteAccount({ user, className }: PageProps) {
                                     color="primary"
                                     variant="flat"
                                     className="font-semibold"
-                                    onPress={handleAccountDeletion}
+                                    onPress={() => deleteAccount()}
                                     isDisabled={isLoading}
                                     isLoading={isLoading}
                                 >

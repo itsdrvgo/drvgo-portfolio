@@ -1,7 +1,7 @@
 "use client";
 
-import { parseJSONToObject } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import { manageProjectState } from "@/src/actions/projects";
+import { handleClientError } from "@/src/lib/utils";
 import {
     Button,
     Card,
@@ -14,7 +14,7 @@ import {
     Switch,
     useDisclosure,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -23,16 +23,10 @@ interface PageProps {
     projectState: boolean;
 }
 
-interface ProjectResponseData {
-    state: boolean;
-}
-
 function ProjectStatus({ projectState }: PageProps) {
     const router = useRouter();
 
     const [isActive, setIsActive] = useState(projectState);
-    const [isLoading, setIsLoading] = useState(false);
-
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
     const handleSwitchChange = (value: boolean) => {
@@ -40,48 +34,43 @@ function ProjectStatus({ projectState }: PageProps) {
         onOpen();
     };
 
-    const handleUpdateState = () => {
-        setIsLoading(true);
-
-        const toastId = toast.loading("Updating status...");
-
-        const body = {
-            state: isActive,
-        };
-
-        axios
-            .post<ResponseData>("/api/projects/status", JSON.stringify(body))
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast.error(resData.message, { id: toastId });
-
-                const result = parseJSONToObject<ProjectResponseData>(
-                    resData.data
-                );
-
-                toast.success(
-                    `${
-                        result.state
-                            ? "You'll now receive orders"
-                            : "You'll no longer receive orders"
-                    }`,
-                    { id: toastId }
-                );
-            })
-            .catch((err) => {
-                setIsActive(projectState);
-
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsLoading(false);
-                onClose();
-                router.refresh();
+    const { mutate: handleUpdateState, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Updating status...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            const { state } = await manageProjectState({
+                state: isActive,
             });
-    };
+
+            return {
+                state,
+            };
+        },
+        onSuccess({ state }, __, ctx) {
+            toast.success(
+                `${
+                    state
+                        ? "You'll now receive orders"
+                        : "You'll no longer receive orders"
+                }`,
+                {
+                    id: ctx?.toastId,
+                }
+            );
+            router.refresh();
+        },
+        onError(err, __, ctx) {
+            setIsActive(projectState);
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            onClose();
+        },
+    });
 
     return (
         <>
@@ -141,7 +130,7 @@ function ProjectStatus({ projectState }: PageProps) {
                                     className="font-semibold"
                                     isDisabled={isLoading}
                                     isLoading={isLoading}
-                                    onPress={handleUpdateState}
+                                    onPress={() => handleUpdateState()}
                                 >
                                     Confirm
                                 </Button>

@@ -1,8 +1,10 @@
 "use client";
 
+import { handleBlogDelete, handleBlogPrivacy } from "@/src/actions/blogs";
 import { Icons } from "@/src/components/icons/icons";
-import { BlogPatchData } from "@/src/lib/validation/blogs";
-import { ResponseData } from "@/src/lib/validation/response";
+import { handleClientError } from "@/src/lib/utils";
+import { blogPublishSchema } from "@/src/lib/validation/blogs";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { CachedBlog } from "@/src/types/cache";
 import {
     Button,
@@ -18,20 +20,17 @@ import {
     ModalHeader,
     useDisclosure,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface PageProps {
     blog: CachedBlog;
+    user: ClerkUserWithoutEmail;
 }
 
-function BlogOperations({ blog }: PageProps) {
+function BlogOperations({ blog, user }: PageProps) {
     const router = useRouter();
-
-    const [isDeleting, setIsDeleting] = useState<boolean>(false);
-    const [isPublishing, setIsPublishing] = useState<boolean>(false);
 
     const {
         isOpen: isDeleteOpen,
@@ -47,85 +46,77 @@ function BlogOperations({ blog }: PageProps) {
         onOpenChange: onPublishOpenChange,
     } = useDisclosure();
 
-    const deleteBlog = () => {
-        setIsDeleting(true);
+    const { mutate: deleteBlog, isLoading: isDeleting } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Deleting blog...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            if (blog.authorId !== user.id)
+                throw new Error("You are not the author of this blog!");
 
-        const toastId = toast.loading("Deleting blog...");
-
-        axios
-            .delete<ResponseData>(`/api/blogs/${blog.id}`)
-            .then(({ data: resData }) => {
-                if (resData.code !== 204)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                toast.success("Blog has been deleted", {
-                    id: toastId,
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-
-                toast.error("Blog was not deleted, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsDeleting(false);
-                onDeleteClose();
-                router.refresh();
+            await handleBlogDelete({
+                blog,
             });
-    };
-
-    const publishBlog = () => {
-        setIsPublishing(true);
-
-        const toastId = toast.loading(
-            blog.published ? "Unpublishing blog..." : "Publishing blog..."
-        );
-
-        const body: BlogPatchData = {
-            ...blog,
-            published: !blog.published,
-            action: "publish",
-        };
-
-        axios
-            .patch<ResponseData>(`/api/blogs/${blog.id}`, JSON.stringify(body))
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                toast.success(
-                    blog.published
-                        ? "Blog has been unpublished"
-                        : "Blog has been published",
-                    {
-                        id: toastId,
-                    }
-                );
-            })
-            .catch((err) => {
-                console.error(err);
-
-                toast.error(
-                    blog.published
-                        ? "Error unpublishing the blog, try again later!"
-                        : "Blog was not published, try again later!",
-                    {
-                        id: toastId,
-                    }
-                );
-            })
-            .finally(() => {
-                setIsPublishing(false);
-                onPublishClose();
-                router.refresh();
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Blog has been deleted", {
+                id: ctx?.toastId,
             });
-    };
+        },
+        onError(err, __, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            onDeleteClose();
+            router.refresh();
+        },
+    });
+
+    const { mutate: managePrivacy, isLoading: isPublishing } = useMutation({
+        onMutate() {
+            const toastId = toast.loading(
+                blog.published ? "Unpublishing blog..." : "Publishing blog..."
+            );
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            if (blog.authorId !== user.id)
+                throw new Error("You are not the author of this blog!");
+
+            blogPublishSchema.parse({
+                title: blog.title,
+                description: blog.description,
+                content: blog.content,
+                thumbnail: blog.thumbnailUrl,
+            });
+
+            await handleBlogPrivacy({
+                blog,
+            });
+        },
+        onSuccess(_, __, ctx) {
+            toast.success(
+                blog.published
+                    ? "Blog has been unpublished"
+                    : "Blog has been published",
+                {
+                    id: ctx?.toastId,
+                }
+            );
+        },
+        onError(err, __, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            onPublishClose();
+            router.refresh();
+        },
+    });
 
     return (
         <>
@@ -197,7 +188,7 @@ function BlogOperations({ blog }: PageProps) {
                                 <Button
                                     radius="sm"
                                     color="primary"
-                                    onPress={deleteBlog}
+                                    onPress={() => deleteBlog()}
                                     className="font-semibold"
                                     isDisabled={isDeleting}
                                     isLoading={isDeleting}
@@ -238,7 +229,7 @@ function BlogOperations({ blog }: PageProps) {
                                 <Button
                                     radius="sm"
                                     color="primary"
-                                    onPress={publishBlog}
+                                    onPress={() => managePrivacy()}
                                     className="font-semibold"
                                     isDisabled={isPublishing}
                                     isLoading={isPublishing}

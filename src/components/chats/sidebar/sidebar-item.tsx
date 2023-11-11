@@ -23,7 +23,6 @@ function SideBarItem({
     uId,
     message,
     index,
-    key,
     ...props
 }: PageProps) {
     const router = useRouter();
@@ -32,12 +31,12 @@ function SideBarItem({
     const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
     const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
 
-    if (typeof window === undefined) return null;
+    if (typeof window === "undefined") return null;
     const isMobile = window.innerWidth <= 768;
 
     return (
         <div
-            key={key}
+            key={chatter.id}
             className={cn(
                 "flex cursor-pointer items-center gap-4 px-5 hover:bg-chat-hover",
                 pId === chatter.id && "bg-chat-hover"

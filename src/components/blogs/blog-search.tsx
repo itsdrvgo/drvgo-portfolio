@@ -16,12 +16,11 @@ interface PageProps extends DefaultProps {
     blogs: CachedBlog[];
 }
 
-const fetchBlogs = async (page: number) => {
+const fetchBlogs = async (page: number): Promise<CachedBlog[]> => {
     await wait(1000);
-    const {
-        data: { data },
-    } = await axios.get<ResponseData>("/api/blogs");
-    return parseJSONToObject<CachedBlog[]>(data).slice(
+    const { data } = await axios.get<ResponseData>("/api/blogs");
+
+    return parseJSONToObject<CachedBlog[]>(data.data).slice(
         (page - 1) * 6,
         page * 6
     );

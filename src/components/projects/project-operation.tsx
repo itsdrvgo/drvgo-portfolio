@@ -1,7 +1,7 @@
 "use client";
 
 import { isCancellable, isEditable, isMessageable } from "@/src/lib/projects";
-import { chatHrefConstructor } from "@/src/lib/utils";
+import { chatParamsGenerator } from "@/src/lib/utils";
 import { DefaultProps, ExtendedProject } from "@/src/types";
 import {
     Button,
@@ -84,10 +84,11 @@ function ProjectOperation({ project, ownerId }: PageProps) {
                             startContent={<Icons.send className="h-4 w-4" />}
                             onPress={() => {
                                 router.push(
-                                    `/chats/${chatHrefConstructor(
-                                        ownerId,
-                                        project.purchaserId
-                                    )}`
+                                    "/chats?" +
+                                        chatParamsGenerator(
+                                            ownerId,
+                                            project.purchaserId
+                                        )
                                 );
                             }}
                         >
@@ -119,7 +120,7 @@ function ProjectOperation({ project, ownerId }: PageProps) {
             </Dropdown>
 
             <ProjectCancelModal
-                data={project}
+                project={project}
                 isOpen={isCancelOpen}
                 onOpenChange={onCancelOpenChange}
                 onClose={onCancelClose}
