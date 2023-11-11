@@ -5,11 +5,11 @@ import { NextUIProvider } from "@nextui-org/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useRouter } from "next/navigation";
-
-const queryClient = new QueryClient();
+import { useState } from "react";
 
 function ClientProvider({ children }: DefaultProps) {
     const router = useRouter();
+    const [queryClient] = useState(() => new QueryClient());
 
     return (
         <NextUIProvider navigate={router.push}>
