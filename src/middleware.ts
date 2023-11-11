@@ -15,15 +15,16 @@ const globalRateLimiter = new Ratelimit({
     timeout: 1000,
 });
 
-const viewsRateLimiter = new Ratelimit({
-    redis: Redis.fromEnv(),
-    limiter: Ratelimit.fixedWindow(5, "60s"),
-    ephemeralCache: cache,
-    analytics: true,
-    timeout: 1000,
-});
-
 export default authMiddleware({
+    ignoredRoutes: [
+        "/api/bday",
+        "/api/users",
+        "/og.webp",
+        "/og-blogs.webp",
+        "/favicon.ico",
+        "/",
+        "/bday(.*)",
+    ],
     publicRoutes: [
         "/blogs(.*)",
         "/courses(.*)",
@@ -37,7 +38,7 @@ export default authMiddleware({
         "/api/uploadthing(.*)",
         "/support(.*)",
     ],
-    async afterAuth(auth, req, evt) {
+    afterAuth: async (auth, req, evt) => {
         const url = new URL(req.nextUrl.origin);
 
         if (auth.isPublicRoute) {
@@ -104,55 +105,27 @@ export default authMiddleware({
             return NextResponse.redirect(new URL("/profile/settings", req.url));
 
         if (req.nextUrl.pathname.startsWith("/api")) {
-            if (req.nextUrl.pathname === "/api/blogs/views") {
-                const { success, pending, limit, reset, remaining } =
-                    await viewsRateLimiter.limit(auth.userId);
-                evt.waitUntil(pending);
+            const { success, pending, limit, reset, remaining } =
+                await globalRateLimiter.limit(auth.userId);
+            evt.waitUntil(pending);
 
-                const res = success
-                    ? NextResponse.next()
-                    : NextResponse.json({
-                          code: 429,
-                          message: "Too many view requests",
-                      });
+            const res = success
+                ? NextResponse.next()
+                : NextResponse.json({
+                      code: 429,
+                      message: "Too many requests, go slow",
+                  });
 
-                res.headers.set("X-RateLimit-Limit", limit.toString());
-                res.headers.set("X-RateLimit-Remaining", remaining.toString());
-                res.headers.set("X-RateLimit-Reset", reset.toString());
-                return res;
-            } else {
-                const { success, pending, limit, reset, remaining } =
-                    await globalRateLimiter.limit(auth.userId);
-                evt.waitUntil(pending);
-
-                const res = success
-                    ? NextResponse.next()
-                    : NextResponse.json({
-                          code: 429,
-                          message: "Too many requests, go slow",
-                      });
-
-                res.headers.set("X-RateLimit-Limit", limit.toString());
-                res.headers.set("X-RateLimit-Remaining", remaining.toString());
-                res.headers.set("X-RateLimit-Reset", reset.toString());
-                return res;
-            }
+            res.headers.set("X-RateLimit-Limit", limit.toString());
+            res.headers.set("X-RateLimit-Remaining", remaining.toString());
+            res.headers.set("X-RateLimit-Reset", reset.toString());
+            return res;
         }
 
         return NextResponse.next();
     },
-    ignoredRoutes: [
-        "/api/bday",
-        "/api/auth",
-        "/api/users",
-        "/og.webp",
-        "/og-blogs.webp",
-        "/favicon.ico",
-        "/",
-        "/bday(.*)",
-    ],
 });
 
 export const config = {
-    matcher: ["/((?!.*\\..*|_next).*)"],
+    matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/"],
 };
