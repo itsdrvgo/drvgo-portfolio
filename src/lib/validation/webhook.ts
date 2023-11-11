@@ -28,12 +28,6 @@ export const userDeleteWebhookSchema = z.object({
     object: z.string(),
 });
 
-export const roleUpdateSchema = z.object({
-    role: z.enum(["user", "guest", "moderator", "admin", "owner"]),
-    userId: z.string(),
-    action: z.enum(["promote", "demote"]).optional(),
-});
-
 export const userDeleteSchema = z.object({
     id: z.string(),
 });
@@ -41,5 +35,4 @@ export const userDeleteSchema = z.object({
 export type WebhookData = z.infer<typeof webhookSchema>;
 export type UserWebhookData = z.infer<typeof userWebhookSchema>;
 export type UserDeleteWebhookData = z.infer<typeof userDeleteWebhookSchema>;
-export type UserRoleUpdateData = z.infer<typeof roleUpdateSchema>;
 export type UserDeleteData = z.infer<typeof userDeleteSchema>;

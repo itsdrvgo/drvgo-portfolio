@@ -33,7 +33,7 @@ export type NewBlogNotificationProps = {
     type: "newBlog";
     blogId: string;
     blogTitle: string;
-    blogThumbnailUrl: string;
+    blogThumbnailUrl: string | null;
 };
 
 export type BlogLikeNotificationProps = {

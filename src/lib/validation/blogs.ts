@@ -1,42 +1,40 @@
 import { z } from "zod";
 
-export const blogCreateSchema = z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    content: z.string().optional(),
-    thumbnailUrl: z.string().optional(),
+export const blogTitleSchema = z
+    .string()
+    .min(1, "Title must have at least 1 characters")
+    .max(128, "Title cannot exceed 128 characters");
+
+export const blogDescriptionSchema = z
+    .string()
+    .min(1, "Description must have at least 1 characters")
+    .max(150, "Description cannot exceed 150 characters");
+
+export const blogContentSchema = z
+    .string()
+    .min(1, "Content must have at least 1 characters");
+
+export const blogThumbnailSchema = z
+    .string({ invalid_type_error: "Thumbnail cannot be empty" })
+    .url();
+
+export const blogPrivacySchema = z.object({
+    published: z.boolean(),
 });
 
-export const publishSchema = z.object({
-    title: z
-        .string()
-        .min(1, "Title must have at least 1 characters")
-        .max(128, "Title cannot exceed 128 characters"),
-    description: z
-        .string()
-        .min(1, "Description must have at least 1 characters")
-        .max(150, "Description cannot exceed 150 characters"),
-    content: z.string().min(1, "Content must have at least 1 characters"),
-    thumbnailUrl: z
-        .string({ invalid_type_error: "Thumbnail cannot be empty" })
-        .url(),
-    published: z.boolean().default(false),
+export const blogUpdateSchema = z.object({
+    title: blogTitleSchema.optional(),
+    description: blogDescriptionSchema.optional(),
+    content: blogContentSchema.optional(),
+    thumbnailUrl: blogThumbnailSchema.nullable(),
 });
 
-export const postPatchSchema = z.object({
-    title: publishSchema.shape.title.optional(),
-    description: publishSchema.shape.description.optional(),
-    content: z.string().optional().nullable(),
-    thumbnailUrl: publishSchema.shape.thumbnailUrl.nullable(),
-    published: publishSchema.shape.published,
-    action: z.enum(["edit", "publish"]),
+export const blogPublishSchema = z.object({
+    title: blogTitleSchema,
+    description: blogDescriptionSchema,
+    content: blogContentSchema,
+    thumbnailUrl: blogThumbnailSchema,
 });
 
-export const likeUpdateSchema = z.object({
-    isLiked: z.boolean(),
-});
-
-export type BlogCreateData = z.infer<typeof blogCreateSchema>;
-export type BlogPatchData = z.infer<typeof postPatchSchema>;
-export type BlogPublishData = z.infer<typeof publishSchema>;
-export type LikeUpdateData = z.infer<typeof likeUpdateSchema>;
+export type BlogUpdateData = z.infer<typeof blogUpdateSchema>;
+export type BlogPublishData = z.infer<typeof blogPublishSchema>;
