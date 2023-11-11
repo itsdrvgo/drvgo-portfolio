@@ -1,6 +1,8 @@
 "use client";
 
-import { cn, markNotificationAsRead } from "@/src/lib/utils";
+import { markAllNotificationsAsRead } from "@/src/actions/notifications";
+import { cn, handleClientError } from "@/src/lib/utils";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { ButtonHTMLAttributes } from "react";
 import toast from "react-hot-toast";
@@ -12,19 +14,28 @@ interface PageProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 function NotificationMarkAllAsRead({ className, userId, ...props }: PageProps) {
     const router = useRouter();
 
-    const handleMarkAllAsRead = () => {
-        markNotificationAsRead({
-            userId,
-        })
-            .then(() => {
-                toast.success("Marked all notifications as read");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!");
-            })
-            .finally(() => router.refresh());
-    };
+    const { mutate: handleMarkAllAsRead, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Marking all as read...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            await markAllNotificationsAsRead({
+                userId,
+            });
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Marked all notifications as read", {
+                id: ctx?.toastId,
+            });
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
 
     return (
         <button
@@ -32,7 +43,8 @@ function NotificationMarkAllAsRead({ className, userId, ...props }: PageProps) {
                 "absolute bottom-0 left-0 w-full cursor-pointer rounded-b-md border-t border-border p-2 py-3 text-center text-sm",
                 className
             )}
-            onClick={handleMarkAllAsRead}
+            disabled={isLoading}
+            onClick={() => handleMarkAllAsRead()}
             {...props}
         >
             <p>Mark all as Read</p>

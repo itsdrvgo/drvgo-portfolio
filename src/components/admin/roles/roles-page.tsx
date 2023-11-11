@@ -12,7 +12,7 @@ async function RolesPage({ className }: DefaultProps) {
     ]);
 
     if (!user) redirect("/auth");
-    let parsedUser = userSchema
+    const parsedUser = userSchema
         .omit({
             emailAddresses: true,
         })

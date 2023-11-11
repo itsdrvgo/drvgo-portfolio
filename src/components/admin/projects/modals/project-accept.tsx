@@ -1,6 +1,7 @@
 "use client";
 
-import { ResponseData } from "@/src/lib/validation/response";
+import { manageProjectStatus } from "@/src/actions/projects";
+import { handleClientError } from "@/src/lib/utils";
 import { ExtendedProject } from "@/src/types";
 import {
     Button,
@@ -11,13 +12,13 @@ import {
     ModalHeader,
     Selection,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import toast from "react-hot-toast";
 
 interface PageProps {
-    data: ExtendedProject;
+    project: ExtendedProject;
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     onClose: () => void;
@@ -25,7 +26,7 @@ interface PageProps {
 }
 
 function ProjectAcceptModal({
-    data,
+    project,
     isOpen,
     onOpenChange,
     onClose,
@@ -33,38 +34,37 @@ function ProjectAcceptModal({
 }: PageProps) {
     const router = useRouter();
 
-    const [isAccepting, setIsAccepting] = useState(false);
-
-    const handleProjectAccept = () => {
-        setIsAccepting(true);
-
-        const toastId = toast.loading("Accepting project...");
-
-        axios
-            .patch<ResponseData>(`/api/projects/${data.id}/accept`)
-            .then(({ data }) => {
-                if (data.code !== 204)
-                    return toast.error(data.message, {
-                        id: toastId,
-                    });
-
+    const { mutate: handleProjectAccept, isLoading: isAccepting } = useMutation(
+        {
+            onMutate() {
+                const toastId = toast.loading("Accepting project...");
+                return {
+                    toastId,
+                };
+            },
+            async mutationFn() {
+                await manageProjectStatus({
+                    id: project.id,
+                    props: {
+                        status: "accepted",
+                    },
+                });
+            },
+            onSuccess(_, __, ctx) {
                 toast.success("Project has been accepted", {
-                    id: toastId,
+                    id: ctx?.toastId,
                 });
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsAccepting(false);
+                router.refresh();
+            },
+            onError(err, _, ctx) {
+                handleClientError(err, ctx?.toastId);
+            },
+            onSettled() {
                 setSelected?.(new Set(["default"]));
                 onClose();
-                router.refresh();
-            });
-    };
+            },
+        }
+    );
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -93,7 +93,7 @@ function ProjectAcceptModal({
                                 className="font-semibold"
                                 isDisabled={isAccepting}
                                 isLoading={isAccepting}
-                                onPress={handleProjectAccept}
+                                onPress={() => handleProjectAccept()}
                             >
                                 Accept
                             </Button>

@@ -1,12 +1,9 @@
 "use client";
 
+import { markNotificationAsRead } from "@/src/actions/notifications";
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { User } from "@/src/lib/drizzle/schema";
-import {
-    cn,
-    convertMstoTimeElapsed,
-    markNotificationAsRead,
-} from "@/src/lib/utils";
+import { cn, convertMstoTimeElapsed } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Notification } from "@/src/types/notification";
 import { Avatar } from "@nextui-org/react";
@@ -29,7 +26,6 @@ function NotificationBarContent({
     const handleNotificationClick = () => {
         markNotificationAsRead({
             notificationId: notification.id,
-            userId: notification.userId!,
         });
 
         switch (notification.props.type) {

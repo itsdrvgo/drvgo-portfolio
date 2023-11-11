@@ -38,8 +38,9 @@ function BlogNavItems({ className, data }: PageProps) {
             <Popover
                 placement="bottom"
                 classNames={{
-                    base: "w-72 max-h-96",
+                    base: "w-72 max-h-96 rounded-r-none",
                 }}
+                showArrow={false}
             >
                 <PopoverTrigger>
                     <Button
@@ -50,7 +51,11 @@ function BlogNavItems({ className, data }: PageProps) {
                         isIconOnly
                     />
                 </PopoverTrigger>
-                <PopoverContent className="gap-2 pb-4 pt-2">
+                <PopoverContent
+                    className={cn("justify-start gap-2 pb-4 pt-2", {
+                        "overflow-y-scroll": data.length,
+                    })}
+                >
                     <h2
                         className={cn(
                             "p-2 font-semibold uppercase",
@@ -62,13 +67,7 @@ function BlogNavItems({ className, data }: PageProps) {
 
                     <Divider />
 
-                    <div
-                        className={cn(
-                            "flex flex-col gap-2",
-                            { "overflow-y-scroll": data.length },
-                            className
-                        )}
-                    >
+                    <div className={cn("flex flex-col gap-2", className)}>
                         {data.length ? (
                             data
                                 .sort((a, b) => b.likes - a.likes)

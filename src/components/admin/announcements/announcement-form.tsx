@@ -1,16 +1,15 @@
 "use client";
 
-import { cn } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import { addNotificationToAllUsers } from "@/src/actions/notifications";
+import { cn, handleClientError } from "@/src/lib/utils";
 import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
-import { Notification } from "@/src/types/notification";
 import { Button, Image, Input, Textarea } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import NextImage from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { useUploadThing } from "../../global/uploadthing";
 import UploadZone from "../../ui/uploadzone";
 
@@ -28,75 +27,48 @@ interface PageProps extends DefaultProps {
 }
 
 function AnnouncementForm({ className, user, ...props }: PageProps) {
-    const [isLoading, setIsLoading] = useState(false);
-
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [imageUrl, setImageUrl] = useState<string | null>(null);
 
     const [uploadProgress, setUploadProgress] = useState(0);
 
-    const handleSend = () => {
-        setIsLoading(true);
-
-        const toastId = toast.loading("Sending notification...");
-
-        try {
-            const parsedData = announcementSchema.parse({
+    const { mutate: handleSend, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Sending notification...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            announcementSchema.parse({
                 title,
                 content,
                 imageUrl,
             });
 
-            const notification: Omit<
-                Notification,
-                "id" | "read" | "createdAt"
-            > = {
-                title: "New Announcement!",
-                content: "You just received a new announcement from the admin!",
+            await addNotificationToAllUsers({
+                content,
                 notifierId: user.id,
+                title,
+                type: "custom",
                 props: {
                     type: "custom",
-                    title: parsedData.title,
-                    content: parsedData.content,
-                    imageUrl: parsedData.imageUrl,
+                    title,
+                    content,
+                    imageUrl,
                 },
-                type: "custom",
-            };
-
-            axios
-                .post<ResponseData>(
-                    "/api/notifications",
-                    JSON.stringify(notification)
-                )
-                .then(() => {
-                    toast.success("Notification sent", {
-                        id: toastId,
-                    });
-                })
-                .catch((err) => {
-                    console.error(err);
-                    toast.error("Something went wrong, try again later!", {
-                        id: toastId,
-                    });
-                });
-        } catch (err) {
-            if (err instanceof ZodError)
-                return toast.error(
-                    err.issues.map((e) => e.message).join(", "),
-                    {
-                        id: toastId,
-                    }
-                );
-
-            console.error(err);
-            return toast.error("Something went wrong, try again later!", {
-                id: toastId,
             });
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Notification sent", {
+                id: ctx?.toastId,
+            });
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
 
     const { startUpload, isUploading, permittedFileInfo } = useUploadThing(
         "announcementThumbnail",
@@ -199,7 +171,7 @@ function AnnouncementForm({ className, user, ...props }: PageProps) {
                     className="font-semibold"
                     radius="full"
                     color="primary"
-                    onPress={handleSend}
+                    onPress={() => handleSend()}
                     isLoading={isLoading}
                     isDisabled={isLoading || (!title && !content && !imageUrl)}
                 >

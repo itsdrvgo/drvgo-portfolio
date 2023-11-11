@@ -2,6 +2,7 @@
 
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
 import { cn, formatDate } from "@/src/lib/utils";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { Column, DefaultProps, ExtendedProject } from "@/src/types";
 import {
     Button,
@@ -123,9 +124,10 @@ export const statusColorMap: Record<string, ChipProps["color"]> = {
 
 interface PageProps extends DefaultProps {
     data: ExtendedProject[];
+    user: ClerkUserWithoutEmail;
 }
 
-function ProjectsTable({ className, data }: PageProps) {
+function ProjectsTable({ className, data, user }: PageProps) {
     const [filterValue, setFilterValue] = useState("");
     const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -264,7 +266,7 @@ function ProjectsTable({ className, data }: PageProps) {
                 case "actions": {
                     return (
                         <div className="flex items-center justify-end">
-                            <ProjectOperation data={project} />
+                            <ProjectOperation project={project} user={user} />
                         </div>
                     );
                 }
@@ -273,8 +275,8 @@ function ProjectsTable({ className, data }: PageProps) {
                     return null;
                 }
             }
-            // eslint-disable-next-line react-hooks/exhaustive-deps
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         []
     );
 

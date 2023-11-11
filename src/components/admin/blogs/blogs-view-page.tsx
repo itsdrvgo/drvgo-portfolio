@@ -1,11 +1,23 @@
 import { getAllBlogsFromCache } from "@/src/lib/redis/methods/blog";
 import { cn } from "@/src/lib/utils";
+import { userSchema } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
+import { currentUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 import BlogCreateButton from "../../global/buttons/blog-create-button";
 import { EmptyPlaceholder } from "../../ui/empty-placeholder";
 import BlogItem from "./blog-item";
 
 async function BlogsPage({ className }: DefaultProps) {
+    const user = await currentUser();
+    if (!user) redirect("/auth");
+
+    const parsedUser = userSchema
+        .omit({
+            emailAddresses: true,
+        })
+        .parse(user);
+
     const blogs = await getAllBlogsFromCache();
     const sortedBlogs = blogs.sort(
         (a, b) =>
@@ -22,7 +34,7 @@ async function BlogsPage({ className }: DefaultProps) {
                     )}
                 >
                     {sortedBlogs.map((blog) => (
-                        <BlogItem key={blog.id} blog={blog} />
+                        <BlogItem key={blog.id} blog={blog} user={parsedUser} />
                     ))}
                 </div>
             ) : (

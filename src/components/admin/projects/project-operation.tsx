@@ -8,9 +8,9 @@ import {
     isRejectable,
     isUpdatable,
 } from "@/src/lib/projects";
-import { chatHrefConstructor } from "@/src/lib/utils";
+import { chatParamsGenerator } from "@/src/lib/utils";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedProject } from "@/src/types";
-import { useAuth } from "@clerk/nextjs";
 import {
     Button,
     Dropdown,
@@ -31,13 +31,12 @@ import ProjectRejectModal from "./modals/project-reject";
 import ProjectUpdateModal from "./modals/project-update";
 
 interface PageProps extends DefaultProps {
-    data: ExtendedProject;
+    project: ExtendedProject;
+    user: ClerkUserWithoutEmail;
 }
 
-function ProjectOperation({ data }: PageProps) {
+function ProjectOperation({ project, user }: PageProps) {
     const router = useRouter();
-
-    const { userId } = useAuth();
 
     const {
         isOpen: isAcceptOpen,
@@ -97,21 +96,23 @@ function ProjectOperation({ data }: PageProps) {
                 </DropdownTrigger>
                 <DropdownMenu
                     disabledKeys={[
-                        ...(isAcceptable(data.status) ? [] : ["accept"]),
-                        ...(isRejectable(data.status) ? [] : ["reject"]),
+                        ...(isAcceptable(project.status) ? [] : ["accept"]),
+                        ...(isRejectable(project.status) ? [] : ["reject"]),
                         ...(isCompletable({
-                            status: data.status,
-                            price: data.price,
-                            deadline: data.deadline,
+                            status: project.status,
+                            price: project.price,
+                            deadline: project.deadline,
                         })
                             ? []
                             : ["complete"]),
-                        ...(isCancellable(data.status, true) ? [] : ["cancel"]),
-                        ...(isUpdatable(data.status) ? [] : ["update"]),
+                        ...(isCancellable(project.status, true)
+                            ? []
+                            : ["cancel"]),
+                        ...(isUpdatable(project.status) ? [] : ["update"]),
                         ...(isPayable({
-                            status: data.status,
-                            price: data.price,
-                            deadline: data.deadline,
+                            status: project.status,
+                            price: project.price,
+                            deadline: project.deadline,
                         })
                             ? []
                             : ["paid"]),
@@ -122,7 +123,7 @@ function ProjectOperation({ data }: PageProps) {
                             key={"copy_id"}
                             startContent={<Icons.user className="h-4 w-4" />}
                             onPress={() => {
-                                navigator.clipboard.writeText(data.id);
+                                navigator.clipboard.writeText(project.id);
                                 toast.success("ID has been copied");
                             }}
                         >
@@ -132,7 +133,9 @@ function ProjectOperation({ data }: PageProps) {
                             key={"copy_purchaser_id"}
                             startContent={<Icons.user className="h-4 w-4" />}
                             onPress={() => {
-                                navigator.clipboard.writeText(data.purchaserId);
+                                navigator.clipboard.writeText(
+                                    project.purchaserId
+                                );
                                 toast.success("Purchaser ID has been copied");
                             }}
                         >
@@ -141,7 +144,9 @@ function ProjectOperation({ data }: PageProps) {
                         <DropdownItem
                             key={"view"}
                             startContent={<Icons.view className="h-4 w-4" />}
-                            onPress={() => router.push(`/projects/${data.id}`)}
+                            onPress={() =>
+                                router.push(`/projects/${project.id}`)
+                            }
                         >
                             View
                         </DropdownItem>
@@ -153,10 +158,11 @@ function ProjectOperation({ data }: PageProps) {
                             startContent={<Icons.send className="h-4 w-4" />}
                             onPress={() =>
                                 router.push(
-                                    `/chats/${chatHrefConstructor(
-                                        data.purchaserId,
-                                        userId!
-                                    )}`
+                                    "/chats?" +
+                                        chatParamsGenerator(
+                                            project.purchaserId,
+                                            user.id
+                                        )
                                 )
                             }
                         >
@@ -227,42 +233,43 @@ function ProjectOperation({ data }: PageProps) {
                 isOpen={isAcceptOpen}
                 onOpenChange={onAcceptOpenChange}
                 onClose={onAcceptClose}
-                data={data}
+                project={project}
             />
 
             <ProjectRejectModal
                 isOpen={isRejectOpen}
                 onOpenChange={onRejectOpenChange}
                 onClose={onRejectClose}
-                data={data}
+                project={project}
             />
 
             <ProjectCompleteModal
                 isOpen={isCompleteOpen}
                 onOpenChange={onCompleteOpenChange}
                 onClose={onCompleteClose}
-                data={data}
+                project={project}
             />
 
             <ProjectUpdateModal
                 isOpen={isUpdateOpen}
                 onOpenChange={onUpdateOpenChange}
                 onClose={onUpdateClose}
-                data={data}
+                project={project}
+                user={user}
             />
 
             <ProjectCancelModal
                 isOpen={isCancelOpen}
                 onOpenChange={onCancelOpenChange}
                 onClose={onCancelClose}
-                data={data}
+                project={project}
             />
 
             <ProjectPaidModal
                 isOpen={isPaidOpen}
                 onOpenChange={onPaidOpenChange}
                 onClose={onPaidClose}
-                data={data}
+                project={project}
             />
         </>
     );

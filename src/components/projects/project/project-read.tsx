@@ -2,6 +2,7 @@
 
 import { Mdx } from "@/src/components/md/mdx-comp";
 import { cn, convertMsIntoDays } from "@/src/lib/utils";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedProject } from "@/src/types";
 import { Card, CardBody, Divider } from "@nextui-org/react";
 import { format } from "date-fns";
@@ -12,9 +13,16 @@ import ProjectOperations from "./project-operations";
 interface PageProps extends DefaultProps {
     project: ExtendedProject;
     isOwner: boolean;
+    user: ClerkUserWithoutEmail;
 }
 
-function ProjectRead({ className, project, isOwner, ...props }: PageProps) {
+function ProjectRead({
+    className,
+    project,
+    isOwner,
+    user,
+    ...props
+}: PageProps) {
     return (
         <div
             className={cn(
@@ -117,7 +125,7 @@ function ProjectRead({ className, project, isOwner, ...props }: PageProps) {
                 <Mdx>{project.requirements}</Mdx>
             </div>
 
-            {isOwner && <ProjectOperations project={project} />}
+            {isOwner && <ProjectOperations project={project} user={user} />}
         </div>
     );
 }

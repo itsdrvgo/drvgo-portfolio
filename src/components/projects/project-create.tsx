@@ -9,7 +9,7 @@ async function ProjectCreate() {
     return (
         <>
             {projectState && projectState.state ? (
-                <ProjectForm />
+                <ProjectForm projectState={projectState.state} />
             ) : (
                 <EmptyPlaceholder
                     title="Projects are currently closed"

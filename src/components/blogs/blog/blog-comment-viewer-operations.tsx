@@ -1,15 +1,17 @@
 "use client";
 
+import {
+    loveComment,
+    replyToComment,
+    unloveComment,
+} from "@/src/actions/comments";
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { NewComment } from "@/src/lib/drizzle/schema";
-import { cn } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import { cn, handleClientError } from "@/src/lib/utils";
 import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps, ExtendedComment } from "@/src/types";
 import { CachedBlog } from "@/src/types/cache";
 import { Avatar, Button, Textarea } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -33,7 +35,6 @@ function BlogCommentViewerOperation({
     const [isReplying, setIsReplying] = useState(false);
     const [reply, setReply] = useState("");
     const [isActive, setIsActive] = useState(false);
-    const [isPosting, setIsPosting] = useState(false);
     const [isLoved, setIsLoved] = useState(commentLoved);
     const [lovesLength, setLovesLength] = useState(comment.loves.length);
 
@@ -47,48 +48,40 @@ function BlogCommentViewerOperation({
         setIsReplying(true);
     };
 
-    const handleReplyAdd = () => {
-        setIsActive(false);
-        setIsPosting(true);
+    const { mutate: handleReplyAdd, isLoading: isPosting } = useMutation({
+        onMutate() {
+            setIsActive(false);
 
-        const body: Pick<NewComment, "content"> = {
-            content: reply,
-        };
+            const toastId = toast.loading("Adding reply...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            if (!user) return toast.error("You're not logged in!");
 
-        axios
-            .post<ResponseData>(
-                `/api/blogs/comments/${blog.id}/${
-                    comment.parentId === null ? comment.id : comment.parentId
-                }`,
-                JSON.stringify(body)
-            )
-            .then(({ data: resData }) => {
-                if (resData.code !== 200) return toast.error(resData.message);
-                toast.success("Reply added");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!");
-            })
-            .finally(() => {
-                setIsPosting(false);
-                setIsReplying(false);
-                setReply("");
-                router.refresh();
+            await replyToComment({
+                blog,
+                comment,
+                user,
+                content: reply,
             });
-    };
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Reply added", {
+                id: ctx?.toastId!,
+            });
+            setReply("");
+            setIsReplying(false);
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
 
     const { mutate: handleCommentLove } = useMutation({
-        mutationFn: async () => {
-            const response = await axios.post<ResponseData>(
-                `/api/blogs/comments/${blog.id}/${comment.id}/${
-                    !isLoved ? "unlove" : "love"
-                }`
-            );
-
-            return response.data;
-        },
-        onMutate: async () => {
+        onMutate() {
             const previousLoves = lovesLength;
 
             setLovesLength((previousLoves || 0) + (isLoved ? -1 : 1));
@@ -96,15 +89,23 @@ function BlogCommentViewerOperation({
 
             return { previousLoves };
         },
-        onError: (err, _, context) => {
-            console.error(err);
-            setLovesLength(context!.previousLoves);
-            setIsLoved(!isLoved);
+        async mutationFn() {
+            if (!user) return toast.error("You're not logged in!");
 
-            return toast.error("Something went wrong, try again later!");
+            isLoved
+                ? await loveComment({
+                      comment,
+                      user,
+                  })
+                : await unloveComment({
+                      comment,
+                      user,
+                  });
         },
-        onSuccess: (res) => {
-            if (res.code !== 200) return toast.error(res.message);
+        onError(err, _, ctx) {
+            setLovesLength(ctx?.previousLoves!);
+            setIsLoved(!isLoved);
+            handleClientError(err);
         },
     });
 
@@ -178,7 +179,7 @@ function BlogCommentViewerOperation({
                             size="sm"
                             variant="flat"
                             color="primary"
-                            onPress={handleReplyAdd}
+                            onPress={() => handleReplyAdd()}
                             isDisabled={!isActive}
                             className="font-semibold"
                             radius="sm"

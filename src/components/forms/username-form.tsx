@@ -1,16 +1,17 @@
 "use client";
 
-import { UserUpdateData, userUpdateSchema } from "@/src/lib/validation/auth";
-import { ResponseData } from "@/src/lib/validation/response";
+import { updateUsername } from "@/src/actions/users";
+import { handleClientError } from "@/src/lib/utils";
+import { checkUsernameSchema, UsernameData } from "@/src/lib/validation/auth";
 import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { z } from "zod";
 import {
     Form,
     FormControl,
@@ -19,51 +20,55 @@ import {
     FormMessage,
 } from "../ui/form";
 
+const updateUsernameSchema = z.object({
+    username: checkUsernameSchema.shape.username,
+});
+
 interface PageProps extends DefaultProps {
     user: ClerkUserWithoutEmail;
 }
 
 function UsernameForm({ user }: PageProps) {
     const router = useRouter();
-    const [isLoading, setLoading] = useState(false);
 
-    const form = useForm<UserUpdateData>({
-        resolver: zodResolver(userUpdateSchema),
+    const form = useForm<UsernameData>({
+        resolver: zodResolver(updateUsernameSchema),
         defaultValues: {
             username: user.username!,
         },
     });
 
-    const onSubmit = (data: UserUpdateData) => {
-        setLoading(true);
-
-        axios
-            .patch<ResponseData>(
-                `/api/users/${user.id}`,
-                JSON.stringify({
-                    username: data.username,
-                })
-            )
-            .then(({ data: resData }) => {
-                if (resData.code !== 200) return toast.error(resData.message);
-
-                toast.success("Username updated");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!");
-            })
-            .finally(() => {
-                setLoading(false);
-                router.refresh();
+    const { mutate: handleUpdateUsername, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Updating username...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            await updateUsername({
+                id: user.id,
+                username: form.getValues().username,
             });
-    };
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Username updated", {
+                id: ctx?.toastId,
+            });
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
 
     return (
         <Form {...form}>
             <form
                 className="grid gap-4"
-                onSubmit={(...args) => form.handleSubmit(onSubmit)(...args)}
+                onSubmit={(...args) =>
+                    form.handleSubmit(() => handleUpdateUsername())(...args)
+                }
             >
                 <FormField
                     control={form.control}

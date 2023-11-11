@@ -1,9 +1,11 @@
 "use client";
 
+import { updateProject } from "@/src/actions/projects";
 import { Icons } from "@/src/components/icons/icons";
 import { Calendar } from "@/src/components/ui/calendar";
-import { ProjectPatchData } from "@/src/lib/validation/project";
-import { ResponseData } from "@/src/lib/validation/response";
+import { handleClientError } from "@/src/lib/utils";
+import { projectUpdateSchema } from "@/src/lib/validation/project";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { ExtendedProject } from "@/src/types";
 import {
     Button,
@@ -21,7 +23,7 @@ import {
     Selection,
     SelectItem,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { addDays, format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -52,67 +54,65 @@ const quickPickers: QuickPickerProps[] = [
 ];
 
 interface PageProps {
-    data: ExtendedProject;
+    project: ExtendedProject;
     isOpen: boolean;
+    user: ClerkUserWithoutEmail;
     onOpenChange: (open: boolean) => void;
     onClose: () => void;
     setSelected?: Dispatch<SetStateAction<Selection>>;
 }
 
 function ProjectUpdateModal({
-    data,
+    project,
     isOpen,
+    user,
     onOpenChange,
     onClose,
     setSelected,
 }: PageProps) {
     const router = useRouter();
 
-    const [isUpdating, setIsUpdating] = useState(false);
-
     const [deadline, setDeadline] = useState(
-        data.deadline?.toLocaleDateString()
+        project.deadline?.toLocaleDateString()
     );
-    const [price, setPrice] = useState(data.price);
+    const [price, setPrice] = useState(project.price);
 
-    const handleProjectUpdate = () => {
-        setIsUpdating(true);
-
-        const toastId = toast.loading("Updating project...");
-
-        const body: Pick<ProjectPatchData, "price" | "deadline"> = {
-            price,
-            deadline: deadline || undefined,
-        };
-
-        axios
-            .patch<ResponseData>(
-                `/api/projects/${data.id}`,
-                JSON.stringify(body)
-            )
-            .then(({ data }) => {
-                if (data.code !== 204)
-                    return toast.error(data.message, {
-                        id: toastId,
-                    });
-
-                toast.success("Project has been updated", {
-                    id: toastId,
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsUpdating(false);
-                setSelected?.(new Set(["default"]));
-                onClose();
-                router.refresh();
+    const { mutate: handleProjectUpdate, isLoading: isUpdating } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Updating project...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            projectUpdateSchema.parse({
+                price,
+                deadline,
             });
-    };
+
+            await updateProject({
+                project,
+                user,
+                props: {
+                    price,
+                    deadline,
+                },
+            });
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Project has been updated", {
+                id: ctx?.toastId,
+            });
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            setSelected?.(new Set(["default"]));
+            onClose();
+        },
+    });
 
     return (
         <Modal
@@ -231,7 +231,7 @@ function ProjectUpdateModal({
                                 className="font-semibold"
                                 isDisabled={isUpdating}
                                 isLoading={isUpdating}
-                                onPress={handleProjectUpdate}
+                                onPress={() => handleProjectUpdate()}
                             >
                                 Update
                             </Button>

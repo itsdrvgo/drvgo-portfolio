@@ -168,10 +168,10 @@ export const images = mysqlTable(
 
 export const blogs = mysqlTable("blogs", {
     id: varchar("id", { length: 191 }).notNull().primaryKey(),
-    title: varchar("title", { length: 191 }).notNull(),
+    title: varchar("title", { length: 191 }).notNull().default(""),
     thumbnailUrl: varchar("thumbnailUrl", { length: 191 }),
-    description: varchar("description", { length: 150 }).notNull(),
-    content: longtext("content"),
+    description: varchar("description", { length: 150 }).notNull().default(""),
+    content: longtext("content").notNull(),
     published: boolean("published").default(false).notNull(),
     createdAt: timestamp("created_at")
         .default(sql`current_timestamp()`)

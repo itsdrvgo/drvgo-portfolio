@@ -1,7 +1,10 @@
 "use client";
 
+import { updateRole } from "@/src/actions/roles";
 import { BitFieldPermissions, Permissions } from "@/src/config/const";
-import { cn } from "@/src/lib/utils";
+import { cn, handleClientError } from "@/src/lib/utils";
+import { roleUpdateSchema } from "@/src/lib/validation/roles";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { CachedRole } from "@/src/types/cache";
 import {
@@ -12,22 +15,26 @@ import {
     Input,
     Switch,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface PageProps extends DefaultProps {
-    roleData: CachedRole;
+    _role: CachedRole;
     hasAccessToEdit: boolean;
     isOwner: boolean;
+    user: ClerkUserWithoutEmail;
+    initialRoles: CachedRole[];
 }
 
 function RoleForm({
     className,
-    roleData,
+    _role,
     hasAccessToEdit,
     isOwner,
+    user,
+    initialRoles,
     ...props
 }: PageProps) {
     const router = useRouter();
@@ -44,9 +51,9 @@ function RoleForm({
         0
     );
 
-    const [roleName, setRoleName] = useState<string>(roleData.name);
+    const [roleName, setRoleName] = useState<string>(_role.name);
     const [rolePermissions, setRolePermissions] = useState<number>(
-        roleData.permissions
+        _role.permissions
     );
 
     useEffect(() => {
@@ -59,39 +66,39 @@ function RoleForm({
             );
     }, [rolePermissions]);
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const { mutate: handleUpdateRole, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Updating role...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            roleUpdateSchema.parse({
+                name: roleName,
+                permissions: rolePermissions,
+            });
 
-    const handleSubmit = () => {
-        setIsLoading(true);
-
-        const toastId = toast.loading("Updating role...");
-
-        const body: Partial<CachedRole> = {
-            name: roleName,
-            permissions: rolePermissions,
-        };
-
-        axios
-            .patch(`/api/roles/${roleData.id}`, JSON.stringify(body))
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-                toast.success("Role updated successfully", {
-                    id: toastId,
-                });
-                router.refresh();
-                router.push("/admin/roles");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => setIsLoading(false));
-    };
+            await updateRole({
+                initialRoles,
+                role: _role,
+                updatedRole: {
+                    name: roleName,
+                    permissions: rolePermissions,
+                },
+                user,
+            });
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Role updated successfully", {
+                id: ctx?.toastId,
+            });
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
 
     return (
         <div
@@ -109,9 +116,7 @@ function RoleForm({
                 label="Name"
                 labelPlacement="outside"
                 isDisabled={
-                    isLoading || roleData.position === 0
-                        ? false
-                        : !hasAccessToEdit
+                    isLoading || _role.position === 0 ? false : !hasAccessToEdit
                 }
             />
 
@@ -132,7 +137,7 @@ function RoleForm({
                             )
                         }
                         isDisabled={
-                            isLoading || roleData.position === 0
+                            isLoading || _role.position === 0
                                 ? false
                                 : !hasAccessToEdit
                         }
@@ -161,7 +166,7 @@ function RoleForm({
                                         name={permission.name}
                                         isDisabled={
                                             isLoading ||
-                                            (roleData.position === 0
+                                            (_role.position === 0
                                                 ? false
                                                 : !hasAccessToEdit)
                                         }
@@ -190,16 +195,16 @@ function RoleForm({
                 variant="flat"
                 isDisabled={
                     isLoading ||
-                    (JSON.stringify(roleData.permissions) ===
+                    (JSON.stringify(_role.permissions) ===
                         JSON.stringify(rolePermissions) &&
-                        roleData.name === roleName)
+                        _role.name === roleName)
                 }
             >
                 <Button
                     className="bg-default-100 first:rounded-l-full"
                     onPress={() => {
-                        setRoleName(roleData.name);
-                        setRolePermissions(roleData.permissions);
+                        setRoleName(_role.name);
+                        setRolePermissions(_role.permissions);
                     }}
                 >
                     Cancel
@@ -208,7 +213,7 @@ function RoleForm({
                 <Button
                     className="bg-default-100 last:rounded-r-full"
                     isLoading={isLoading}
-                    onPress={handleSubmit}
+                    onPress={() => handleUpdateRole()}
                 >
                     Submit
                 </Button>

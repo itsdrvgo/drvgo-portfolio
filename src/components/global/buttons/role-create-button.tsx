@@ -1,52 +1,41 @@
 "use client";
 
-import { cn, parseJSONToObject } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import { createRole } from "@/src/actions/roles";
+import { cn, handleClientError } from "@/src/lib/utils";
 import { Button, ButtonProps } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import toast from "react-hot-toast";
 import { Icons } from "../../icons/icons";
 
 function RoleCreateButton({ className, ...props }: ButtonProps) {
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const handleRoleCreate = () => {
-        setIsLoading(true);
-
-        const toastId = toast.loading("Creating role...");
-
-        axios
-            .post<ResponseData>("/api/roles")
-            .then(({ data: resData }) => {
-                setIsLoading(false);
-
-                if (resData.code !== 200)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-                toast.success("Role created successfully", {
-                    id: toastId,
-                });
-
-                const roleId = parseJSONToObject<string>(resData.data);
-                router.push(`/admin/roles/${roleId}`);
-            })
-            .catch((err) => {
-                console.error(err);
-
-                setIsLoading(false);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
+    const { mutate: handleRoleCreate, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Creating role...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            const role = await createRole();
+            return role;
+        },
+        onSuccess({ role }, __, ctx) {
+            toast.success("Role created successfully", {
+                id: ctx?.toastId,
             });
-    };
+            router.push(`/admin/roles/${role.id}`);
+        },
+        onError(err, __, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
 
     return (
         <Button
-            onPress={handleRoleCreate}
+            onPress={() => handleRoleCreate()}
             isDisabled={isLoading}
             isLoading={isLoading}
             className={cn("font-semibold", className)}

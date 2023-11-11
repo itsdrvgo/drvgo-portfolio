@@ -16,7 +16,12 @@ async function UsersView({ className }: DefaultProps) {
     ]);
 
     if (!user) redirect("/auth");
-    const parsedUser = userSchema.parse(user);
+    const parsedUser = userSchema
+        .omit({
+            emailAddresses: true,
+        })
+        .parse(user);
+
     if (
         !hasPermission(
             parsedUser.privateMetadata.permissions,

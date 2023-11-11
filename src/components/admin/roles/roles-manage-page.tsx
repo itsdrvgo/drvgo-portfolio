@@ -1,9 +1,11 @@
 "use client";
 
+import { updateRoles } from "@/src/actions/roles";
 import { BitFieldPermissions } from "@/src/config/const";
 import {
     checkRoleHierarchy,
     cn,
+    handleClientError,
     hasPermission,
     reorder,
 } from "@/src/lib/utils";
@@ -17,7 +19,7 @@ import {
     DropResult,
 } from "@hello-pangea/dnd";
 import { Button, ButtonGroup, Chip } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -33,7 +35,11 @@ function isOwnerRoleActionable(user: ClerkUserWithoutEmail, role: CachedRole) {
     return false;
 }
 
-function isActionable(user: ClerkUserWithoutEmail, roles: CachedRole[], role: CachedRole) {
+function isActionable(
+    user: ClerkUserWithoutEmail,
+    roles: CachedRole[],
+    role: CachedRole
+) {
     const hasUserPermission = hasPermission(
         user.privateMetadata.permissions,
         BitFieldPermissions.ManagePages | BitFieldPermissions.ManageRoles
@@ -57,7 +63,6 @@ function RolesManagePage({ className, initialRoles, user }: PageProps) {
     const router = useRouter();
 
     const [roles, setRoles] = useState<CachedRole[]>(initialRoles);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleDragStart = () => {
         if (window.navigator.vibrate) window.navigator.vibrate(100);
@@ -93,40 +98,35 @@ function RolesManagePage({ className, initialRoles, user }: PageProps) {
         setRoles(newRoles);
     };
 
-    const handleSave = () => {
-        setIsLoading(true);
+    const { mutate: handleRoleUpdate, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Updating roles...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            const rolesToBeUpdated = roles.map((role, index) => ({
+                id: role.id,
+                position: index + 1,
+            }));
 
-        const toastId = toast.loading("Updating roles...");
-
-        const body: Partial<CachedRole>[] = roles.map((role, index) => ({
-            id: role.id,
-            position: index + 1,
-        }));
-
-        axios
-            .patch("/api/roles", JSON.stringify(body))
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                toast.success("Roles updated successfully", {
-                    id: toastId,
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsLoading(false);
-                router.refresh();
+            await updateRoles({
+                initialRoles,
+                rolesToBeUpdated,
+                user,
             });
-    };
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Roles updated successfully", {
+                id: ctx?.toastId,
+            });
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
 
     return (
         <div className="flex flex-col gap-5">
@@ -272,7 +272,7 @@ function RolesManagePage({ className, initialRoles, user }: PageProps) {
                     <Button
                         className="bg-default-100 last:rounded-r-full"
                         isLoading={isLoading}
-                        onPress={handleSave}
+                        onPress={() => handleRoleUpdate()}
                     >
                         Save
                     </Button>

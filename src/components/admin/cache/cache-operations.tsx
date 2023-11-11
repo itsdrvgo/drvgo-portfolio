@@ -1,11 +1,15 @@
 "use client";
 
-import { cn } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
+import {
+    revalidateBlogs,
+    revalidateRoles,
+    revalidateUsers,
+} from "@/src/actions/cache";
+import { cn, handleClientError } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { CachedBlog, CachedRole, CachedUser } from "@/src/types/cache";
 import { Button, Card, CardBody } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -24,30 +28,31 @@ function CacheOperations({ className, users, blogs, roles }: PageProps) {
 
     const [isFetching, setIsFetching] = useState<CachedType | null>(null);
 
-    const handleFetch = (type: CachedType) => {
-        setIsFetching(type);
-
-        const toastId = toast.loading("Revalidating cache...");
-
-        axios
-            .post<ResponseData>(`/api/fetch/${type}`)
-            .then(({ data: resData }) => {
-                if (resData.code !== 200)
-                    return toast.error(resData.message, { id: toastId });
-
-                toast.success("Cache revalidated!", { id: toastId });
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsFetching(null);
-                router.refresh();
+    const { mutate: handleRevalidate, isLoading } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Revalidating cache...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            isFetching === "users" && (await revalidateUsers());
+            isFetching === "blogs" && (await revalidateBlogs());
+            isFetching === "roles" && (await revalidateRoles());
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Cache revalidated!", {
+                id: ctx?.toastId,
             });
-    };
+            router.refresh();
+        },
+        onError(err, _, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            setIsFetching(null);
+        },
+    });
 
     return (
         <div className={cn("flex flex-col gap-4", className)}>
@@ -67,9 +72,12 @@ function CacheOperations({ className, users, blogs, roles }: PageProps) {
                     <Button
                         isIconOnly
                         color="primary"
-                        isDisabled={!!isFetching}
+                        isDisabled={isLoading}
                         radius="full"
-                        onPress={() => handleFetch("users")}
+                        onPress={() => {
+                            setIsFetching("users");
+                            handleRevalidate();
+                        }}
                         startContent={
                             <Icons.refresh
                                 className={cn("h-4 w-4", {
@@ -97,9 +105,12 @@ function CacheOperations({ className, users, blogs, roles }: PageProps) {
                     <Button
                         isIconOnly
                         color="primary"
-                        isDisabled={!!isFetching}
+                        isDisabled={isLoading}
                         radius="full"
-                        onPress={() => handleFetch("blogs")}
+                        onPress={() => {
+                            setIsFetching("blogs");
+                            handleRevalidate();
+                        }}
                         startContent={
                             <Icons.refresh
                                 className={cn("h-4 w-4", {
@@ -127,9 +138,12 @@ function CacheOperations({ className, users, blogs, roles }: PageProps) {
                     <Button
                         isIconOnly
                         color="primary"
-                        isDisabled={!!isFetching}
+                        isDisabled={isLoading}
                         radius="full"
-                        onPress={() => handleFetch("roles")}
+                        onPress={() => {
+                            setIsFetching("roles");
+                            handleRevalidate();
+                        }}
                         startContent={
                             <Icons.refresh
                                 className={cn("h-4 w-4", {

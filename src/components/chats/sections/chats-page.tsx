@@ -1,26 +1,23 @@
 "use client";
 
+import { getChat, markMessageAsSeen, sendMessage } from "@/src/actions/chats";
 import { Message } from "@/src/lib/drizzle/schema";
 import { pusherClient } from "@/src/lib/pusher/client";
 import {
-    chatHrefConstructor,
+    chatParamsGenerator,
     cn,
-    parseJSONToObject,
-    toPusherKey,
+    handleClientError,
+    toPusherKey
 } from "@/src/lib/utils";
-import { ResponseData } from "@/src/lib/validation/response";
 import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
-import { ChatWithExtendedMessages, DefaultProps } from "@/src/types";
+import { DefaultProps } from "@/src/types";
 import { CachedUser } from "@/src/types/cache";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { usePathname } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
 import ChatInput from "../chat-input";
 import ChatSection from "../chat-section";
 import ChatsNavbar from "../chats-navbar";
-import { ChatSectionSkeleton } from "../skeletons/sidebar";
 
 interface PageProps extends DefaultProps {
     chatPartner: CachedUser;
@@ -36,6 +33,9 @@ function ChatsPage({
     ...props
 }: PageProps) {
     const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    const currentUrl = pathname + "?" + searchParams.toString();
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [pendingMessages, setPendingMessages] = useState<string[]>([]);
@@ -46,16 +46,12 @@ function ChatsPage({
 
     useEffect(() => {
         if (messages.filter((msg) => msg.status === "sent").length) {
-            axios
-                .patch<ResponseData>(`/api/chats/${chatId}/messages`)
-                .then(({ data: resData }) => {
-                    if (resData.code !== 200)
-                        return console.error(resData.message);
-                    console.log("seen");
-                })
-                .catch((err) => {
-                    console.error(err);
-                });
+            markMessageAsSeen({
+                chatId,
+                user,
+            })
+                .then(() => console.log("seen"))
+                .catch((err) => console.error(err));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chatId, messages, pathname]);
@@ -80,8 +76,8 @@ function ChatsPage({
 
         const messageSeenHandler = ({ receiverId }: { receiverId: string }) => {
             const shouldMarkAsSeen =
-                pathname ===
-                `/chats/${chatHrefConstructor(user.id, receiverId)}`;
+                currentUrl ===
+                "/chats?" + chatParamsGenerator(user.id, receiverId);
 
             if (!shouldMarkAsSeen) return;
 
@@ -106,35 +102,29 @@ function ChatsPage({
             pusherClient.unbind("message_seen", messageSeenHandler);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chatId, pathname]);
+    }, [chatId, currentUrl]);
 
-    const { mutate: sendMessage } = useMutation({
-        mutationFn: async () => {
-            const body = {
-                text: finalText,
-                chatId: chatId,
-            };
-
-            const { data } = await axios.post<ResponseData>(
-                `/api/chats/${chatId}/send`,
-                JSON.stringify(body)
-            );
-            return data;
-        },
-        onMutate: () => {
+    const { mutate: handleSendMessage } = useMutation({
+        onMutate() {
             const oldText = text;
 
             setPendingMessages((prev) => [...prev, text]);
-
             setText("");
             textAreaRef.current?.focus();
 
-            return { oldText };
+            return {
+                oldText,
+            };
         },
-        onError: (err, _, context) => {
-            console.error(err);
-            setText(context?.oldText || "");
-
+        async mutationFn() {
+            await sendMessage({
+                chatId,
+                content: finalText,
+                user,
+            });
+        },
+        onError(err, _, ctx) {
+            setText(ctx?.oldText || "");
             setPendingMessages((prev) => {
                 const newPendingMessages = [...prev];
                 newPendingMessages.pop();
@@ -142,29 +132,23 @@ function ChatsPage({
                 return newPendingMessages;
             });
 
-            return toast.error("Something went wrong, try again later!");
-        },
-        onSuccess: (resData) => {
-            if (resData.code !== 201) return toast.error(resData.message);
+            handleClientError(err);
         },
     });
 
-    const { isLoading } = useQuery({
-        queryKey: ["chat", chatId],
-        queryFn: async () => {
-            const { data } = await axios.get<ResponseData>(
-                `/api/chats/${chatId}`
-            );
+    useEffect(() => {
+        const getChatMessages = async () => {
+            const { chat } = await getChat({
+                chatId,
+                user,
+            });
 
-            const chatData = parseJSONToObject<ChatWithExtendedMessages>(
-                data.data
-            );
-            setMessages(chatData.messages);
-            return chatData;
-        },
-    });
+            setMessages(chat.messages);
+        };
 
-    if (isLoading) return <ChatSectionSkeleton />;
+        getChatMessages();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chatId]);
 
     return (
         <div
@@ -190,7 +174,7 @@ function ChatsPage({
                 chatPartner={chatPartner}
                 text={text}
                 setText={setText}
-                sendMessage={sendMessage}
+                sendMessage={() => handleSendMessage()}
                 textAreaRef={textAreaRef}
             />
         </div>

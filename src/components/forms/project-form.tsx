@@ -1,14 +1,14 @@
 "use client";
 
+import { createProject, updateProject } from "@/src/actions/projects";
 import { Project } from "@/src/lib/drizzle/schema";
-import { parseJSONToObject } from "@/src/lib/utils";
+import { handleClientError } from "@/src/lib/utils";
 import {
     ProjectCreateData,
     projectCreateSchema,
-    ProjectPatchData,
+    projectUpdateSchema,
 } from "@/src/lib/validation/project";
-import { ResponseData } from "@/src/lib/validation/response";
-import { NewProjectProps } from "@/src/types/notification";
+import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Button,
@@ -21,9 +21,8 @@ import {
     Textarea,
     useDisclosure,
 } from "@nextui-org/react";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import {
@@ -38,13 +37,14 @@ import {
 
 interface PageProps {
     project?: Project;
+    projectState?: boolean;
+    user?: ClerkUserWithoutEmail;
 }
 
-function ProjectForm({ project }: PageProps) {
+function ProjectForm({ project, projectState, user }: PageProps) {
     const router = useRouter();
 
     const { isOpen, onClose, onOpenChange, onOpen } = useDisclosure();
-    const [isLoading, setIsLoading] = useState(false);
 
     const form = useForm<ProjectCreateData>({
         resolver: zodResolver(projectCreateSchema),
@@ -59,83 +59,91 @@ function ProjectForm({ project }: PageProps) {
         project ? handleUpdateProject() : onOpen();
     };
 
-    const handleUpdateProject = () => {
-        setIsLoading(true);
+    const { mutate: handleUpdateProject, isLoading: isUpdating } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Updating Project...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            if (!project) throw new Error("Project does not exist!");
+            if (!user) throw new Error("You are not logged in!");
 
-        const toastId = toast.loading("Updating Project...");
+            const name = form.getValues("name");
+            const description = form.getValues("description");
+            const requirements = form.getValues("requirements");
 
-        const body: ProjectPatchData = {
-            name: form.getValues("name"),
-            description: form.getValues("description"),
-            requirements: form.getValues("requirements"),
-        };
-
-        axios
-            .patch<ResponseData>(`/api/projects/${project?.id}`, body)
-            .then(({ data: resData }) => {
-                if (resData.code !== 204)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                toast.success("Project has been updated", {
-                    id: toastId,
-                });
-
-                router.push(`/projects/${project?.id}`);
-            })
-            .catch((err) => {
-                console.error(err);
-
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsLoading(false);
+            projectUpdateSchema.parse({
+                name,
+                description,
+                requirements,
             });
-    };
 
-    const handleCreateProject = () => {
-        setIsLoading(true);
-
-        const toastId = toast.loading("Creating Project...");
-
-        const body: ProjectCreateData = {
-            name: form.getValues("name"),
-            description: form.getValues("description"),
-            requirements: form.getValues("requirements"),
-        };
-
-        axios
-            .post<ResponseData>("/api/projects", JSON.stringify(body))
-            .then(({ data: resData }) => {
-                if (resData.code !== 201)
-                    return toast.error(resData.message, {
-                        id: toastId,
-                    });
-
-                toast.success("Project has been initiated", {
-                    id: toastId,
-                });
-
-                const result = parseJSONToObject<Omit<NewProjectProps, "type">>(
-                    resData.data
-                );
-
-                router.push(`/projects/${result.projectId}`);
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error("Something went wrong, try again later!", {
-                    id: toastId,
-                });
-            })
-            .finally(() => {
-                setIsLoading(false);
-                onClose();
+            await updateProject({
+                project: project,
+                user: user,
+                props: {
+                    name,
+                    description,
+                    requirements,
+                },
             });
-    };
+        },
+        onSuccess(_, __, ctx) {
+            toast.success("Project has been updated", {
+                id: ctx?.toastId,
+            });
+        },
+        onError(err, __, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+    });
+
+    const { mutate: handleCreateProject, isLoading: isCreating } = useMutation({
+        onMutate() {
+            const toastId = toast.loading("Creating Project...");
+            return {
+                toastId,
+            };
+        },
+        async mutationFn() {
+            const name = form.getValues("name");
+            const description = form.getValues("description");
+            const requirements = form.getValues("requirements");
+
+            projectCreateSchema.parse({
+                name,
+                description,
+                requirements,
+            });
+
+            const { project } = await createProject({
+                state: projectState,
+                props: {
+                    name,
+                    description,
+                    requirements,
+                },
+            });
+
+            return {
+                project,
+            };
+        },
+        onSuccess({ project }, __, ctx) {
+            toast.success("Project has been initiated", {
+                id: ctx?.toastId,
+            });
+            router.push(`/projects/${project.projectId}`);
+        },
+        onError(err, __, ctx) {
+            handleClientError(err, ctx?.toastId);
+        },
+        onSettled() {
+            onClose();
+        },
+    });
 
     return (
         <>
@@ -162,7 +170,7 @@ function ProjectForm({ project }: PageProps) {
                                         }}
                                         placeholder="Super Cool Project"
                                         maxLength={100}
-                                        isDisabled={isLoading}
+                                        isDisabled={isUpdating || isCreating}
                                         {...field}
                                     />
                                 </FormControl>
@@ -190,7 +198,9 @@ function ProjectForm({ project }: PageProps) {
                                             }}
                                             aria-label="Project Description"
                                             minRows={3}
-                                            isDisabled={isLoading}
+                                            isDisabled={
+                                                isUpdating || isCreating
+                                            }
                                             maxLength={450}
                                             {...field}
                                         />
@@ -229,7 +239,7 @@ function ProjectForm({ project }: PageProps) {
                                         aria-label="Project Requirements"
                                         minRows={8}
                                         maxRows={400}
-                                        isDisabled={isLoading}
+                                        isDisabled={isUpdating || isCreating}
                                         {...field}
                                     />
                                 </FormControl>
@@ -241,7 +251,8 @@ function ProjectForm({ project }: PageProps) {
                         type="submit"
                         className="bg-primary-700 font-semibold text-black"
                         isDisabled={
-                            isLoading ||
+                            isUpdating ||
+                            isCreating ||
                             !form.formState.isValid ||
                             (form.getValues("name") === project?.name &&
                                 form.getValues("description") ===
@@ -249,13 +260,13 @@ function ProjectForm({ project }: PageProps) {
                                 form.getValues("requirements") ===
                                     project?.requirements)
                         }
-                        isLoading={isLoading}
+                        isLoading={isUpdating || isCreating}
                     >
                         {project
-                            ? isLoading
+                            ? isUpdating
                                 ? "Updating Project"
                                 : "Update Project"
-                            : isLoading
+                            : isCreating
                             ? "Creating Project"
                             : "Create Project"}
                     </Button>
@@ -550,7 +561,7 @@ function ProjectForm({ project }: PageProps) {
                                     color="danger"
                                     variant="light"
                                     onPress={onClose}
-                                    isDisabled={isLoading}
+                                    isDisabled={isUpdating || isCreating}
                                 >
                                     Cancel
                                 </Button>
@@ -559,9 +570,9 @@ function ProjectForm({ project }: PageProps) {
                                     color="primary"
                                     variant="flat"
                                     className="font-semibold"
-                                    onPress={handleCreateProject}
-                                    isDisabled={isLoading}
-                                    isLoading={isLoading}
+                                    onPress={() => handleCreateProject()}
+                                    isDisabled={isUpdating || isCreating}
+                                    isLoading={isUpdating || isCreating}
                                 >
                                     Agree
                                 </Button>
