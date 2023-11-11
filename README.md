@@ -36,10 +36,10 @@ Hey there, I'm [DRVGO](https://itsdrvgo.me/), a passionate Full Stack Developer,
 
 The portfolio website is built with the following technologies:
 
--   [Next.js (App Router)](https://nextjs.org/): A powerful framework for building performant and SEO-friendly web applications.
+-   [Next.JS 14 (App Router)](https://nextjs.org/): A powerful framework for building performant and SEO-friendly web applications.
+-   [Next.JS Server Actions](https://nextjs.org/docs/app/api-reference/functions/server-actions): A new way to create API routes in Next.js.
 -   [TypeScript](https://www.typescriptlang.org/): Ensuring robust and type-safe code for enhanced development.
--   [React.js](https://react.dev/): Creating dynamic and interactive user interfaces for seamless navigation.
--   [ShadCN UI](https://ui.shadcn.com/): The best library of manipulate the UI.
+-   [React.JS](https://react.dev/): Creating dynamic and interactive user interfaces for seamless navigation.
 -   [Next UI](https://nextui.org/): The best library of manipulate the UI.
 -   [Pusher](https://pusher.com/): Adding real-time functionality to the application.
 -   [React Hot Toast](https://react-hot-toast.com/): Adding toast notifications to the application.
@@ -53,8 +53,6 @@ The portfolio website is built with the following technologies:
 -   [Drizzle](https://orm.drizzle.team/): TypeScript ORM for SQL.
 -   [Planetscale MySQL](https://planetscale.com/): Primary Database to save most of the user, blogs, etc. data.
 -   [Upstash Redis](https://upstash.com/): Adding ratelimiter to api routes.
--   [Axios](https://axios-http.com/docs/intro): Manipulating data between Front-end & Back-end.
--   [Lucide Icons](https://lucide.dev/): Adding interesting icons.
 -   [Zustand](https://github.com/pmndrs/zustand): State management for React.
 
 ## Community
