@@ -31,9 +31,14 @@ export type SiteConfig = {
     description: string;
     url: string;
     ogImage: string;
+    blogsOgImage: string;
+    keywords: string[];
     links: {
+        youtube: string;
+        instagram: string;
         twitter: string;
         github: string;
+        discord: string;
     };
 };
 
@@ -104,8 +109,3 @@ export interface ExtendedMessage extends Message {
     receiver: User;
     chat: Chat;
 }
-
-export type FAQ = {
-    question: string;
-    answer: string;
-};

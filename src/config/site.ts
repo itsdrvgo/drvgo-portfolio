@@ -1,4 +1,6 @@
-export const siteConfig = {
+import { SiteConfig } from "../types";
+
+export const siteConfig: SiteConfig = {
     name: "DRVGO",
     description:
         "Discover the creative world of DRVGO Portfolio - a harmonious fusion of art and technology. 🚀 Explore my journey and get inspired by the possibilities of creating impactful digital experiences. 🎨 Let's connect and embark on this exciting tech adventure together!",

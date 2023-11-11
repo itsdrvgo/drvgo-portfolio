@@ -1,13 +1,14 @@
 import { currentUser } from "@clerk/nextjs";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { format } from "date-fns";
+import { DrizzleError } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import toast from "react-hot-toast";
 import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
 import { BitFieldPermissions } from "../config/const";
 import { CachedRole } from "../types/cache";
-import { ResponseData } from "./validation/response";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -152,49 +153,6 @@ export function checkRoleHierarchy(
     return userHighestRole.position < targetHighestRole.position;
 }
 
-export function updateBlogViews(blogId: string) {
-    axios
-        .patch<ResponseData>(`/api/blogs/views/${blogId}`)
-        .then(({ data: resData }) => {
-            if (resData.code !== 200) return console.error(resData.message);
-            console.info("Updated view");
-        })
-        .catch((err) => {
-            console.error(err);
-            console.error("Couldn't update view");
-        });
-}
-
-export async function markNotificationAsRead({
-    userId,
-    notificationId,
-}: {
-    userId: string;
-    notificationId?: string;
-}) {
-    try {
-        let url: string;
-
-        if (notificationId)
-            url = `/api/users/${userId}/notifications/${notificationId}`;
-        else url = `/api/users/${userId}/notifications`;
-
-        const { data } = await axios.patch<ResponseData>(url);
-
-        if (data.code !== 200) {
-            console.error(data.message);
-            return false;
-        }
-
-        console.info("Marked notification as read");
-        return true;
-    } catch (err) {
-        console.error(err);
-        console.error("Couldn't mark notification as read");
-        return false;
-    }
-}
-
 export async function getAuthorizedUser(permissions: number) {
     const user = await currentUser();
     if (!user) return null;
@@ -205,9 +163,12 @@ export async function getAuthorizedUser(permissions: number) {
     return null;
 }
 
-export function hasPermission(userPermission: number, permission: number) {
-    if (userPermission & BitFieldPermissions.Administrator) return true;
-    return (userPermission & permission) !== 0;
+export function hasPermission(
+    userPermissions: number,
+    requiredPermissions: number
+) {
+    if (userPermissions & BitFieldPermissions.Administrator) return true;
+    return (userPermissions & requiredPermissions) === requiredPermissions;
 }
 
 export function toPusherKey(key: string) {
@@ -222,37 +183,6 @@ export function chatHrefConstructor(id1: string, id2: string) {
 export function chatParamsGenerator(id1: string, id2: string) {
     const sortedIds = [id1, id2].sort();
     return `uId=${sortedIds[0]}&pId=${sortedIds[1]}`;
-}
-
-export async function updateMessage(
-    messageId: string,
-    chatId: string,
-    props: {
-        text?: string;
-        read?: boolean;
-    }
-) {
-    try {
-        const { data } = await axios.patch<ResponseData>(
-            `/api/chats/messages/${messageId}`,
-            JSON.stringify({
-                chatId,
-                ...props,
-            })
-        );
-
-        if (data.code !== 200) {
-            console.error(data.message);
-            return false;
-        }
-
-        console.info("Message updated");
-        return true;
-    } catch (err) {
-        console.error(err);
-        console.error("Couldn't update message");
-        return false;
-    }
 }
 
 export function reorder<TItem>(
@@ -277,4 +207,32 @@ export const formatTimestampIntoDate = (timestamp: number) => {
 
 export function parseJSONToObject<T>(data: string): T {
     return JSON.parse(data) as T;
+}
+
+export function absoluteUrl(path: string) {
+    if (typeof window !== "undefined") return path;
+    if (process.env.VERCEL_URL)
+        return `https://${process.env.VERCEL_URL}${path}`;
+    return `http://localhost:${process.env.PORT ?? 3000}${path}`;
+}
+
+export function handleClientError(error: unknown, toastId?: string) {
+    if (error instanceof DrizzleError) {
+        return toast.error(error.message, {
+            id: toastId,
+        });
+    } else if (error instanceof ZodError) {
+        return toast.error(error.issues.map((x) => x.message).join(", "), {
+            id: toastId,
+        });
+    } else if (error instanceof Error) {
+        return toast.error(error.message, {
+            id: toastId,
+        });
+    } else {
+        console.error(error);
+        return toast.error("Something went wrong, try again later!", {
+            id: toastId,
+        });
+    }
 }
