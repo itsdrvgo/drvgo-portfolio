@@ -228,7 +228,7 @@ function ChatSection({
                                                         <span
                                                             className={cn(
                                                                 "hidden",
-                                                                lastMessageFromSender.id ===
+                                                                lastMessageFromSender?.id ===
                                                                     message.id &&
                                                                     "inline-block",
                                                                 isPressed ===
@@ -242,7 +242,7 @@ function ChatSection({
                                                         <span
                                                             className={cn(
                                                                 "hidden",
-                                                                lastMessageFromSender.id ===
+                                                                lastMessageFromSender?.id ===
                                                                     message.id &&
                                                                     "inline-block",
                                                                 isPressed ===

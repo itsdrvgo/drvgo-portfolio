@@ -1,20 +1,20 @@
 "use client";
 
-import { getChat, markMessageAsSeen, sendMessage } from "@/src/actions/chats";
+import { markMessageAsSeen, sendMessage } from "@/src/actions/chats";
 import { Message } from "@/src/lib/drizzle/schema";
 import { pusherClient } from "@/src/lib/pusher/client";
 import {
     chatParamsGenerator,
     cn,
     handleClientError,
-    toPusherKey
+    toPusherKey,
 } from "@/src/lib/utils";
 import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import { CachedUser } from "@/src/types/cache";
 import { useMutation } from "@tanstack/react-query";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import ChatInput from "../chat-input";
 import ChatSection from "../chat-section";
 import ChatsNavbar from "../chats-navbar";
@@ -23,6 +23,8 @@ interface PageProps extends DefaultProps {
     chatPartner: CachedUser;
     user: ClerkUserWithoutEmail;
     chatId: string;
+    messages: Message[];
+    setMessages: Dispatch<SetStateAction<Message[]>>;
 }
 
 function ChatsPage({
@@ -30,6 +32,8 @@ function ChatsPage({
     chatPartner,
     user,
     chatId,
+    messages,
+    setMessages,
     ...props
 }: PageProps) {
     const pathname = usePathname();
@@ -37,7 +41,6 @@ function ChatsPage({
 
     const currentUrl = pathname + "?" + searchParams.toString();
 
-    const [messages, setMessages] = useState<Message[]>([]);
     const [pendingMessages, setPendingMessages] = useState<string[]>([]);
     const [text, setText] = useState("");
     const textAreaRef = useRef<HTMLInputElement | null>(null);
@@ -136,24 +139,10 @@ function ChatsPage({
         },
     });
 
-    useEffect(() => {
-        const getChatMessages = async () => {
-            const { chat } = await getChat({
-                chatId,
-                user,
-            });
-
-            setMessages(chat.messages);
-        };
-
-        getChatMessages();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chatId]);
-
     return (
         <div
             className={cn(
-                "relative flex h-screen w-full flex-1 flex-col justify-between bg-stone-950",
+                "relative flex h-screen w-full flex-1 flex-col justify-between",
                 className
             )}
             style={{

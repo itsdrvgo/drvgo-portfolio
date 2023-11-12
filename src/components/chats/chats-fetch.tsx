@@ -8,7 +8,7 @@ import { DefaultProps } from "@/src/types";
 import { currentUser } from "@clerk/nextjs";
 import { and, eq, or } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
-import ChatsPage from "./sections/chats-page";
+import ChatMessagesFetch from "./sections/messages-fetch";
 import ChatNoAccess from "./sections/no-access";
 import NoChatsPage from "./sections/no-chats-page";
 import ChatsNoPerms from "./sections/no-perms";
@@ -42,15 +42,13 @@ async function ChatsFetch({ searchParams }: PageProps) {
         ),
     });
 
-    if (
-        !userProject &&
-        !hasPermission(
+    const isAuthorizedToSendMessages =
+        hasPermission(
             parsedUser.privateMetadata.permissions,
             BitFieldPermissions.SendMessages
-        )
-    )
-        return <ChatsNoPerms />;
+        ) || userProject;
 
+    if (!isAuthorizedToSendMessages) return <ChatsNoPerms />;
     if (!searchParams) return <NoChatsPage />;
 
     const { uId, pId } = searchParams;
@@ -77,7 +75,7 @@ async function ChatsFetch({ searchParams }: PageProps) {
     const chatId = chatHrefConstructor(uId, pId);
 
     return (
-        <ChatsPage
+        <ChatMessagesFetch
             user={parsedUser}
             chatPartner={chatPartner}
             chatId={chatId}
