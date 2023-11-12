@@ -30,7 +30,7 @@ async function BlogNav({ params }: PageProps) {
         updatedAt: blog.updatedAt ? blog.updatedAt.toISOString() : null,
     }));
 
-    return <BlogNavItems data={data} />;
+    return <BlogNavItems data={[...data, ...data, ...data]} />;
 }
 
 export default BlogNav;

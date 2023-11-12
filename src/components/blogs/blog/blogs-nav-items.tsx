@@ -38,7 +38,8 @@ function BlogNavItems({ className, data }: PageProps) {
             <Popover
                 placement="bottom"
                 classNames={{
-                    base: "w-72 max-h-96 rounded-r-none",
+                    base: "w-72",
+                    content: "max-h-96 h-full rounded-r-none",
                 }}
                 showArrow={false}
             >
@@ -52,20 +53,22 @@ function BlogNavItems({ className, data }: PageProps) {
                     />
                 </PopoverTrigger>
                 <PopoverContent
-                    className={cn("justify-start gap-2 pb-4 pt-2", {
+                    className={cn("justify-start gap-2 pb-4 pt-0", {
                         "overflow-y-scroll": data.length,
                     })}
                 >
-                    <h2
-                        className={cn(
-                            "p-2 font-semibold uppercase",
-                            "text-center"
-                        )}
-                    >
-                        People Also Like
-                    </h2>
+                    <div className="sticky top-0 z-20 w-full rounded-lg bg-default-50 pt-2">
+                        <h2
+                            className={cn(
+                                "p-2 font-semibold uppercase",
+                                "text-center"
+                            )}
+                        >
+                            People Also Like
+                        </h2>
 
-                    <Divider />
+                        <Divider />
+                    </div>
 
                     <div className={cn("flex flex-col gap-2", className)}>
                         {data.length ? (
