@@ -52,9 +52,7 @@ function ChatsPage({
             markMessageAsSeen({
                 chatId,
                 user,
-            })
-                .then(() => console.log("seen"))
-                .catch((err) => console.error(err));
+            }).catch((err) => console.error(err));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chatId, messages, pathname]);

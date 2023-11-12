@@ -264,13 +264,13 @@ function RolesManagePage({ className, initialRoles, user }: PageProps) {
                 >
                     <Button
                         onPress={() => setRoles(initialRoles)}
-                        className="bg-default-100 first:rounded-l-full"
+                        className="bg-default-100 first:rounded-s-full"
                     >
                         Cancel
                     </Button>
 
                     <Button
-                        className="bg-default-100 last:rounded-r-full"
+                        className="bg-default-100 last:rounded-e-full"
                         isLoading={isLoading}
                         onPress={() => handleRoleUpdate()}
                     >

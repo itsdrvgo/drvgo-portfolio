@@ -326,7 +326,7 @@ function BlogWriteUp({
             <ButtonGroup className="sticky bottom-10 z-50" variant="flat">
                 <Button
                     onPress={() => editAndSaveBlog()}
-                    className="bg-default-100 first:rounded-l-full"
+                    className="bg-default-100 first:rounded-s-full"
                     startContent={
                         !isSaving && <Icons.document className="h-4 w-4" />
                     }
@@ -337,7 +337,7 @@ function BlogWriteUp({
 
                 <Button
                     onPress={() => setPreviewEnable(!previewEnabled)}
-                    className="bg-default-100 last:rounded-r-full"
+                    className="bg-default-100 last:rounded-e-full"
                     startContent={
                         previewEnabled ? (
                             <Icons.hide className="h-4 w-4" />

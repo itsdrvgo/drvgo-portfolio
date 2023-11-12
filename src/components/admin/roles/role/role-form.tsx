@@ -201,7 +201,7 @@ function RoleForm({
                 }
             >
                 <Button
-                    className="bg-default-100 first:rounded-l-full"
+                    className="bg-default-100 first:rounded-s-full"
                     onPress={() => {
                         setRoleName(_role.name);
                         setRolePermissions(_role.permissions);
@@ -211,7 +211,7 @@ function RoleForm({
                 </Button>
 
                 <Button
-                    className="bg-default-100 last:rounded-r-full"
+                    className="bg-default-100 last:rounded-e-full"
                     isLoading={isLoading}
                     onPress={() => handleUpdateRole()}
                 >

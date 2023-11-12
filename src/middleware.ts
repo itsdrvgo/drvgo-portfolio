@@ -70,7 +70,7 @@ export default authMiddleware({
             !user.privateMetadata.permissions &&
             !user.privateMetadata.strikes
         ) {
-            await clerkClient.users.updateUserMetadata(auth.userId, {
+            await clerkClient.users.updateUser(auth.userId, {
                 privateMetadata: {
                     roles: ["user"],
                     permissions: 1,

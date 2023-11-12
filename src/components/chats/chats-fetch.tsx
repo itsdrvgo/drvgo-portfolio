@@ -46,7 +46,7 @@ async function ChatsFetch({ searchParams }: PageProps) {
         hasPermission(
             parsedUser.privateMetadata.permissions,
             BitFieldPermissions.SendMessages
-        ) || userProject;
+        ) || !!userProject;
 
     if (!isAuthorizedToSendMessages) return <ChatsNoPerms />;
     if (!searchParams) return <NoChatsPage />;

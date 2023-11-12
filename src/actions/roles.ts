@@ -190,7 +190,7 @@ export async function updateRole({
                 if (!accountHighestRole) return;
 
                 if (role.position <= accountHighestRole.position) {
-                    await clerkClient.users.updateUserMetadata(u.id, {
+                    await clerkClient.users.updateUser(u.id, {
                         privateMetadata: {
                             permissions,
                             roles: u.roles,
@@ -219,7 +219,7 @@ export async function updateRole({
                     x === role.key ? name.toLowerCase().replace(/\s/g, "_") : x
                 );
 
-                await clerkClient.users.updateUserMetadata(u.id, {
+                await clerkClient.users.updateUser(u.id, {
                     privateMetadata: {
                         permissions: u.permissions,
                         roles: newRoles,

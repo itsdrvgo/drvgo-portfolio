@@ -192,7 +192,7 @@ export async function manageProjectStatus({
                 existingProject.purchaserId
             );
 
-            await clerkClient.users.updateUserMetadata(clerkUser.id, {
+            await clerkClient.users.updateUser(clerkUser.id, {
                 privateMetadata: {
                     ...clerkUser.privateMetadata,
                     strikes: clerkUser.privateMetadata.strikes + 1,
