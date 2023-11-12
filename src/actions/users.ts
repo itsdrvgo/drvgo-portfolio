@@ -44,12 +44,10 @@ export async function updateUserRoles({
     if (!isUserAuthorized) throw new Error("You are not authorized!");
 
     const permissions = allRoles
-        .filter((role) => target.roles.includes(role.key))
-        .reduce((acc, role) => {
-            return acc | role.permissions;
-        }, 0);
+        .filter((role) => updatedRoles.includes(role.key))
+        .reduce((prev, curr) => prev | curr.permissions, 0);
 
-    await clerkClient.users.updateUserMetadata(target.id, {
+    await clerkClient.users.updateUser(target.id, {
         privateMetadata: {
             roles: updatedRoles,
             permissions,
