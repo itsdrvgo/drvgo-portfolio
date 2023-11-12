@@ -130,7 +130,7 @@ function BlogViewOperations({
             >
                 <Button
                     onPress={() => handleLike()}
-                    className="bg-default-100 first:rounded-l-full"
+                    className="bg-default-100 first:rounded-s-full"
                     startContent={
                         <Icons.heart
                             className={cn(
@@ -169,7 +169,7 @@ function BlogViewOperations({
                 <Divider orientation="vertical" />
 
                 <Button
-                    className="bg-default-100 last:rounded-r-full"
+                    className="bg-default-100 last:rounded-e-full"
                     onPress={() => {
                         navigator.clipboard.writeText(
                             env.NEXT_PUBLIC_APP_URL + "/blogs/" + blog.id
