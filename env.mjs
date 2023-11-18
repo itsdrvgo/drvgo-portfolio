@@ -8,7 +8,10 @@ export const env = createEnv({
         CLERK_SECRET_KEY: z.string(),
         SVIX_SECRET: z.string(),
 
+        DATASE_NAME: z.string(),
+        DATABASE_HOST: z.string(),
         DATABASE_URL: z.string().url(),
+
         UPSTASH_REDIS_REST_URL: z.string().url(),
         UPSTASH_REDIS_REST_TOKEN: z.string(),
 
@@ -43,7 +46,10 @@ export const env = createEnv({
         NEXT_PUBLIC_PUSHER_APP_CLUSTER:
             process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
 
+        DATASE_NAME: process.env.DATASE_NAME,
+        DATABASE_HOST: process.env.DATABASE_HOST,
         DATABASE_URL: process.env.DATABASE_URL,
+
         REDIS_URL: process.env.REDIS_URL,
         UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
         UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
