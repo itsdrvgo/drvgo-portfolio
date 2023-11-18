@@ -1,5 +1,4 @@
 import { currentUser } from "@clerk/nextjs";
-import { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { format } from "date-fns";
 import { DrizzleError } from "drizzle-orm";
@@ -33,9 +32,9 @@ export function handleError(err: unknown) {
             code: 422,
             message: err.issues.map((x) => x.message).join(", "),
         });
-    else if (err instanceof AxiosError)
+    else if (err instanceof DrizzleError)
         return NextResponse.json({
-            code: err.code,
+            code: 422,
             message: err.message,
         });
     else
@@ -235,4 +234,13 @@ export function handleClientError(error: unknown, toastId?: string) {
             id: toastId,
         });
     }
+}
+
+export async function customFetch<T>(
+    url: string,
+    options?: RequestInit
+): Promise<T> {
+    const res = await fetch(url, options);
+    const data = await res.json();
+    return data;
 }

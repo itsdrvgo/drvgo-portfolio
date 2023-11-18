@@ -4,7 +4,7 @@ import { siteConfig } from "@/src/config/site";
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Image } from "@nextui-org/react";
-import { motion, Variants } from "framer-motion";
+import { m, Variants } from "framer-motion";
 import NextImage from "next/image";
 import DRVGOBitMojiHi from "public/drvgo_bitmoji_hi.webp";
 import { Smiley } from "../global/svgs/Smiley";
@@ -44,13 +44,13 @@ function Landing({ className }: DefaultProps) {
                 className
             )}
         >
-            <motion.div
+            <m.div
                 className="z-20 flex h-full w-full flex-col items-center justify-center gap-6 text-center md:gap-10"
                 variants={slideUp}
                 initial="hidden"
                 animate="show"
             >
-                <motion.div
+                <m.div
                     className="pointer-events-none select-none"
                     variants={fadeIn}
                 >
@@ -63,9 +63,9 @@ function Landing({ className }: DefaultProps) {
                         radius="full"
                         priority
                     />
-                </motion.div>
+                </m.div>
 
-                <motion.div
+                <m.div
                     className="flex items-end gap-0 md:gap-4"
                     variants={fadeIn}
                 >
@@ -76,17 +76,14 @@ function Landing({ className }: DefaultProps) {
                     </p>
 
                     <SurpriseSparkleRight height={80} width={80} />
-                </motion.div>
+                </m.div>
 
-                <motion.div
-                    className="flex items-center gap-3"
-                    variants={fadeIn}
-                >
+                <m.div className="flex items-center gap-3" variants={fadeIn}>
                     <p className="text-lg md:text-xl">Ayo, I&apos;m DRVGO</p>
                     <Smiley />
-                </motion.div>
+                </m.div>
 
-                <motion.p
+                <m.p
                     className="max-w-xs text-base text-gray-300 md:max-w-xl md:text-lg"
                     variants={fadeIn}
                 >
@@ -99,10 +96,10 @@ function Landing({ className }: DefaultProps) {
                     personal website or a robust web application, I take pride
                     in exceeding expectations and ensuring top-notch quality in
                     every endeavor.
-                </motion.p>
-            </motion.div>
+                </m.p>
+            </m.div>
 
-            <motion.div
+            <m.div
                 className="glow-bg absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                 initial={{ opacity: 0 }}
                 animate={{
@@ -113,7 +110,7 @@ function Landing({ className }: DefaultProps) {
                 }}
             />
 
-            <motion.div
+            <m.div
                 initial={{ opacity: 0 }}
                 animate={{
                     opacity: 1,
@@ -126,7 +123,7 @@ function Landing({ className }: DefaultProps) {
                 <Sparkle className="spark-spin-2 absolute left-[20%] top-[40%]" />
                 <Sparkle className="spark-spin-3 absolute right-[20%] top-[80%]" />
                 <Sparkle className="spark-spin-2 absolute right-[10%] top-[20%]" />
-            </motion.div>
+            </m.div>
         </section>
     );
 }

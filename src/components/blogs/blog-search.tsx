@@ -1,12 +1,11 @@
 "use client";
 
-import { cn, parseJSONToObject, wait } from "@/src/lib/utils";
+import { cn, customFetch, parseJSONToObject, wait } from "@/src/lib/utils";
 import { ResponseData } from "@/src/lib/validation/response";
 import { DefaultProps } from "@/src/types";
 import { CachedBlog } from "@/src/types/cache";
 import { Button, Divider, Input } from "@nextui-org/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useState } from "react";
 import GoBackButton from "../global/buttons/go-back-button";
 import { EmptyPlaceholder } from "../ui/empty-placeholder";
@@ -18,7 +17,9 @@ interface PageProps extends DefaultProps {
 
 const fetchBlogs = async (page: number): Promise<CachedBlog[]> => {
     await wait(1000);
-    const { data } = await axios.get<ResponseData>("/api/blogs");
+    const { data } = await customFetch<ResponseData>("/api/blogs", {
+        method: "GET",
+    });
 
     return parseJSONToObject<CachedBlog[]>(data.data).slice(
         (page - 1) * 6,

@@ -1,5 +1,10 @@
 import { Notification as TypedNotification } from "@/src/types/notification";
-import { InferModel, relations, sql } from "drizzle-orm";
+import {
+    InferInsertModel,
+    InferSelectModel,
+    relations,
+    sql,
+} from "drizzle-orm";
 import {
     boolean,
     index,
@@ -16,15 +21,6 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 
 // SCHEMAS
-
-export const birthdayParticipants2023 = mysqlTable(
-    "birthday_participants_2023",
-    {
-        id: varchar("id", { length: 191 }).notNull().primaryKey(),
-        isParticipating: boolean("isParticipating").default(false).notNull(),
-    }
-);
-
 export const users = mysqlTable(
     "users",
     {
@@ -338,61 +334,49 @@ export const commentLovesRelations = relations(commentLoves, ({ one }) => ({
 
 // TYPES
 
-export type BirthdayParticipant2023 = InferModel<
-    typeof birthdayParticipants2023
->;
-export type NewBirthdayParticipant2023 = InferModel<
-    typeof birthdayParticipants2023,
-    "insert"
->;
+export type User = InferSelectModel<typeof users>;
+export type NewUser = InferInsertModel<typeof users>;
 
-export type User = InferModel<typeof users>;
-export type NewUser = InferModel<typeof users, "insert">;
+export type Account = InferSelectModel<typeof accounts>;
+export type NewAccount = InferInsertModel<typeof accounts>;
 
-export type Account = InferModel<typeof accounts>;
-export type NewAccount = InferModel<typeof accounts, "insert">;
+export type Chat = InferSelectModel<typeof chats>;
+export type NewChat = InferInsertModel<typeof chats>;
 
-export type Chat = InferModel<typeof chats>;
-export type NewChat = InferModel<typeof chats, "insert">;
+export type Message = InferSelectModel<typeof messages>;
+export type NewMessage = InferInsertModel<typeof messages>;
 
-export type Message = InferModel<typeof messages>;
-export type NewMessage = InferModel<typeof messages, "insert">;
+export type Notification = InferSelectModel<typeof notifications>;
+export type NewNotification = InferInsertModel<typeof notifications>;
 
-export type Notification = InferModel<typeof notifications>;
-export type NewNotification = InferModel<typeof notifications, "insert">;
+export type Blog = InferSelectModel<typeof blogs>;
+export type NewBlog = InferInsertModel<typeof blogs>;
 
-export type Blog = InferModel<typeof blogs>;
-export type NewBlog = InferModel<typeof blogs, "insert">;
+export type View = InferSelectModel<typeof views>;
+export type NewView = InferInsertModel<typeof views>;
 
-export type View = InferModel<typeof views>;
-export type NewView = InferModel<typeof views, "insert">;
+export type Like = InferSelectModel<typeof likes>;
+export type NewLike = InferInsertModel<typeof likes>;
 
-export type Like = InferModel<typeof likes>;
-export type NewLike = InferModel<typeof likes, "insert">;
+export type Comment = InferSelectModel<typeof comments>;
+export type NewComment = InferInsertModel<typeof comments>;
 
-export type Comment = InferModel<typeof comments>;
-export type NewComment = InferModel<typeof comments, "insert">;
+export type CommentLove = InferSelectModel<typeof commentLoves>;
+export type NewCommentLove = InferInsertModel<typeof commentLoves>;
 
-export type CommentLove = InferModel<typeof commentLoves>;
-export type NewCommentLove = InferModel<typeof commentLoves, "insert">;
+export type Image = InferSelectModel<typeof images>;
+export type NewImage = InferInsertModel<typeof images>;
 
-export type Image = InferModel<typeof images>;
-export type NewImage = InferModel<typeof images, "insert">;
+export type Project = InferSelectModel<typeof projects>;
+export type NewProject = InferInsertModel<typeof projects>;
 
-export type Project = InferModel<typeof projects>;
-export type NewProject = InferModel<typeof projects, "insert">;
+export type ProjectState = InferSelectModel<typeof projectsState>;
+export type NewProjectState = InferInsertModel<typeof projectsState>;
 
-export type ProjectState = InferModel<typeof projectsState>;
-export type NewProjectState = InferModel<typeof projectsState, "insert">;
-
-export type Role = InferModel<typeof roles>;
-export type NewRole = InferModel<typeof roles, "insert">;
+export type Role = InferSelectModel<typeof roles>;
+export type NewRole = InferInsertModel<typeof roles>;
 
 // ZOD SCHEMA
-
-export const insertBirthdayParticipant2023Schema = createInsertSchema(
-    birthdayParticipants2023
-);
 
 export const insertUserSchema = createInsertSchema(users);
 

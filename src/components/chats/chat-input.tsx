@@ -4,9 +4,14 @@ import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { CachedUser } from "@/src/types/cache";
 import { Button, Textarea } from "@nextui-org/react";
-import EmojiPicker, { EmojiStyle, Theme } from "emoji-picker-react";
+import { EmojiStyle, Theme } from "emoji-picker-react";
+import dynamic from "next/dynamic";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Icons } from "../icons/icons";
+
+const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
+    ssr: false,
+});
 
 interface PageProps extends DefaultProps {
     chatPartner: CachedUser;

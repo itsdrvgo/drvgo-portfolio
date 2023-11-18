@@ -17,13 +17,16 @@ const globalRateLimiter = new Ratelimit({
 
 export default authMiddleware({
     ignoredRoutes: [
-        "/api/bday",
+        "/api/blogs(.*)",
+        "/loading",
         "/api/users",
         "/og.webp",
         "/og-blogs.webp",
         "/favicon.ico",
         "/",
-        "/bday(.*)",
+        "/robots.txt",
+        "/sitemap.xml",
+        "/site.webmanifest",
     ],
     publicRoutes: [
         "/blogs(.*)",

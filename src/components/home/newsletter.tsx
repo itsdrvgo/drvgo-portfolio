@@ -2,15 +2,15 @@
 
 import { DefaultProps } from "@/src/types";
 import { Button, Card, CardBody, Input } from "@nextui-org/react";
-import { motion, Variants } from "framer-motion";
+import { m, Variants } from "framer-motion";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { Sparkle } from "../global/svgs/Sparkle";
 
 function Newsletter({ className }: DefaultProps) {
     const [value, setValue] = useState("");
 
-    const handleNewsLetter = () => {
+    const handleNewsLetter = async () => {
+        const toast = (await import("react-hot-toast")).default;
         toast.error("This feature is not yet available!");
     };
 
@@ -38,14 +38,14 @@ function Newsletter({ className }: DefaultProps) {
 
     return (
         <section className={className} id="newsletter">
-            <motion.div
+            <m.div
                 className="container flex max-w-4xl flex-col items-center justify-center gap-10 p-0"
                 variants={slideUp}
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true }}
             >
-                <motion.div className="space-y-2 text-center" variants={fadeIn}>
+                <m.div className="space-y-2 text-center" variants={fadeIn}>
                     <p className="cursor-default text-4xl font-bold md:text-5xl">
                         Newsletter
                     </p>
@@ -53,9 +53,9 @@ function Newsletter({ className }: DefaultProps) {
                         Subscribe to our Newsletter to receive updates about our
                         latest projects.
                     </p>
-                </motion.div>
+                </m.div>
 
-                <motion.div variants={fadeIn} className="w-full">
+                <m.div variants={fadeIn} className="w-full">
                     <Card>
                         <CardBody className="gap-4 p-6 md:p-10 md:px-8">
                             <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:gap-5">
@@ -85,10 +85,10 @@ function Newsletter({ className }: DefaultProps) {
                             </p>
                         </CardBody>
                     </Card>
-                </motion.div>
-            </motion.div>
+                </m.div>
+            </m.div>
 
-            <motion.div
+            <m.div
                 initial={{ opacity: 0 }}
                 whileInView={{
                     opacity: 1,
@@ -103,7 +103,7 @@ function Newsletter({ className }: DefaultProps) {
                 <Sparkle className="spark-spin-2 absolute left-[20%] top-[40%]" />
                 <Sparkle className="spark-spin-3 absolute right-[20%] top-[80%]" />
                 <Sparkle className="spark-spin-2 absolute right-[10%] top-[20%]" />
-            </motion.div>
+            </m.div>
         </section>
     );
 }

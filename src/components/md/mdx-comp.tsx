@@ -1,19 +1,24 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { HTMLAttributes, ImgHTMLAttributes } from "react";
 import ReactMarkdown from "react-markdown";
 import { SpecialComponents } from "react-markdown/lib/ast-to-react";
 import { NormalComponents } from "react-markdown/lib/complex-types";
 import { ReactMarkdownOptions } from "react-markdown/lib/react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
 import CopyButton from "../global/buttons/copy-button";
 import LinkPreviewButton from "../global/buttons/link-preview-button";
 import { Icons } from "../icons/icons";
 import MdImage from "./mdx-image";
+
+const DynamicSyntaxHighlighter = dynamic(
+    () => import("react-syntax-highlighter").then((mod) => mod.Prism),
+    { ssr: false }
+);
 
 const chatComponents: Partial<
     Omit<NormalComponents, keyof SpecialComponents> & SpecialComponents
@@ -124,7 +129,7 @@ const chatComponents: Partial<
 
         return !inline && match ? (
             <div className="relative">
-                <SyntaxHighlighter
+                <DynamicSyntaxHighlighter
                     {...props}
                     style={oneDark}
                     language={match[1]}
@@ -142,7 +147,7 @@ const chatComponents: Partial<
                     }}
                 >
                     {String(children).replace(/\n$/, "")}
-                </SyntaxHighlighter>
+                </DynamicSyntaxHighlighter>
 
                 <CopyButton item={String(children).replace(/\n$/, "")} />
             </div>
@@ -335,7 +340,7 @@ const articleComponents: Partial<
 
         return !inline && match ? (
             <div className="relative">
-                <SyntaxHighlighter
+                <DynamicSyntaxHighlighter
                     {...props}
                     style={oneDark}
                     language={match[1]}
@@ -353,7 +358,7 @@ const articleComponents: Partial<
                     }}
                 >
                     {String(children).replace(/\n$/, "")}
-                </SyntaxHighlighter>
+                </DynamicSyntaxHighlighter>
 
                 <CopyButton item={String(children).replace(/\n$/, "")} />
             </div>
