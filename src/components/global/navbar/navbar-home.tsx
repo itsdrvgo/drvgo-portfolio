@@ -20,7 +20,6 @@ import {
     NavbarMenuToggle,
     NavbarProps,
 } from "@nextui-org/react";
-import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import LoginButton from "../buttons/login-button";
@@ -72,7 +71,6 @@ function NavbarHome({ ...props }: NavbarProps) {
                           <NavbarItem key={index} className="text-sm">
                               <Link
                                   className="text-sm text-text"
-                                  as={NextLink}
                                   href={item.href}
                               >
                                   {item.title}
@@ -157,7 +155,6 @@ function NavbarHome({ ...props }: NavbarProps) {
                         onClick={() => setIsMenuOpen(false)}
                     >
                         <Link
-                            as={NextLink}
                             className="w-full text-text"
                             href={item.href}
                             size="lg"
@@ -170,7 +167,6 @@ function NavbarHome({ ...props }: NavbarProps) {
                 {items.subNav.map((item, index) => (
                     <NavbarMenuItem key={`${item}-${index}`}>
                         <Link
-                            as={NextLink}
                             className="w-full text-text"
                             href={item.href}
                             size="lg"

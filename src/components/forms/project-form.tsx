@@ -443,13 +443,6 @@ function ProjectForm({ project, projectState, user }: PageProps) {
                                     </li>
                                     <li>
                                         <span className="font-semibold text-gray-300">
-                                            Axios:
-                                        </span>{" "}
-                                        Manipulating data between Front-end &
-                                        Back-end.
-                                    </li>
-                                    <li>
-                                        <span className="font-semibold text-gray-300">
                                             Zustand:
                                         </span>{" "}
                                         State management for React.

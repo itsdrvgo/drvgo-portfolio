@@ -1,7 +1,6 @@
 import { siteConfig } from "@/src/config/site";
 import { cn } from "@/src/lib/utils";
 import { Button, Link } from "@nextui-org/react";
-import NextLink from "next/link";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 import { Icons } from "../../icons/icons";
 import ProjectStartButton from "../buttons/project-start-button";
@@ -93,23 +92,13 @@ function FooterHome({
                 </div>
 
                 <div className="flex items-center gap-1">
-                    <Link
-                        as={NextLink}
-                        href={"/privacy"}
-                        color="foreground"
-                        size="sm"
-                    >
+                    <Link href={"/privacy"} color="foreground" size="sm">
                         Privacy Policy
                     </Link>
 
                     <p>•</p>
 
-                    <Link
-                        as={NextLink}
-                        href={"/tos"}
-                        color="foreground"
-                        size="sm"
-                    >
+                    <Link href={"/tos"} color="foreground" size="sm">
                         Terms of Services
                     </Link>
                 </div>
@@ -117,7 +106,6 @@ function FooterHome({
                 <p className="text-sm">
                     Copyright © 2023{" "}
                     <Link
-                        as={NextLink}
                         href={"/"}
                         underline="always"
                         className="text-sm font-semibold text-accent"
