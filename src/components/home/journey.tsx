@@ -3,7 +3,7 @@
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Card, CardBody } from "@nextui-org/react";
-import { motion, Variants } from "framer-motion";
+import { m, Variants } from "framer-motion";
 import { useState } from "react";
 import { Sparkle } from "../global/svgs/Sparkle";
 
@@ -90,14 +90,14 @@ function Journey({ className }: DefaultProps) {
 
     return (
         <section className={className}>
-            <motion.div
+            <m.div
                 className="container relative flex max-w-4xl flex-col items-center justify-center gap-20 px-0"
                 variants={slideUp}
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true }}
             >
-                <motion.div
+                <m.div
                     className="cursor-default space-y-2 text-center"
                     variants={fadeIn}
                 >
@@ -107,9 +107,9 @@ function Journey({ className }: DefaultProps) {
                         today. Here&apos;s a brief overview of my journey so
                         far.
                     </p>
-                </motion.div>
+                </m.div>
 
-                <motion.div
+                <m.div
                     className="flex w-full flex-col items-center"
                     variants={slideUp}
                     initial="hidden"
@@ -117,7 +117,7 @@ function Journey({ className }: DefaultProps) {
                     viewport={{ once: true }}
                 >
                     {journey.map((item, index) => (
-                        <motion.div
+                        <m.div
                             key={index}
                             className="flex flex-col items-center transition-all ease-in-out"
                             variants={fadeIn}
@@ -221,12 +221,12 @@ function Journey({ className }: DefaultProps) {
                                 ) : (
                                     <div className="h-16 w-1 bg-primary-400" />
                                 ))}
-                        </motion.div>
+                        </m.div>
                     ))}
-                </motion.div>
-            </motion.div>
+                </m.div>
+            </m.div>
 
-            <motion.div
+            <m.div
                 initial={{ opacity: 0 }}
                 whileInView={{
                     opacity: 1,
@@ -241,7 +241,7 @@ function Journey({ className }: DefaultProps) {
                 <Sparkle className="spark-spin-2 absolute left-[20%] top-[60%]" />
                 <Sparkle className="spark-spin-3 absolute right-[10%] top-[20%]" />
                 <Sparkle className="spark-spin-2 absolute right-[20%] top-[45%]" />
-            </motion.div>
+            </m.div>
         </section>
     );
 }

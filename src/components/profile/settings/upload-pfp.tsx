@@ -1,7 +1,7 @@
 "use client";
 
 import { DEFAULT_USER_IMAGE } from "@/src/config/const";
-import { cn, handleClientError } from "@/src/lib/utils";
+import { cn, customFetch, handleClientError } from "@/src/lib/utils";
 import { ClerkUserWithoutEmail } from "@/src/lib/validation/user";
 import { DefaultProps } from "@/src/types";
 import {
@@ -17,7 +17,6 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import "cropperjs/dist/cropper.css";
 import { ResponseData } from "@/src/lib/validation/response";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { Cropper, ReactCropperElement } from "react-cropper";
@@ -94,10 +93,11 @@ function UploadPFP({ user }: PageProps) {
             const formData = new FormData();
             formData.append("image", imageFile);
 
-            const { data } = await axios.put<ResponseData>(
+            const { data } = await customFetch<ResponseData>(
                 `/api/users/${user.id}`,
-                formData,
                 {
+                    method: "PUT",
+                    body: formData,
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },

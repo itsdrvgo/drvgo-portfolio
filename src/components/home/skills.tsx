@@ -2,7 +2,7 @@
 
 import { DefaultProps } from "@/src/types";
 import { Image, Link } from "@nextui-org/react";
-import { motion, Variants } from "framer-motion";
+import { m, Variants } from "framer-motion";
 import NextImage from "next/image";
 import { Sparkle } from "../global/svgs/Sparkle";
 
@@ -120,14 +120,14 @@ function Skills({ className }: DefaultProps) {
 
     return (
         <section className={className}>
-            <motion.div
+            <m.div
                 className="container flex max-w-4xl flex-col items-center justify-center gap-20 px-0"
                 variants={slideUp}
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true }}
             >
-                <motion.div
+                <m.div
                     className="cursor-default space-y-2 text-center"
                     variants={fadeIn}
                 >
@@ -136,9 +136,9 @@ function Skills({ className }: DefaultProps) {
                         Skills that I have mastered over the years. I am always
                         learning new things and improving my skills.
                     </p>
-                </motion.div>
+                </m.div>
 
-                <motion.div
+                <m.div
                     className="relative grid basis-1/2 grid-cols-2 gap-3 md:grid-cols-4 md:gap-5"
                     variants={slideUp}
                     initial="hidden"
@@ -146,7 +146,7 @@ function Skills({ className }: DefaultProps) {
                     viewport={{ once: true }}
                 >
                     {skills.map((skill, index) => (
-                        <motion.div key={index} variants={fadeIn}>
+                        <m.div key={index} variants={fadeIn}>
                             <Link
                                 className="z-10 flex items-center gap-5 rounded-lg border border-gray-600 bg-white/20 p-3 text-white backdrop-blur-sm md:p-5"
                                 href={skill.href}
@@ -165,17 +165,17 @@ function Skills({ className }: DefaultProps) {
                                     {skill.name}
                                 </p>
                             </Link>
-                        </motion.div>
+                        </m.div>
                     ))}
 
-                    <motion.div
+                    <m.div
                         className="glow-bg absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                         variants={fadeIn}
                     />
-                </motion.div>
-            </motion.div>
+                </m.div>
+            </m.div>
 
-            <motion.div
+            <m.div
                 initial={{ opacity: 0 }}
                 whileInView={{
                     opacity: 1,
@@ -190,7 +190,7 @@ function Skills({ className }: DefaultProps) {
                 <Sparkle className="spark-spin-2 absolute left-[20%] top-[90%]" />
                 <Sparkle className="spark-spin-3 absolute right-[15%] top-[70%]" />
                 <Sparkle className="spark-spin-2 absolute right-[25%] top-[20%]" />
-            </motion.div>
+            </m.div>
         </section>
     );
 }
