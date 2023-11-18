@@ -8,7 +8,7 @@ export const env = createEnv({
         CLERK_SECRET_KEY: z.string(),
         SVIX_SECRET: z.string(),
 
-        DATASE_NAME: z.string(),
+        DATABASE_NAME: z.string(),
         DATABASE_HOST: z.string(),
         DATABASE_URL: z.string().url(),
 
@@ -46,7 +46,7 @@ export const env = createEnv({
         NEXT_PUBLIC_PUSHER_APP_CLUSTER:
             process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
 
-        DATASE_NAME: process.env.DATASE_NAME,
+        DATABASE_NAME: process.env.DATABASE_NAME,
         DATABASE_HOST: process.env.DATABASE_HOST,
         DATABASE_URL: process.env.DATABASE_URL,
 
