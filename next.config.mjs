@@ -1,4 +1,5 @@
 import "./env.mjs";
+import bundleAnalyzer from "@next/bundle-analyzer";
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
@@ -14,4 +15,9 @@ const nextConfig = {
     reactStrictMode: true,
 };
 
-export default nextConfig;
+const withBundleAnalyzer = bundleAnalyzer({
+    // enabled: true,
+    enabled: false,
+});
+
+export default withBundleAnalyzer(nextConfig);
