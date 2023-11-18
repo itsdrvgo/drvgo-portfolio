@@ -16,15 +16,6 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 
 // SCHEMAS
-
-export const birthdayParticipants2023 = mysqlTable(
-    "birthday_participants_2023",
-    {
-        id: varchar("id", { length: 191 }).notNull().primaryKey(),
-        isParticipating: boolean("isParticipating").default(false).notNull(),
-    }
-);
-
 export const users = mysqlTable(
     "users",
     {
@@ -338,14 +329,6 @@ export const commentLovesRelations = relations(commentLoves, ({ one }) => ({
 
 // TYPES
 
-export type BirthdayParticipant2023 = InferModel<
-    typeof birthdayParticipants2023
->;
-export type NewBirthdayParticipant2023 = InferModel<
-    typeof birthdayParticipants2023,
-    "insert"
->;
-
 export type User = InferModel<typeof users>;
 export type NewUser = InferModel<typeof users, "insert">;
 
@@ -389,10 +372,6 @@ export type Role = InferModel<typeof roles>;
 export type NewRole = InferModel<typeof roles, "insert">;
 
 // ZOD SCHEMA
-
-export const insertBirthdayParticipant2023Schema = createInsertSchema(
-    birthdayParticipants2023
-);
 
 export const insertUserSchema = createInsertSchema(users);
 
