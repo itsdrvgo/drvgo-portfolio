@@ -4,14 +4,15 @@ import { RootLayoutProps } from "@/src/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Home",
+    title: "Videos",
+    description: "Watch my videos on music, and programming",
 };
 
 function Layout({ children }: RootLayoutProps) {
     return (
         <div className="flex min-h-screen flex-col">
             <Navbar />
-            <main className="relative flex-1">{children}</main>
+            <main className="flex-1">{children}</main>
             <Footer />
         </div>
     );

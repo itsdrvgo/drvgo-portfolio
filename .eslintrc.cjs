@@ -1,6 +1,15 @@
 /** @type {import("eslint").Linter.Config} */
 const config = {
     plugins: ["tailwindcss", "unused-imports"],
+    parser: "@typescript-eslint/parser",
+    parserOptions: {
+        ecmaVersion: 2021,
+        sourceType: "module",
+        ecmaFeatures: {
+            jsx: true,
+        },
+    },
+    root: true,
     extends: [
         "next/core-web-vitals",
         "prettier",
@@ -8,7 +17,7 @@ const config = {
     ],
     rules: {
         semi: "error",
-        "tailwindcss/no-custom-classname": "off",
+        "tailwindcss/no-custom-classname": "warn",
         "unused-imports/no-unused-imports": "warn",
         "unused-imports/no-unused-vars": "warn",
     },
@@ -20,13 +29,7 @@ const config = {
         next: {
             rootDir: ["./src/"],
         },
-        ignorePatterns: [
-            "node_modules/",
-            ".next/",
-            "assets/",
-            "public/",
-            "drizzle/",
-        ],
+        ignorePatterns: ["node_modules/", ".next/", "assets/", "public/"],
     },
 };
 

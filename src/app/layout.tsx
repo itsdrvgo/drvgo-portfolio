@@ -1,15 +1,13 @@
-import "./globals.css";
 import { siteConfig } from "@/src/config/site";
 import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
 import { Titillium_Web } from "next/font/google";
-import { Toaster } from "react-hot-toast";
 import ClientProvider from "../components/providers/client";
-import ServerProvider from "../components/providers/server";
 import { cn } from "../lib/utils";
 import { RootLayoutProps } from "../types";
+import "./globals.css";
 
-const poppins = Titillium_Web({
+const font = Titillium_Web({
     subsets: ["latin"],
     weight: ["200", "300", "400", "600", "700"],
 });
@@ -62,28 +60,18 @@ export const metadata: Metadata = {
 
 function RootLayout({ children }: RootLayoutProps) {
     return (
-        <ServerProvider>
-            <html lang="en" suppressHydrationWarning className="dark">
-                <head />
-                <body
-                    className={cn(
-                        poppins.className,
-                        "min-h-screen overflow-x-hidden scroll-smooth antialiased"
-                    )}
-                >
-                    <ClientProvider>{children}</ClientProvider>
-                    <Analytics />
-                    <Toaster
-                        toastOptions={{
-                            style: {
-                                background: "#333",
-                                color: "#fff",
-                            },
-                        }}
-                    />
-                </body>
-            </html>
-        </ServerProvider>
+        <html lang="en" suppressHydrationWarning className="dark">
+            <head />
+            <body
+                className={cn(
+                    font.className,
+                    "min-h-screen overflow-x-hidden scroll-smooth bg-background text-foreground antialiased"
+                )}
+            >
+                <ClientProvider>{children}</ClientProvider>
+                <Analytics />
+            </body>
+        </html>
     );
 }
 

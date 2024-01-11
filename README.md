@@ -37,23 +37,11 @@ Hey there, I'm [DRVGO](https://itsdrvgo.me/), a passionate Full Stack Developer,
 The portfolio website is built with the following technologies:
 
 -   [Next.JS 14 (App Router)](https://nextjs.org/): A powerful framework for building performant and SEO-friendly web applications.
--   [Next.JS Server Actions](https://nextjs.org/docs/app/api-reference/functions/server-actions): A new way to create API routes in Next.js.
 -   [TypeScript](https://www.typescriptlang.org/): Ensuring robust and type-safe code for enhanced development.
 -   [React.JS](https://react.dev/): Creating dynamic and interactive user interfaces for seamless navigation.
 -   [Next UI](https://nextui.org/): The best library of manipulate the UI.
--   [Pusher](https://pusher.com/): Adding real-time functionality to the application.
--   [React Hot Toast](https://react-hot-toast.com/): Adding toast notifications to the application.
 -   [Tailwind CSS](https://tailwindcss.com/): Designing responsive layouts with ease and speed.
--   [Zod](https://zod.dev/): Implementing strong data validation for secure user interactions.
--   [Clerk](https://clerk.com/): Facilitating authentication and user management.
--   [Tanstack Query](https://tanstack.com/query/latest): Optimizing server-state synchronization and caching.
--   [T3-Env](https://env.t3.gg/): Adding type-safe environment variables.
--   [UploadThing](https://uploadthing.com/): Uploading and storing files, images of users.
 -   [Framer Motion](https://www.framer.com/motion/): Adding delightful animations to user interactions.
--   [Drizzle](https://orm.drizzle.team/): TypeScript ORM for SQL.
--   [Planetscale MySQL](https://planetscale.com/): Primary Database to save most of the user, blogs, etc. data.
--   [Upstash Redis](https://upstash.com/): Adding ratelimiter to api routes.
--   [Zustand](https://github.com/pmndrs/zustand): State management for React.
 
 ## Community
 
@@ -63,26 +51,10 @@ Join the [DRVGO Discord Server](https://itsdrvgo.me/support) to connect with the
 
 This project is licensed under the [MIT License](LICENSE).
 
-## Let's Connect
+## Connect with me
 
-[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://instagram.com/itsdrvgo) [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/itsdrvgo) [![Twitch](https://img.shields.io/badge/Twitch-%239146FF.svg?logo=Twitch&logoColor=white)](https://twitch.tv/itsdrvgo) [![Twitter](https://img.shields.io/badge/Twitter-%231DA1F2.svg?logo=Twitter&logoColor=white)](https://twitter.com/itsdrvgo) [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?logo=YouTube&logoColor=white)](https://youtube.com/@itsdrvgodev)
-
-## Contribution
-
-Contributions are welcome! If you have any improvements, suggestions, or bug fixes, feel free to submit a pull request.
-
-<a href="https://github.com/itsdrvgo/drvgo-portfolio/graphs/contributors">
-    <p align="center">
-        <img src="https://contrib.rocks/image?repo=itsdrvgo/drvgo-portfolio" />
-    </p>
-</a>
-
-<p align="center">
-  Made with <a rel="noopener noreferrer" target="_blank" href="https://contrib.rocks">contrib.rocks</a>
-</p>
-
-<p align="center">
-    <a rel="noopener noreferrer" target="_blank" href="https://vercel.com/?utm_source=itsdrvgo&utm_campaign=oss">
-        <img height="34px" src="https://www.datocms-assets.com/31049/1618983297-powered-by-vercel.svg" alt="Powered by vercel">
-    </a>
-</p>
+[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://instagram.com/itsdrvgo)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/itsdrvgo)
+[![Twitch](https://img.shields.io/badge/Twitch-%239146FF.svg?logo=Twitch&logoColor=white)](https://twitch.tv/itsdrvgo)
+[![X](https://img.shields.io/badge/X-%23000000.svg?logo=X&logoColor=white)](https://x.com/itsdrvgo)
+[![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?logo=YouTube&logoColor=white)](https://youtube.com/@itsdrvgodev)

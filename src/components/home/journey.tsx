@@ -3,7 +3,7 @@
 import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Card, CardBody } from "@nextui-org/react";
-import { m, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useState } from "react";
 import { Sparkle } from "../global/svgs/Sparkle";
 
@@ -35,7 +35,7 @@ const journey: Journey[] = [
     {
         title: "Beginning of Coding Journey",
         description:
-            "I started my coding journey with JavaScipt, specifically Discord.JS.",
+            "I started my coding journey with JavaScript, specifically Discord.JS.",
         month: "June",
         year: "2021",
     },
@@ -61,9 +61,17 @@ const journey: Journey[] = [
         month: "August",
         year: "2023",
     },
+    {
+        title: "Started Learning MERN Stack",
+        description:
+            "I started learning the MERN stack from Webskitters Academy, a renowned institute in Kolkata.",
+        org: "Webskitters Academy",
+        month: "August",
+        year: "2023",
+    },
 ];
 
-function Journey({ className }: DefaultProps) {
+function Journey({ className, ...props }: DefaultProps) {
     const [openIndex, setOpenIndex] = useState(-1);
 
     const slideUp: Variants = {
@@ -89,27 +97,33 @@ function Journey({ className }: DefaultProps) {
     };
 
     return (
-        <section className={className}>
-            <m.div
-                className="container relative flex max-w-4xl flex-col items-center justify-center gap-20 px-0"
+        <section
+            className={cn(
+                "relative mb-20 flex min-h-screen items-center justify-center p-5 md:mb-20",
+                className
+            )}
+            {...props}
+        >
+            <motion.div
+                className="relative flex max-w-4xl flex-col items-center justify-center gap-20"
                 variants={slideUp}
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true }}
             >
-                <m.div
+                <motion.div
                     className="cursor-default space-y-2 text-center"
                     variants={fadeIn}
                 >
                     <p className="text-4xl font-bold md:text-5xl">My Journey</p>
-                    <p className="text-sm text-gray-400 md:text-base">
+                    <p className="text-sm text-white/60 md:text-base">
                         I&apos;ve been on a long journey to get to where I am
                         today. Here&apos;s a brief overview of my journey so
                         far.
                     </p>
-                </m.div>
+                </motion.div>
 
-                <m.div
+                <motion.div
                     className="flex w-full flex-col items-center"
                     variants={slideUp}
                     initial="hidden"
@@ -117,7 +131,7 @@ function Journey({ className }: DefaultProps) {
                     viewport={{ once: true }}
                 >
                     {journey.map((item, index) => (
-                        <m.div
+                        <motion.div
                             key={index}
                             className="flex flex-col items-center transition-all ease-in-out"
                             variants={fadeIn}
@@ -200,13 +214,13 @@ function Journey({ className }: DefaultProps) {
                                                         {item.title}
                                                     </p>
                                                     {item.org && (
-                                                        <p className="text-xs text-gray-500 md:text-sm">
+                                                        <p className="text-xs text-white/50 md:text-sm">
                                                             from {item.org}
                                                         </p>
                                                     )}
                                                 </div>
 
-                                                <p className="text-sm text-gray-300 md:text-base">
+                                                <p className="text-sm text-white/80 md:text-base">
                                                     {item.description}
                                                 </p>
                                             </div>
@@ -221,12 +235,12 @@ function Journey({ className }: DefaultProps) {
                                 ) : (
                                     <div className="h-16 w-1 bg-primary-400" />
                                 ))}
-                        </m.div>
+                        </motion.div>
                     ))}
-                </m.div>
-            </m.div>
+                </motion.div>
+            </motion.div>
 
-            <m.div
+            <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{
                     opacity: 1,
@@ -241,7 +255,7 @@ function Journey({ className }: DefaultProps) {
                 <Sparkle className="spark-spin-2 absolute left-[20%] top-[60%]" />
                 <Sparkle className="spark-spin-3 absolute right-[10%] top-[20%]" />
                 <Sparkle className="spark-spin-2 absolute right-[20%] top-[45%]" />
-            </m.div>
+            </motion.div>
         </section>
     );
 }

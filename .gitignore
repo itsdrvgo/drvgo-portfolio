@@ -30,6 +30,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# drizzle
+/drizzle/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -40,3 +43,6 @@ next-env.d.ts
 # docker
 Dockerfile
 .dockerignore
+
+# vscode
+.vscode/

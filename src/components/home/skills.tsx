@@ -1,8 +1,9 @@
 "use client";
 
+import { cn } from "@/src/lib/utils";
 import { DefaultProps } from "@/src/types";
 import { Image, Link } from "@nextui-org/react";
-import { m, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import NextImage from "next/image";
 import { Sparkle } from "../global/svgs/Sparkle";
 
@@ -59,6 +60,11 @@ const skills: Skill[] = [
         href: "https://www.mysql.com/",
     },
     {
+        name: "PostgreSQL",
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg",
+        href: "https://www.postgresql.org/",
+    },
+    {
         name: "Tailwind CSS",
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg",
         href: "https://tailwindcss.com/",
@@ -88,14 +94,9 @@ const skills: Skill[] = [
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/aftereffects/aftereffects-original.svg",
         href: "https://www.adobe.com/products/aftereffects.html",
     },
-    {
-        name: "Illustrator",
-        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/illustrator/illustrator-plain.svg",
-        href: "https://www.adobe.com/products/illustrator.html",
-    },
 ];
 
-function Skills({ className }: DefaultProps) {
+function Skills({ className, ...props }: DefaultProps) {
     const slideUp: Variants = {
         hidden: {
             y: 100,
@@ -119,26 +120,32 @@ function Skills({ className }: DefaultProps) {
     };
 
     return (
-        <section className={className}>
-            <m.div
-                className="container flex max-w-4xl flex-col items-center justify-center gap-20 px-0"
+        <section
+            className={cn(
+                "relative mb-20 flex min-h-screen items-center justify-center p-5 md:mb-0",
+                className
+            )}
+            {...props}
+        >
+            <motion.div
+                className="flex w-full max-w-4xl flex-col items-center justify-center gap-20"
                 variants={slideUp}
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true }}
             >
-                <m.div
+                <motion.div
                     className="cursor-default space-y-2 text-center"
                     variants={fadeIn}
                 >
                     <p className="text-4xl font-bold md:text-5xl">My Skills</p>
-                    <p className="text-sm text-gray-400 md:text-base">
+                    <p className="text-sm text-white/60 md:text-base">
                         Skills that I have mastered over the years. I am always
                         learning new things and improving my skills.
                     </p>
-                </m.div>
+                </motion.div>
 
-                <m.div
+                <motion.div
                     className="relative grid basis-1/2 grid-cols-2 gap-3 md:grid-cols-4 md:gap-5"
                     variants={slideUp}
                     initial="hidden"
@@ -146,9 +153,9 @@ function Skills({ className }: DefaultProps) {
                     viewport={{ once: true }}
                 >
                     {skills.map((skill, index) => (
-                        <m.div key={index} variants={fadeIn}>
+                        <motion.div key={index} variants={fadeIn}>
                             <Link
-                                className="z-10 flex items-center gap-5 rounded-lg border border-gray-600 bg-white/20 p-3 text-white backdrop-blur-sm md:p-5"
+                                className="z-10 flex items-center gap-5 rounded-lg border border-white/40 bg-white/20 p-3 text-white backdrop-blur-sm md:p-5"
                                 href={skill.href}
                                 target="_blank"
                             >
@@ -165,17 +172,17 @@ function Skills({ className }: DefaultProps) {
                                     {skill.name}
                                 </p>
                             </Link>
-                        </m.div>
+                        </motion.div>
                     ))}
 
-                    <m.div
+                    <motion.div
                         className="glow-bg absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                         variants={fadeIn}
                     />
-                </m.div>
-            </m.div>
+                </motion.div>
+            </motion.div>
 
-            <m.div
+            <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{
                     opacity: 1,
@@ -190,7 +197,7 @@ function Skills({ className }: DefaultProps) {
                 <Sparkle className="spark-spin-2 absolute left-[20%] top-[90%]" />
                 <Sparkle className="spark-spin-3 absolute right-[15%] top-[70%]" />
                 <Sparkle className="spark-spin-2 absolute right-[25%] top-[20%]" />
-            </m.div>
+            </motion.div>
         </section>
     );
 }
