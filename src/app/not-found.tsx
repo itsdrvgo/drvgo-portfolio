@@ -9,7 +9,9 @@ function Page() {
                 icon="construction"
                 title="Page not found"
                 description="Either this page is under maintenance or the page does not exist. Come back later."
-                endContent={<GoBackButton />}
+                endContent={
+                    <GoBackButton color="danger" className="bg-red-700" />
+                }
             />
         </div>
     );

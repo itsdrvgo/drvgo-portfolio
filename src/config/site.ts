@@ -3,10 +3,9 @@ import { SiteConfig } from "../types";
 export const siteConfig: SiteConfig = {
     name: "DRVGO",
     description:
-        "Discover the creative world of DRVGO Portfolio - a harmonious fusion of art and technology. 🚀 Explore my journey and get inspired by the possibilities of creating impactful digital experiences. 🎨 Let's connect and embark on this exciting tech adventure together!",
+        "A personal portfolio website of Sarthak Kundu, a.k.a. DRVGO. I am a full-stack web developer, a musician, and a content creator. 😃",
     url: "https://itsdrvgo.me",
     ogImage: "/og.webp",
-    blogsOgImage: "/og-blogs.webp",
     keywords: [
         "DRVGO",
         "drago",

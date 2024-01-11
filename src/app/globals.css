@@ -2,36 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-    :root {
-        --text: hsl(0, 0%, 100%);
-        --background: hsl(210, 4%, 6%);
-        --code: hsl(220, 13%, 18%);
-        --accent: hsl(212, 85%, 82%);
-        --border: hsl(213, 10%, 17%);
-
-        --chat: hsl(0, 0%, 13%);
-        --chat-input: hsl(0, 0%, 8%);
-        --chat-border: hsl(0, 0%, 100%, 0.14);
-        --chat-hover: hsl(0, 0%, 25%);
-    }
-}
-
-@layer base {
-    * {
-        @apply border-border;
-    }
-
-    body {
-        @apply bg-background text-text;
-    }
-}
-
-aside.EmojiPickerReact.epr-main {
-    border: none !important;
-    border-radius: 0 !important;
-}
-
 ::-webkit-scrollbar {
     width: 7px;
     background-color: rgb(32, 36, 39);

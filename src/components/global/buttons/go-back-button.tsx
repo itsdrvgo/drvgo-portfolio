@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/src/lib/utils";
 import { Button, ButtonProps } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
@@ -10,8 +9,8 @@ function GoBackButton({ className, ...props }: ButtonProps) {
     return (
         <Button
             aria-label="Go back to the previous page"
-            className={cn("border bg-default-100", className)}
             radius="sm"
+            className={className}
             onPress={() => router.back()}
             {...props}
         >
