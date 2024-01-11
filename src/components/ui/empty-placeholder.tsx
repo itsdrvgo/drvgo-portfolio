@@ -51,7 +51,7 @@ export function EmptyPlaceholder({
                 </CardHeader>
             )}
             <CardBody className="flex flex-col items-center gap-4 text-center">
-                <p className="text-2xl font-bold">{title}</p>
+                <h2 className="text-2xl font-bold">{title}</h2>
                 <p className="max-w-xs text-balance text-sm text-white/80">
                     {description}
                 </p>

@@ -59,9 +59,9 @@ function Footer({
         >
             {pathname === "/" && (
                 <div className="absolute top-0 mx-5 flex max-w-4xl -translate-y-1/2 flex-col items-center justify-around gap-5 rounded-lg bg-primary-700 px-8 py-5 text-center md:mx-0 md:flex-row md:p-10">
-                    <p className="w-full text-2xl font-bold text-background md:text-4xl">
+                    <h3 className="w-full text-2xl font-bold text-background md:text-4xl">
                         Start a Project
-                    </p>
+                    </h3>
 
                     <p className="w-full text-balance text-sm font-semibold text-background">
                         Interested in working together? We can have a chat, &

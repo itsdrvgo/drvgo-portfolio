@@ -115,7 +115,7 @@ function Journey({ className, ...props }: DefaultProps) {
                     className="cursor-default space-y-2 text-center"
                     variants={fadeIn}
                 >
-                    <p className="text-4xl font-bold md:text-5xl">My Journey</p>
+                    <h2 className="text-4xl font-bold md:text-5xl">My Journey</h2>
                     <p className="text-sm text-white/60 md:text-base">
                         I&apos;ve been on a long journey to get to where I am
                         today. Here&apos;s a brief overview of my journey so

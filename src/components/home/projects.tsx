@@ -103,7 +103,7 @@ function Projects({ className, ...props }: DefaultProps) {
                     className="cursor-default space-y-2 text-center"
                     variants={fadeIn}
                 >
-                    <p className="text-4xl font-bold md:text-5xl">Projects</p>
+                    <h2 className="text-4xl font-bold md:text-5xl">Projects</h2>
                     <p className="text-sm text-white/60 md:text-base">
                         A list of the best of what I have built over the years.
                     </p>

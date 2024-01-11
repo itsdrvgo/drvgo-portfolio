@@ -19,9 +19,9 @@ function CodingVideos({ className }: DefaultProps) {
 
     return (
         <div className={cn("space-y-5", className)}>
-            <h1 className="text-start text-base font-semibold md:text-2xl">
+            <h2 className="text-start text-base font-semibold md:text-2xl">
                 Coding Videos
-            </h1>
+            </h2>
 
             <Carousel
                 showIndicators={false}

@@ -54,9 +54,9 @@ function Navbar({ ...props }: NavbarProps) {
                         color="primary"
                     >
                         <DRVGO />
-                        <p className="text-xl font-bold text-primary-700">
+                        <h4 className="text-xl font-bold text-primary-700">
                             {siteConfig.name}
-                        </p>
+                        </h4>
                     </Link>
                 </NavbarBrand>
             </NavbarContent>

@@ -72,9 +72,9 @@ function Landing({ className, ...props }: DefaultProps) {
                 >
                     <SurpriseSparkleLeft height={80} width={80} />
 
-                    <p className="bg-gradient-to-r from-yellow-400 via-blue-700 to-red-500 bg-clip-text text-5xl font-bold text-transparent md:text-7xl">
+                    <h1 className="bg-gradient-to-r from-yellow-400 via-blue-700 to-red-500 bg-clip-text text-5xl font-bold text-transparent md:text-7xl">
                         Full Stack Developer
-                    </p>
+                    </h1>
 
                     <SurpriseSparkleRight height={80} width={80} />
                 </motion.div>

@@ -138,7 +138,9 @@ function Skills({ className, ...props }: DefaultProps) {
                     className="cursor-default space-y-2 text-center"
                     variants={fadeIn}
                 >
-                    <p className="text-4xl font-bold md:text-5xl">My Skills</p>
+                    <h2 className="text-4xl font-bold md:text-5xl">
+                        My Skills
+                    </h2>
                     <p className="text-sm text-white/60 md:text-base">
                         Skills that I have mastered over the years. I am always
                         learning new things and improving my skills.
