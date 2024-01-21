@@ -34,11 +34,10 @@ const projects: Project[] = [
         name: "PeerAmp",
         description:
             "A private professional development platform designed to foster collaboration.",
-        demo: "https://peeramp.vercel.app/",
         thumbnail: PeerAmpBG.src,
     },
     {
-        name: "Nexpress",
+        name: "Nextress",
         description: "A template for an Next.JS based Express app.",
         source: GITHUB_BASE_URL + "itsdrvgo/express-ts-template",
         thumbnail: NexpressBG.src,
