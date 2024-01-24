@@ -132,4 +132,12 @@ export const programming: CVideo[] = [
         id: "He-cYL6WS0E",
         name: "I found a way to handle Pagination in Drizzle",
     },
+    {
+        id: "egnoaiIzw4g",
+        name: "I modded some built-in functions in Next.JS",
+    },
+    {
+        id: "AWLS0IeoQjQ",
+        name: "Why people are even learning Bootstrap in 2024!",
+    },
 ];
