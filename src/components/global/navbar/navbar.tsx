@@ -25,6 +25,7 @@ function Navbar({ ...props }: NavbarProps) {
 
     return (
         <Nav
+            isMenuOpen={isMenuOpen}
             onMenuOpenChange={setIsMenuOpen}
             shouldHideOnScroll
             classNames={{
@@ -93,15 +94,13 @@ function Navbar({ ...props }: NavbarProps) {
 
             <NavbarMenu className="z-50">
                 {menuConfig.map((item, index) => (
-                    <NavbarMenuItem
-                        key={`${item}-${index}`}
-                        onClick={() => setIsMenuOpen(false)}
-                    >
+                    <NavbarMenuItem key={`${item}-${index}`}>
                         <Link
                             href={item.href}
                             size="lg"
                             color="foreground"
                             isExternal={item.isExternal}
+                            onPress={() => setIsMenuOpen(false)}
                         >
                             {item.title}
                         </Link>
