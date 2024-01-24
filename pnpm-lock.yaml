@@ -20,6 +20,9 @@ dependencies:
   clsx:
     specifier: ^2.1.0
     version: 2.1.0
+  embla-carousel-react:
+    specifier: 8.0.0-rc20
+    version: 8.0.0-rc20(react@18.2.0)
   framer-motion:
     specifier: ^10.17.12
     version: 10.17.12(react-dom@18.2.0)(react@18.2.0)
@@ -3665,6 +3668,28 @@ packages:
 
   /electron-to-chromium@1.4.626:
     resolution: {integrity: sha512-f7/be56VjRRQk+Ric6PmIrEtPcIqsn3tElyAu9Sh6egha2VLJ82qwkcOdcnT06W+Pb6RUulV1ckzrGbKzVcTHg==}
+
+  /embla-carousel-react@8.0.0-rc20(react@18.2.0):
+    resolution: {integrity: sha512-02xhtl/qd5VQtzRbG3jQKVXy/YzP4J3nxQcJhz7cIY73nK3aPwxoZL+Fjk0VdS5eUIWowRBH5qIv3nVNsqeYZQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0
+    dependencies:
+      embla-carousel: 8.0.0-rc20
+      embla-carousel-reactive-utils: 8.0.0-rc20(embla-carousel@8.0.0-rc20)
+      react: 18.2.0
+    dev: false
+
+  /embla-carousel-reactive-utils@8.0.0-rc20(embla-carousel@8.0.0-rc20):
+    resolution: {integrity: sha512-fE7IeSS8HqwDnTDMP8eo0i4pcYQAemmJq53zCLXnp3Yj/p5+IpB1nC7aKQjd2ug1dGOSwwNRFaPI3shlAVVW/A==}
+    peerDependencies:
+      embla-carousel: 8.0.0-rc20
+    dependencies:
+      embla-carousel: 8.0.0-rc20
+    dev: false
+
+  /embla-carousel@8.0.0-rc20:
+    resolution: {integrity: sha512-fhzhbIAcsjSpUsg5jWsg0+zVyJhY5x2SPXtuS4MPAWQWoVQpvkcbX9r0FvPBn6emTbgNFRtAcWczstJy2msdUw==}
+    dev: false
 
   /emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
