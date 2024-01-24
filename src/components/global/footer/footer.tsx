@@ -124,7 +124,7 @@ function Footer({
                     </p>
                 </div>
             ) : (
-                <div className="flex w-full max-w-4xl flex-col items-center justify-between gap-7 md:flex-row 2xl:max-w-6xl">
+                <div className="flex w-full max-w-4xl flex-col items-center justify-between gap-2 md:flex-row md:gap-7 2xl:max-w-6xl">
                     <DRVGO height={40} width={40} />
                     <p className="text-sm">
                         © {new Date().getFullYear()}{" "}
