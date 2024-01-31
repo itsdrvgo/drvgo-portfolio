@@ -75,9 +75,17 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
         description: blog.frontMatter.description,
         keywords: blog.frontMatter.tags,
         authors: blog.frontMatter.authors,
+        creator: siteConfig.name,
         openGraph: {
-            title: blog.frontMatter.title,
+            title: blog.frontMatter.title + " | Blogs | " + siteConfig.name,
             description: blog.frontMatter.description,
+            type: "article",
+            locale: "en_US",
+            url: siteConfig.url + "/blogs/" + blog.slug,
+            authors: blog.frontMatter.authors.map((author) => author.name),
+            publishedTime: new Date(blog.frontMatter.date).toISOString(),
+            tags: blog.frontMatter.tags,
+            siteName: siteConfig.name,
             images: [
                 {
                     url: getBlogThumbnail(blog.slug) || siteConfig.ogImage,
@@ -88,8 +96,11 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
             ],
         },
         twitter: {
-            title: blog.frontMatter.title,
+            title: blog.frontMatter.title + " | Blogs | " + siteConfig.name,
             description: blog.frontMatter.description,
+            card: "summary_large_image",
+            creator: "@itsdrvgo",
+            creatorId: "itsdrvgo",
             images: [getBlogThumbnail(blog.slug) || siteConfig.ogImage],
         },
     };
