@@ -1,0 +1,436 @@
+---
+title: tRPC needs to document this ASAP!
+description: Join me in the journey of setting up tRPC from scratch in a Next.js project.
+tags: ["trpc", "nextjs", "typescript", "react", "tutorial"]
+authors: [{ "name": "DRVGO", "url": "https://x.com/itsdrvgo" }]
+date: 2024-01-31
+---
+
+<YouTube id="chvmiw9OAAs" />
+
+## Introduction
+
+I've been using <Link href="https://trpc.io">tRPC</Link> for a while now and I love it. It's a great way to handle API calls in a Next.js project. It's easy to use and it's easy to set up. But there's one thing that I've been struggling with for a while now. And that is the documentation. It's not that the documentation is bad, it's just that it's not complete. There are a lot of things that are not documented. And that's what I'm going to talk about in this article.
+
+## The problem
+
+Even thought it's been more than a year since Next.JS App Router update was introduced, the tRPC documentation still doesn't mention it. And that's a problem. Because if you want to use tRPC in your Next.js project and you want to use the **app** directory, you're going to have a hard time. There's a specific section for setting up with Next.JS in tRPC documentation, but it was written for **pages** router. <Link href="https://trpc.io/docs/client/nextjs">Here's the link</Link>.
+
+So, if you want to use the **app** directory, you're going to have to figure it out yourself. And that's what I did. I spent a lot of time trying to figure it out. And I finally did. So, I'm going to share it with you.
+
+## The solution
+
+### File Structure
+
+```bash
+src
+├── app
+│   ├── api
+│   │   └── trpc
+│   │       └── [trpc]
+│   │           └── route.ts
+│   ├── page.tsx
+│   └── layout.tsx
+├── components
+│   └── providers
+│       └── client.tsx
+└── lib
+    ├── drizzle
+    │   ├── index.ts
+    │   └── schema.ts
+    ├── trpc
+    │   ├── routers
+    │   │   └── post.ts
+    │   ├── client.ts
+    │   ├── context.ts
+    │   ├── index.ts
+    │   └── trpc.ts
+    └── utils.ts
+```
+
+### Setting up Pre-requisites
+
+-   If you already have a Next.js project, you can skip this step. But if you don't, you can follow along. First, let's create a new Next.js project. Just run the following command in your terminal. We'll use <Link href="https://pnpm.io/">pnpm</Link> as our package manager.
+
+    ```bash
+    pnpm dlx create-next-app
+    ```
+
+-   Now that the project is setup, let's install the dependencies we need. Just run the following command in your terminal.
+
+    ```bash
+    pnpm add @tanstack/react-query @trpc/client @trpc/next @trpc/react-query @trpc/server superjson
+    ```
+
+-   We also need a dev dependency for this. So, run the following command in your terminal.
+
+    ```bash
+    pnpm add -D @tanstack/react-query-devtools
+    ```
+
+-   **(Optional)** We'll be setting up tRPC with <Link href="https://orm.drizzle.team/">Drizzle</Link> with <Link href="https://postgresql.org/">PostgreSQL</Link>. The setup process is well documented in the <Link href="https://orm.drizzle.team/">Drizzle Documentation</Link>. So, I won't be going over it in this article. But if you want to follow along, you can check out their documentation.
+
+> If you're using tRPC v10, make sure you install **4.36.1** version of **@tanstack/react-query** and **@tanstack/react-query-devtools**. If you want to use v5 of React Query, you need to install v11-beta of tRPC. We'll be using v10 in this article.
+
+### Process of setting up tRPC
+
+Now that we have all the dependencies installed, let's set up tRPC. First, create a new folder called **lib** inside your **src** folder. If you are not using **src** folder, you can create the **lib** folder in the root directory.
+
+Inside this **lib** folder, let's create the files and folders we need.
+
+#### Setting up the Database
+
+-   As we'll be using **Drizzle**, I already have a schema setup for it. You can create your own schema, or just copy-paste this one. Just create a new folder called **drizzle** inside the **lib** folder and create a file called **schema.ts** inside it. And paste the following code in it.
+
+    ```ts
+    // lib/drizzle/schema.ts
+    import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+    import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+    import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+    import { generateId } from "../utils"; // uses @paralleldrive/cuid2"
+
+    // SCHEMAS
+
+    export const posts = pgTable("test__posts", {
+        id: text("id")
+            .notNull()
+            .unique()
+            .primaryKey()
+            .$defaultFn(() => generateId()),
+        content: text("content").notNull(),
+        createdAt: timestamp("created_at", { withTimezone: true })
+            .notNull()
+            .defaultNow(),
+    });
+
+    // TYPES
+
+    export type Post = InferSelectModel<typeof posts>;
+    export type NewPost = InferInsertModel<typeof posts>;
+
+    // ZOD SCHEMA
+
+    export const insertPostSchema = createInsertSchema(posts);
+    export const selectPostSchema = createSelectSchema(posts);
+    ```
+
+-   We also need to access the **db**, so create a file called **index.ts** inside the **drizzle** folder and paste the following code in it.
+
+    ```ts
+    // lib/drizzle/index.ts
+    import { env } from "@/env.mjs"; // uses @t3-oss/env-nextjs
+    import { drizzle } from "drizzle-orm/postgres-js";
+    import postgres from "postgres";
+    import * as Schema from "./schema";
+
+    const connection = postgres(env.DATABASE_URL, {
+        prepare: false,
+    });
+
+    export const db = drizzle(connection, { schema: Schema });
+    ```
+
+#### Setting up the tRPC Server
+
+-   Now that we've the database setup, let's setup the tRPC server. Create a folder called **trpc** inside the **lib** folder and create a file called **context.ts** inside it. And paste the following code in it.
+
+    ```ts
+    // lib/trpc/context.ts
+    import { inferAsyncReturnType } from "@trpc/server";
+    import { db } from "../drizzle"; // importing the db from drizzle
+    import { posts } from "../drizzle/schema"; // importing the posts table from drizzle
+
+    export const createContextInner = () => {
+        // now we'll have access to the db and the posts table in the context in our tRPC server
+        // we won't need to import the db and the posts separately in our routes
+        return {
+            db,
+            posts,
+        };
+    };
+
+    export const createContext = () => {
+        return createContextInner();
+    };
+
+    // we'll use this type in our routes to get the type of the context, make it type-safe
+    export type Context = inferAsyncReturnType<typeof createContextInner>;
+    ```
+
+    You can read more about what **Context** is in the <Link href="https://trpc.io/docs/server/context">tRPC Documentation</Link>.
+
+-   Now, we can initiate writing our tRPC router code. Create a file called **trpc.ts** inside the **trpc** folder and paste the following code in it.
+
+    ```ts
+    // lib/trpc/trpc.ts
+    import { initTRPC } from "@trpc/server";
+    import superjson from "superjson";
+    import { ZodError } from "zod";
+    import { Context } from "./context"; // importing the context we created earlier
+
+    // creating the tRPC router
+    // passing the type 'Context' as generic to the initTRPC.context() function
+    // so that we can get the type of the context in our routes
+    export const t = initTRPC.context<Context>().create({
+        transformer: superjson,
+        errorFormatter({ shape, error }) {
+            return {
+                ...shape,
+                data: {
+                    ...shape.data,
+                    zodError:
+                        error.cause instanceof ZodError
+                            ? error.cause.flatten()
+                            : null,
+                },
+            };
+        },
+    });
+
+    // exporting the router
+    export const createTRPCRouter = t.router;
+    // exporting the procedure
+    export const publicProcedure = t.procedure;
+    ```
+
+-   If you have any authentication layer or you want to use any middleware in your routes, you can have something like this,
+
+    ```ts
+    // lib/trpc/trpc.ts
+    import { TRPCError } from "@trpc/server";
+    // ...previous code
+
+    const isAuth = t.middleware(async ({ ctx, next }) => {
+        if (!ctx.auth?.userId)
+            throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You're not authenticated!",
+    });
+
+        return next({
+            ctx: { ...ctx, auth: ctx.auth },
+        });
+    });
+
+    // ...previous code
+    export const protectedProcedure = t.procedure.use(isAuth);
+    ```
+
+    Now, all routes with the **protectedProcedure** procedure will be protected by the **isAuth** middleware. You can read more about middleware in the <Link href="https://trpc.io/docs/server/middleware">tRPC Documentation</Link>.
+
+-   That's all we needed to do before we can create a route. So, let's go and create one. Create a folder called **routers** and create a file called **post.ts** inside it. Now, paste the following code in it.
+
+    ```ts
+    // lib/trpc/routers/post.ts
+    // importing the router and the procedure we created earlier
+    import { createTRPCRouter, publicProcedure } from "../trpc";
+
+    export const postRouter = createTRPCRouter({
+        // we'll use this name in our client to call this route
+        getPosts: publicProcedure
+            .query(async ({ ctx, input }) => {
+                const { db, posts } = ctx;
+
+                // getting all the posts from the database
+                const data = await db.query.posts.findMany();
+                return { data };
+            }),
+    });
+    ```
+
+    You can add more routes if you want. All you need to do is add more procedures to the router. You can read more about procedures in the <Link href="https://trpc.io/docs/server/procedures">tRPC Documentation</Link>.
+
+-   Now, we need to link this route to our server. So, create a file called **index.ts** inside the **trpc** folder and paste the following code in it.
+
+    ```ts
+    // lib/trpc/index.ts
+    import { postRouter } from "./routers/post"; // importing the post router
+    import { createTRPCRouter } from "./trpc"; // importing the router
+
+    export const appRouter = createTRPCRouter({
+        posts: postRouter, // linking the post router to the server
+    });
+
+    // exporting the type of the router that we'll use in our client
+    export type AppRouter = typeof appRouter;
+    ```
+
+    You can have merged routers if you want. You can read more about merged routers in the <Link href="https://trpc.io/docs/server/merging-routers">tRPC Documentation</Link>.
+
+-   Lastly, we need to create a caller for the client, by which we'll send or receive data from the server. Create a file called **client.ts** inside the **trpc** folder and paste the following code in it.
+
+    ```ts
+    // lib/trpc/client.ts
+    import { createTRPCReact } from "@trpc/react-query";
+    import { AppRouter } from "."; // importing the type of appRouter
+
+    // this is what we'll use in our client to call the routes
+    export const trpc = createTRPCReact<AppRouter>();
+    ```
+
+    You can read more about the client in the <Link href="https://trpc.io/docs/client/react">tRPC Documentation</Link>.
+
+#### Setting up the Next.js App
+
+-   Now that we have the server setup, let's setup our Next.JS app, so that we can handle our tRPC calls through native **API Routes**. Create a folder called **api** inside the **src** folder and create a folder called **trpc** inside it. This folder will contain a dynamic route with the name of the procedure we want to call. So, let's create a folder called **[trpc]**, and lastly this folder will have our **route.ts** file. Check out [File Structure](#file-structure) for more info.
+
+-   Now, inside the **route.ts** file, paste the following code.
+
+    ```ts
+    // src/api/trpc/[trpc]/route.ts
+    import { appRouter } from "@/src/lib/trpc"; // importing the appRouter
+    import { createContext } from "@/src/lib/trpc/context"; // importing the createContext function
+    import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+    import { NextRequest } from "next/server";
+
+    // this is the handler that we'll use in our API route
+    const handler = (req: NextRequest) => {
+        return fetchRequestHandler({
+            // passing the request
+            req,
+            // the endpoint where we'll send the request
+            endpoint: "/api/trpc",
+            // passing the router
+            router: appRouter,
+            // passing the createContext function
+            createContext,
+            // if there's an error, we'll log it in the console
+            onError:
+                process.env.NODE_ENV === "development"
+                    ? ({ path, error }) => {
+                        console.error(
+                            `❌ tRPC failed on ${path ?? "<no-path>"}: ${
+                                error.message
+                            }`
+                        );
+                    }
+                    : undefined,
+        });
+    };
+
+    // exporting the handler so that next.js can recognize it
+    export { handler as GET, handler as POST };
+    ```
+
+    Even though tRPC provides a built-in Next.JS adapter, we can still use the native **fetch** adapter. You can read more about it in the <Link href="https://trpc.io/docs/server/adapters/fetch">tRPC Documentation</Link>.
+
+-   We're almost at the end. Now, we need to wrap the body using a tRPC Provider. So, let's do it quickly! Go inside your **components** folder, and create a folder called **providers** inside it. Now, create a file called **client.tsx** inside it and paste the following code in it.
+
+    ```tsx
+    // src/components/providers/client.tsx
+    // IMPORTANT: make sure this is marked as a client component
+    "use client";
+
+    import { ReactNode } from "react";
+    import { trpc } from "@/src/lib/trpc/client";
+    import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+    import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+    import { httpBatchLink, loggerLink } from "@trpc/react-query";
+    import { useState } from "react";
+    import superjson from "superjson";
+
+    // getting the base url
+    const getBaseUrl = () => {
+        if (typeof window !== "undefined") return "";
+
+        // VERCEL_URL is an environment variable that is set by Vercel
+        // if we're in production, we'll use the VERCEL_URL
+        if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+
+        // if we're in development, we'll use localhost
+        return `http://localhost:${process.env.PORT ?? 3000}`;
+    };
+
+    function ClientProvider({ children }: { children: ReactNode }) {
+        const [queryClient] = useState(() => new QueryClient());
+
+        const [trpcClient] = useState(() =>
+            trpc.createClient({
+                transformer: superjson,
+                links: [
+                    httpBatchLink({
+                        url: `${getBaseUrl()}/api/trpc`,
+                    }),
+                    loggerLink({
+                        enabled: (opts) =>
+                            process.env.NODE_ENV === "development" ||
+                            (opts.direction === "down" &&
+                                opts.result instanceof Error),
+                    }),
+                ],
+            })
+        );
+
+        return (
+            // wrapping the body using the tRPC Provider
+            <trpc.Provider client={trpcClient} queryClient={queryClient}>
+                <QueryClientProvider client={queryClient}>
+                    {children}
+                <ReactQueryDevtools />
+                </QueryClientProvider>
+            </trpc.Provider>
+        );
+    }
+
+    export default ClientProvider;
+    ```
+
+-   Final Step, go to your **layout.tsx** file and wrap the body using the **ClientProvider** component we just created.
+
+    ```tsx
+    // src/app/layout.tsx
+    import { ReactNode } from "react";
+    import ClientProvider from "@/src/components/providers/client";
+
+    function RootLayout({ children }: { children: ReactNode }) {
+        return (
+            <html lang="en" suppressHydrationWarning>
+                <head />
+                <ClientProvider>
+                    <body>{children}</body>
+                </ClientProvider>
+            </html>
+        );
+    }
+
+    export default RootLayout;
+    ```
+
+### Using tRPC in the client
+
+Let's create a page where we can use tRPC. Create a file called **page.tsx** inside the **app** folder and paste the following code in it.
+
+```tsx
+// src/app/page.tsx
+"use client";
+
+import { trpc } from "@/src/lib/trpc/client";
+
+function Page() {
+    // calling the route we created earlier
+    const { data, isLoading } = trpc.posts.getPosts.useQuery();
+
+    return (
+        <div>
+            <h1>Posts</h1>
+
+            {isLoading && <p>Loading...</p>}
+
+            {data?.data.map((post) => (
+                <div key={post.id}>
+                    <p>{post.content}</p>
+                    <p>{post.createdAt}</p>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+export default Page;
+```
+
+## Conclusion
+
+And that's it! You've successfully setup tRPC in your Next.JS project. Now, you can use tRPC in your project. Thanks for reading this article. I hope you found it helpful. If you have any questions, feel free to ask me on <Link href="https://x.com/itsdrvgo">X</Link>. I'll try my best to answer them. You can join our <Link href="https://dsc.gg/drvgo">Discord Server</Link> to get help from the community.
+
+Have a great day!

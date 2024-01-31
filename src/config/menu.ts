@@ -6,6 +6,10 @@ export const menuConfig: NavItem[] = [
         href: "/#projects",
     },
     {
+        title: "Blogs",
+        href: "/blogs",
+    },
+    {
         title: "Videos",
         href: "/videos",
     },
