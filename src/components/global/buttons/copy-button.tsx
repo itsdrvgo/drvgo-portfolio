@@ -1,12 +1,11 @@
 "use client";
 
 import { cn } from "@/src/lib/utils";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { ButtonHTMLAttributes, useEffect, useState } from "react";
-import { Icons } from "../../icons/icons";
 
 interface PageProps extends ButtonHTMLAttributes<HTMLElement> {
-    content: any;
+    content: string;
 }
 
 function CopyButton({ className, content, ...props }: PageProps) {
@@ -21,31 +20,24 @@ function CopyButton({ className, content, ...props }: PageProps) {
     }, [copied]);
 
     return (
-        <div className={cn("absolute right-2 top-2", className)} {...props}>
-            <Tooltip
-                content="Copied"
-                placement="top"
-                isOpen={copied}
+        <div
+            className={cn(
+                "absolute right-2 top-0 -translate-y-full",
+                className
+            )}
+            {...props}
+        >
+            <Button
                 radius="sm"
-                showArrow
+                variant="bordered"
+                className="h-auto rounded-md border-1 bg-background px-3 py-1 uppercase text-white/80"
+                onPress={() => {
+                    navigator.clipboard.writeText(content);
+                    setCopied(true);
+                }}
             >
-                <Button
-                    radius="sm"
-                    isIconOnly
-                    variant="bordered"
-                    className="text-gray-400"
-                    onPress={() => {
-                        navigator.clipboard.writeText(content);
-                        setCopied(true);
-                    }}
-                >
-                    {copied ? (
-                        <Icons.check className="h-4 w-4" />
-                    ) : (
-                        <Icons.copy className="h-4 w-4" />
-                    )}
-                </Button>
-            </Tooltip>
+                {copied ? "Copied" : "Copy"}
+            </Button>
         </div>
     );
 }
