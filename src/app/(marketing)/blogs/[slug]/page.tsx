@@ -295,7 +295,7 @@ function getBlogThumbnail(slug: string) {
     );
     if (!thumbnailExt) return null;
 
-    const imagePath = "/blogs/" + slug + "." + thumbnailExt;
+    const imagePath = "/blogs/thumbnails" + slug + "." + thumbnailExt;
     return imagePath;
 }
 
