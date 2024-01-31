@@ -1,4 +1,4 @@
-import DefaultAvatar from "@/public/authors/default.png";
+import DefaultAvatar from "@/public/blogs/authors/default.png";
 import GeneralShell from "@/src/components/global/shells/general-shell";
 import { cn, getReadTime } from "@/src/lib/utils";
 import { BlogMetadata, blogMetadataSchema } from "@/src/lib/validation/blog";
@@ -6,6 +6,7 @@ import { Avatar, Divider, Tooltip } from "@nextui-org/react";
 import "date-fns";
 import fs from "fs";
 import path from "path";
+import { IMAGE_EXTENSIONS } from "@/src/config/const";
 import { format } from "date-fns";
 import matter from "gray-matter";
 import Link from "next/link";
@@ -129,22 +130,19 @@ function BlogCard({ blog }: { blog: Blog }) {
 }
 
 function getAuthorAvatars(authors: string[]) {
-    const imageExtensions = ["png", "jpg", "jpeg", "webp", "svg"];
+    const avatarPath = path.join("public", "blogs", "authors");
 
     return authors.map((author) => {
-        const authorAvatar = imageExtensions.find((extension) =>
-            fs.existsSync(
-                path.join("public", "authors", author + "." + extension)
-            )
+        const avatarExt = IMAGE_EXTENSIONS.find((extension) =>
+            fs.existsSync(path.join(avatarPath, author + "." + extension))
         );
-
-        if (!authorAvatar) return DefaultAvatar.src;
+        if (!avatarExt) return DefaultAvatar.src;
 
         const fileBuffer = fs.readFileSync(
-            path.join("public", "authors", author + "." + authorAvatar)
+            path.join(avatarPath, author + "." + avatarExt)
         );
 
         const image = Buffer.from(fileBuffer).toString("base64");
-        return "data:image/" + authorAvatar + ";base64," + image;
+        return "data:image/" + avatarExt + ";base64," + image;
     });
 }

@@ -1,14 +1,16 @@
-import DefaultAvatar from "@/public/authors/default.png";
-import GroupAvatar from "@/public/authors/group.png";
+import DefaultAvatar from "@/public/blogs/authors/default.png";
+import GroupAvatar from "@/public/blogs/authors/group.png";
 import BlogShell from "@/src/components/global/shells/blog-shell";
 import MdxLink from "@/src/components/mdx/link";
 import YouTube from "@/src/components/mdx/youtube";
-import { getReadTime } from "@/src/lib/utils";
+import { IMAGE_EXTENSIONS } from "@/src/config/const";
+import { siteConfig } from "@/src/config/site";
+import { cn, getReadTime } from "@/src/lib/utils";
 import { blogMetadataSchema } from "@/src/lib/validation/blog";
 import "@/src/styles/github-dark.css";
 import fs from "fs";
 import path from "path";
-import { siteConfig } from "@/src/config/site";
+import CopyButton from "@/src/components/global/buttons/copy-button";
 import { Avatar, Link } from "@nextui-org/react";
 import { format } from "date-fns";
 import matter from "gray-matter";
@@ -25,6 +27,7 @@ import { Metadata } from "next";
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
+import React from "react";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 
@@ -109,7 +112,11 @@ function Page(props: PageProps) {
                         <div>
                             <Avatar
                                 src={getAuthorAvatar(
-                                    blogAuthors.map((author) => author.name)
+                                    blogAuthors.map((author) =>
+                                        author.name
+                                            .toLowerCase()
+                                            .replace(" ", "-")
+                                    )
                                 )}
                                 alt={blogAuthors
                                     .map((author) => author.name)
@@ -233,6 +240,34 @@ function Page(props: PageProps) {
                                 {children}
                             </h6>
                         ),
+                        pre: (props) => (
+                            <pre
+                                {...props}
+                                className={cn(
+                                    "overflow-x-visible",
+                                    props.className
+                                )}
+                            />
+                        ),
+                        code: (props) => {
+                            const stringfiedChildren = React.Children.toArray(
+                                props.children
+                            )
+                                .map((child) => {
+                                    if (React.isValidElement(child)) {
+                                        return child.props.children;
+                                    }
+                                    return child;
+                                })
+                                .join("");
+
+                            return (
+                                <div className="relative">
+                                    <code {...props} />
+                                    <CopyButton content={stringfiedChildren} />
+                                </div>
+                            );
+                        },
                     }}
                 />
             </article>
@@ -253,15 +288,34 @@ export async function generateStaticParams() {
 }
 
 function getBlogThumbnail(slug: string) {
-    const imageExtensions = ["png", "jpg", "jpeg", "webp", "svg"];
-
-    const thumbnail = imageExtensions.find((extension) =>
-        fs.existsSync(path.join("public", "blogs", slug + "." + extension))
+    const thumbnailExt = IMAGE_EXTENSIONS.find((extension) =>
+        fs.existsSync(
+            path.join("public", "blogs", "thumbnails", slug + "." + extension)
+        )
     );
-    if (!thumbnail) return null;
+    if (!thumbnailExt) return null;
 
-    const imagePath = "/blogs/" + slug + "." + thumbnail;
+    const imagePath = "/blogs/" + slug + "." + thumbnailExt;
     return imagePath;
+}
+
+function getAuthorAvatar(authors: string[]) {
+    if (authors.length > 1) return GroupAvatar.src;
+
+    const author = authors[0];
+    const avatarPath = path.join("public", "blogs", "authors");
+
+    const avatarExt = IMAGE_EXTENSIONS.find((extension) =>
+        fs.existsSync(path.join(avatarPath, author + "." + extension))
+    );
+    if (!avatarExt) return DefaultAvatar.src;
+
+    const fileBuffer = fs.readFileSync(
+        path.join(avatarPath, author + "." + avatarExt)
+    );
+
+    const image = Buffer.from(fileBuffer).toString("base64");
+    return "data:image/" + avatarExt + ";base64," + image;
 }
 
 function TableOfContents({ content }: { content: string }) {
@@ -315,24 +369,4 @@ function getBlogInfo({ params }: PageProps) {
         slug,
         content,
     };
-}
-
-function getAuthorAvatar(authors: string[]) {
-    const imageExtensions = ["png", "jpg", "jpeg", "webp", "svg"];
-
-    if (authors.length > 1) return GroupAvatar.src;
-
-    const authorAvatar = imageExtensions.find((extension) =>
-        fs.existsSync(
-            path.join("public", "authors", authors[0] + "." + extension)
-        )
-    );
-    if (!authorAvatar) return DefaultAvatar.src;
-
-    const fileBuffer = fs.readFileSync(
-        path.join("public", "authors", authors[0] + "." + authorAvatar)
-    );
-
-    const image = Buffer.from(fileBuffer).toString("base64");
-    return "data:image/" + authorAvatar + ";base64," + image;
 }
