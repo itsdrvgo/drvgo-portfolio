@@ -205,7 +205,7 @@ Inside this **lib** folder, let's create the files and folders we need.
             throw new TRPCError({
             code: "UNAUTHORIZED",
             message: "You're not authenticated!",
-    });
+        });
 
         return next({
             ctx: { ...ctx, auth: ctx.auth },
