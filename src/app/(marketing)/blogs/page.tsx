@@ -130,7 +130,7 @@ function BlogCard({ blog }: { blog: Blog }) {
 }
 
 function getAuthorAvatars(authors: string[]) {
-    const avatarPath = path.join("public", "blogs", "authors");
+    const avatarPath = path.join("public", "authors");
 
     return authors.map((author) => {
         const avatarExt = IMAGE_EXTENSIONS.find((extension) =>

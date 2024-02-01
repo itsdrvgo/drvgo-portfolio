@@ -300,13 +300,11 @@ export async function generateStaticParams() {
 
 function getBlogThumbnail(slug: string) {
     const thumbnailExt = IMAGE_EXTENSIONS.find((extension) =>
-        fs.existsSync(
-            path.join("public", "blogs", "thumbnails", slug + "." + extension)
-        )
+        fs.existsSync(path.join("public", "thumbnails", slug + "." + extension))
     );
     if (!thumbnailExt) return null;
 
-    const imagePath = "/blogs/thumbnails/" + slug + "." + thumbnailExt;
+    const imagePath = "/thumbnails/" + slug + "." + thumbnailExt;
     return imagePath;
 }
 
@@ -314,7 +312,7 @@ function getAuthorAvatar(authors: string[]) {
     if (authors.length > 1) return GroupAvatar.src;
 
     const author = authors[0];
-    const avatarPath = path.join("public", "blogs", "authors");
+    const avatarPath = path.join("public", "authors");
 
     const avatarExt = IMAGE_EXTENSIONS.find((extension) =>
         fs.existsSync(path.join(avatarPath, author + "." + extension))
