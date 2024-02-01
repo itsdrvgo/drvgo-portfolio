@@ -1,18 +1,18 @@
-import DefaultAvatar from "@/public/blogs/authors/default.png";
-import GroupAvatar from "@/public/blogs/authors/group.png";
+import DefaultAvatar from "@/public/authors/default.png";
+import GroupAvatar from "@/public/authors/group.png";
+import CopyButton from "@/src/components/global/buttons/copy-button";
 import BlogShell from "@/src/components/global/shells/blog-shell";
+import MdxImage from "@/src/components/mdx/image";
 import MdxLink from "@/src/components/mdx/link";
 import YouTube from "@/src/components/mdx/youtube";
 import { IMAGE_EXTENSIONS } from "@/src/config/const";
 import { siteConfig } from "@/src/config/site";
-import { cn, getReadTime } from "@/src/lib/utils";
+import { getReadTime } from "@/src/lib/utils";
 import { blogMetadataSchema } from "@/src/lib/validation/blog";
 import "@/src/styles/github-dark.css";
-import fs from "fs";
-import path from "path";
-import CopyButton from "@/src/components/global/buttons/copy-button";
 import { Avatar, Link } from "@nextui-org/react";
 import { format } from "date-fns";
+import fs from "fs";
 import matter from "gray-matter";
 import langBash from "highlight.js/lib/languages/bash";
 import langC from "highlight.js/lib/languages/c";
@@ -27,6 +27,7 @@ import { Metadata } from "next";
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
+import path from "path";
 import React from "react";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
@@ -191,6 +192,7 @@ function Page(props: PageProps) {
                     components={{
                         YouTube,
                         Link: MdxLink,
+                        Image: MdxImage,
                         h2: ({ children, ...props }) => (
                             <h2
                                 id={children
@@ -251,19 +253,17 @@ function Page(props: PageProps) {
                                 {children}
                             </h6>
                         ),
-                        pre: (props) => (
-                            <pre
-                                {...props}
-                                className={cn(
-                                    "overflow-x-visible",
-                                    props.className
-                                )}
-                            />
-                        ),
-                        code: (props) => {
-                            const stringfiedChildren = React.Children.toArray(
+                        pre: (props) => {
+                            const code = React.Children.toArray(
                                 props.children
-                            )
+                            ).map((child) => {
+                                if (React.isValidElement(child)) {
+                                    return child.props.children;
+                                }
+                                return child;
+                            });
+
+                            const stringfiedCode = React.Children.toArray(code)
                                 .map((child) => {
                                     if (React.isValidElement(child)) {
                                         return child.props.children;
@@ -273,9 +273,12 @@ function Page(props: PageProps) {
                                 .join("");
 
                             return (
-                                <div className="relative">
-                                    <code {...props} />
-                                    <CopyButton content={stringfiedChildren} />
+                                <div className="group relative">
+                                    <pre {...props} />
+                                    <CopyButton
+                                        content={stringfiedCode}
+                                        className="opacity-0 transition-all ease-in-out group-hover:opacity-100"
+                                    />
                                 </div>
                             );
                         },

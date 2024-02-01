@@ -21,10 +21,7 @@ function CopyButton({ className, content, ...props }: PageProps) {
 
     return (
         <div
-            className={cn(
-                "absolute right-2 top-0 -translate-y-full",
-                className
-            )}
+            className={cn("absolute right-4 top-0 -translate-y-1/2", className)}
             {...props}
         >
             <Button

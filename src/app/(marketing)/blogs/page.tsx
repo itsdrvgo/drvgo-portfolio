@@ -1,4 +1,4 @@
-import DefaultAvatar from "@/public/blogs/authors/default.png";
+import DefaultAvatar from "@/public/authors/default.png";
 import GeneralShell from "@/src/components/global/shells/general-shell";
 import { cn, getReadTime } from "@/src/lib/utils";
 import { BlogMetadata, blogMetadataSchema } from "@/src/lib/validation/blog";
