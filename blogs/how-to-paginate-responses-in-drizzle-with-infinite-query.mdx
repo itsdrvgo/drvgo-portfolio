@@ -1,0 +1,351 @@
+---
+title: How to Paginate Responses in Drizzle w/ Infinite Query
+description: Learn how to paginate responses in Drizzle via Tanstack Infinite Query
+tags:
+    [
+        "infinitequery",
+        "nextjs",
+        "typescript",
+        "react",
+        "tutorial",
+        "drizzle",
+        "drizzle-orm",
+        "drizzle-pagination",
+    ]
+authors: [{ "name": "DRVGO", "url": "https://x.com/itsdrvgo" }]
+date: 2024-02-01
+---
+
+<YouTube id="He-cYL6WS0E" />
+
+## Introduction
+
+At this point, we all know that <Link href="https://orm.drizzle.team">Drizzle</Link> is a great ORM for interacting with SQL databases. However, one of the most common questions I get is how to paginate responses in Drizzle. The fact is, Drizzle natively doesn't support pagination, so when I was asked this question, I had to think of a solution. I surfed the web and found out that some of the others were also having the same problem. So, I ran into <Link href="https://github.com/drizzle-team/drizzle-orm/issues/1041">this issue</Link> on Drizzle's GitHub Repo.
+
+Seemed like, there were two packages that could help me with this problem. One was <Link href="https://github.com/xantiagoma/drizzle-cursor">drizzle-cursor</Link> and the other was <Link href="https://github.com/miketromba/drizzle-pagination">drizzle-pagination</Link>. I tried both of them, and **drizzle-pagination** seemed to be the best fit for my use case. So, I decided to use it in my project. In this article, I'll show you how to use **drizzle-pagination** to paginate responses in Drizzle.
+
+## What is Pagination?
+
+Before we get started, let's first understand what pagination is. Pagination is a technique for dividing a long list of items into segments or pages. This is done to improve the performance of the application. For example, if you have a list of 1000 items, you can divide it into 10 pages of 100 items each. This way, you can load only the first page when the user opens the application. Then, when the user sends a request for the second page, you can load the second page and so on.
+
+<Image type="local" location="/images/pagination_definition.jpg" />
+
+## Why do we need Pagination?
+
+The best way to understand why we need pagination is to look at an example. Let's say you're using Twitter. You open the application and you see a list of tweets. You scroll down and you see more tweets. You scroll down again and you see more of them, and so on. Now, as a rough estimation, let's say Twitter has a total of 10 million tweets. If you load all of them at once, it'll take a lot of time, and more over you have to do 10 million row-reads at once. This will not only slow down the application, but also increase the cost of the database.
+
+So, what we can do is, we can divide the tweets into pages. For example, we can divide them into 100 tweets per page. This way, when the user opens the application, we can load only the first page. Then, when the user scrolls down, we can load the second page and so on. This way, we can reduce the load on the database and improve the performance of the application.
+
+### File Structure
+
+```bash
+src
+├── app
+│   ├── api
+│   │   └── ...
+│   ├── page.tsx
+│   └── layout.tsx
+├── components
+│   │── posts
+│   │   └── post-card.tsx
+│   └── ui
+│       └── loader.tsx
+└── lib
+    ├── drizzle
+    │   ├── index.ts
+    │   └── schema.ts
+    ├── trpc
+    │   ├── routers
+    │   │   └── post.ts
+    │   └── ...
+    └── utils.ts
+```
+
+## Pre-requisites
+
+If you're reading this article, we can safely assume that you've a Next.JS project setup. If not, run the following command to create a new Next.JS project.
+
+```bash
+pnpm dlx create-next-app
+```
+
+Once you've created the project, install the following dependencies.
+
+```bash
+pnpm add drizzle-orm drizzle-pagination drizzle-zod postgres
+```
+
+Also, as we'll be making the infinite-query calls from the client-side, we'll be using **tRPC**. You can use native **Fetch API** or **Axios** as well. But, I prefer **tRPC** as it's easy to use and has a lot of features. If you don't know how to setup tRPC, read my previous article on <Link href="/blog/trpc-needs-to-document-this-asap">tRPC needs to document this ASAP!</Link>. Once you've setup tRPC, install the following dependencies.
+
+```bash
+pnpm add @mantine/hooks @paralleldrive/cuid2
+```
+
+## Setting up the Database
+
+Now, let's setup the database. For this tutorial, we'll be using **PostgreSQL**. We'll using <Link href="https://supabase.com">Supabase</Link> as our database provider. Get the **DATABASE_URL** from your Supabase project and add it to your **.env.local** file.
+
+```bash
+DATABASE_URL=postgres://<username>:<password>@<host>:<port>/<database>
+```
+
+### Connecting to the Database
+
+Now, if you're having a **src** folder in your project, create a **lib** folder inside it. Inside the **lib** folder, create a **drizzle** folder. Inside the **drizzle** folder, create a **index.ts** file. Inside the **index.ts** file, add the following code.
+
+```ts
+// src/lib/drizzle/index.ts
+import { env } from "@/env.mjs";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as Schema from "./schema";
+
+const connection = postgres(env.DATABASE_URL, {
+    prepare: false,
+});
+
+export const db = drizzle(connection, { schema: Schema });
+```
+
+### Creating the Schema
+
+Now, let's create the schema. Inside the **drizzle** folder, create a **schema.ts** file. Inside the **schema.ts** file, add the following code.
+
+```ts
+// src/lib/drizzle/schema.ts
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { generateId } from "../utils"; // we'll create this file later
+
+// SCHEMAS
+
+export const posts = pgTable("test__posts", {
+    id: text("id")
+        .notNull()
+        .unique()
+        .primaryKey()
+        .$defaultFn(() => generateId()),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+        .notNull()
+        .defaultNow(),
+});
+
+// TYPES
+
+export type Post = InferSelectModel<typeof posts>;
+export type NewPost = InferInsertModel<typeof posts>;
+
+// ZOD SCHEMA
+
+export const insertPostSchema = createInsertSchema(posts);
+export const selectPostSchema = createSelectSchema(posts);
+```
+
+### Creating the Utils
+
+Now, let's create the **utils** file. Inside the **drizzle** folder, create a **utils.ts** file. Inside the **utils.ts** file, add the following code.
+
+```ts
+// src/lib/drizzle/utils.ts
+import { init } from "@paralleldrive/cuid2";
+
+// generate a unique id of length 16
+export const generateId = init({
+    length: 16,
+});
+```
+
+## Setting up Post Route
+
+Now, let's setup the post route from where we'll be fetching the posts. If you're using **tRPC**, go inside your **routers** folders, and create a **post.ts** file. Inside the **post.ts** file, add the following code.
+
+```ts
+// src/lib/trpc/routers/post.ts
+
+// the package that we'll be using to paginate responses
+import { withCursorPagination } from "drizzle-pagination";
+import { z } from "zod";
+import { createTRPCRouter, publicProcedure } from "../trpc";
+
+// creating the post router
+export const postRouter = createTRPCRouter({
+    // the name of the router
+    getInfinitePosts: publicProcedure
+        .input(
+            z.object({
+                // Cursor: The cursor from where to start fetching the posts.
+                // This will progressively increase as we fetch more posts.
+                cursor: z.string().nullish(),
+                // Limit: The number of posts to fetch. The default value is 5.
+                limit: z.number().min(1).max(50).default(5),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const { db, posts } = ctx;
+            // de-strucutre the input
+            const { cursor, limit } = input;
+
+            const data = await db.query.posts.findMany(
+                // use the withCursorPagination function to paginate the responses
+                // read more about it here: https://github.com/miketromba/drizzle-pagination
+                withCursorPagination({
+                    limit,
+                    cursors: [
+                        [
+                            // by which column to sort the posts
+                            posts.createdAt,
+                            // in which order we should sort, "asc" or "desc"
+                            "desc",
+                            // the cursor from where to start fetching the posts
+                            cursor ? new Date(cursor) : undefined,
+                        ],
+                        // ... add more cursors here
+                        // for example, updatedAt, id, etc.
+                    ],
+                })
+            );
+
+            return {
+                // return the data
+                data,
+                // return the next cursor
+                nextCursor: data.length
+                    ? data[data.length - 1].createdAt.toISOString()
+                    : null,
+            };
+        }),
+});
+```
+
+## Setting up the Client
+
+Now, let's setup the client. We can call the **getInfinitePosts** procedure from any component we want. For this tutorial, we'll be calling it from the **app/page.tsx** file. As we'll be calling this from browser, make sure you mark the page as **use client** at the top.
+
+```tsx
+// src/app/page.tsx
+"use client";
+
+import PostCard from "@/src/components/posts/post-card"; // a custom component to display the posts
+import Loader from "@/src/components/ui/loader"; // a custom component to display the loader
+import { trpc } from "@/src/lib/trpc/client";
+import { useIntersection } from "@mantine/hooks"; // a hook that we'll be using to detect when the user reaches the bottom of the page
+import { Divider, Spinner } from "@nextui-org/react";
+import { useEffect, useMemo, useRef } from "react";
+
+function Page() {
+    const {
+        data: postsRaw,
+        isLoading,
+        fetchNextPage,
+        isFetchingNextPage,
+    // fetching the posts from the route
+    } = trpc.posts.getInfinitePosts.useInfiniteQuery(
+        // the input - empty because we don't need any
+        {},
+        {
+            // the cursor from where to start fetching the posts
+            getNextPageParam: (lastPage) => lastPage.nextCursor,
+        }
+    );
+
+    // a ref to the viewport
+    const viewportRef = useRef<HTMLDivElement>(null);
+    // a ref to the last post element
+    const { entry, ref } = useIntersection({
+        root: viewportRef.current,
+        threshold: 1,
+    });
+
+    useEffect(() => {
+        // if the user reaches the bottom of the page, and there are more posts to fetch, fetch them
+        if (
+            entry?.isIntersecting &&
+            postsRaw?.pages.length &&
+            postsRaw?.pages[postsRaw.pages.length - 1].nextCursor
+        )
+            fetchNextPage();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [entry]);
+
+    // memoize the posts, so that they don't get re-rendered on every re-render
+    const posts = useMemo(
+        () => postsRaw?.pages.flatMap((page) => page.data) ?? [],
+        [postsRaw]
+    );
+
+    return (
+        <section className="flex justify-center p-5">
+            <div className="w-full max-w-2xl space-y-4">
+                {isLoading ? (
+                    // if we're still fetching the initial posts, display the loader
+                    <div className="flex justify-center">
+                        <Loader />
+                    </div>
+                ) : !!posts.length ? (
+                    // if there are posts to show, display them
+                    <>
+                        {posts.map((post, i) => (
+                            <>
+                                {i === posts.length - 1 ? (
+                                    <div
+                                        ref={ref}
+                                        key={post.id}
+                                        className="cursor-pointer"
+                                    >
+                                        <PostCard post={post} />
+                                    </div>
+                                ) : (
+                                    <div
+                                        key={post.id}
+                                        className="cursor-pointer"
+                                    >
+                                        <PostCard post={post} />
+                                    </div>
+                                )}
+
+                                <Divider />
+                            </>
+                        ))}
+
+                        // if we're fetching the next page, display the loader after the last post
+                        {isFetchingNextPage && (
+                            <div className="flex justify-center">
+                                <Spinner />
+                            </div>
+                        )}
+
+                        // if there are no more posts to fetch, display a message
+                        {!isFetchingNextPage &&
+                            postsRaw?.pages.length &&
+                            !postsRaw.pages[postsRaw.pages.length - 1]
+                                .nextCursor && (
+                                <div className="text-center opacity-60">
+                                    <p className="text-xs md:text-sm">
+                                        No more posts to load
+                                    </p>
+                                </div>
+                            )}
+                    </>
+                ) : (
+                    // if there are no posts to show, display a message
+                    <div className="flex justify-center">
+                        <p className="text-sm text-white/60">
+                            No posts to show
+                        </p>
+                    </div>
+                )}
+            </div>
+        </section>
+    );
+}
+
+export default Page;
+```
+
+## Conclusion
+
+That's it! Now, you can paginate responses in Drizzle. You can get a live demo of this system in <Link href="https://post-it-itsdrvgo.vercel.app">PostIt</Link>. You can also check out the source code of this project on <Link href="https://github.com/itsdrvgo/post-it">GitHub</Link>. Thanks for reading this article. I hope you found it helpful. If you have any questions, feel free to ask me on <Link href="https://x.com/itsdrvgo">X</Link>. I'll try my best to answer them. You can join our <Link href="https://dsc.gg/drvgo">Discord Server</Link> to get help from the community.
+
+Have a great day!
