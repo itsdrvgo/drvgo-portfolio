@@ -219,6 +219,46 @@ export const postRouter = createTRPCRouter({
 });
 ```
 
+Currently we're not using any filters, but you can add them as per your use case. You can also add more cursors. For example, if we were to get all posts of a specific user, we would write something like this.
+
+```ts
+import { eq } from "drizzle-orm";
+// ... other imports
+
+// ... previous code
+getInfinitePosts: publicProcedure
+    .input(
+        z.object({
+            // ... previous input
+            // UserId: The id of the user whose posts we want to fetch.
+            userId: z.string(),
+        })
+    )
+    .query(async ({ ctx, input }) => {
+        const { db, posts } = ctx;
+        // de-strucutre the input
+        const { cursor, limit, userId } = input;
+
+        const data = await db.query.posts.findMany(
+            // use the withCursorPagination function to paginate the responses
+            // read more about it here: https://github.com/miketromba/drizzle-pagination
+            withCursorPagination({
+                where: eq(posts.authorId, userId),
+                // ... other filters
+            })
+        );
+
+        return {
+            // return the data of posts for that user
+            data,
+            // return the next cursor
+            nextCursor: data.length
+                ? data[data.length - 1].createdAt.toISOString()
+                : null,
+        };
+    }),
+```
+
 ## Setting up the Client
 
 Now, let's setup the client. We can call the **getInfinitePosts** procedure from any component we want. For this tutorial, we'll be calling it from the **app/page.tsx** file. As we'll be calling this from browser, make sure you mark the page as **use client** at the top.
