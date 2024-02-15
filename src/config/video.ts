@@ -27,7 +27,7 @@ export const music: MVideo[] = [
     },
     {
         id: "V2GwWe3teDE",
-        name: "Sapna Jahan",
+        name: "Sapna Jahan - Sonu Nigam, Neeti Mohan",
         artists: [
             {
                 name: "DRVGO",
@@ -41,7 +41,7 @@ export const music: MVideo[] = [
     },
     {
         id: "LnsPH6y2GYc",
-        name: "Until I Found You",
+        name: "Until I Found You - Stephen Sanchez, Em Beihold",
         artists: [
             {
                 name: "DRVGO",
@@ -55,7 +55,7 @@ export const music: MVideo[] = [
     },
     {
         id: "RX3L3SICy5k",
-        name: "golden hour",
+        name: "golden hour - JVKE",
         artists: [
             {
                 name: "JVKE",
@@ -69,12 +69,18 @@ export const music: MVideo[] = [
     },
     {
         id: "o15Oa8DJRn4",
-        name: "Found",
+        name: "Found - Marc Wavy",
         artists: [
             {
-                name: "Marc Wavy",
-                href: "https://www.youtube.com/@MarcWavy",
+                name: "DRVGO",
+                href: "https://www.youtube.com/@itsdrvgo",
             },
+        ],
+    },
+    {
+        id: "sF_othft0DM",
+        name: "Stay - The Kid LAROI, Justin Bieber",
+        artists: [
             {
                 name: "DRVGO",
                 href: "https://www.youtube.com/@itsdrvgo",
@@ -139,5 +145,13 @@ export const programming: CVideo[] = [
     {
         id: "AWLS0IeoQjQ",
         name: "Why people are even learning Bootstrap in 2024!",
+    },
+    {
+        id: "chvmiw9OAAs",
+        name: "tRPC needs to document this ASAP!!",
+    },
+    {
+        id: "8bmsOOy8lbI",
+        name: "Will Project IDX really replace VS Code?",
     },
 ];
