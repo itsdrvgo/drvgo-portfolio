@@ -1,0 +1,178 @@
+---
+title: Will Project IDX really replace VS Code?
+description: Let's talk about Google's new VS Code competitor, Project IDX, and whether it will replace VS Code.
+tags: ["vscode", "project-idx", "google", "microsoft", "idx"]
+authors: [{ "name": "DRVGO", "url": "https://x.com/itsdrvgo" }]
+date: 2024-02-15
+---
+
+<YouTube id="8bmsOOy8lbI" />
+
+## What is Project IDX?
+
+Recently, Google announced about its VS Code competitor, Project IDX. Curently, it's in Beta, and weirdly enough, I got access to use it. I've been using it for quite a few days, and ngl, I'm kind of loving it. Join me as we delve into the world of Project IDX, exploring its features, assessing its strengths and weaknesses, and pondering the question on every developer's mind: Could Project IDX truly replace Visual Studio Code?
+
+## Initial Impressions and Features
+
+Project IDX, Google's answer to Visual Studio Code (VS Code), has garnered attention with its recent beta release. Unlike VS Code, Project IDX distinguishes itself as an online IDE, offering a seamless development experience directly within the browser at <Link href="https://idx.google.com">here</Link>.
+
+However, it's worth noting that Project IDX is currently in beta, which means access is limited. Interested developers must join a waitlist and hope for the chance to explore its capabilities. This exclusivity adds an element of anticipation, fueling speculation about its potential impact on the developer community.
+
+<Image type="local" location="/images/idx_welcome_page.jpg" />
+
+### User Experience
+
+Project IDX presents itself with a sleek and intuitive interface, aligning with Google's design ethos. Navigation feels smooth, contributing to a more seamless development experience. In fact, I find the design of IDX to be a notable improvement over Google's general design language, adding an extra layer of appeal to the overall experience.
+
+### Performance
+
+Performance-wise, Project IDX impresses with its speed and responsiveness. Tasks like code editing and debugging are executed swiftly, enhancing overall productivity. One significant advantage lies in its cloud-hosted computing, meaning none of the user's resources are burdened with heavy computation tasks. This architecture leads to a noticeable bump in performance, allowing developers to work more efficiently.
+
+### Feature Set
+
+Project IDX boasts a feature-rich environment, comparable to VS Code. It leverages Nix as its backend engine, providing robust functionality for code editing, debugging, and other development tasks. Additionally, for extensions, Project IDX integrates with open-vsx.org, offering a wide range of plugins to enhance the IDE's capabilities. We'll delve deeper into these features and their implications later in our discussion. From syntax highlighting and code completion to Git integration and debugging tools, Project IDX caters to the diverse needs of modern software development.
+
+## Getting Started with Project IDX
+
+Now that we've discussed the initial impressions and features of Project IDX, let's dive into a walkthrough of how to get started with the IDE. If you're fortunate enough to gain access to Project IDX, here's a step-by-step guide on making your first project:
+
+1. Accessing Project IDX
+
+    Firstly, navigate to <Link href="https://idx.google.com">Project IDX Page</Link> and log in with your Google account. If you're on the waitlist, keep an eye out for an invitation to access the beta version.
+
+2. Creating a New Project
+
+    Once logged in, you'll be greeted with the Project IDX dashboard. To create a new project, you have two options:
+
+    - **Choose a Template**: From the main page, essential templates like Angular, Next.js, Gemini, and more are readily available. Simply click on the template of your choice to start a new project based on that template.
+
+    - **Explore More Templates**: If you're looking for additional options, click on the "See all templates" button. Here, you'll find a wider selection of templates covering various project types, including web applications, mobile apps, and backend services. Scroll through the available templates and choose the one that best suits your project requirements.
+
+    <Gallery
+        imagePaths={[
+            "/images/idx_template_setup_page_1.jpg",
+            "/images/idx_template_setup_page_2.jpg",
+            "/images/idx_template_setup_page_3.jpg",
+            "/images/idx_template_setup_page_4.jpg",
+            "/images/idx_template_setup_page_5.jpg",
+        ]}
+    />
+
+    For demonstration purposes, let's create a blank project from the "Misc" category. After selecting the template, you'll be prompted to name your workspace. Once named, simply hit create to initiate the project setup. Now, it will take a few seconds to set up the project, and once done, you'll be redirected to the project workspace.
+
+3. Exploring the Workspace
+
+    Upon entering the workspace, you'll notice a familiar layout, resembling that of VS Code. One interesting aspect is that instead of using <Link href="https://github.com/features/copilot">GitHub Copilot</Link>, Project IDX leverages their own **Project IDX AI**.
+
+    > I've been using Project IDX for a few days now, and unfortunately, it is not as good as GitHub Copilot. It may do the job for simple tasks, but for complex tasks, it's not as reliable as GitHub Copilot. I hope they improve it in the future.
+
+    <Image type="local" location="/images/idx_welcome_page.jpg" />
+
+    The workspace is equipped with a file explorer, code editor, terminal, and debugging tools, providing a comprehensive environment for software development. You can start coding right away, leveraging the features and capabilities of Project IDX to bring your projects to life.
+
+4. Exploring Extensions
+
+    Project IDX offers a wide range of extensions to enhance the IDE's capabilities. To explore available extensions, click on the extensions icon in the sidebar. Here, you can search for extensions, install them, and manage your existing extensions. The integration with <Link href="https://open-vsx.org">open-vsx.org</Link> ensures a rich library of extensions, catering to various development needs.
+
+    > VS Code doesn't use open-vsx.org, and instead, it uses the official <Link href="https://marketplace.visualstudio.com">VS Code Marketplace</Link>. As a result, some extensions may not be available in Project IDX, which could be a deal-breaker for some developers.
+
+    <Image type="local" location="/images/idx_extension_page.jpg" />
+
+    Also, it doesn't sync with your existing VS Code extensions, so you'll have to install them manually.
+
+5. Tweaking Project Environment
+
+    At this point, we all understand that Project IDX is an online IDE. So, the question arises: How do we install Node or Python or any other language? Well, Project IDX uses Nix as its backend engine, which means you can install any language or package using Nix. At the top, we have folder called **.idx**, which contains a file called **dev.nix**. This file is used to install any language, package, or tool you need for your project globally. For example, if you want to install Node, you can add the following line to the **dev.nix** file:
+
+    ```nix
+    pkgs.nodejs_20
+    ```
+
+    There are over 80,000 packages available in Nix, check out the <Link href="https://search.nixos.org/packages">Nix Packages Search</Link> to find the package you need.
+
+    <Image type="local" location="/images/idx_nix_env_page.jpg" />
+
+    > You can also set global environment variables, which is a nice touch. Everytime you update the **dev.nix** file, it will ask you to rebuild the environment. Read more about it <Link href="https://developers.google.com/idx/guides/customize-idx-env">here</Link>.
+
+## Writing Your First Code
+
+Now that we've explored the workspace and environment of Project IDX, let's write some code to get a feel for the development experience. For this demonstration, we'll create a simple **Fetch API** call to retrieve data from an external source. Here's a step-by-step guide to writing your first code in Project IDX:
+
+-   For this example, we'll create a new project using <Link href="https://bun.sh">Bun</Link>. As IDX runs on Linux, we can easily install Bun using the following command in the terminal:
+
+    ```bash
+    npm i -g bun
+    ```
+
+-   Once installed, restart the terminal and run the following command to create a new project:
+
+    ```bash
+    bun init
+    ```
+
+    This will ask you these questions:
+
+    ```bash
+    ? package name (test):
+    ? entry point (index.ts):
+    ```
+
+    Name your project whatever you want and hit enter. For the entry point, you can leave it as it is, but we'll change it to **src/index.ts**.
+
+    <Image type="local" location="/images/idx_bun_setup_page.jpg" />
+
+-   Now, open the **src/index.ts** file and you'll see the following code:
+
+    ```ts
+    console.log("Hello via Bun!);
+    ```
+
+    Replace it with the following code:
+
+    ```ts
+    const fetchData = async () => {
+        try {
+            const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    fetchData();
+    ```
+
+    This code will fetch data from <Link href="https://jsonplaceholder.typicode.com/posts">JSONPlaceholder</Link> and log it to the console.
+
+-   Now, run the following command in the terminal to execute the code:
+
+    ```bash
+    bun run src/index.ts
+    ```
+
+    You'll see the data logged to the console.
+
+    <Image type="local" location="/images/idx_bun_run_page.jpg" />
+
+Voila! You've successfully written and executed your first code in Project IDX. The development experience feels smooth and seamless, allowing you to focus on your code without worrying about the underlying infrastructure.
+
+## Final Thoughts
+
+I must say, Project IDX has left a lasting impression on me. The performance, feature set, and user experience are commendable, making it a strong contender in the IDE landscape. However, the question remains: Could Project IDX truly replace Visual Studio Code?
+
+The answer is not straightforward. While Project IDX offers a compelling online development environment, it's not without its limitations. The lack of integration with the official VS Code Marketplace and the absence of GitHub Copilot are notable drawbacks. Additionally, the exclusivity of the beta release may deter some developers from adopting Project IDX as their primary IDE.
+
+Also, there are some weird bugs and glitches that I've encountered while using Project IDX. For example,
+
+1. If you're hosting a server, IDX assigns a generated URL to it. When I tried to access the URL on my browser, it worked fine. I was able to access get a HTML page, but when I tried send a POST request to the server using the URL, via Thunder Client, it didn't work. I tried it on my local machine, and it worked fine. On top of that, when I tried to send the POST request using Thunder Client via IDX Extension inside IDX, it worked fine. I had to write **localhost** instead of the generated URL to make it work.
+
+2. When using Next.JS, if you try to access the site using the generated URL, at first it will just load infinitely. Then you realize that the URL is not having the **https://** prefix. You have to manually add it to the URL to make it work. So, everytime you navigate to a new page, you have to add the **https://** prefix to the URL, or it won't work. This is a weird bug that I've encountered.
+
+## Conclusion
+
+In conclusion, Project IDX is a promising venture by Google, offering a compelling alternative to Visual Studio Code. Its performance, feature set, and user experience make it a strong contender in the IDE landscape. However, the limitations and exclusivity of the beta release may hinder its widespread adoption. As Project IDX continues to evolve, it will be interesting to see how it shapes the future of online development environments and whether it can truly replace Visual Studio Code. For now, it's a matter of personal preference and specific project requirements. I, for one, will continue to explore Project IDX and monitor its progress, eager to witness its impact on the developer community.
+
+Thanks for reading this article. I hope you found it helpful. If you have any questions, feel free to ask me on <Link href="https://x.com/itsdrvgo">X</Link>. I'll try my best to answer them. You can join our <Link href="https://dsc.gg/drvgo">Discord Server</Link> to get help from the community.
+
+Have a great day!
