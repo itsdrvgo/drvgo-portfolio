@@ -115,7 +115,9 @@ function Journey({ className, ...props }: DefaultProps) {
                     className="cursor-default space-y-2 text-center"
                     variants={fadeIn}
                 >
-                    <h2 className="text-4xl font-bold md:text-5xl">My Journey</h2>
+                    <h2 className="text-4xl font-bold md:text-5xl">
+                        My Journey
+                    </h2>
                     <p className="text-sm text-white/60 md:text-base">
                         I&apos;ve been on a long journey to get to where I am
                         today. Here&apos;s a brief overview of my journey so
@@ -153,7 +155,7 @@ function Journey({ className, ...props }: DefaultProps) {
                                 <div>
                                     <div
                                         className={cn(
-                                            "relative flex h-16 w-16 cursor-pointer flex-col items-center justify-center rounded-full bg-white/10 text-sm font-semibold transition-all ease-in-out hover:bg-primary-300 md:h-20 md:w-20 md:text-base",
+                                            "relative flex size-16 cursor-pointer flex-col items-center justify-center rounded-full bg-white/10 text-sm font-semibold transition-all ease-in-out hover:bg-primary-300 md:size-20 md:text-base",
                                             {
                                                 "bg-primary-300":
                                                     openIndex === index,
@@ -163,7 +165,7 @@ function Journey({ className, ...props }: DefaultProps) {
                                         <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
                                             <div
                                                 className={cn(
-                                                    "h-16 w-16 rounded-full outline-dashed outline-2 outline-offset-4 outline-primary-400 md:h-20 md:w-20",
+                                                    "size-16 rounded-full outline-dashed outline-2 outline-offset-4 outline-primary-400 md:size-20",
                                                     {
                                                         "rotate-left":
                                                             index % 2 === 0,

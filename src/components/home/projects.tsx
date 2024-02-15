@@ -188,7 +188,7 @@ function ProjectCard({
                 }}
             />
 
-            <div className="absolute left-0 top-0 z-40 flex h-full w-full translate-y-full flex-col items-center justify-center gap-5 bg-black/80 p-4 opacity-0 transition-all ease-in-out group-hover:translate-y-0 group-hover:opacity-100">
+            <div className="absolute left-0 top-0 z-40 flex size-full translate-y-full flex-col items-center justify-center gap-5 bg-black/80 p-4 opacity-0 transition-all ease-in-out group-hover:translate-y-0 group-hover:opacity-100">
                 <div className="space-y-2 text-center">
                     <p
                         className={cn(

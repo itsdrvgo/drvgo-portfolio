@@ -46,7 +46,7 @@ function Landing({ className, ...props }: DefaultProps) {
             {...props}
         >
             <motion.div
-                className="z-20 flex h-full w-full flex-col items-center justify-center gap-6 text-center md:gap-10"
+                className="z-20 flex size-full flex-col items-center justify-center gap-6 text-center md:gap-10"
                 variants={slideUp}
                 initial="hidden"
                 animate="show"

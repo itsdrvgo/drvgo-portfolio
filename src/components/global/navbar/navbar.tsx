@@ -85,9 +85,9 @@ function Navbar({ ...props }: NavbarProps) {
                         href="/support"
                         className="group flex items-center gap-2 rounded-full bg-primary-700 px-4 py-2 text-sm font-semibold text-black hover:opacity-100"
                     >
-                        <Icons.discord className="h-4 w-4 transition-all ease-in-out group-hover:h-0 group-hover:w-0" />
+                        <Icons.discord className="size-4 transition-all ease-in-out group-hover:size-0" />
                         <p className="uppercase">Discord</p>
-                        <Icons.arrowRight className="h-0 w-0 transition-all ease-in-out group-hover:h-4 group-hover:w-4" />
+                        <Icons.arrowRight className="size-0 transition-all ease-in-out group-hover:size-4" />
                     </Link>
                 </NavbarItem>
             </NavbarContent>

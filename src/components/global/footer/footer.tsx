@@ -74,9 +74,7 @@ function Footer({
                             href="/support"
                             radius="full"
                             isExternal
-                            startContent={
-                                <Icons.sparkles className="h-4 w-4" />
-                            }
+                            startContent={<Icons.sparkles className="size-4" />}
                         >
                             Let&apos;s go
                         </Button>
@@ -105,7 +103,7 @@ function Footer({
                                     className="bg-primary-200"
                                     target="_blank"
                                 >
-                                    <Icon className="h-4 w-4" />
+                                    <Icon className="size-4" />
                                 </Button>
                             );
                         })}
