@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { Image } from "@nextui-org/react";
+import { Image, ImageProps } from "@nextui-org/react";
 import NextImage from "next/image";
 
 type MdxRemoteImageProps = {
@@ -13,12 +13,18 @@ type MdxLocalImageProps = {
     location: string;
 };
 
-type MdxImageProps = MdxRemoteImageProps | MdxLocalImageProps;
+type MdxImageProps = (MdxRemoteImageProps | MdxLocalImageProps) & ImageProps;
 
 function MdxImage(props: MdxImageProps) {
     if (props.type === "external")
         return (
-            <Image src={props.url} alt={props.url} height={1920} width={1080} />
+            <Image
+                src={props.url}
+                alt={props.url}
+                height={1920}
+                width={1080}
+                {...props}
+            />
         );
     else {
         const location = props.location;
@@ -39,6 +45,7 @@ function MdxImage(props: MdxImageProps) {
                 alt={location}
                 height={1920}
                 width={1080}
+                {...props}
             />
         );
     }
