@@ -2,17 +2,19 @@ import DefaultAvatar from "@/public/authors/default.png";
 import GroupAvatar from "@/public/authors/group.png";
 import CopyButton from "@/src/components/global/buttons/copy-button";
 import BlogShell from "@/src/components/global/shells/blog-shell";
+import MdxGallery from "@/src/components/mdx/gallery";
 import MdxImage from "@/src/components/mdx/image";
 import MdxLink from "@/src/components/mdx/link";
 import YouTube from "@/src/components/mdx/youtube";
 import { IMAGE_EXTENSIONS } from "@/src/config/const";
 import { siteConfig } from "@/src/config/site";
-import { getReadTime } from "@/src/lib/utils";
+import { cn, getReadTime } from "@/src/lib/utils";
 import { blogMetadataSchema } from "@/src/lib/validation/blog";
 import "@/src/styles/github-dark.css";
+import fs from "fs";
+import path from "path";
 import { Avatar, Link } from "@nextui-org/react";
 import { format } from "date-fns";
-import fs from "fs";
 import matter from "gray-matter";
 import langBash from "highlight.js/lib/languages/bash";
 import langC from "highlight.js/lib/languages/c";
@@ -27,7 +29,6 @@ import { Metadata } from "next";
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
-import path from "path";
 import React from "react";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
@@ -179,7 +180,7 @@ function Page(props: PageProps) {
                     <p className="text-sm text-white/60">{readTime} min read</p>
                 </div>
 
-                <div className="my-10 rounded-lg border bg-default-50 p-6 md:px-10">
+                <div className="my-10 rounded-lg border border-white/15 bg-default-50 p-6 md:px-10">
                     <h2 className="my-0 mb-5 lg:my-0 lg:mb-5">
                         Table of Contents
                     </h2>
@@ -193,6 +194,7 @@ function Page(props: PageProps) {
                         YouTube,
                         Link: MdxLink,
                         Image: MdxImage,
+                        Gallery: MdxGallery,
                         h2: ({ children, ...props }) => (
                             <h2
                                 id={children
@@ -280,6 +282,34 @@ function Page(props: PageProps) {
                                         className="opacity-0 transition-all ease-in-out group-hover:opacity-100"
                                     />
                                 </div>
+                            );
+                        },
+                        blockquote: ({ className, children, ...props }) => {
+                            const removeMargins = (child: React.ReactNode) => {
+                                if (React.isValidElement(child)) {
+                                    return React.cloneElement(
+                                        child as React.ReactElement<any>,
+                                        {
+                                            className: "lg:my-2 lg:text-base",
+                                        }
+                                    );
+                                }
+                                return child;
+                            };
+
+                            return (
+                                <blockquote
+                                    className={cn(
+                                        "rounded-r-md bg-default-50 py-2 pr-4",
+                                        className
+                                    )}
+                                    {...props}
+                                >
+                                    {React.Children.map(
+                                        children,
+                                        removeMargins
+                                    )}
+                                </blockquote>
                             );
                         },
                     }}
