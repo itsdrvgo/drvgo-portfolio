@@ -9,7 +9,8 @@ function MdxLink(props: LinkProps) {
         return (
             <Link
                 as={NextLink}
-                className="text-sm md:text-base lg:text-lg"
+                className="text-sm text-primary-600 md:text-base lg:my-0 lg:text-lg"
+                underline="hover"
                 {...props}
             >
                 {props.children}
@@ -20,7 +21,8 @@ function MdxLink(props: LinkProps) {
     return (
         <Link
             isExternal
-            className="text-sm md:text-base lg:text-lg"
+            className="text-sm text-primary-600 md:text-base lg:my-0 lg:text-lg"
+            underline="hover"
             {...props}
         />
     );
