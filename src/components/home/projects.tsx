@@ -6,9 +6,9 @@ import { DefaultProps } from "@/src/types";
 import { Button, Image, Link } from "@nextui-org/react";
 import { motion, Variants } from "framer-motion";
 import NextImage from "next/image";
+import BerryFitLabsBG from "public/projects/berryfitlabs.jpeg";
 import NexpressBG from "public/projects/nexpress.jpeg";
 import NextJSBG from "public/projects/next_js_template.jpeg";
-import PeerAmpBG from "public/projects/peeramp.jpeg";
 import PostItBG from "public/projects/post_it.jpeg";
 import XarOSBG from "public/projects/xar_os.jpeg";
 import { Sparkle } from "../global/svgs/Sparkle";
@@ -31,10 +31,10 @@ const projects: Project[] = [
         thumbnail: PostItBG.src,
     },
     {
-        name: "PeerAmp",
+        name: "BerryFitLabs",
         description:
-            "A private professional development platform designed to foster collaboration.",
-        thumbnail: PeerAmpBG.src,
+            "A fitness app that helps you track your daily workouts and diet.",
+        thumbnail: BerryFitLabsBG.src,
     },
     {
         name: "Nextress",
