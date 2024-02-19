@@ -51,7 +51,7 @@ function Footer({
     return (
         <footer
             className={cn(
-                "relative flex w-full cursor-default flex-col items-center justify-center space-y-20 border-t border-white/10 bg-default-50",
+                "relative flex w-full cursor-default flex-col items-center justify-center space-y-20 border-t border-white/5",
                 pathname === "/" ? "py-10" : "py-2",
                 className
             )}

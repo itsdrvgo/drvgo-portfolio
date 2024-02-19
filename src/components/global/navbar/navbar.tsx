@@ -34,7 +34,7 @@ function Navbar({ ...props }: NavbarProps) {
                     "z-50 bg-transparent",
                     pathname === "/"
                         ? "pointer-events-none fixed z-50 bg-transparent px-0 pt-0 backdrop-blur-sm backdrop-saturate-100 md:px-5 md:pt-5 md:backdrop-blur-0"
-                        : "z-50 border-b border-white/10 bg-transparent md:bg-default-50"
+                        : "z-50 border-b border-white/5 backdrop-blur-md backdrop-saturate-100"
                 ),
                 wrapper:
                     pathname === "/"
