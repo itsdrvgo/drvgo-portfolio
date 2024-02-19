@@ -66,7 +66,7 @@ const skills: Skill[] = [
     },
     {
         name: "Tailwind CSS",
-        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg",
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg",
         href: "https://tailwindcss.com/",
     },
     {

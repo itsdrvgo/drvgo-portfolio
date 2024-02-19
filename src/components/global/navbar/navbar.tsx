@@ -14,6 +14,7 @@ import {
     NavbarMenuToggle,
     NavbarProps,
 } from "@nextui-org/react";
+import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Icons } from "../../icons/icons";
@@ -51,6 +52,7 @@ function Navbar({ ...props }: NavbarProps) {
                 <NavbarBrand>
                     <Link
                         href="/"
+                        as={NextLink}
                         className="flex items-center gap-2"
                         color="primary"
                     >
@@ -68,6 +70,7 @@ function Navbar({ ...props }: NavbarProps) {
                           <NavbarItem key={index}>
                               <Link
                                   className="text-sm"
+                                  as={NextLink}
                                   href={item.href}
                                   color="foreground"
                                   isExternal={item.isExternal}
@@ -97,6 +100,7 @@ function Navbar({ ...props }: NavbarProps) {
                     <NavbarMenuItem key={`${item}-${index}`}>
                         <Link
                             href={item.href}
+                            as={NextLink}
                             size="lg"
                             color="foreground"
                             isExternal={item.isExternal}
