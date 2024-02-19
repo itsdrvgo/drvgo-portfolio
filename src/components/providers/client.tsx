@@ -6,7 +6,14 @@ import { useRouter } from "next/navigation";
 
 function ClientProvider({ children }: DefaultProps) {
     const router = useRouter();
-    return <NextUIProvider navigate={router.push}>{children}</NextUIProvider>;
+    return (
+        <NextUIProvider
+            navigate={router.push}
+            className="flex min-h-screen flex-col"
+        >
+            {children}
+        </NextUIProvider>
+    );
 }
 
 export default ClientProvider;

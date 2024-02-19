@@ -65,7 +65,7 @@ function RootLayout({ children }: RootLayoutProps) {
             <body
                 className={cn(
                     font.className,
-                    "min-h-screen overflow-x-hidden scroll-smooth bg-background text-foreground antialiased"
+                    "min-h-screen overflow-x-hidden bg-background text-foreground antialiased"
                 )}
             >
                 <ClientProvider>{children}</ClientProvider>
