@@ -203,7 +203,7 @@ const CarouselPrevious = React.forwardRef<
     return (
         <button
             className={cn(
-                "absolute flex h-full items-center bg-gradient-to-r from-black to-transparent px-2",
+                "absolute flex h-full items-center bg-gradient-to-r from-background to-transparent px-5",
                 orientation === "horizontal"
                     ? "left-0 top-1/2 -translate-y-1/2"
                     : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -230,7 +230,7 @@ const CarouselNext = React.forwardRef<
     return (
         <button
             className={cn(
-                "absolute flex h-full items-center bg-gradient-to-l from-black to-transparent px-2",
+                "absolute flex h-full items-center bg-gradient-to-l from-background to-transparent px-5",
                 orientation === "horizontal"
                     ? "right-0 top-1/2 -translate-y-1/2"
                     : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
