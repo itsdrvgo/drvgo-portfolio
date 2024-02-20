@@ -123,7 +123,7 @@ function Page(props: PageProps) {
 
     return (
         <BlogShell>
-            <div className="flex flex-col items-center justify-center md:flex-row md:items-stretch">
+            <div className="flex flex-col items-center justify-center gap-10 md:flex-row md:items-stretch md:gap-0">
                 <article className="prose prose-sm prose-sky !prose-invert w-full max-w-[80ch] md:prose-base lg:prose-lg md:px-4">
                     <h1>{blog.frontMatter.title}</h1>
 
@@ -345,9 +345,9 @@ function Page(props: PageProps) {
                 </article>
 
                 {relatedBlogs.length > 0 && (
-                    <div className="basis-1/5 px-4 md:border-l md:border-white/10">
+                    <div className="md:basis-1/5 md:border-l md:border-white/10 md:px-4">
                         <div className="space-y-4">
-                            <h4 className="text-2xl font-semibold">
+                            <h4 className="text-xl font-semibold md:text-2xl">
                                 Related Blogs
                             </h4>
 
