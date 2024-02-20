@@ -1,22 +1,24 @@
-import DefaultAvatar from "@/public/authors/default.png";
-import GroupAvatar from "@/public/authors/group.png";
+import RelatedBlogCard from "@/src/components/blogs/blog/related-blog-card";
+import TableOfContents from "@/src/components/blogs/blog/table-of-contents";
+import {
+    getAuthorAvatar,
+    getBlogInfo,
+    getBlogThumbnail,
+    getRelatedBlogs,
+} from "@/src/components/blogs/blog/utils";
 import CopyButton from "@/src/components/global/buttons/copy-button";
 import BlogShell from "@/src/components/global/shells/blog-shell";
 import MdxGallery from "@/src/components/mdx/gallery";
 import MdxImage from "@/src/components/mdx/image";
 import MdxLink from "@/src/components/mdx/link";
 import YouTube from "@/src/components/mdx/youtube";
-import { IMAGE_EXTENSIONS } from "@/src/config/const";
 import { siteConfig } from "@/src/config/site";
 import { cn, getReadTime } from "@/src/lib/utils";
-import { Blog, blogMetadataSchema } from "@/src/lib/validation/blog";
 import "@/src/styles/github-dark.css";
 import fs from "fs";
 import path from "path";
-import BlogCard from "@/src/components/blogs/blog-card";
 import { Avatar, Divider, Link } from "@nextui-org/react";
 import { format } from "date-fns";
-import matter from "gray-matter";
 import langBash from "highlight.js/lib/languages/bash";
 import langC from "highlight.js/lib/languages/c";
 import langCss from "highlight.js/lib/languages/css";
@@ -33,8 +35,6 @@ import { notFound } from "next/navigation";
 import React from "react";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
-
-const BLOGS_DIR = "blogs";
 
 const options: SerializeOptions = {
     mdxOptions: {
@@ -358,7 +358,7 @@ function Page(props: PageProps) {
 
                             <div className="space-y-2">
                                 {relatedBlogs.map((blog) => (
-                                    <BlogCard
+                                    <RelatedBlogCard
                                         key={blog.slug}
                                         blog={blog}
                                         href={"/blogs/" + blog.slug}
@@ -383,131 +383,4 @@ export async function generateStaticParams() {
     }));
 
     return paths;
-}
-
-function getBlogThumbnail(slug: string) {
-    const thumbnailExt = IMAGE_EXTENSIONS.find((extension) =>
-        fs.existsSync(path.join("public", "thumbnails", slug + "." + extension))
-    );
-    if (!thumbnailExt) return null;
-
-    const imagePath = "/thumbnails/" + slug + "." + thumbnailExt;
-    return imagePath;
-}
-
-function getAuthorAvatar(authors: string[]) {
-    if (authors.length > 1) return GroupAvatar.src;
-
-    const author = authors[0];
-    const avatarPath = path.join("public", "authors");
-
-    const avatarExt = IMAGE_EXTENSIONS.find((extension) =>
-        fs.existsSync(path.join(avatarPath, author + "." + extension))
-    );
-    if (!avatarExt) return DefaultAvatar.src;
-
-    const fileBuffer = fs.readFileSync(
-        path.join(avatarPath, author + "." + avatarExt)
-    );
-
-    const image = Buffer.from(fileBuffer).toString("base64");
-    return "data:image/" + avatarExt + ";base64," + image;
-}
-
-function TableOfContents({ content }: { content: string }) {
-    const headings = content.match(/#{1,6} .+/g);
-    if (!headings) return null;
-
-    const headingsWithId = headings.map((heading) => {
-        const headingText = heading.replace(/#{1,6} /, "");
-        const headingId = headingText
-            .toLowerCase()
-            .replace(/\s/g, "-")
-            .replace(/:$/, "");
-
-        return {
-            text: headingText,
-            id: headingId,
-        };
-    });
-
-    return (
-        <ul className="mb-0 lg:mb-0">
-            {headingsWithId.map((heading) => (
-                <li key={heading.text} className="lg:my-0">
-                    <Link href={"#" + heading.id} color="foreground">
-                        {heading.text}
-                    </Link>
-                </li>
-            ))}
-        </ul>
-    );
-}
-
-function getBlogInfo({ params }: PageProps) {
-    const { slug } = params;
-
-    const isFileExists = fs.existsSync(path.join("blogs", slug + ".mdx"));
-    if (!isFileExists) return null;
-
-    const markdownFile = fs.readFileSync(
-        path.join("blogs", slug + ".mdx"),
-        "utf-8"
-    );
-
-    const { data: frontMatter, content } = matter(markdownFile);
-    const parsedBlogData = blogMetadataSchema.safeParse(frontMatter);
-
-    if (!parsedBlogData.success) return null;
-
-    return {
-        frontMatter: parsedBlogData.data,
-        slug,
-        content,
-    };
-}
-
-function getRelatedBlogs(props: PageProps) {
-    const files = fs.readdirSync(path.join(BLOGS_DIR));
-    const blogs: Blog[] = [];
-    const relatedBlogs: Blog[] = [];
-
-    const currentBlog = getBlogInfo(props);
-    if (!currentBlog) return [];
-    const currentBlogTags = currentBlog.frontMatter.tags;
-
-    for (const filename of files) {
-        const fileContent = fs.readFileSync(
-            path.join(BLOGS_DIR, filename),
-            "utf-8"
-        );
-
-        const { data: frontMatter, content } = matter(fileContent);
-        const parsedBlog = blogMetadataSchema.safeParse(frontMatter);
-        if (!parsedBlog.success) continue;
-
-        const isCurrentBlog = filename === currentBlog.slug + ".mdx";
-        if (isCurrentBlog) continue;
-
-        blogs.push({
-            meta: parsedBlog.data,
-            slug: filename.replace(".mdx", ""),
-            content,
-        });
-
-        const hasSimilarTags = currentBlogTags.some((tag) =>
-            parsedBlog.data.tags.includes(tag)
-        );
-        if (!hasSimilarTags) continue;
-
-        relatedBlogs.push({
-            meta: parsedBlog.data,
-            slug: filename.replace(".mdx", ""),
-            content,
-        });
-
-        if (relatedBlogs.length === 5) break;
-    }
-
-    return !!relatedBlogs.length ? relatedBlogs : blogs.slice(0, 5);
 }

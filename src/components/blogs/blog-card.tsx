@@ -3,14 +3,21 @@ import path from "path";
 import { IMAGE_EXTENSIONS } from "@/src/config/const";
 import { cn } from "@/src/lib/utils";
 import { Blog } from "@/src/lib/validation/blog";
-import { Image, Link, LinkProps } from "@nextui-org/react";
-import NextImage from "next/image";
+import { Avatar, Tooltip } from "@nextui-org/react";
+import { format } from "date-fns";
+import Image from "next/image";
+import Link from "next/link";
+import { getAuthorAvatars } from "./utils";
 
-interface BlogCardProps extends LinkProps {
-    blog: Blog;
-}
+function BlogCard({ blog }: { blog: Blog }) {
+    const blogAuthors = blog.meta.authors;
 
-function BlogCard({ blog, className, ...props }: BlogCardProps) {
+    const authorAvatars = getAuthorAvatars(
+        blogAuthors
+            .slice(0, 2)
+            .map((author) => author.name.toLowerCase().replace(" ", "-"))
+    );
+
     const thumbnailExt = IMAGE_EXTENSIONS.find((extension) =>
         fs.existsSync(
             path.join("public", "thumbnails", blog.slug + "." + extension)
@@ -30,25 +37,63 @@ function BlogCard({ blog, className, ...props }: BlogCardProps) {
 
     return (
         <Link
-            className={cn(
-                "group relative overflow-hidden rounded-lg shadow-md",
-                className
-            )}
-            color="foreground"
-            {...props}
+            href={"/blogs/" + blog.slug}
+            className="group relative aspect-[3/2] overflow-hidden rounded-lg border border-white/15 shadow-md"
         >
             <Image
                 src={thumbnail}
-                radius="sm"
                 alt={blog.meta.title}
-                as={NextImage}
-                height={1000}
-                width={1000}
+                height={1920}
+                width={1080}
+                className="size-full object-cover"
             />
 
-            <p className="absolute bottom-0 left-0 z-10 flex size-full items-end bg-gradient-to-t from-black/80 to-transparent p-2 text-sm font-semibold transition-all ease-in-out md:translate-y-full md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
-                {blog.meta.title}
-            </p>
+            <div className="absolute bottom-0 left-0 flex size-full flex-col justify-end gap-2 bg-gradient-to-t from-black/80 to-transparent p-2">
+                <h3 className="text-lg font-bold md:text-xl">
+                    {blog.meta.title}
+                </h3>
+
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                        {authorAvatars.map((avatar, index) => (
+                            <Tooltip
+                                key={index}
+                                content={blogAuthors[index].name}
+                            >
+                                <Avatar
+                                    src={avatar}
+                                    alt={blog.meta.title}
+                                    classNames={{
+                                        base: cn(
+                                            index !== 0 && "-ml-3",
+                                            "!size-6 border border-white/20"
+                                        ),
+                                    }}
+                                    showFallback
+                                    size="sm"
+                                />
+                            </Tooltip>
+                        ))}
+
+                        {blogAuthors.length > 2 && (
+                            <Tooltip
+                                content={blogAuthors
+                                    .slice(2)
+                                    .map((author) => author.name)
+                                    .join(", ")}
+                            >
+                                <p className="text-white/60">
+                                    +{blogAuthors.length - 2}
+                                </p>
+                            </Tooltip>
+                        )}
+                    </div>
+
+                    <p className="text-sm font-light text-white/60">
+                        {format(new Date(blog.meta.date), "do MMMM, yyyy")}
+                    </p>
+                </div>
+            </div>
         </Link>
     );
 }
