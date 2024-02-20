@@ -46,7 +46,7 @@ function BlogCard({ blog, className, ...props }: BlogCardProps) {
                 width={1000}
             />
 
-            <p className="absolute bottom-0 left-0 z-10 flex size-full items-end bg-gradient-to-t from-black/80 to-transparent p-2 text-sm font-semibold transition-all ease-in-out md:translate-y-full md:group-hover:translate-y-0">
+            <p className="absolute bottom-0 left-0 z-10 flex size-full items-end bg-gradient-to-t from-black/80 to-transparent p-2 text-sm font-semibold transition-all ease-in-out md:translate-y-full md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
                 {blog.meta.title}
             </p>
         </Link>

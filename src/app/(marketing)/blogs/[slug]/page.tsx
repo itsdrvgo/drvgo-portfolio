@@ -122,7 +122,7 @@ function Page(props: PageProps) {
 
     return (
         <BlogShell>
-            <div className="flex flex-col justify-center md:flex-row">
+            <div className="flex flex-col items-center justify-center md:flex-row md:items-stretch">
                 <article
                     className={cn(
                         "prose prose-sm prose-sky !prose-invert w-full p-5 md:prose-base lg:prose-lg",
