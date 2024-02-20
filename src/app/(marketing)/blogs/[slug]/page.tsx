@@ -17,6 +17,7 @@ import { cn, getReadTime } from "@/src/lib/utils";
 import "@/src/styles/github-dark.css";
 import fs from "fs";
 import path from "path";
+import MdxHighlight from "@/src/components/mdx/highlight";
 import { Avatar, Divider, Link } from "@nextui-org/react";
 import { format } from "date-fns";
 import langBash from "highlight.js/lib/languages/bash";
@@ -35,7 +36,6 @@ import { notFound } from "next/navigation";
 import React from "react";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
-import MdxHighlight from "@/src/components/mdx/highlight";
 
 const options: SerializeOptions = {
     mdxOptions: {
@@ -124,12 +124,7 @@ function Page(props: PageProps) {
     return (
         <BlogShell>
             <div className="flex flex-col items-center justify-center md:flex-row md:items-stretch">
-                <article
-                    className={cn(
-                        "prose prose-sm prose-sky !prose-invert w-full p-5 md:prose-base lg:prose-lg",
-                        relatedBlogs.length > 0 ? "max-w-[80ch]" : "max-w-full"
-                    )}
-                >
+                <article className="prose prose-sm prose-sky !prose-invert w-full max-w-[80ch] p-5 md:prose-base lg:prose-lg">
                     <h1>{blog.frontMatter.title}</h1>
 
                     <div className="flex items-center justify-between gap-2">
@@ -298,7 +293,7 @@ function Page(props: PageProps) {
                                         <pre {...props} />
                                         <CopyButton
                                             content={stringfiedCode}
-                                            className="opacity-0 transition-all ease-in-out group-hover:opacity-100"
+                                            className="opacity-100 transition-all ease-in-out md:opacity-0 md:group-hover:opacity-100"
                                         />
                                     </div>
                                 );
@@ -307,7 +302,7 @@ function Page(props: PageProps) {
                                 return (
                                     <code
                                         className={cn(
-                                            "whitespace-pre-wrap",
+                                            "whitespace-pre-wrap break-all",
                                             className
                                         )}
                                         {...props}
