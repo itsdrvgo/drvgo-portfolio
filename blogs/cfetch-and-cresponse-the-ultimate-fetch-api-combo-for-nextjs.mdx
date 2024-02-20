@@ -29,7 +29,7 @@ In this tutorial, I'll show you what <Highlight content="cFetch" /> and <Highlig
 
 ## What is cFetch?
 
-<Highlight>cFetch</Highlight> is a wrapper around the Fetch API that makes it easy
+<Highlight content="cFetch" /> is a wrapper around the Fetch API that makes it easy
 to handle different types of responses in a type-safe way. Let's take a look at the
 code for cFetch:
 
@@ -345,6 +345,7 @@ export function CResponse<T>({
 6. **The return statement**: This is the actual response that we send. We use
    Next's native <Highlight content="NextResponse" /> to send the response. We pass an
    object with the status code, response message, long message, and data to the
+   {" "}
    {" "}
     {" "}
     <Highlight content="NextResponse.json" /> function.
