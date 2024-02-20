@@ -1,0 +1,421 @@
+---
+title: cFetch & CResponse - The Ultimate Fetch API Combo for Next.js
+description: Learn how I created cFetch and CResponse, a powerful combo for the Fetch API, and how to use it in your Next.js project.
+tags:
+    [
+        "cfetch",
+        "cresponse",
+        "nextjs",
+        "typescript",
+        "react",
+        "tutorial",
+        "javascript",
+        "fetch",
+        "api",
+    ]
+authors: [{ "name": "DRVGO", "url": "https://x.com/itsdrvgo" }]
+date: 2024-02-20
+---
+
+<YouTube id="egnoaiIzw4g" />
+
+## Introduction
+
+The Fetch API in Next.js is a powerful tool for making requests to a server. However, it can be a bit cumbersome to use, especially when you need to handle different types of responses. That's why I created cFetch and CResponse, a powerful combo for the Fetch API that makes it easy to handle different types of responses.
+
+> Both cFetch and CResponse are written in TypeScript, and they are designed to work seamlessly with Next.js with TypeScript. However, they can also be used in regular JavaScript projects, but you won't get the full benefits of TypeScript.
+
+In this tutorial, I'll show you what <Highlight content="cFetch" /> and <Highlight content="CResponse" /> are, how to use them in your Next.js project, and the benefits of using them.
+
+## What is cFetch?
+
+<Highlight>cFetch</Highlight> is a wrapper around the Fetch API that makes it easy
+to handle different types of responses in a type-safe way. Let's take a look at the
+code for cFetch:
+
+```ts
+// lib/utils.ts
+export async function cFetch<T>(
+    url: string,
+    options?: RequestInit
+): Promise<T> {
+    const res = await fetch(url, options);
+    const data = await res.json();
+    return data;
+}
+```
+
+What? That's it? Yes, that's it! cFetch is just a simple wrapper around the Fetch API that returns the JSON data from the response.
+
+### Explanation (cFetch)
+
+1. <Highlight content="export async function cFetch<T>" />: This is a generic
+   function that takes a type parameter <Highlight content="T" />. This type parameter
+   is the type of the data that you expect to receive from the server. For example,
+   if you expect to receive an array of objects, you can use <Highlight content="cFetch<BlogPost[]>" />
+   . If you expect to receive a single object, you can use <Highlight content="cFetch<BlogPost>" />
+   .
+
+2. <Highlight content="url: string" />: This is the URL of the server that you
+   want to make a request to.
+
+3. <Highlight content="options?: RequestInit" />: This is an optional parameter
+   that allows you to pass additional options to the Fetch API, such as headers,
+   method, body, etc.
+
+4. <Highlight content="Promise<T>" />: This is the return type of the function.
+   It's a promise that resolves to the type <Highlight content="T" />.
+
+5. <Highlight content="const res = await fetch(url, options)" />: This is the
+   actual call to the Fetch API. It makes a request to the server and returns a
+   response.
+
+6. <Highlight content="const data = await res.json()" />: This line extracts the
+   JSON data from the response.
+
+7. <Highlight content="return data" />: Finally, the function returns the JSON
+   data.
+
+To put it simply, whatever you pass as the type parameter <Highlight content="T" /> will be the type of the data that you expect to receive from the server. cFetch will make the request to the server, extract the JSON data from the response, and return it as the type <Highlight content="T" />.
+
+### Usage (cFetch)
+
+Here's an example of how you can use cFetch in your Next.js project:
+
+```ts
+// create-post-page.tsx
+const res = await cFetch<ResponseData<UploadFileResponse[]>>(
+    "/api/uploads",
+    {
+        method: "POST",
+        body: formData,
+    }
+);
+```
+
+1. <Highlight content="cFetch<ResponseData<UploadFileResponse>>" />: This is a
+   call to cFetch with a type parameter. We'll talk more about <Highlight content="ResponseData" /> later.
+   For now, just know that it's a type that wraps the response data. <Highlight content="UploadFileResponse" /> is
+   the type of the data that we expect to receive from the server. If you're
+   familiar with <Link href="https://uploadthing.com/">UploadThing</Link>, you'll
+   what <Highlight content="UploadFileResponse" /> is. For context, this is how the
+   type looks like:
+
+```ts
+type UploadData = {
+    key: string;
+    url: string;
+    name: string;
+    size: number;
+};
+
+type UploadError = {
+    code: string;
+    message: string;
+    data: any;
+};
+
+type UploadFileResponse =
+    | {
+            data: UploadData;
+            error: null;
+        }
+    | {
+            data: null;
+            error: UploadError;
+        };
+```
+
+2. <Highlight content='"/api/uploads"' />: This is the URL of the server that we
+   want to make a request to.
+
+3. <Highlight content='{ method: "POST", body: formData }' />: These are the
+   options that we want to pass to the Fetch API. In this case, we're making a
+   POST request with a form data body.
+
+4. <Highlight content="await" />: This is the keyword that tells JavaScript to
+   wait for the promise to resolve before continuing.
+
+5. <Highlight content="res" />: This is the response data that we receive from
+   the server.
+
+### Benefits (cFetch)
+
+Now, the question is, why should you use cFetch instead of the Fetch API directly? Here are a few benefits of using cFetch:
+
+1. **Type safety**: cFetch is a generic function that takes a
+   type parameter. This means that you can specify the type of the data that you
+   expect to receive from the server. This makes it easy to handle different
+   types of responses in a type-safe way.
+
+2. **Simplicity**: cFetch is a simple wrapper around the
+   Fetch API that makes it easy to make requests to a server and handle the
+   response data.
+
+3. **Consistency**: cFetch returns the JSON data from the
+   response. This makes it easy to handle different types of responses in a
+   consistent way. This also means, you cannot use cFetch to handle non-JSON
+   responses.
+
+## What is CResponse?
+
+<Highlight content="CResponse" /> is another wrapper around Next's native <Highlight content="NextResponse" />
+. It's designed to work seamlessly with cFetch. But, before we look at the code,
+we need to create the <Highlight content="ResponseData" /> type that we used in the
+previous example.
+
+```ts
+// lib/validations/response.ts
+import { z, ZodType } from "zod";
+
+export const responseMessages = z.union([
+    z.literal("OK"),
+    z.literal("ERROR"),
+    z.literal("UNAUTHORIZED"),
+    z.literal("FORBIDDEN"),
+    z.literal("NOT_FOUND"),
+    z.literal("BAD_REQUEST"),
+    z.literal("TOO_MANY_REQUESTS"),
+    z.literal("INTERNAL_SERVER_ERROR"),
+    z.literal("SERVICE_UNAVAILABLE"),
+    z.literal("GATEWAY_TIMEOUT"),
+    z.literal("UNKNOWN_ERROR"),
+    z.literal("UNPROCESSABLE_ENTITY"),
+    z.literal("NOT_IMPLEMENTED"),
+    z.literal("CREATED"),
+    z.literal("BAD_GATEWAY"),
+]);
+
+const responseSchema = <DataType extends z.ZodTypeAny>(dataType: DataType) =>
+    z.object({
+        code: z.number(),
+        message: responseMessages,
+        longMessage: z.string().optional(),
+        data: dataType.optional(),
+    });
+
+export type ResponseMessages = z.infer<typeof responseMessages>;
+type ResponseType<DataType extends z.ZodTypeAny> = ReturnType<
+    typeof responseSchema<DataType>
+>;
+export type ResponseData<T> = z.infer<ResponseType<ZodType<T>>>;
+```
+
+### Explanation (ResponseData)
+
+You need to have <Highlight content="zod" /> installed in your project to use the above code. If you don't have it installed, you can install it by running the following command:
+
+```bash
+npm install zod
+```
+
+1.  <Highlight content="responseMessages" />: This is a union of all the
+    possible response messages that you can receive from the server. For
+    example, "OK", "ERROR", "UNAUTHORIZED", etc. Feel free to add more messages
+    if you need them.
+
+2.  <Highlight content="responseSchema" />: This is a function that takes a type
+    parameter <Highlight content="DataType" />. It returns a Zod object schema that
+    represents the response data. The <Highlight content="dataType" /> parameter
+    is the type of the data that you expect to receive from the server. For example,
+    if you expect to receive an array of objects, you can use <Highlight content="z.array(z.object({...}))" />
+    . If you expect to receive a single object, you can use <Highlight content="z.object({...})" />
+    .
+
+3.  <Highlight content="ResponseMessages" />: This is the type of the response
+    messages that we defined earlier.
+
+4.  <Highlight content="ResponseType" />: This is a generic type that takes a
+    type parameter <Highlight content="DataType" />. It represents the type of the
+    response data. For example, if you expect to receive an array of objects, you
+    can use <Highlight content="ResponseType<z.array(z.object({...}))>" />. If
+    you expect to receive a single object, you can use <Highlight content="ResponseType<z.object({...})>" />
+
+    .
+
+5.  <Highlight content="ResponseData" />: This is a generic type that takes a
+    type parameter <Highlight content="T" />. It represents the type of the response
+    data that you expect to receive from the server. For example, if you expect to
+    receive an array of objects, you can use <Highlight content="ResponseData<BlogPost[]>" />
+    . If you expect to receive a single object, you can use <Highlight content="ResponseData<BlogPost>" />
+    .
+
+Now that we have the <Highlight content="ResponseData" /> type, we can look at the code for <Highlight content="CResponse" />:
+
+```ts
+// lib/utils.ts
+import { ResponseMessages } from "./validation/response";
+import { NextResponse } from "next/server";
+
+export function CResponse<T>({
+    message,
+    longMessage,
+    data,
+}: {
+    message: ResponseMessages;
+    longMessage?: string;
+    data?: T;
+}) {
+    let code: number;
+
+    switch (message) {
+        case "OK":
+            code = 200;
+            break;
+        case "ERROR":
+            code = 400;
+            break;
+        case "UNAUTHORIZED":
+            code = 401;
+            break;
+        case "FORBIDDEN":
+            code = 403;
+            break;
+        case "NOT_FOUND":
+            code = 404;
+            break;
+        case "BAD_REQUEST":
+            code = 400;
+            break;
+        case "TOO_MANY_REQUESTS":
+            code = 429;
+            break;
+        case "INTERNAL_SERVER_ERROR":
+            code = 500;
+            break;
+        case "SERVICE_UNAVAILABLE":
+            code = 503;
+            break;
+        case "GATEWAY_TIMEOUT":
+            code = 504;
+            break;
+        case "UNKNOWN_ERROR":
+            code = 500;
+            break;
+        case "UNPROCESSABLE_ENTITY":
+            code = 422;
+            break;
+        case "NOT_IMPLEMENTED":
+            code = 501;
+            break;
+        case "CREATED":
+            code = 201;
+            break;
+        case "BAD_GATEWAY":
+            code = 502;
+            break;
+        default:
+            code = 500;
+            break;
+    }
+
+    return NextResponse.json({
+        code,
+        message,
+        longMessage,
+        data,
+    });
+}
+```
+
+### Explanation (CResponse)
+
+1. <Highlight content="export function CResponse<T>" />: This is a generic
+   function that takes a type parameter <Highlight content="T" />. This type parameter
+   is the type of the data that you want to send in the response. For example, if
+   you want to send an array of objects, you can use <Highlight content="CResponse<BlogPost[]>" />
+   . If you want to send a single object, you can use <Highlight content="CResponse<BlogPost>" />
+   .
+
+2. <Highlight content="message: ResponseMessages" />: This is the response
+   message that you want to send. It should be one of the response messages that
+   we defined earlier.
+
+3. <Highlight content="longMessage?: string" />: This is an optional parameter
+   that allows you to send a long message in the response.
+
+4. <Highlight content="data?: T" />: This is an optional parameter that allows
+   you to send data in the response. The type of the data should match the type
+   parameter <Highlight content="T" />.
+
+5. <Highlight content="let code: number" />: This is a variable that holds the
+   status code of the response. We use a switch statement to determine the
+   status code based on the response message.
+
+6. **The return statement**: This is the actual response that we send. We use
+   Next's native <Highlight content="NextResponse" /> to send the response. We pass an
+   object with the status code, response message, long message, and data to the
+   {" "}
+    {" "}
+    <Highlight content="NextResponse.json" /> function.
+
+### Usage (CResponse)
+
+Here's an example of how you can use CResponse in your Next.js project:
+
+```ts
+// api/uploads/route.ts
+
+import { CResponse } from "@/src/lib/utils";
+import { NextRequest } from "next/server";
+import { utapi } from "../uploadthing/core";
+
+export async function POST(req: NextRequest) {
+    const body = await req.formData();
+
+    const images = body.getAll("image") as File[];
+    if (!images?.length)
+        return CResponse({
+            message: "BAD_REQUEST",
+            longMessage: "No images were uploaded",
+        });
+
+    const res = await utapi.uploadFiles(images);
+    if (!res?.length)
+        return CResponse({
+            message: "BAD_REQUEST",
+            longMessage: "Images could not be uploaded",
+        });
+
+    return CResponse({
+        message: "OK",
+        data: res,
+    });
+}
+```
+
+In this example, we're receiving a request to upload images. Once the images are uploaded, the <Highlight content="utapi.uploadFiles" /> function returns an array of objects, <Highlight content="UploadFileResponse[]" /> to be more accurate. We then send the response using <Highlight content="CResponse" />. If there's an error, we send a response with the message "BAD_REQUEST" and a long message explaining the error. If everything goes well, we send a response with the message "OK" and the data that we received from the server.
+
+### Benefits (CResponse)
+
+Now, the question is, why should you use CResponse instead of Next's native <Highlight content="NextResponse" />? Here are a few benefits of using CResponse:
+
+1. **Setting status code**: CResponse sets the status code of the response
+   based on the response message. This makes it easy to send consistent responses
+   with the correct status code. You could've done this with <Highlight content="NextResponse" /> as well, but it would've been a bit more cumbersome.
+
+2. **Consistency**: CResponse returns the response data in a consistent way. This makes it easy to handle different types of responses in a consistent way. If you're using cFetch - or even if you're not, and you have the schema for the response data, you can use <Highlight content="ResponseData" /> to validate the response data.
+
+## Disadvantages
+
+1. **cFetch**:
+
+    - cFetch only works with JSON responses. If you need to handle non-JSON responses, you'll have to use the Fetch API directly.
+    - cFetch doesn't handle errors. You'll have to handle errors same as you would with the Fetch API.
+
+2. **CResponse**:
+
+    - The way CResponse is configured currently, it only works with Next.js. If you want to use it in an Express.js server, you can find the code for it in my <Link href="https://github.com/itsdrvgo/nextress">Nextress App</Link>.
+    - CResponse only works with JSON responses. If you need to send non-JSON responses, you'll have to use Next's native <Highlight content="NextResponse" />.
+
+## Conclusion
+
+cFetch and CResponse are a powerful combo for the Fetch API that makes it easy to handle different types of responses in a type-safe way. They are designed to work seamlessly with Next.js with TypeScript, but they can also be used in regular JavaScript projects. If you're using Next.js with TypeScript, and not using tRPC or any other similar library, I highly recommend using cFetch and CResponse in your project. They will make your life a lot easier when it comes to handling different types of responses from the server.
+
+All the code that I've shown in this tutorial is available in <Link href="https://github.com/itsdrvgo/post-it">Post It</Link>, a rip-off of popular social media platforms. Feel free to check it out and use the code in your own projects. Quickly setup a Next.js project with TypeScript and Tailwind CSS template by running the following command:
+
+```bash
+git clone https://github.com/itsdrvgo/nextjs-14-template.git
+```
+
+Thanks for reading this article. I hope you found it helpful. If you have any questions, feel free to ask me on <Link href="https://x.com/itsdrvgo">X</Link>. I'll try my best to answer them. You can join our <Link href="https://dsc.gg/drvgo">Discord Server</Link> to get help from the community.
