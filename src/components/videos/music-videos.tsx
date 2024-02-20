@@ -28,7 +28,7 @@ function MusicVideos({ className, ...props }: DefaultProps) {
                 className="w-full"
             >
                 <CarouselContent>
-                    {music.reverse().map((item, index) => (
+                    {music.map((item, index) => (
                         <CarouselItem
                             key={index}
                             className="md:basis-1/2 lg:basis-1/3"

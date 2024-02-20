@@ -28,7 +28,7 @@ function CodingVideos({ className, ...props }: DefaultProps) {
                 className="w-full"
             >
                 <CarouselContent>
-                    {programming.reverse().map((item, index) => (
+                    {programming.map((item, index) => (
                         <CarouselItem
                             key={index}
                             className="md:basis-1/2 lg:basis-1/3"
