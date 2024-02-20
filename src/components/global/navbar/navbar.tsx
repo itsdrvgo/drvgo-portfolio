@@ -40,7 +40,7 @@ function Navbar({ ...props }: NavbarProps) {
                 wrapper:
                     pathname === "/"
                         ? "bg-transparent md:bg-default-100 rounded-none md:rounded-full pointer-events-auto"
-                        : "max-w-4xl 2xl:max-w-6xl lg:px-0 px-4",
+                        : "max-w-6xl px-4",
             }}
             {...props}
         >
