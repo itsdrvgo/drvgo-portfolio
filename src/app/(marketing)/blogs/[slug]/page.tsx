@@ -35,6 +35,7 @@ import { notFound } from "next/navigation";
 import React from "react";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
+import MdxHighlight from "@/src/components/mdx/highlight";
 
 const options: SerializeOptions = {
     mdxOptions: {
@@ -210,6 +211,7 @@ function Page(props: PageProps) {
                             Link: MdxLink,
                             Image: MdxImage,
                             Gallery: MdxGallery,
+                            Highlight: MdxHighlight,
                             h2: ({ children, ...props }) => (
                                 <h2
                                     id={children
