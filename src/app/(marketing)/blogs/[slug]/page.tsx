@@ -124,7 +124,7 @@ function Page(props: PageProps) {
     return (
         <BlogShell>
             <div className="flex flex-col items-center justify-center md:flex-row md:items-stretch">
-                <article className="prose prose-sm prose-sky !prose-invert w-full max-w-[80ch] p-5 md:prose-base lg:prose-lg">
+                <article className="prose prose-sm prose-sky !prose-invert w-full max-w-[80ch] md:prose-base lg:prose-lg md:px-4">
                     <h1>{blog.frontMatter.title}</h1>
 
                     <div className="flex items-center justify-between gap-2">
@@ -302,7 +302,7 @@ function Page(props: PageProps) {
                                 return (
                                     <code
                                         className={cn(
-                                            "whitespace-pre-wrap break-all",
+                                            "whitespace-pre-wrap",
                                             className
                                         )}
                                         {...props}
