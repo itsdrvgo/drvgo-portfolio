@@ -9,11 +9,12 @@ import YouTube from "@/src/components/mdx/youtube";
 import { IMAGE_EXTENSIONS } from "@/src/config/const";
 import { siteConfig } from "@/src/config/site";
 import { cn, getReadTime } from "@/src/lib/utils";
-import { blogMetadataSchema } from "@/src/lib/validation/blog";
+import { Blog, blogMetadataSchema } from "@/src/lib/validation/blog";
 import "@/src/styles/github-dark.css";
 import fs from "fs";
 import path from "path";
-import { Avatar, Link } from "@nextui-org/react";
+import BlogCard from "@/src/components/blogs/blog-card";
+import { Avatar, Divider, Link } from "@nextui-org/react";
 import { format } from "date-fns";
 import matter from "gray-matter";
 import langBash from "highlight.js/lib/languages/bash";
@@ -32,6 +33,8 @@ import { notFound } from "next/navigation";
 import React from "react";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
+
+const BLOGS_DIR = "blogs";
 
 const options: SerializeOptions = {
     mdxOptions: {
@@ -115,206 +118,257 @@ function Page(props: PageProps) {
     const blogAuthors = blog.frontMatter.authors;
     const readTime = getReadTime(blog.content);
 
+    const relatedBlogs = getRelatedBlogs(props);
+
     return (
         <BlogShell>
-            <article className="prose prose-sm prose-slate !prose-invert max-w-full md:prose-base lg:prose-lg">
-                <h1>{blog.frontMatter.title}</h1>
+            <div className="flex flex-col justify-center md:flex-row">
+                <article
+                    className={cn(
+                        "prose prose-sm prose-sky !prose-invert w-full p-5 md:prose-base lg:prose-lg",
+                        relatedBlogs.length > 0 ? "max-w-[80ch]" : "max-w-full"
+                    )}
+                >
+                    <h1>{blog.frontMatter.title}</h1>
 
-                <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-4">
-                        <div>
-                            <Avatar
-                                src={getAuthorAvatar(
-                                    blogAuthors.map((author) =>
-                                        author.name
-                                            .toLowerCase()
-                                            .replace(" ", "-")
-                                    )
-                                )}
-                                alt={blogAuthors
-                                    .map((author) => author.name)
-                                    .join(", ")}
-                                showFallback
-                                color="primary"
-                                isBordered
-                            />
-                        </div>
+                    <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-4">
+                            <div>
+                                <Avatar
+                                    src={getAuthorAvatar(
+                                        blogAuthors.map((author) =>
+                                            author.name
+                                                .toLowerCase()
+                                                .replace(" ", "-")
+                                        )
+                                    )}
+                                    alt={blogAuthors
+                                        .map((author) => author.name)
+                                        .join(", ")}
+                                    showFallback
+                                    color="primary"
+                                    isBordered
+                                />
+                            </div>
 
-                        <div className="space-y-0">
-                            <p className="!my-0 text-base text-white">
-                                {blogAuthors.map((author, index) =>
-                                    author.url ? (
-                                        <span key={author.name}>
-                                            <Link
-                                                href={author.url}
-                                                isExternal
-                                                underline="none"
-                                                color="foreground"
-                                            >
+                            <div className="space-y-0">
+                                <p className="!my-0 text-base text-white">
+                                    {blogAuthors.map((author, index) =>
+                                        author.url ? (
+                                            <span key={author.name}>
+                                                <Link
+                                                    href={author.url}
+                                                    isExternal
+                                                    underline="none"
+                                                    color="foreground"
+                                                >
+                                                    {author.name}
+                                                </Link>
+                                                {index ===
+                                                blogAuthors.length - 1
+                                                    ? ""
+                                                    : ", "}
+                                            </span>
+                                        ) : (
+                                            <span key={author.name}>
                                                 {author.name}
-                                            </Link>
-                                            {index === blogAuthors.length - 1
-                                                ? ""
-                                                : ", "}
-                                        </span>
-                                    ) : (
-                                        <span key={author.name}>
-                                            {author.name}
-                                            {index === blogAuthors.length - 1
-                                                ? ""
-                                                : ", "}
-                                        </span>
-                                    )
-                                )}
-                            </p>
+                                                {index ===
+                                                blogAuthors.length - 1
+                                                    ? ""
+                                                    : ", "}
+                                            </span>
+                                        )
+                                    )}
+                                </p>
 
-                            <p className="m-0 text-sm text-white/60">
-                                {format(
-                                    new Date(blog.frontMatter.date),
-                                    "do MMMM, yyyy"
-                                )}
-                            </p>
+                                <p className="m-0 text-sm text-white/60">
+                                    {format(
+                                        new Date(blog.frontMatter.date),
+                                        "do MMMM, yyyy"
+                                    )}
+                                </p>
+                            </div>
                         </div>
+
+                        <p className="text-sm text-white/60">
+                            {readTime} min read
+                        </p>
                     </div>
 
-                    <p className="text-sm text-white/60">{readTime} min read</p>
-                </div>
+                    <div className="my-10 rounded-lg border border-white/15 bg-default-50 p-6 md:px-10">
+                        <h2 className="my-0 mb-5 lg:my-0 lg:mb-5">
+                            Table of Contents
+                        </h2>
+                        <TableOfContents content={blog.content} />
+                    </div>
 
-                <div className="my-10 rounded-lg border border-white/15 bg-default-50 p-6 md:px-10">
-                    <h2 className="my-0 mb-5 lg:my-0 lg:mb-5">
-                        Table of Contents
-                    </h2>
-                    <TableOfContents content={blog.content} />
-                </div>
-
-                <MDXRemote
-                    source={blog.content}
-                    options={options}
-                    components={{
-                        YouTube,
-                        Link: MdxLink,
-                        Image: MdxImage,
-                        Gallery: MdxGallery,
-                        h2: ({ children, ...props }) => (
-                            <h2
-                                id={children
-                                    ?.toString()
-                                    .toLowerCase()
-                                    .replace(/\s/g, "-")
-                                    .replace(/:$/, "")}
-                                {...props}
-                            >
-                                {children}
-                            </h2>
-                        ),
-                        h3: ({ children, ...props }) => (
-                            <h3
-                                id={children
-                                    ?.toString()
-                                    .toLowerCase()
-                                    .replace(/\s/g, "-")
-                                    .replace(/:$/, "")}
-                                {...props}
-                            >
-                                {children}
-                            </h3>
-                        ),
-                        h4: ({ children, ...props }) => (
-                            <h4
-                                id={children
-                                    ?.toString()
-                                    .toLowerCase()
-                                    .replace(/\s/g, "-")
-                                    .replace(/:$/, "")}
-                                {...props}
-                            >
-                                {children}
-                            </h4>
-                        ),
-                        h5: ({ children, ...props }) => (
-                            <h5
-                                id={children
-                                    ?.toString()
-                                    .toLowerCase()
-                                    .replace(/\s/g, "-")
-                                    .replace(/:$/, "")}
-                                {...props}
-                            >
-                                {children}
-                            </h5>
-                        ),
-                        h6: ({ children, ...props }) => (
-                            <h6
-                                id={children
-                                    ?.toString()
-                                    .toLowerCase()
-                                    .replace(/\s/g, "-")
-                                    .replace(/:$/, "")}
-                                {...props}
-                            >
-                                {children}
-                            </h6>
-                        ),
-                        pre: (props) => {
-                            const code = React.Children.toArray(
-                                props.children
-                            ).map((child) => {
-                                if (React.isValidElement(child)) {
-                                    return child.props.children;
-                                }
-                                return child;
-                            });
-
-                            const stringfiedCode = React.Children.toArray(code)
-                                .map((child) => {
+                    <MDXRemote
+                        source={blog.content}
+                        options={options}
+                        components={{
+                            YouTube,
+                            Link: MdxLink,
+                            Image: MdxImage,
+                            Gallery: MdxGallery,
+                            h2: ({ children, ...props }) => (
+                                <h2
+                                    id={children
+                                        ?.toString()
+                                        .toLowerCase()
+                                        .replace(/\s/g, "-")
+                                        .replace(/:$/, "")}
+                                    {...props}
+                                >
+                                    {children}
+                                </h2>
+                            ),
+                            h3: ({ children, ...props }) => (
+                                <h3
+                                    id={children
+                                        ?.toString()
+                                        .toLowerCase()
+                                        .replace(/\s/g, "-")
+                                        .replace(/:$/, "")}
+                                    {...props}
+                                >
+                                    {children}
+                                </h3>
+                            ),
+                            h4: ({ children, ...props }) => (
+                                <h4
+                                    id={children
+                                        ?.toString()
+                                        .toLowerCase()
+                                        .replace(/\s/g, "-")
+                                        .replace(/:$/, "")}
+                                    {...props}
+                                >
+                                    {children}
+                                </h4>
+                            ),
+                            h5: ({ children, ...props }) => (
+                                <h5
+                                    id={children
+                                        ?.toString()
+                                        .toLowerCase()
+                                        .replace(/\s/g, "-")
+                                        .replace(/:$/, "")}
+                                    {...props}
+                                >
+                                    {children}
+                                </h5>
+                            ),
+                            h6: ({ children, ...props }) => (
+                                <h6
+                                    id={children
+                                        ?.toString()
+                                        .toLowerCase()
+                                        .replace(/\s/g, "-")
+                                        .replace(/:$/, "")}
+                                    {...props}
+                                >
+                                    {children}
+                                </h6>
+                            ),
+                            pre: (props) => {
+                                const code = React.Children.toArray(
+                                    props.children
+                                ).map((child) => {
                                     if (React.isValidElement(child)) {
                                         return child.props.children;
                                     }
                                     return child;
-                                })
-                                .join("");
+                                });
 
-                            return (
-                                <div className="group relative">
-                                    <pre {...props} />
-                                    <CopyButton
-                                        content={stringfiedCode}
-                                        className="opacity-0 transition-all ease-in-out group-hover:opacity-100"
-                                    />
-                                </div>
-                            );
-                        },
-                        blockquote: ({ className, children, ...props }) => {
-                            const removeMargins = (child: React.ReactNode) => {
-                                if (React.isValidElement(child)) {
-                                    return React.cloneElement(
-                                        child as React.ReactElement<any>,
-                                        {
-                                            className: "lg:my-2 lg:text-base",
+                                const stringfiedCode = React.Children.toArray(
+                                    code
+                                )
+                                    .map((child) => {
+                                        if (React.isValidElement(child)) {
+                                            return child.props.children;
                                         }
-                                    );
-                                }
-                                return child;
-                            };
+                                        return child;
+                                    })
+                                    .join("");
 
-                            return (
-                                <blockquote
-                                    className={cn(
-                                        "rounded-r-md bg-default-50 py-2 pr-4",
-                                        className
-                                    )}
-                                    {...props}
-                                >
-                                    {React.Children.map(
-                                        children,
-                                        removeMargins
-                                    )}
-                                </blockquote>
-                            );
-                        },
-                    }}
-                />
-            </article>
+                                return (
+                                    <div className="group relative">
+                                        <pre {...props} />
+                                        <CopyButton
+                                            content={stringfiedCode}
+                                            className="opacity-0 transition-all ease-in-out group-hover:opacity-100"
+                                        />
+                                    </div>
+                                );
+                            },
+                            code: ({ className, ...props }) => {
+                                return (
+                                    <code
+                                        className={cn(
+                                            "whitespace-pre-wrap",
+                                            className
+                                        )}
+                                        {...props}
+                                    />
+                                );
+                            },
+                            blockquote: ({ className, children, ...props }) => {
+                                const removeMargins = (
+                                    child: React.ReactNode
+                                ) => {
+                                    if (React.isValidElement(child)) {
+                                        return React.cloneElement(
+                                            child as React.ReactElement<any>,
+                                            {
+                                                className:
+                                                    "lg:my-2 lg:text-base",
+                                            }
+                                        );
+                                    }
+                                    return child;
+                                };
+
+                                return (
+                                    <blockquote
+                                        className={cn(
+                                            "rounded-r-md bg-default-50 py-2 pr-4",
+                                            className
+                                        )}
+                                        {...props}
+                                    >
+                                        {React.Children.map(
+                                            children,
+                                            removeMargins
+                                        )}
+                                    </blockquote>
+                                );
+                            },
+                        }}
+                    />
+                </article>
+
+                {relatedBlogs.length > 0 && (
+                    <div className="basis-1/5 px-4 md:border-l md:border-white/10">
+                        <div className="space-y-4">
+                            <h4 className="text-2xl font-semibold">
+                                Related Blogs
+                            </h4>
+
+                            <Divider />
+
+                            <div className="space-y-2">
+                                {relatedBlogs.map((blog) => (
+                                    <BlogCard
+                                        key={blog.slug}
+                                        blog={blog}
+                                        href={"/blogs/" + blog.slug}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </BlogShell>
     );
 }
@@ -411,4 +465,49 @@ function getBlogInfo({ params }: PageProps) {
         slug,
         content,
     };
+}
+
+function getRelatedBlogs(props: PageProps) {
+    const files = fs.readdirSync(path.join(BLOGS_DIR));
+    const blogs: Blog[] = [];
+    const relatedBlogs: Blog[] = [];
+
+    const currentBlog = getBlogInfo(props);
+    if (!currentBlog) return [];
+    const currentBlogTags = currentBlog.frontMatter.tags;
+
+    for (const filename of files) {
+        const fileContent = fs.readFileSync(
+            path.join(BLOGS_DIR, filename),
+            "utf-8"
+        );
+
+        const { data: frontMatter, content } = matter(fileContent);
+        const parsedBlog = blogMetadataSchema.safeParse(frontMatter);
+        if (!parsedBlog.success) continue;
+
+        const isCurrentBlog = filename === currentBlog.slug + ".mdx";
+        if (isCurrentBlog) continue;
+
+        blogs.push({
+            meta: parsedBlog.data,
+            slug: filename.replace(".mdx", ""),
+            content,
+        });
+
+        const hasSimilarTags = currentBlogTags.some((tag) =>
+            parsedBlog.data.tags.includes(tag)
+        );
+        if (!hasSimilarTags) continue;
+
+        relatedBlogs.push({
+            meta: parsedBlog.data,
+            slug: filename.replace(".mdx", ""),
+            content,
+        });
+
+        if (relatedBlogs.length === 5) break;
+    }
+
+    return !!relatedBlogs.length ? relatedBlogs : blogs.slice(0, 5);
 }

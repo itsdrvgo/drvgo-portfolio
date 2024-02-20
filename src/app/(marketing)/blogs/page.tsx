@@ -1,21 +1,15 @@
-import DefaultAvatar from "@/public/authors/default.png";
-import GeneralShell from "@/src/components/global/shells/general-shell";
-import { cn, getReadTime } from "@/src/lib/utils";
-import { BlogMetadata, blogMetadataSchema } from "@/src/lib/validation/blog";
-import { Avatar, Divider, Tooltip } from "@nextui-org/react";
-import "date-fns";
 import fs from "fs";
 import path from "path";
+import DefaultAvatar from "@/public/authors/default.png";
+import GeneralShell from "@/src/components/global/shells/general-shell";
 import { IMAGE_EXTENSIONS } from "@/src/config/const";
+import { cn } from "@/src/lib/utils";
+import { Blog, blogMetadataSchema } from "@/src/lib/validation/blog";
+import { Avatar, Tooltip } from "@nextui-org/react";
 import { format } from "date-fns";
 import matter from "gray-matter";
+import Image from "next/image";
 import Link from "next/link";
-
-interface Blog {
-    meta: BlogMetadata;
-    slug: string;
-    content: string;
-}
 
 const BLOGS_DIR = "blogs";
 
@@ -50,7 +44,7 @@ function Page() {
                 </p>
             </div>
 
-            <div className="py-2">
+            <div className="grid gap-2 py-2 md:grid-cols-3 md:gap-4">
                 {blogs
                     .sort(
                         (a, b) =>
@@ -77,54 +71,82 @@ function BlogCard({ blog }: { blog: Blog }) {
             .map((author) => author.name.toLowerCase().replace(" ", "-"))
     );
 
+    const thumbnailExt = IMAGE_EXTENSIONS.find((extension) =>
+        fs.existsSync(
+            path.join("public", "thumbnails", blog.slug + "." + extension)
+        )
+    );
+    if (!thumbnailExt) return null;
+
+    const avatarPath = path.join("public", "thumbnails");
+
+    const imageBuffer = fs.readFileSync(
+        path.join(avatarPath, blog.slug + "." + thumbnailExt)
+    );
+
+    const base64Thumbnail = Buffer.from(imageBuffer).toString("base64");
+    const thumbnail =
+        "data:image/" + thumbnailExt + ";base64," + base64Thumbnail;
+
     return (
-        <Link href={"/blogs/" + blog.slug}>
-            <div className="flex items-center justify-between gap-5 py-2">
-                <div className="basis-7/12">
-                    <h3 className="text-lg font-bold">{blog.meta.title}</h3>
-                    <p className="text-sm text-white/60 md:text-base">
-                        {blog.meta.description}
+        <Link
+            href={"/blogs/" + blog.slug}
+            className="group relative aspect-[3/2] overflow-hidden rounded-lg border border-white/15 shadow-md"
+        >
+            <Image
+                src={thumbnail}
+                alt={blog.meta.title}
+                height={1920}
+                width={1080}
+                className="size-full object-cover"
+            />
+
+            <div className="absolute bottom-0 left-0 flex size-full flex-col justify-end gap-2 bg-gradient-to-t from-black/80 to-transparent p-2">
+                <h3 className="text-lg font-bold md:text-xl">
+                    {blog.meta.title}
+                </h3>
+
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                        {authorAvatars.map((avatar, index) => (
+                            <Tooltip
+                                key={index}
+                                content={blogAuthors[index].name}
+                            >
+                                <Avatar
+                                    src={avatar}
+                                    alt={blog.meta.title}
+                                    classNames={{
+                                        base: cn(
+                                            index !== 0 && "-ml-3",
+                                            "!size-6 border border-white/20"
+                                        ),
+                                    }}
+                                    showFallback
+                                    size="sm"
+                                />
+                            </Tooltip>
+                        ))}
+
+                        {blogAuthors.length > 2 && (
+                            <Tooltip
+                                content={blogAuthors
+                                    .slice(2)
+                                    .map((author) => author.name)
+                                    .join(", ")}
+                            >
+                                <p className="text-white/60">
+                                    +{blogAuthors.length - 2}
+                                </p>
+                            </Tooltip>
+                        )}
+                    </div>
+
+                    <p className="text-sm font-light text-white/60">
+                        {format(new Date(blog.meta.date), "do MMMM, yyyy")}
                     </p>
                 </div>
-
-                <div className="hidden items-center gap-1 md:flex">
-                    {authorAvatars.map((avatar, index) => (
-                        <Tooltip key={index} content={blogAuthors[index].name}>
-                            <Avatar
-                                src={avatar}
-                                alt={blog.meta.title}
-                                classNames={{
-                                    base: cn(index !== 0 && "relative -left-2"),
-                                }}
-                                color="primary"
-                                isBordered
-                                showFallback
-                                size="sm"
-                            />
-                        </Tooltip>
-                    ))}
-
-                    {blogAuthors.length > 2 && (
-                        <Tooltip
-                            content={blogAuthors
-                                .slice(2)
-                                .map((author) => author.name)
-                                .join(", ")}
-                        >
-                            <p className="text-white/60">
-                                +{blogAuthors.length - 2}
-                            </p>
-                        </Tooltip>
-                    )}
-                </div>
-
-                <div className="text-end text-sm text-white/60">
-                    <p>{format(new Date(blog.meta.date), "do MMMM, yyyy")}</p>
-                    <p>{getReadTime(blog.content)} min read</p>
-                </div>
             </div>
-
-            <Divider />
         </Link>
     );
 }

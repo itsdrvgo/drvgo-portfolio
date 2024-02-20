@@ -38,4 +38,12 @@ export const blogMetadataSchema = z.object({
         .max(new Date(), "Date must be before today"),
 });
 
+export const blogSchema = z.object({
+    meta: blogMetadataSchema,
+    slug: z.string().min(1, "Slug must be at least 1 character long"),
+    content: z.string().min(1, "Content must be at least 1 character long"),
+});
+
 export type BlogMetadata = z.infer<typeof blogMetadataSchema>;
+export type BlogAuthor = z.infer<typeof blogAuthorSchema>;
+export type Blog = z.infer<typeof blogSchema>;
