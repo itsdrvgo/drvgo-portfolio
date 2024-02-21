@@ -144,11 +144,14 @@ function Page(props: PageProps) {
                                     showFallback
                                     color="primary"
                                     isBordered
+                                    classNames={{
+                                        base: "!size-8 md:size-10",
+                                    }}
                                 />
                             </div>
 
                             <div className="space-y-0">
-                                <p className="!my-0 text-base text-white">
+                                <p className="!my-0 text-sm text-white md:text-base">
                                     {blogAuthors.map((author, index) =>
                                         author.url ? (
                                             <span key={author.name}>
@@ -177,7 +180,7 @@ function Page(props: PageProps) {
                                     )}
                                 </p>
 
-                                <p className="m-0 text-sm text-white/60">
+                                <p className="m-0 text-xs text-white/60 md:text-sm">
                                     {format(
                                         new Date(blog.frontMatter.date),
                                         "do MMMM, yyyy"
@@ -186,7 +189,7 @@ function Page(props: PageProps) {
                             </div>
                         </div>
 
-                        <p className="text-sm text-white/60">
+                        <p className="text-xs text-white/60 md:text-sm">
                             {readTime} min read
                         </p>
                     </div>
@@ -296,17 +299,6 @@ function Page(props: PageProps) {
                                             className="opacity-100 transition-all ease-in-out md:opacity-0 md:group-hover:opacity-100"
                                         />
                                     </div>
-                                );
-                            },
-                            code: ({ className, ...props }) => {
-                                return (
-                                    <code
-                                        className={cn(
-                                            "whitespace-pre-wrap",
-                                            className
-                                        )}
-                                        {...props}
-                                    />
                                 );
                             },
                             blockquote: ({ className, children, ...props }) => {
