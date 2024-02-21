@@ -22,7 +22,7 @@ date: 2024-02-01
 
 At this point, we all know that <Link href="https://orm.drizzle.team">Drizzle</Link> is a great ORM for interacting with SQL databases. However, one of the most common questions I get is how to paginate responses in Drizzle. The fact is, Drizzle natively doesn't support pagination, so when I was asked this question, I had to think of a solution. I surfed the web and found out that some of the others were also having the same problem. So, I ran into <Link href="https://github.com/drizzle-team/drizzle-orm/issues/1041">this issue</Link> on Drizzle's GitHub Repo.
 
-Seemed like, there were two packages that could help me with this problem. One was <Link href="https://github.com/xantiagoma/drizzle-cursor">drizzle-cursor</Link> and the other was <Link href="https://github.com/miketromba/drizzle-pagination">drizzle-pagination</Link>. I tried both of them, and **drizzle-pagination** seemed to be the best fit for my use case. So, I decided to use it in my project. In this article, I'll show you how to use **drizzle-pagination** to paginate responses in Drizzle.
+Seemed like, there were two packages that could help me with this problem. One was <Link href="https://github.com/xantiagoma/drizzle-cursor">drizzle-cursor</Link> and the other was <Link href="https://github.com/miketromba/drizzle-pagination">drizzle-pagination</Link>. I tried both of them, and <Highlight content="drizzle-pagination" /> seemed to be the best fit for my use case. So, I decided to use it in my project. In this article, I'll show you how to use <Highlight content="drizzle-pagination" /> to paginate responses in Drizzle.
 
 ## What is Pagination?
 
@@ -75,7 +75,7 @@ Once you've created the project, install the following dependencies.
 pnpm add drizzle-orm drizzle-pagination drizzle-zod postgres
 ```
 
-Also, as we'll be making the infinite-query calls from the client-side, we'll be using **tRPC**. You can use native **Fetch API** or **Axios** as well. But, I prefer **tRPC** as it's easy to use and has a lot of features. If you don't know how to setup tRPC, read my previous article on <Link href="/blog/trpc-needs-to-document-this-asap">tRPC needs to document this ASAP!</Link>. Once you've setup tRPC, install the following dependencies.
+Also, as we'll be making the infinite-query calls from the client-side, we'll be using <Highlight content="tRPC" />. You can use native <Highlight content="Fetch API" /> or <Highlight content="Axios" /> as well. But, I prefer <Highlight content="tRPC" /> as it's easy to use and has a lot of features. If you don't know how to setup tRPC, read my previous article on <Link href="/blog/trpc-needs-to-document-this-asap">tRPC needs to document this ASAP!</Link>. Once you've setup tRPC, install the following dependencies.
 
 ```bash
 pnpm add @mantine/hooks @paralleldrive/cuid2
@@ -83,7 +83,7 @@ pnpm add @mantine/hooks @paralleldrive/cuid2
 
 ## Setting up the Database
 
-Now, let's setup the database. For this tutorial, we'll be using **PostgreSQL**. We'll using <Link href="https://supabase.com">Supabase</Link> as our database provider. Get the **DATABASE_URL** from your Supabase project and add it to your **.env.local** file.
+Now, let's setup the database. For this tutorial, we'll be using <Highlight content="PostgreSQL" />. We'll using <Link href="https://supabase.com">Supabase</Link> as our database provider. Get the <Highlight content="DATABASE_URL" /> from your Supabase project and add it to your <Highlight content=".env.local" /> file.
 
 ```bash
 DATABASE_URL=postgres://<username>:<password>@<host>:<port>/<database>
@@ -91,7 +91,7 @@ DATABASE_URL=postgres://<username>:<password>@<host>:<port>/<database>
 
 ### Connecting to the Database
 
-Now, if you're having a **src** folder in your project, create a **lib** folder inside it. Inside the **lib** folder, create a **drizzle** folder. Inside the **drizzle** folder, create a **index.ts** file. Inside the **index.ts** file, add the following code.
+Now, if you're having a <Highlight content="src" /> folder in your project, create a <Highlight content="lib" /> folder inside it. Inside the <Highlight content="lib" /> folder, create a <Highlight content="drizzle" /> folder. Inside the <Highlight content="drizzle" /> folder, create a <Highlight content="index.ts" /> file. Inside the <Highlight content="index.ts" /> file, add the following code.
 
 ```ts
 // src/lib/drizzle/index.ts
@@ -109,7 +109,7 @@ export const db = drizzle(connection, { schema: Schema });
 
 ### Creating the Schema
 
-Now, let's create the schema. Inside the **drizzle** folder, create a **schema.ts** file. Inside the **schema.ts** file, add the following code.
+Now, let's create the schema. Inside the <Highlight content="drizzle" /> folder, create a <Highlight content="schema.ts" /> file. Inside the <Highlight content="schema.ts" /> file, add the following code.
 
 ```ts
 // src/lib/drizzle/schema.ts
@@ -145,10 +145,10 @@ export const selectPostSchema = createSelectSchema(posts);
 
 ### Creating the Utils
 
-Now, let's create the **utils** file. Inside the **drizzle** folder, create a **utils.ts** file. Inside the **utils.ts** file, add the following code.
+Now, let's create the <Highlight content="utils" /> file. Inside the <Highlight content="lib" /> folder, create a <Highlight content="utils.ts" /> file. Inside the <Highlight content="utils.ts" /> file, add the following code.
 
 ```ts
-// src/lib/drizzle/utils.ts
+// src/lib/utils.ts
 import { init } from "@paralleldrive/cuid2";
 
 // generate a unique id of length 16
@@ -159,7 +159,7 @@ export const generateId = init({
 
 ## Setting up Post Route
 
-Now, let's setup the post route from where we'll be fetching the posts. If you're using **tRPC**, go inside your **routers** folders, and create a **post.ts** file. Inside the **post.ts** file, add the following code.
+Now, let's setup the post route from where we'll be fetching the posts. If you're using <Highlight content="tRPC" />, go inside your <Highlight content="routers" /> folders, and create a <Highlight content="post.ts" /> file. Inside the <Highlight content="post.ts" /> file, add the following code.
 
 ```ts
 // src/lib/trpc/routers/post.ts
@@ -261,7 +261,7 @@ getInfinitePosts: publicProcedure
 
 ## Setting up the Client
 
-Now, let's setup the client. We can call the **getInfinitePosts** procedure from any component we want. For this tutorial, we'll be calling it from the **app/page.tsx** file. As we'll be calling this from browser, make sure you mark the page as **use client** at the top.
+Now, let's setup the client. We can call the <Highlight content="getInfinitePosts" /> procedure from any component we want. For this tutorial, we'll be calling it from the <Highlight content="app/page.tsx" /> file. As we'll be calling this from browser, make sure you mark the page as <Highlight content="use client" /> at the top.
 
 ```tsx
 // src/app/page.tsx

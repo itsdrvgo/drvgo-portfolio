@@ -14,9 +14,9 @@ I've been using <Link href="https://trpc.io">tRPC</Link> for a while now and I l
 
 ## The problem
 
-Even thought it's been more than a year since Next.JS App Router update was introduced, the tRPC documentation still doesn't mention it. And that's a problem. Because if you want to use tRPC in your Next.js project and you want to use the **app** directory, you're going to have a hard time. There's a specific section for setting up with Next.JS in tRPC documentation, but it was written for **pages** router. <Link href="https://trpc.io/docs/client/nextjs">Here's the link</Link>.
+Even thought it's been more than a year since Next.JS App Router update was introduced, the tRPC documentation still doesn't mention it. And that's a problem. Because if you want to use tRPC in your Next.js project and you want to use the <Highlight content="app" /> directory, you're going to have a hard time. There's a specific section for setting up with Next.JS in tRPC documentation, but it was written for <Highlight content="pages" /> router. <Link href="https://trpc.io/docs/client/nextjs">Here's the link</Link>.
 
-So, if you want to use the **app** directory, you're going to have to figure it out yourself. And that's what I did. I spent a lot of time trying to figure it out. And I finally did. So, I'm going to share it with you.
+So, if you want to use the <Highlight content="app" /> directory, you're going to have to figure it out yourself. And that's what I did. I spent a lot of time trying to figure it out. And I finally did. So, I'm going to share it with you.
 
 ## The solution
 
@@ -70,17 +70,17 @@ src
 
 -   **(Optional)** We'll be setting up tRPC with <Link href="https://orm.drizzle.team/">Drizzle</Link> with <Link href="https://postgresql.org/">PostgreSQL</Link>. The setup process is well documented in the <Link href="https://orm.drizzle.team/">Drizzle Documentation</Link>. So, I won't be going over it in this article. But if you want to follow along, you can check out their documentation.
 
-> If you're using tRPC v10, make sure you install **4.36.1** version of **@tanstack/react-query** and **@tanstack/react-query-devtools**. If you want to use v5 of React Query, you need to install v11-beta of tRPC. We'll be using v10 in this article.
+> If you're using tRPC v10, make sure you install <Highlight content="4.36.1" /> version of <Highlight content="@tanstack/react-query" /> and <Highlight content="@tanstack/react-query-devtools" />. If you want to use v5 of React Query, you need to install v11-beta of tRPC. We'll be using v10 in this article.
 
 ### Process of setting up tRPC
 
-Now that we have all the dependencies installed, let's set up tRPC. First, create a new folder called **lib** inside your **src** folder. If you are not using **src** folder, you can create the **lib** folder in the root directory.
+Now that we have all the dependencies installed, let's set up tRPC. First, create a new folder called <Highlight content="lib" /> inside your <Highlight content="src" /> folder. If you are not using <Highlight content="src" /> folder, you can create the <Highlight content="lib" /> folder in the root directory.
 
-Inside this **lib** folder, let's create the files and folders we need.
+Inside this <Highlight content="lib" /> folder, let's create the files and folders we need.
 
 #### Setting up the Database
 
--   As we'll be using **Drizzle**, I already have a schema setup for it. You can create your own schema, or just copy-paste this one. Just create a new folder called **drizzle** inside the **lib** folder and create a file called **schema.ts** inside it. And paste the following code in it.
+-   As we'll be using <Highlight content="Drizzle" />, I already have a schema setup for it. You can create your own schema, or just copy-paste this one. Just create a new folder called <Highlight content="drizzle" /> inside the <Highlight content="lib" /> folder and create a file called <Highlight content="schema.ts" /> inside it. And paste the following code in it.
 
     ```ts
     // lib/drizzle/schema.ts
@@ -114,7 +114,7 @@ Inside this **lib** folder, let's create the files and folders we need.
     export const selectPostSchema = createSelectSchema(posts);
     ```
 
--   We also need to access the **db**, so create a file called **index.ts** inside the **drizzle** folder and paste the following code in it.
+-   We also need to access the <Highlight content="db" />, so create a file called <Highlight content="index.ts" /> inside the <Highlight content="drizzle" /> folder and paste the following code in it.
 
     ```ts
     // lib/drizzle/index.ts
@@ -132,7 +132,7 @@ Inside this **lib** folder, let's create the files and folders we need.
 
 #### Setting up the tRPC Server
 
--   Now that we've the database setup, let's setup the tRPC server. Create a folder called **trpc** inside the **lib** folder and create a file called **context.ts** inside it. And paste the following code in it.
+-   Now that we've the database setup, let's setup the tRPC server. Create a folder called <Highlight content="trpc" /> inside the <Highlight content="lib" /> folder and create a file called <Highlight content="context.ts" /> inside it. And paste the following code in it.
 
     ```ts
     // lib/trpc/context.ts
@@ -157,9 +157,9 @@ Inside this **lib** folder, let's create the files and folders we need.
     export type Context = inferAsyncReturnType<typeof createContextInner>;
     ```
 
-    You can read more about what **Context** is in the <Link href="https://trpc.io/docs/server/context">tRPC Documentation</Link>.
+    You can read more about what <Highlight content="Context" /> is in the <Link href="https://trpc.io/docs/server/context">tRPC Documentation</Link>.
 
--   Now, we can initiate writing our tRPC router code. Create a file called **trpc.ts** inside the **trpc** folder and paste the following code in it.
+-   Now, we can initiate writing our tRPC router code. Create a file called <Highlight content="trpc.ts" /> inside the <Highlight content="trpc" /> folder and paste the following code in it.
 
     ```ts
     // lib/trpc/trpc.ts
@@ -216,9 +216,9 @@ Inside this **lib** folder, let's create the files and folders we need.
     export const protectedProcedure = t.procedure.use(isAuth);
     ```
 
-    Now, all routes with the **protectedProcedure** procedure will be protected by the **isAuth** middleware. You can read more about middleware in the <Link href="https://trpc.io/docs/server/middleware">tRPC Documentation</Link>.
+    Now, all routes with the <Highlight content="protectedProcedure" /> procedure will be protected by the <Highlight content="isAuth" /> middleware. You can read more about middleware in the <Link href="https://trpc.io/docs/server/middleware">tRPC Documentation</Link>.
 
--   That's all we needed to do before we can create a route. So, let's go and create one. Create a folder called **routers** and create a file called **post.ts** inside it. Now, paste the following code in it.
+-   That's all we needed to do before we can create a route. So, let's go and create one. Create a folder called <Highlight content="routers" /> and create a file called <Highlight content="post.ts" /> inside it. Now, paste the following code in it.
 
     ```ts
     // lib/trpc/routers/post.ts
@@ -240,7 +240,7 @@ Inside this **lib** folder, let's create the files and folders we need.
 
     You can add more routes if you want. All you need to do is add more procedures to the router. You can read more about procedures in the <Link href="https://trpc.io/docs/server/procedures">tRPC Documentation</Link>.
 
--   Now, we need to link this route to our server. So, create a file called **index.ts** inside the **trpc** folder and paste the following code in it.
+-   Now, we need to link this route to our server. So, create a file called <Highlight content="index.ts" /> inside the <Highlight content="trpc" /> folder and paste the following code in it.
 
     ```ts
     // lib/trpc/index.ts
@@ -257,7 +257,7 @@ Inside this **lib** folder, let's create the files and folders we need.
 
     You can have merged routers if you want. You can read more about merged routers in the <Link href="https://trpc.io/docs/server/merging-routers">tRPC Documentation</Link>.
 
--   Lastly, we need to create a caller for the client, by which we'll send or receive data from the server. Create a file called **client.ts** inside the **trpc** folder and paste the following code in it.
+-   Lastly, we need to create a caller for the client, by which we'll send or receive data from the server. Create a file called <Highlight content="client.ts" /> inside the <Highlight content="trpc" /> folder and paste the following code in it.
 
     ```ts
     // lib/trpc/client.ts
@@ -272,9 +272,9 @@ Inside this **lib** folder, let's create the files and folders we need.
 
 #### Setting up the Next.js App
 
--   Now that we have the server setup, let's setup our Next.JS app, so that we can handle our tRPC calls through native **API Routes**. Create a folder called **api** inside the **src** folder and create a folder called **trpc** inside it. This folder will contain a dynamic route with the name of the procedure we want to call. So, let's create a folder called **[trpc]**, and lastly this folder will have our **route.ts** file. Check out [File Structure](#file-structure) for more info.
+-   Now that we have the server setup, let's setup our Next.JS app, so that we can handle our tRPC calls through native <Highlight content="API Routes" />. Create a folder called <Highlight content="api" /> inside the <Highlight content="src" /> folder and create a folder called <Highlight content="trpc" /> inside it. This folder will contain a dynamic route with the name of the procedure we want to call. So, let's create a folder called <Highlight content="[trpc]" />, and lastly this folder will have our <Highlight content="route.ts" /> file. Check out [File Structure](#file-structure) for more info.
 
--   Now, inside the **route.ts** file, paste the following code.
+-   Now, inside the <Highlight content="route.ts" /> file, paste the following code.
 
     ```ts
     // src/api/trpc/[trpc]/route.ts
@@ -312,9 +312,9 @@ Inside this **lib** folder, let's create the files and folders we need.
     export { handler as GET, handler as POST };
     ```
 
-    Even though tRPC provides a built-in Next.JS adapter, we can still use the native **fetch** adapter. You can read more about it in the <Link href="https://trpc.io/docs/server/adapters/fetch">tRPC Documentation</Link>.
+    Even though tRPC provides a built-in Next.JS adapter, we can still use the native <Highlight content="fetch" /> adapter. You can read more about it in the <Link href="https://trpc.io/docs/server/adapters/fetch">tRPC Documentation</Link>.
 
--   We're almost at the end. Now, we need to wrap the body using a tRPC Provider. So, let's do it quickly! Go inside your **components** folder, and create a folder called **providers** inside it. Now, create a file called **client.tsx** inside it and paste the following code in it.
+-   We're almost at the end. Now, we need to wrap the body using a tRPC Provider. So, let's do it quickly! Go inside your <Highlight content="Components" /> folder, and create a folder called <Highlight content="providers" /> inside it. Now, create a file called <Highlight content="client.tsx" /> inside it and paste the following code in it.
 
     ```tsx
     // src/components/providers/client.tsx
@@ -375,7 +375,7 @@ Inside this **lib** folder, let's create the files and folders we need.
     export default ClientProvider;
     ```
 
--   Final Step, go to your **layout.tsx** file and wrap the body using the **ClientProvider** component we just created.
+-   Final Step, go to your <Highlight content="layout.tsx" /> file and wrap the body using the <Highlight content="ClientProvider" /> component we just created.
 
     ```tsx
     // src/app/layout.tsx
@@ -398,7 +398,7 @@ Inside this **lib** folder, let's create the files and folders we need.
 
 ### Using tRPC in the client
 
-Let's create a page where we can use tRPC. Create a file called **page.tsx** inside the **app** folder and paste the following code in it.
+Let's create a page where we can use tRPC. Create a file called <Highlight content="page.tsx" /> inside the <Highlight content="app" /> folder and paste the following code in it.
 
 ```tsx
 // src/app/page.tsx

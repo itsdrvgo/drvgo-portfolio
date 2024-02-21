@@ -82,7 +82,7 @@ Now that we've discussed the initial impressions and features of Project IDX, le
 
 5. Tweaking Project Environment
 
-    At this point, we all understand that Project IDX is an online IDE. So, the question arises: How do we install Node or Python or any other language? Well, Project IDX uses Nix as its backend engine, which means you can install any language or package using Nix. At the top, we have folder called **.idx**, which contains a file called **dev.nix**. This file is used to install any language, package, or tool you need for your project globally. For example, if you want to install Node, you can add the following line to the **dev.nix** file:
+    At this point, we all understand that Project IDX is an online IDE. So, the question arises: How do we install Node or Python or any other language? Well, Project IDX uses Nix as its backend engine, which means you can install any language or package using Nix. At the top, we have folder called <Highlight content=".idx" />, which contains a file called <Highlight content="dev.nix" />. This file is used to install any language, package, or tool you need for your project globally. For example, if you want to install Node, you can add the following line to the <Highlight content="dev.nix" /> file:
 
     ```nix
     pkgs.nodejs_20
@@ -92,11 +92,11 @@ Now that we've discussed the initial impressions and features of Project IDX, le
 
     <Image type="local" location="/images/idx_nix_env_page.jpg" />
 
-    > You can also set global environment variables, which is a nice touch. Everytime you update the **dev.nix** file, it will ask you to rebuild the environment. Read more about it <Link href="https://developers.google.com/idx/guides/customize-idx-env">here</Link>.
+    > You can also set global environment variables, which is a nice touch. Everytime you update the <Highlight content="dev.nix" /> file, it will ask you to rebuild the environment. Read more about it <Link href="https://developers.google.com/idx/guides/customize-idx-env">here</Link>.
 
 ## Writing Your First Code
 
-Now that we've explored the workspace and environment of Project IDX, let's write some code to get a feel for the development experience. For this demonstration, we'll create a simple **Fetch API** call to retrieve data from an external source. Here's a step-by-step guide to writing your first code in Project IDX:
+Now that we've explored the workspace and environment of Project IDX, let's write some code to get a feel for the development experience. For this demonstration, we'll create a simple <Highlight content="Fetch API" /> call to retrieve data from an external source. Here's a step-by-step guide to writing your first code in Project IDX:
 
 -   For this example, we'll create a new project using <Link href="https://bun.sh">Bun</Link>. As IDX runs on Linux, we can easily install Bun using the following command in the terminal:
 
@@ -117,11 +117,11 @@ Now that we've explored the workspace and environment of Project IDX, let's writ
     ? entry point (index.ts):
     ```
 
-    Name your project whatever you want and hit enter. For the entry point, you can leave it as it is, but we'll change it to **src/index.ts**.
+    Name your project whatever you want and hit enter. For the entry point, you can leave it as it is, but we'll change it to <Highlight content="src/index.ts" />.
 
     <Image type="local" location="/images/idx_bun_setup_page.jpg" />
 
--   Now, open the **src/index.ts** file and you'll see the following code:
+-   Now, open the <Highlight content="src/index.ts" /> file and you'll see the following code:
 
     ```ts
     console.log("Hello via Bun!);
@@ -167,9 +167,9 @@ The answer is not straightforward. While Project IDX offers a compelling online 
 
 Also, there are some weird bugs and glitches that I've encountered while using Project IDX. For example,
 
-1. If you're hosting a server, IDX assigns a generated URL to it. When I tried to access the URL on my browser, it worked fine. I was able to access get a HTML page, but when I tried send a POST request to the server using the URL, via Thunder Client, it didn't work. I tried it on my local machine, and it worked fine. On top of that, when I tried to send the POST request using Thunder Client via IDX Extension inside IDX, it worked fine. I had to write **localhost** instead of the generated URL to make it work.
+1. If you're hosting a server, IDX assigns a generated URL to it. When I tried to access the URL on my browser, it worked fine. I was able to access get a HTML page, but when I tried send a POST request to the server using the URL, via Thunder Client, it didn't work. I tried it on my local machine, and it worked fine. On top of that, when I tried to send the POST request using Thunder Client via IDX Extension inside IDX, it worked fine. I had to write <Highlight content="localhost" /> instead of the generated URL to make it work.
 
-2. When using Next.JS, if you try to access the site using the generated URL, at first it will just load infinitely. Then you realize that the URL is not having the **https://** prefix. You have to manually add it to the URL to make it work. So, everytime you navigate to a new page, you have to add the **https://** prefix to the URL, or it won't work. This is a weird bug that I've encountered.
+2. When using Next.JS, if you try to access the site using the generated URL, at first it will just load infinitely. Then you realize that the URL is not having the <Highlight content="https://" /> prefix. You have to manually add it to the URL to make it work. So, everytime you navigate to a new page, you have to add the <Highlight content="https://" /> prefix to the URL, or it won't work. This is a weird bug that I've encountered.
 
 ## Conclusion
 

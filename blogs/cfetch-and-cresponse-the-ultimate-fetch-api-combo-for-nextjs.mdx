@@ -52,9 +52,8 @@ What? That's it? Yes, that's it! cFetch is just a simple wrapper around the Fetc
 1. <Highlight content="export async function cFetch<T>" />: This is a generic
    function that takes a type parameter <Highlight content="T" />. This type parameter
    is the type of the data that you expect to receive from the server. For example,
-   if you expect to receive an array of objects, you can use <Highlight content="cFetch<BlogPost[]>" />
-   . If you expect to receive a single object, you can use <Highlight content="cFetch<BlogPost>" />
-   .
+   if you expect to receive an array of objects, you can use <Highlight content="cFetch<BlogPost[]>" />.
+   If you expect to receive a single object, you can use <Highlight content="cFetch<BlogPost>" />.
 
 2. <Highlight content="url: string" />: This is the URL of the server that you
    want to make a request to.
@@ -218,9 +217,9 @@ npm install zod
     parameter <Highlight content="DataType" />. It returns a Zod object schema that
     represents the response data. The <Highlight content="dataType" /> parameter
     is the type of the data that you expect to receive from the server. For example,
-    if you expect to receive an array of objects, you can use <Highlight content="z.array(z.object({...}))" />
-    . If you expect to receive a single object, you can use <Highlight content="z.object({...})" />
-    .
+    if you expect to receive an array of objects, you can use
+    <Highlight content="z.array(z.object({...}))" />. If you expect to receive a
+    single object, you can use <Highlight content="z.object({...})" />.
 
 3.  <Highlight content="ResponseMessages" />: This is the type of the response
     messages that we defined earlier.
@@ -229,16 +228,15 @@ npm install zod
     type parameter <Highlight content="DataType" />. It represents the type of the
     response data. For example, if you expect to receive an array of objects, you
     can use <Highlight content="ResponseType<z.array(z.object({...}))>" />. If
-    you expect to receive a single object, you can use <Highlight content="ResponseType<z.object({...})>" />
-
-    .
+    you expect to receive a single object, you can use
+    <Highlight content="ResponseType<z.object({...})>" />.
 
 5.  <Highlight content="ResponseData" />: This is a generic type that takes a
     type parameter <Highlight content="T" />. It represents the type of the response
     data that you expect to receive from the server. For example, if you expect to
-    receive an array of objects, you can use <Highlight content="ResponseData<BlogPost[]>" />
-    . If you expect to receive a single object, you can use <Highlight content="ResponseData<BlogPost>" />
-    .
+    receive an array of objects, you can use <Highlight content="ResponseData<BlogPost[]>" />.
+    If you expect to receive a single object, you can use
+    <Highlight content="ResponseData<BlogPost>" />.
 
 Now that we have the <Highlight content="ResponseData" /> type, we can look at the code for <Highlight content="CResponse" />:
 
@@ -323,9 +321,9 @@ export function CResponse<T>({
 1. <Highlight content="export function CResponse<T>" />: This is a generic
    function that takes a type parameter <Highlight content="T" />. This type parameter
    is the type of the data that you want to send in the response. For example, if
-   you want to send an array of objects, you can use <Highlight content="CResponse<BlogPost[]>" />
-   . If you want to send a single object, you can use <Highlight content="CResponse<BlogPost>" />
-   .
+   you want to send an array of objects, you can use
+   <Highlight content="CResponse<BlogPost[]>" />. If you want to send a
+   single object, you can use <Highlight content="CResponse<BlogPost>" />.
 
 2. <Highlight content="message: ResponseMessages" />: This is the response
    message that you want to send. It should be one of the response messages that
@@ -345,10 +343,7 @@ export function CResponse<T>({
 6. **The return statement**: This is the actual response that we send. We use
    Next's native <Highlight content="NextResponse" /> to send the response. We pass an
    object with the status code, response message, long message, and data to the
-   {" "}
-   {" "}
-    {" "}
-    <Highlight content="NextResponse.json" /> function.
+   <Highlight content="NextResponse.json" /> function.
 
 ### Usage (CResponse)
 
