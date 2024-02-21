@@ -10,6 +10,12 @@ export default {
         "./src/**/*.{ts,tsx}",
         "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
     ],
+    theme: {
+        container: {
+            center: true,
+            padding: "1.25rem",
+        },
+    },
     plugins: [
         nextui({
             prefix: "drvgo",
