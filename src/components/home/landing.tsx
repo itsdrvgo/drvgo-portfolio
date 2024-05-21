@@ -128,6 +128,9 @@ function Landing({ className, ...props }: DefaultProps) {
                 <Sparkle className="spark-spin-3 absolute right-[20%] top-[80%]" />
                 <Sparkle className="spark-spin-2 absolute right-[10%] top-[20%]" />
             </motion.div>
+
+            <div className="absolute inset-0 size-full bg-[radial-gradient(#404040_1px,transparent_1px)] [background-size:40px_40px]"></div>
+            <div className="absolute bottom-0 left-0 h-32 w-full bg-gradient-to-t from-background to-transparent" />
         </section>
     );
 }

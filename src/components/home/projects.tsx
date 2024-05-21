@@ -6,10 +6,10 @@ import { DefaultProps } from "@/src/types";
 import { Button, Image, Link } from "@nextui-org/react";
 import { motion, Variants } from "framer-motion";
 import NextImage from "next/image";
-import BerryFitLabsBG from "public/projects/berryfitlabs.jpeg";
-import NexpressBG from "public/projects/nexpress.jpeg";
-import NextJSBG from "public/projects/next_js_template.jpeg";
+import CreateEV0App from "public/projects/create_ev0_app.jpeg";
+import PeerAmpFS from "public/projects/peeramp_fs.jpeg";
 import PostItBG from "public/projects/post_it.jpeg";
+import Routez from "public/projects/routez.jpeg";
 import XarOSBG from "public/projects/xar_os.jpeg";
 import { Sparkle } from "../global/svgs/Sparkle";
 
@@ -31,23 +31,24 @@ const projects: Project[] = [
         thumbnail: PostItBG.src,
     },
     {
-        name: "BerryFitLabs",
-        description:
-            "A fitness app that helps you track your daily workouts and diet.",
-        thumbnail: BerryFitLabsBG.src,
+        name: "Routez",
+        description: "Next.JS like file-based routing for Express.js",
+        source: GITHUB_BASE_URL + "itsdrvgo/routez",
+        thumbnail: Routez.src,
     },
     {
-        name: "Nextress",
-        description: "A template for an Next.JS based Express app.",
-        source: GITHUB_BASE_URL + "itsdrvgo/express-ts-template",
-        thumbnail: NexpressBG.src,
+        name: "Create EV0 App",
+        description:
+            "The best way to start your next Next.js project in a type-safe environment.",
+        source: GITHUB_BASE_URL + "itsdrvgo/create-ev0-app",
+        demo: "https://ev0.vercel.app/",
+        thumbnail: CreateEV0App.src,
     },
     {
-        name: "Next.JS Template",
-        description:
-            "A template for creating Next.JS apps, pre-configured with Authentication, tRPC, and more.",
-        source: GITHUB_BASE_URL + "itsdrvgo/nextjs-14-template",
-        thumbnail: NextJSBG.src,
+        name: "PeerAmp File Server",
+        description: "The official server of PeerAmp to handle files",
+        source: GITHUB_BASE_URL + "itsdrvgo/peeramp-file-server",
+        thumbnail: PeerAmpFS.src,
     },
     {
         name: "XAR OS",
@@ -183,8 +184,11 @@ function ProjectCard({
                 width={1000}
                 height={1000}
                 classNames={{
-                    wrapper: isFirstItem && "h-full",
-                    img: isFirstItem && "h-full",
+                    wrapper: cn(
+                        isFirstItem && "h-full",
+                        "overflow-hidden border border-white/20"
+                    ),
+                    img: cn(isFirstItem && "h-full"),
                 }}
             />
 

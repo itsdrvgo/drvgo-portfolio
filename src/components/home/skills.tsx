@@ -198,7 +198,7 @@ function Skills({ className, ...props }: DefaultProps) {
                 <Sparkle className="spark-spin-1 absolute left-[10%] top-[40%]" />
                 <Sparkle className="spark-spin-2 absolute left-[20%] top-[90%]" />
                 <Sparkle className="spark-spin-3 absolute right-[15%] top-[70%]" />
-                <Sparkle className="spark-spin-2 absolute right-[25%] top-[20%]" />
+                <Sparkle className="spark-spin-2 absolute right-1/4 top-[20%]" />
             </motion.div>
         </section>
     );

@@ -17,7 +17,7 @@ const config = {
     ],
     rules: {
         semi: "error",
-        "tailwindcss/no-custom-classname": "warn",
+        "tailwindcss/no-custom-classname": "off",
         "unused-imports/no-unused-imports": "warn",
         "unused-imports/no-unused-vars": "warn",
     },

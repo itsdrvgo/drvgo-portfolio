@@ -24,7 +24,7 @@ function CopyButton({ className, content, ...props }: CopyButtonProps) {
             radius="sm"
             variant="bordered"
             className={cn(
-                "absolute right-4 top-0 h-auto min-w-unit-16 -translate-y-1/2 rounded-md border-1 bg-background px-2 py-1 text-xs uppercase text-white/80 md:min-w-unit-20 md:px-3 md:text-sm",
+                "min-w-unit-16 md:min-w-unit-20 absolute right-4 top-0 h-auto -translate-y-1/2 rounded-md border-1 bg-background px-2 py-1 text-xs uppercase text-white/80 md:px-3 md:text-sm",
                 className
             )}
             onPress={() => {
