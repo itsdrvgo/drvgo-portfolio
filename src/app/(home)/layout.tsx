@@ -1,18 +1,20 @@
-import Footer from "@/src/components/global/footer/footer";
-import Navbar from "@/src/components/global/navbar/navbar";
-import { RootLayoutProps } from "@/src/types";
+import { Footer, Navbar, NavbarMob } from "@/components/global/layouts";
+import { LayoutProps } from "@/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Home",
 };
 
-function Layout({ children }: RootLayoutProps) {
+function Layout({ children }: LayoutProps) {
     return (
         <>
-            <Navbar />
-            <main className="relative flex-1">{children}</main>
-            <Footer />
+            <div className="relative flex min-h-screen flex-col">
+                <Navbar />
+                <main className="flex-1">{children}</main>
+                <Footer />
+            </div>
+            <NavbarMob />
         </>
     );
 }

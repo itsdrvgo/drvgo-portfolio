@@ -1,19 +1,10 @@
 "use client";
 
-import { DefaultProps } from "@/src/types";
-import { NextUIProvider } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { LayoutProps } from "@/types";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
-function ClientProvider({ children }: DefaultProps) {
-    const router = useRouter();
+export function ClientProvider({ children }: LayoutProps) {
     return (
-        <NextUIProvider
-            navigate={router.push}
-            className="flex min-h-screen flex-col"
-        >
-            {children}
-        </NextUIProvider>
+        <NextThemesProvider attribute="class">{children}</NextThemesProvider>
     );
 }
-
-export default ClientProvider;

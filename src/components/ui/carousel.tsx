@@ -1,12 +1,12 @@
 "use client";
 
-import { cn } from "@/src/lib/utils";
-import { Button } from "@nextui-org/react";
+import { cn } from "@/lib/utils";
 import useEmblaCarousel, {
     type UseEmblaCarouselType,
 } from "embla-carousel-react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import * as React from "react";
+import { Button } from "./button";
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
@@ -209,7 +209,6 @@ const CarouselPrevious = React.forwardRef<
                     : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
                 className
             )}
-            // @ts-expect-error
             ref={ref}
             disabled={!canScrollPrev}
             onClick={scrollPrev}
@@ -236,7 +235,6 @@ const CarouselNext = React.forwardRef<
                     : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
                 className
             )}
-            // @ts-expect-error
             ref={ref}
             disabled={!canScrollNext}
             onClick={scrollNext}

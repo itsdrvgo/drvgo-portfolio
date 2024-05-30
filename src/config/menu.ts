@@ -1,21 +1,19 @@
 import { NavItem } from "../types";
 
-export const menuConfig: NavItem[] = [
+export const menu: NavItem[] = [
     {
-        title: "Projects",
-        href: "/#projects",
+        title: "Home",
+        href: "/",
+        icon: "home",
     },
     {
         title: "Blogs",
         href: "/blogs",
+        icon: "book",
     },
     {
         title: "Videos",
         href: "/videos",
-    },
-    {
-        title: "Github",
-        href: "https://github.com/itsdrvgo",
-        isExternal: true,
+        icon: "video",
     },
 ];

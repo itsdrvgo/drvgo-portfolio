@@ -2,16 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
-::-webkit-scrollbar {
-    width: 7px;
-    height: 7px;
-    background-color: rgb(32, 36, 39);
-}
+@layer base {
+    :root {
+        --background: 270 80% 98%;
+        --foreground: 267 77% 5%;
 
-::-webkit-scrollbar-thumb {
-    background-color: rgb(21, 77, 77);
-}
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
 
-::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(23, 98, 119);
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 84% 4.9%;
+
+        --primary: 265 63% 47%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 96 71% 53%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+
+        --accent: 212 85% 82%;
+        --accent-foreground: 222.2 47.4% 11.2%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 222.2 84% 4.9%;
+
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
+
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
+
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
+
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+
+        --secondary: 217.2 32.6% 17.5%;
+        --secondary-foreground: 210 40% 98%;
+
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+
+        --accent: 217.2 32.6% 17.5%;
+        --accent-foreground: 210 40% 98%;
+
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 212.7 26.8% 83.9%;
+    }
+
+    .spin_box_1 {
+        animation: spin_box 6s linear infinite;
+    }
+
+    .spin_box_2 {
+        animation: spin_box_rev 8s linear infinite 0.5s;
+    }
+
+    .spin_box_3 {
+        animation: spin_box 10s linear infinite 1s;
+    }
+
+    @keyframes spin_box {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes spin_box_rev {
+        to {
+            transform: rotate(-360deg);
+        }
+    }
+
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+
+    ::-webkit-scrollbar {
+        @apply size-[7px] rounded-full bg-background;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply rounded-md bg-primary;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-primary/80;
+    }
 }

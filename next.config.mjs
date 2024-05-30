@@ -7,6 +7,7 @@ const nextConfig = {
             { hostname: "uploadthing.com" },
             { hostname: "**.clerk.dev" },
             { hostname: "utfs.io" },
+            { hostname: "cdn.jsdelivr.net" },
         ],
     },
     reactStrictMode: true,

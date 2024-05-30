@@ -1,18 +1,17 @@
 "use client";
 
-import Journey from "@/src/components/home/journey";
-import Landing from "@/src/components/home/landing";
-import Skills from "@/src/components/home/skills";
-import "./page.css";
-import Projects from "@/src/components/home/projects";
+import { About, Cutout, Hero, Showcase, TechStack } from "@/components/home";
 
 function Page() {
     return (
         <>
-            <Landing />
-            <Skills />
-            <Journey />
-            <Projects />
+            <Hero />
+            <About />
+            <Cutout isReversed />
+            <Showcase />
+            <Cutout />
+            <TechStack />
+            <Cutout isReversed />
         </>
     );
 }

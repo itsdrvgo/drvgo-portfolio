@@ -1,15 +1,15 @@
-import { siteConfig } from "@/src/config/site";
-import { Analytics } from "@vercel/analytics/react";
+import { siteConfig } from "@/config/site";
 import { Metadata } from "next";
-import { Titillium_Web } from "next/font/google";
-import ClientProvider from "../components/providers/client";
-import { cn } from "../lib/utils";
-import { RootLayoutProps } from "../types";
+import { Slackey } from "next/font/google";
 import "./globals.css";
+import { ClientProvider } from "@/components/providers";
+import { Toaster } from "@/components/ui/sonner";
+import { cn, getAbsoluteURL } from "@/lib/utils";
+import { LayoutProps } from "@/types";
 
-const font = Titillium_Web({
+const font = Slackey({
+    weight: ["400"],
     subsets: ["latin"],
-    weight: ["200", "300", "400", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -22,14 +22,14 @@ export const metadata: Metadata = {
     authors: [
         {
             name: siteConfig.name,
-            url: siteConfig.url,
+            url: getAbsoluteURL(),
         },
     ],
     creator: siteConfig.name,
     openGraph: {
         type: "website",
         locale: "en_US",
-        url: siteConfig.url,
+        url: getAbsoluteURL(),
         title: siteConfig.name,
         description: siteConfig.description,
         siteName: siteConfig.name,
@@ -54,22 +54,24 @@ export const metadata: Metadata = {
         shortcut: "/favicon-16x16.png",
         apple: "/apple-touch-icon.png",
     },
-    manifest: `${siteConfig.url}/site.webmanifest`,
-    metadataBase: new URL(siteConfig.url),
+    manifest: getAbsoluteURL("/site.webmanifest"),
+    metadataBase: new URL(getAbsoluteURL()),
 };
 
-function RootLayout({ children }: RootLayoutProps) {
+function RootLayout({ children }: LayoutProps) {
     return (
-        <html lang="en" suppressHydrationWarning className="dark">
+        <html lang="en" suppressHydrationWarning>
             <head />
             <body
                 className={cn(
                     font.className,
-                    "min-h-screen overflow-x-hidden bg-background text-foreground antialiased"
+                    "min-h-screen overflow-x-hidden antialiased"
                 )}
             >
-                <ClientProvider>{children}</ClientProvider>
-                <Analytics />
+                <ClientProvider>
+                    {children}
+                    <Toaster />
+                </ClientProvider>
             </body>
         </html>
     );

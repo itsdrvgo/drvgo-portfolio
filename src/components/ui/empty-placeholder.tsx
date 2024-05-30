@@ -1,61 +1,56 @@
 "use client";
 
-import { cn } from "@/src/lib/utils";
-import {
-    Card,
-    CardBody,
-    CardFooter,
-    CardHeader,
-    CardProps,
-} from "@nextui-org/react";
+import { cn } from "@/lib/utils";
+import { ClassValue } from "clsx";
 import { ReactNode } from "react";
-import { Icons } from "../icons/icons";
+import { Icons } from "../icons";
+import { Card, CardContent, CardFooter, CardHeader } from "./card";
 
-export interface EmptyPlaceholderProps extends CardProps {
+export interface EmptyPlaceholderProps {
     title: string;
     description: string;
     icon?: keyof typeof Icons;
     endContent?: ReactNode;
     isBackgroundVisible?: boolean;
+    className: ClassValue;
 }
 
 export function EmptyPlaceholder({
     title,
     description,
     icon,
-    className,
     endContent,
     isBackgroundVisible = true,
+    className,
     ...props
 }: EmptyPlaceholderProps) {
     const Icon = icon ? Icons[icon] : undefined;
 
     return (
         <Card
-            className={cn("gap-3 py-10", className)}
-            fullWidth
-            classNames={{
-                base: isBackgroundVisible
-                    ? "bg-default-50 shadow-md"
+            className={cn(
+                "gap-3 rounded-xl py-10",
+                isBackgroundVisible
+                    ? "bg-card shadow-md"
                     : "bg-transparent shadow-none",
-            }}
+                className
+            )}
             {...props}
         >
             {Icon && (
                 <CardHeader className="items-center justify-center">
-                    <div className="rounded-full bg-secondary-200 p-5">
-                        <div>
-                            <Icon />
-                        </div>
+                    <div className="rounded-full bg-primary p-5 text-primary-foreground">
+                        <Icon />
                     </div>
                 </CardHeader>
             )}
-            <CardBody className="flex flex-col items-center gap-4 text-center">
+
+            <CardContent className="flex flex-col items-center gap-4 text-center">
                 <h2 className="text-2xl font-bold">{title}</h2>
-                <p className="max-w-xs text-balance text-sm text-white/80">
+                <p className="max-w-xs text-balance text-sm text-muted-foreground">
                     {description}
                 </p>
-            </CardBody>
+            </CardContent>
 
             {endContent && (
                 <CardFooter className="flex items-center justify-center">
