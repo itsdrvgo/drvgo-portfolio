@@ -6,6 +6,7 @@ import { useNavbarStore } from "@/lib/store/navbar";
 import { cn } from "@/lib/utils";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { DRVGO } from "../../svgs";
 
@@ -15,6 +16,7 @@ export function Navbar() {
     const setIsMenuOpen = useNavbarStore((state) => state.setIsOpen);
 
     const { scrollY } = useScroll();
+    const pathname = usePathname();
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         const previous = scrollY.getPrevious() ?? 0;
@@ -38,7 +40,10 @@ export function Navbar() {
                 duration: 0.35,
                 ease: "easeInOut",
             }}
-            className="fixed inset-x-0 top-0 z-50 flex h-auto w-full items-center justify-center p-4 px-3"
+            className={cn(
+                "fixed inset-x-0 top-0 z-50 flex h-auto w-full items-center justify-center p-4 px-3",
+                pathname !== "/" && "sticky"
+            )}
             data-menu-open={isMenuOpen}
         >
             <nav className="relative z-10 flex w-full max-w-4xl items-center justify-between gap-5 overflow-hidden rounded-full border bg-background p-4 shadow-md md:p-0">

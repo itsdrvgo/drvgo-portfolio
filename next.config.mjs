@@ -8,6 +8,7 @@ const nextConfig = {
             { hostname: "**.clerk.dev" },
             { hostname: "utfs.io" },
             { hostname: "cdn.jsdelivr.net" },
+            { hostname: "img.youtube.com" },
         ],
     },
     reactStrictMode: true,

@@ -7,7 +7,7 @@
         --background: 270 80% 98%;
         --foreground: 267 77% 5%;
 
-        --card: 0 0% 100%;
+        --card: 0 0% 75%;
         --card-foreground: 222.2 84% 4.9%;
 
         --popover: 0 0% 100%;
@@ -107,5 +107,19 @@
 
     ::-webkit-scrollbar-thumb:hover {
         @apply bg-primary/80;
+    }
+
+    /* Embla */
+    .embla__container {
+        backface-visibility: hidden;
+        touch-action: pan-y pinch-zoom;
+    }
+
+    .embla__slide {
+        flex: 0 0 100%;
+    }
+
+    .embla-thumbs__slide {
+        flex: 0 0 22%;
     }
 }

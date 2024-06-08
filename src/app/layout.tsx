@@ -1,16 +1,10 @@
-import { siteConfig } from "@/config/site";
-import { Metadata } from "next";
-import { Slackey } from "next/font/google";
-import "./globals.css";
 import { ClientProvider } from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
-import { cn, getAbsoluteURL } from "@/lib/utils";
+import { siteConfig } from "@/config/site";
+import { getAbsoluteURL } from "@/lib/utils";
 import { LayoutProps } from "@/types";
-
-const font = Slackey({
-    weight: ["400"],
-    subsets: ["latin"],
-});
+import { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
     title: {
@@ -62,12 +56,7 @@ function RootLayout({ children }: LayoutProps) {
     return (
         <html lang="en" suppressHydrationWarning>
             <head />
-            <body
-                className={cn(
-                    font.className,
-                    "min-h-screen overflow-x-hidden antialiased"
-                )}
-            >
+            <body className="min-h-screen overflow-x-hidden antialiased">
                 <ClientProvider>
                     {children}
                     <Toaster />

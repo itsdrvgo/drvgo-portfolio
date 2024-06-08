@@ -1,62 +1,9 @@
-interface MArtist {
-    name: string;
-    href: string;
-}
-
-export interface MVideo {
-    id: string;
-    name: string;
-    artists: MArtist[];
-}
-
-export interface CVideo {
+export interface ProgrammingVideo {
     id: string;
     name: string;
 }
 
-export const music: MVideo[] = [
-    {
-        id: "sF_othft0DM",
-        name: "Stay - The Kid LAROI, Justin Bieber",
-        artists: [{ name: "DRVGO", href: "https://www.youtube.com/@itsdrvgo" }],
-    },
-    {
-        id: "o15Oa8DJRn4",
-        name: "Found - Marc Wavy",
-        artists: [{ name: "DRVGO", href: "https://www.youtube.com/@itsdrvgo" }],
-    },
-    {
-        id: "RX3L3SICy5k",
-        name: "golden hour - JVKE",
-        artists: [
-            { name: "JVKE", href: "https://www.instagram.com/@JVKE" },
-            { name: "DRVGO", href: "https://www.youtube.com/@itsdrvgo" },
-        ],
-    },
-    {
-        id: "LnsPH6y2GYc",
-        name: "Until I Found You - Stephen Sanchez, Em Beihold",
-        artists: [
-            { name: "DRVGO", href: "https://www.youtube.com/@itsdrvgo" },
-            { name: "Tisha", href: "https://www.instagram.com/tishade2004" },
-        ],
-    },
-    {
-        id: "V2GwWe3teDE",
-        name: "Sapna Jahan - Sonu Nigam, Neeti Mohan",
-        artists: [
-            { name: "DRVGO", href: "https://www.youtube.com/@itsdrvgo" },
-            { name: "Tisha", href: "https://www.instagram.com/tishade2004" },
-        ],
-    },
-    {
-        id: "XjiD9_NCY8I",
-        name: "GTA San Andreas Theme Song",
-        artists: [{ name: "DRVGO", href: "https://www.youtube.com/@itsdrvgo" }],
-    },
-];
-
-export const programming: CVideo[] = [
+export const programmingVideos: ProgrammingVideo[] = [
     { id: "8bmsOOy8lbI", name: "Will Project IDX really replace VS Code?" },
     { id: "chvmiw9OAAs", name: "tRPC needs to document this ASAP!!" },
     {
