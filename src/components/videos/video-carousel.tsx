@@ -95,8 +95,8 @@ export function VideoCarousel({
                                     <Image
                                         src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`}
                                         alt={video.name}
-                                        width={120}
-                                        height={90}
+                                        width={1280}
+                                        height={720}
                                         className="size-full object-cover"
                                     />
                                 </button>

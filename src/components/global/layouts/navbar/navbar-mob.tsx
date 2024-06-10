@@ -5,10 +5,11 @@ import { menu } from "@/config/menu";
 import { siteConfig } from "@/config/site";
 import { useNavbarStore } from "@/lib/store/navbar";
 import { cn } from "@/lib/utils";
+import { GenericProps } from "@/types";
 import Link from "next/link";
 import { ElementRef, useEffect, useRef } from "react";
 
-export function NavbarMob() {
+export function NavbarMob({ className, ...props }: GenericProps) {
     const isMenuOpen = useNavbarStore((state) => state.isOpen);
     const setIsMenuOpen = useNavbarStore((state) => state.setIsOpen);
 
@@ -50,9 +51,11 @@ export function NavbarMob() {
                 "transition-all duration-500 ease-in-out",
                 "h-0 data-[menu-open=true]:h-screen",
                 "-top-1/2 bottom-0 data-[menu-open=true]:top-0",
-                "md:hidden"
+                "md:hidden",
+                className
             )}
             ref={navContainerRef}
+            {...props}
         >
             <ul
                 className="mt-20 rounded-xl border bg-background px-4 py-3 drop-shadow-md"

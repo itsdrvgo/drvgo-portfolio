@@ -4,13 +4,14 @@ import { Icons } from "@/components/icons";
 import { menu } from "@/config/menu";
 import { useNavbarStore } from "@/lib/store/navbar";
 import { cn } from "@/lib/utils";
+import { GenericProps } from "@/types";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { DRVGO } from "../../svgs";
 
-export function Navbar() {
+export function Navbar({ className }: GenericProps) {
     const [isMenuHidden, setIsMenuHidden] = useState(false);
     const isMenuOpen = useNavbarStore((state) => state.isOpen);
     const setIsMenuOpen = useNavbarStore((state) => state.setIsOpen);
@@ -42,7 +43,8 @@ export function Navbar() {
             }}
             className={cn(
                 "fixed inset-x-0 top-0 z-50 flex h-auto w-full items-center justify-center p-4 px-3",
-                pathname !== "/" && "sticky"
+                pathname !== "/" && "sticky",
+                className
             )}
             data-menu-open={isMenuOpen}
         >
