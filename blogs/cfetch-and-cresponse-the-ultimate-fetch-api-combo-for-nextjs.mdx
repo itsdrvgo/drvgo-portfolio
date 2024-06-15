@@ -33,9 +33,10 @@ In this tutorial, I'll show you what <Highlight content="cFetch" /> and <Highlig
 to handle different types of responses in a type-safe way. Let's take a look at the
 code for cFetch:
 
-```ts
+```
 ---
 name: lib/utils.ts
+language: ts
 ---
 export async function cFetch<T>(
     url: string,
@@ -83,9 +84,10 @@ To put it simply, whatever you pass as the type parameter <Highlight content="T"
 
 Here's an example of how you can use cFetch in your Next.js project:
 
-```ts
+```
 ---
 name: create-post-page.tsx
+language: tsx
 ---
 const res = await cFetch<ResponseData<UploadFileResponse[]>>(
     "/api/uploads",
@@ -104,9 +106,10 @@ const res = await cFetch<ResponseData<UploadFileResponse[]>>(
    what <Highlight content="UploadFileResponse" /> is. For context, this is how the
    type looks like:
 
-```ts
+```
 ---
 name: index.d.ts
+language: ts
 ---
 type UploadData = {
     key: string;
@@ -170,9 +173,10 @@ Now, the question is, why should you use cFetch instead of the Fetch API directl
 we need to create the <Highlight content="ResponseData" /> type that we used in the
 previous example.
 
-```ts
+```
 ---
 name: lib/validations/response.ts
+language: ts
 ---
 import { z, ZodType } from "zod";
 
@@ -213,9 +217,10 @@ export type ResponseData<T> = z.infer<ResponseType<ZodType<T>>>;
 
 You need to have <Highlight content="zod" /> installed in your project to use the above code. If you don't have it installed, you can install it by running the following command:
 
-```bash
+```
 ---
 name: Terminal
+language: bash
 ---
 bun add zod
 ```
@@ -252,9 +257,10 @@ bun add zod
 
 Now that we have the <Highlight content="ResponseData" /> type, we can look at the code for <Highlight content="CResponse" />:
 
-```ts
+```
 ---
 name: lib/utils.ts
+language: ts
 ---
 import { ResponseMessages } from "./validation/response";
 import { NextResponse } from "next/server";
@@ -363,9 +369,10 @@ export function CResponse<T>({
 
 Here's an example of how you can use CResponse in your Next.js project:
 
-```ts
+```
 ---
 name: api/uploads/route.ts
+language: ts
 ---
 import { CResponse } from "@/src/lib/utils";
 import { NextRequest } from "next/server";
@@ -425,9 +432,10 @@ cFetch and CResponse are a powerful combo for the Fetch API that makes it easy t
 
 All the code that I've shown in this tutorial is available in <Link href="https://github.com/itsdrvgo/post-it">Post It</Link>, a rip-off of popular social media platforms. Feel free to check it out and use the code in your own projects. Quickly setup a Next.js project with TypeScript and Tailwind CSS template by running the following command:
 
-```Terminal
+```
 ---
-name: command
+name: Terminal
+language: bash
 ---
 git clone https://github.com/itsdrvgo/nextjs-14-template.git
 ```

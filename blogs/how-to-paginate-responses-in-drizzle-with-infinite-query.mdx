@@ -38,9 +38,10 @@ So, what we can do is, we can divide the tweets into pages. For example, we can 
 
 ### File Structure
 
-```bash
+```
 ---
 name: Project Structure
+language: bash
 ---
 src
 ├── app
@@ -68,27 +69,30 @@ src
 
 If you're reading this article, we can safely assume that you've a Next.JS project setup. If not, run the following command to create a new Next.JS project.
 
-```bash
+```
 ---
 name: Terminal
+language: bash
 ---
 bunx create-next-app
 ```
 
 Once you've created the project, install the following dependencies.
 
-```bash
+```
 ---
 name: Terminal
+language: bash
 ---
 bun add drizzle-orm drizzle-pagination drizzle-zod postgres
 ```
 
 Also, as we'll be making the infinite-query calls from the client-side, we'll be using <Highlight content="tRPC" />. You can use native <Highlight content="Fetch API" /> or <Highlight content="Axios" /> as well. But, I prefer <Highlight content="tRPC" /> as it's easy to use and has a lot of features. If you don't know how to setup tRPC, read my previous article on <Link href="/blog/trpc-needs-to-document-this-asap">tRPC needs to document this ASAP!</Link>. Once you've setup tRPC, install the following dependencies.
 
-```bash
+```
 ---
 name: Terminal
+language: bash
 ---
 bun add @mantine/hooks @paralleldrive/cuid2
 ```
@@ -97,9 +101,10 @@ bun add @mantine/hooks @paralleldrive/cuid2
 
 Now, let's setup the database. For this tutorial, we'll be using <Highlight content="PostgreSQL" />. We'll using <Link href="https://supabase.com">Supabase</Link> as our database provider. Get the <Highlight content="DATABASE_URL" /> from your Supabase project and add it to your <Highlight content=".env.local" /> file.
 
-```bash
+```
 ---
 name: .env.local
+language: bash
 ---
 DATABASE_URL=postgres://<username>:<password>@<host>:<port>/<database>
 ```
@@ -108,9 +113,10 @@ DATABASE_URL=postgres://<username>:<password>@<host>:<port>/<database>
 
 Now, if you're having a <Highlight content="src" /> folder in your project, create a <Highlight content="lib" /> folder inside it. Inside the <Highlight content="lib" /> folder, create a <Highlight content="drizzle" /> folder. Inside the <Highlight content="drizzle" /> folder, create a <Highlight content="index.ts" /> file. Inside the <Highlight content="index.ts" /> file, add the following code.
 
-```ts
+```
 ---
 name: src/lib/drizzle/index.ts
+language: ts
 ---
 import { env } from "@/env.mjs";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -128,9 +134,10 @@ export const db = drizzle(connection, { schema: Schema });
 
 Now, let's create the schema. Inside the <Highlight content="drizzle" /> folder, create a <Highlight content="schema.ts" /> file. Inside the <Highlight content="schema.ts" /> file, add the following code.
 
-```ts
+```
 ---
 name: src/lib/drizzle/schema.ts
+language: ts
 ---
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
@@ -166,9 +173,10 @@ export const selectPostSchema = createSelectSchema(posts);
 
 Now, let's create the <Highlight content="utils" /> file. Inside the <Highlight content="lib" /> folder, create a <Highlight content="utils.ts" /> file. Inside the <Highlight content="utils.ts" /> file, add the following code.
 
-```ts
+```
 ---
 name: src/lib/utils.ts
+language: ts
 ---
 import { init } from "@paralleldrive/cuid2";
 
@@ -182,9 +190,10 @@ export const generateId = init({
 
 Now, let's setup the post route from where we'll be fetching the posts. If you're using <Highlight content="tRPC" />, go inside your <Highlight content="routers" /> folders, and create a <Highlight content="post.ts" /> file. Inside the <Highlight content="post.ts" /> file, add the following code.
 
-```ts
+```
 ---
 name: src/lib/trpc/routers/post.ts
+language: ts
 ---
 // the package that we'll be using to paginate responses
 import { withCursorPagination } from "drizzle-pagination";
@@ -243,9 +252,10 @@ export const postRouter = createTRPCRouter({
 
 Currently we're not using any filters, but you can add them as per your use case. You can also add more cursors. For example, if we were to get all posts of a specific user, we would write something like this.
 
-```ts
+```
 ---
 name: src/lib/trpc/routers/post.ts
+language: ts
 ---
 import { eq } from "drizzle-orm";
 // ... other imports
@@ -288,9 +298,10 @@ getInfinitePosts: publicProcedure
 
 Now, let's setup the client. We can call the <Highlight content="getInfinitePosts" /> procedure from any component we want. For this tutorial, we'll be calling it from the <Highlight content="app/page.tsx" /> file. As we'll be calling this from browser, make sure you mark the page as <Highlight content="use client" /> at the top.
 
-```tsx
+```
 ---
 name: src/app/page.tsx
+language: ts
 ---
 "use client";
 

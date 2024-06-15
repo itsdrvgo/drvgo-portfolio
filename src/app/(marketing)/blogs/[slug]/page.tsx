@@ -24,6 +24,7 @@ import { cn, getAbsoluteURL } from "@/lib/utils";
 import "@/styles/github-dark.css";
 import fs from "fs";
 import path from "path";
+import { snippetMetadataSchema } from "@/lib/validation/snippet";
 import { format } from "date-fns";
 import matter from "gray-matter";
 import { Metadata } from "next";
@@ -294,15 +295,22 @@ function Page(props: PageProps) {
                                 const { data: frontMatter, content } =
                                     matter(stringfiedCode);
 
+                                const parsedSnippetData =
+                                    snippetMetadataSchema.safeParse(
+                                        frontMatter
+                                    );
+                                if (!parsedSnippetData.success) return null;
+
                                 return (
-                                    <div className="group">
+                                    <div>
                                         <div className="flex items-center justify-between gap-5 rounded-md rounded-b-none bg-foreground p-2">
                                             <p className="my-0 space-x-1 pl-1 text-background/60">
                                                 <span className="text-accent">
                                                     &gt;
                                                 </span>{" "}
-                                                {frontMatter.name
-                                                    ? frontMatter.name
+                                                {parsedSnippetData.data.name
+                                                    ? parsedSnippetData.data
+                                                          .name
                                                     : "Code Block"}
                                             </p>
                                             <CopyButton
@@ -318,34 +326,6 @@ function Page(props: PageProps) {
                                 );
                             },
                             code: MdxCode,
-                            // code: ({ className, children, ...props }) => {
-                            //     const stringfiedCode = React.Children.toArray(
-                            //         children
-                            //     )
-                            //         .map((child) => {
-                            //             if (React.isValidElement(child))
-                            //                 return child.props.children;
-                            //             return child;
-                            //         })
-                            //         .join("");
-
-                            //     const { content } = matter(stringfiedCode);
-                            //     const highlightedContent =
-                            //         hljs.highlightAuto(content).value;
-
-                            //     return (
-                            //         <code
-                            //             className={cn(
-                            //                 "whitespace-pre-wrap",
-                            //                 className
-                            //             )}
-                            //             dangerouslySetInnerHTML={{
-                            //                 __html: highlightedContent,
-                            //             }}
-                            //             {...props}
-                            //         />
-                            //     );
-                            // },
                             blockquote: ({ className, children, ...props }) => {
                                 const removeMargins = (
                                     child: React.ReactNode

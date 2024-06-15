@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { snippetMetadataSchema } from "@/lib/validation/snippet";
 import matter from "gray-matter";
 import hljs from "highlight.js";
 import {
@@ -22,8 +23,14 @@ export function MdxCode({
         })
         .join("");
 
-    const { content } = matter(stringfiedCode);
-    const highlightedContent = hljs.highlightAuto(content).value;
+    const { data: frontMatter, content } = matter(stringfiedCode);
+
+    const parsedSnippetData = snippetMetadataSchema.safeParse(frontMatter);
+    if (!parsedSnippetData.success) return null;
+
+    const highlightedContent = hljs.highlight(content, {
+        language: parsedSnippetData.data.language,
+    }).value;
 
     return (
         <code
