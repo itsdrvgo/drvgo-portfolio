@@ -23,7 +23,7 @@ export function CopyButton({ className, content, ...props }: CopyButtonProps) {
         <Button
             variant="outline"
             className={cn(
-                "border-1 absolute right-4 top-0 h-auto min-w-16 -translate-y-1/2 rounded-md border-foreground bg-background px-2 py-1 text-xs uppercase text-muted-foreground md:min-w-20 md:px-3 md:text-sm",
+                "border-1 h-auto min-w-16 rounded-md border-foreground bg-background px-2 py-1 text-xs uppercase text-muted-foreground md:min-w-20 md:px-3 md:text-sm",
                 className
             )}
             onClick={() => {

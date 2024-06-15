@@ -85,6 +85,9 @@ Now that we've discussed the initial impressions and features of Project IDX, le
     At this point, we all understand that Project IDX is an online IDE. So, the question arises: How do we install Node or Python or any other language? Well, Project IDX uses Nix as its backend engine, which means you can install any language or package using Nix. At the top, we have folder called <Highlight content=".idx" />, which contains a file called <Highlight content="dev.nix" />. This file is used to install any language, package, or tool you need for your project globally. For example, if you want to install Node, you can add the following line to the <Highlight content="dev.nix" /> file:
 
     ```nix
+    ---
+    name: dev.nix
+    ---
     pkgs.nodejs_20
     ```
 
@@ -101,18 +104,27 @@ Now that we've explored the workspace and environment of Project IDX, let's writ
 -   For this example, we'll create a new project using <Link href="https://bun.sh">Bun</Link>. As IDX runs on Linux, we can easily install Bun using the following command in the terminal:
 
     ```bash
+    ---
+    name: Terminal
+    ---
     npm i -g bun
     ```
 
 -   Once installed, restart the terminal and run the following command to create a new project:
 
     ```bash
+    ---
+    name: Terminal
+    ---
     bun init
     ```
 
     This will ask you these questions:
 
     ```bash
+    ---
+    name: Terminal
+    ---
     ? package name (test):
     ? entry point (index.ts):
     ```
@@ -124,12 +136,18 @@ Now that we've explored the workspace and environment of Project IDX, let's writ
 -   Now, open the <Highlight content="src/index.ts" /> file and you'll see the following code:
 
     ```ts
+    ---
+    name: index.ts
+    ---
     console.log("Hello via Bun!);
     ```
 
     Replace it with the following code:
 
     ```ts
+    ---
+    name: index.ts
+    ---
     const END_POINT = "https://jsonplaceholder.typicode.com/posts";
 
     const fetchData = async () => {
@@ -150,6 +168,9 @@ Now that we've explored the workspace and environment of Project IDX, let's writ
 -   Now, run the following command in the terminal to execute the code:
 
     ```bash
+    ---
+    name: Terminal
+    ---
     bun run src/index.ts
     ```
 

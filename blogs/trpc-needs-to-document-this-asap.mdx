@@ -23,6 +23,9 @@ So, if you want to use the <Highlight content="app" /> directory, you're going t
 ### File Structure
 
 ```bash
+---
+name: Project Structure
+---
 src
 ├── app
 │   ├── api
@@ -53,19 +56,28 @@ src
 -   If you already have a Next.js project, you can skip this step. But if you don't, you can follow along. First, let's create a new Next.js project. Just run the following command in your terminal. We'll use <Link href="https://pnpm.io/">pnpm</Link> as our package manager.
 
     ```bash
-    pnpm dlx create-next-app
+    ---
+    name: Terminal
+    ---
+    bunx create-next-app
     ```
 
 -   Now that the project is setup, let's install the dependencies we need. Just run the following command in your terminal.
 
     ```bash
-    pnpm add @tanstack/react-query @trpc/client @trpc/next @trpc/react-query @trpc/server superjson
+    ---
+    name: Terminal
+    ---
+    bun add @tanstack/react-query @trpc/client @trpc/next @trpc/react-query @trpc/server superjson
     ```
 
 -   We also need a dev dependency for this. So, run the following command in your terminal.
 
     ```bash
-    pnpm add -D @tanstack/react-query-devtools
+    ---
+    name: Terminal
+    ---
+    bun add -D @tanstack/react-query-devtools
     ```
 
 -   **(Optional)** We'll be setting up tRPC with <Link href="https://orm.drizzle.team/">Drizzle</Link> with <Link href="https://postgresql.org/">PostgreSQL</Link>. The setup process is well documented in the <Link href="https://orm.drizzle.team/">Drizzle Documentation</Link>. So, I won't be going over it in this article. But if you want to follow along, you can check out their documentation.
@@ -83,7 +95,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   As we'll be using <Highlight content="Drizzle" />, I already have a schema setup for it. You can create your own schema, or just copy-paste this one. Just create a new folder called <Highlight content="drizzle" /> inside the <Highlight content="lib" /> folder and create a file called <Highlight content="schema.ts" /> inside it. And paste the following code in it.
 
     ```ts
-    // lib/drizzle/schema.ts
+    ---
+    name: lib/drizzle/schema.ts
+    ---
     import { InferInsertModel, InferSelectModel } from "drizzle-orm";
     import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
     import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -117,7 +131,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   We also need to access the <Highlight content="db" />, so create a file called <Highlight content="index.ts" /> inside the <Highlight content="drizzle" /> folder and paste the following code in it.
 
     ```ts
-    // lib/drizzle/index.ts
+    ---
+    name: lib/drizzle/index.ts
+    ---
     import { env } from "@/env.mjs"; // uses @t3-oss/env-nextjs
     import { drizzle } from "drizzle-orm/postgres-js";
     import postgres from "postgres";
@@ -135,7 +151,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   Now that we've the database setup, let's setup the tRPC server. Create a folder called <Highlight content="trpc" /> inside the <Highlight content="lib" /> folder and create a file called <Highlight content="context.ts" /> inside it. And paste the following code in it.
 
     ```ts
-    // lib/trpc/context.ts
+    ---
+    name: lib/trpc/context.ts
+    ---
     import { inferAsyncReturnType } from "@trpc/server";
     import { db } from "../drizzle"; // importing the db from drizzle
     import { posts } from "../drizzle/schema"; // importing the posts table from drizzle
@@ -162,7 +180,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   Now, we can initiate writing our tRPC router code. Create a file called <Highlight content="trpc.ts" /> inside the <Highlight content="trpc" /> folder and paste the following code in it.
 
     ```ts
-    // lib/trpc/trpc.ts
+    ---
+    name: lib/trpc/trpc.ts
+    ---
     import { initTRPC } from "@trpc/server";
     import superjson from "superjson";
     import { ZodError } from "zod";
@@ -196,7 +216,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   If you have any authentication layer or you want to use any middleware in your routes, you can have something like this,
 
     ```ts
-    // lib/trpc/trpc.ts
+    ---
+    name: lib/trpc/trpc.ts
+    ---
     import { TRPCError } from "@trpc/server";
     // ...previous code
 
@@ -221,6 +243,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   That's all we needed to do before we can create a route. So, let's go and create one. Create a folder called <Highlight content="routers" /> and create a file called <Highlight content="post.ts" /> inside it. Now, paste the following code in it.
 
     ```ts
+    ---
+    name: lib/trpc/routers/post.ts
+    ---
     // lib/trpc/routers/post.ts
     // importing the router and the procedure we created earlier
     import { createTRPCRouter, publicProcedure } from "../trpc";
@@ -243,7 +268,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   Now, we need to link this route to our server. So, create a file called <Highlight content="index.ts" /> inside the <Highlight content="trpc" /> folder and paste the following code in it.
 
     ```ts
-    // lib/trpc/index.ts
+    ---
+    name: lib/trpc/index.ts
+    ---
     import { postRouter } from "./routers/post"; // importing the post router
     import { createTRPCRouter } from "./trpc"; // importing the router
 
@@ -260,7 +287,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   Lastly, we need to create a caller for the client, by which we'll send or receive data from the server. Create a file called <Highlight content="client.ts" /> inside the <Highlight content="trpc" /> folder and paste the following code in it.
 
     ```ts
-    // lib/trpc/client.ts
+    ---
+    name: lib/trpc/client.ts
+    ---
     import { createTRPCReact } from "@trpc/react-query";
     import { AppRouter } from "."; // importing the type of appRouter
 
@@ -277,7 +306,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   Now, inside the <Highlight content="route.ts" /> file, paste the following code.
 
     ```ts
-    // src/api/trpc/[trpc]/route.ts
+    ---
+    name: src/api/trpc/[trpc]/route.ts
+    ---
     import { appRouter } from "@/src/lib/trpc"; // importing the appRouter
     import { createContext } from "@/src/lib/trpc/context"; // importing the createContext function
     import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
@@ -317,7 +348,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   We're almost at the end. Now, we need to wrap the body using a tRPC Provider. So, let's do it quickly! Go inside your <Highlight content="Components" /> folder, and create a folder called <Highlight content="providers" /> inside it. Now, create a file called <Highlight content="client.tsx" /> inside it and paste the following code in it.
 
     ```tsx
-    // src/components/providers/client.tsx
+    ---
+    name: src/components/providers/client.tsx
+    ---
     // IMPORTANT: make sure this is marked as a client component
     "use client";
 
@@ -378,7 +411,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 -   Final Step, go to your <Highlight content="layout.tsx" /> file and wrap the body using the <Highlight content="ClientProvider" /> component we just created.
 
     ```tsx
-    // src/app/layout.tsx
+    ---
+    name: src/app/layout.tsx
+    ---
     import { ReactNode } from "react";
     import ClientProvider from "@/src/components/providers/client";
 
@@ -401,7 +436,9 @@ Inside this <Highlight content="lib" /> folder, let's create the files and folde
 Let's create a page where we can use tRPC. Create a file called <Highlight content="page.tsx" /> inside the <Highlight content="app" /> folder and paste the following code in it.
 
 ```tsx
-// src/app/page.tsx
+---
+name: src/app/page.tsx
+---
 "use client";
 
 import { trpc } from "@/src/lib/trpc/client";

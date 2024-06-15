@@ -1,6 +1,3 @@
-import "@/styles/github-dark.css";
-import fs from "fs";
-import path from "path";
 import { RelatedBlogCard, TableOfContents } from "@/components/blogs";
 import {
     getAuthorAvatar,
@@ -11,8 +8,8 @@ import {
 } from "@/components/blogs/utils";
 import { CopyButton } from "@/components/global/buttons";
 import {
-    MdxCode,
     MdxGallery,
+    MdxHighlight,
     MdxImage,
     MdxLink,
     YouTube,
@@ -23,7 +20,12 @@ import { ROBOTO_FONT } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
 import { languageSettings } from "@/lib/highlightjs";
 import { cn, getAbsoluteURL } from "@/lib/utils";
+import "@/styles/github-dark.css";
+import fs from "fs";
+import path from "path";
 import { format } from "date-fns";
+import matter from "gray-matter";
+import hljs from "highlight.js";
 import { Metadata } from "next";
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -209,7 +211,7 @@ function Page(props: PageProps) {
                             Link: MdxLink,
                             Image: MdxImage,
                             Gallery: MdxGallery,
-                            Highlight: MdxCode,
+                            Highlight: MdxHighlight,
                             h2: ({ children, ...props }) => (
                                 <h2
                                     id={children
@@ -289,23 +291,56 @@ function Page(props: PageProps) {
                                     })
                                     .join("");
 
+                                const { data: frontMatter, content } =
+                                    matter(stringfiedCode);
+
                                 return (
-                                    <div className="group relative">
-                                        <pre {...props} />
-                                        <CopyButton
-                                            content={stringfiedCode}
-                                            className="opacity-100 transition-all ease-in-out md:opacity-0 md:group-hover:opacity-100"
+                                    <div className="group">
+                                        <div className="flex items-center justify-between gap-5 rounded-md rounded-b-none bg-foreground p-2">
+                                            <p className="my-0 space-x-1 pl-1 text-background/60">
+                                                <span className="text-accent">
+                                                    &gt;
+                                                </span>{" "}
+                                                {frontMatter.name
+                                                    ? frontMatter.name
+                                                    : "Code Block"}
+                                            </p>
+                                            <CopyButton
+                                                content={content}
+                                                className="rounded-sm"
+                                            />
+                                        </div>
+                                        <pre
+                                            className="mt-0 rounded-t-none"
+                                            {...props}
                                         />
                                     </div>
                                 );
                             },
-                            code: ({ className, ...props }) => {
+                            code: ({ className, children, ...props }) => {
+                                const stringfiedCode = React.Children.toArray(
+                                    children
+                                )
+                                    .map((child) => {
+                                        if (React.isValidElement(child))
+                                            return child.props.children;
+                                        return child;
+                                    })
+                                    .join("");
+
+                                const { content } = matter(stringfiedCode);
+                                const highlightedContent =
+                                    hljs.highlightAuto(content).value;
+
                                 return (
                                     <code
                                         className={cn(
                                             "whitespace-pre-wrap",
                                             className
                                         )}
+                                        dangerouslySetInnerHTML={{
+                                            __html: highlightedContent,
+                                        }}
                                         {...props}
                                     />
                                 );
