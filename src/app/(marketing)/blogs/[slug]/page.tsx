@@ -8,6 +8,7 @@ import {
 } from "@/components/blogs/utils";
 import { CopyButton } from "@/components/global/buttons";
 import {
+    MdxCode,
     MdxGallery,
     MdxHighlight,
     MdxImage,
@@ -25,7 +26,6 @@ import fs from "fs";
 import path from "path";
 import { format } from "date-fns";
 import matter from "gray-matter";
-import hljs from "highlight.js";
 import { Metadata } from "next";
 import { SerializeOptions } from "next-mdx-remote/dist/types";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -317,34 +317,35 @@ function Page(props: PageProps) {
                                     </div>
                                 );
                             },
-                            code: ({ className, children, ...props }) => {
-                                const stringfiedCode = React.Children.toArray(
-                                    children
-                                )
-                                    .map((child) => {
-                                        if (React.isValidElement(child))
-                                            return child.props.children;
-                                        return child;
-                                    })
-                                    .join("");
+                            code: MdxCode,
+                            // code: ({ className, children, ...props }) => {
+                            //     const stringfiedCode = React.Children.toArray(
+                            //         children
+                            //     )
+                            //         .map((child) => {
+                            //             if (React.isValidElement(child))
+                            //                 return child.props.children;
+                            //             return child;
+                            //         })
+                            //         .join("");
 
-                                const { content } = matter(stringfiedCode);
-                                const highlightedContent =
-                                    hljs.highlightAuto(content).value;
+                            //     const { content } = matter(stringfiedCode);
+                            //     const highlightedContent =
+                            //         hljs.highlightAuto(content).value;
 
-                                return (
-                                    <code
-                                        className={cn(
-                                            "whitespace-pre-wrap",
-                                            className
-                                        )}
-                                        dangerouslySetInnerHTML={{
-                                            __html: highlightedContent,
-                                        }}
-                                        {...props}
-                                    />
-                                );
-                            },
+                            //     return (
+                            //         <code
+                            //             className={cn(
+                            //                 "whitespace-pre-wrap",
+                            //                 className
+                            //             )}
+                            //             dangerouslySetInnerHTML={{
+                            //                 __html: highlightedContent,
+                            //             }}
+                            //             {...props}
+                            //         />
+                            //     );
+                            // },
                             blockquote: ({ className, children, ...props }) => {
                                 const removeMargins = (
                                     child: React.ReactNode

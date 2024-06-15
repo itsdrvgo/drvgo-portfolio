@@ -3,3 +3,4 @@ export * from "./link";
 export * from "./image";
 export * from "./highlight";
 export * from "./gallery";
+export * from "./code";
