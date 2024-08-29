@@ -1,7 +1,7 @@
 <p align="center">
     <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://cdn.discordapp.com/attachments/1091399104480944158/1143144629387141230/DRVGO_--lg_--no-text_--dark-theme.png">
-        <img src="https://cdn.discordapp.com/attachments/1091399104480944158/1143144629387141230/DRVGO_--lg_--no-text_--dark-theme.png" width="200" alt="Logo for DRVGO">
+        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/itsdrvgo/drvgo-portfolio/blob/master/public/DRVGO.svg?raw=true">
+        <img src="https://github.com/itsdrvgo/drvgo-portfolio/blob/master/public/DRVGO.svg?raw=true" width="200" alt="Logo for DRVGO">
     </picture>
 </p>
 
@@ -22,9 +22,9 @@ DRVGO Portfolio is a personal portfolio website built with Next.js, TypeScript, 
 
 </center>
 
-<a href="http://itsdrvgo.me/" target="_blank">
+<a href="https://itsdrvgo.me/" target="_blank">
     <p align="center">
-        <img src="https://github.com/itsdrvgo/drvgo-portfolio/blob/master/public/og.webp?raw=true" alt="ev0" />
+        <img src="https://github.com/itsdrvgo/drvgo-portfolio/blob/master/public/og.webp?raw=true" alt="itsdrvgo" />
     </p>
 </a>
 
@@ -39,9 +39,12 @@ The portfolio website is built with the following technologies:
 -   [Next.JS 14 (App Router)](https://nextjs.org/): A powerful framework for building performant and SEO-friendly web applications.
 -   [TypeScript](https://www.typescriptlang.org/): Ensuring robust and type-safe code for enhanced development.
 -   [React.JS](https://react.dev/): Creating dynamic and interactive user interfaces for seamless navigation.
--   [Next UI](https://nextui.org/): The best library of manipulate the UI.
+-   [ShadCN UI](https://ui.shadcn.com/): The best library of manipulate the UI.
 -   [Tailwind CSS](https://tailwindcss.com/): Designing responsive layouts with ease and speed.
 -   [Framer Motion](https://www.framer.com/motion/): Adding delightful animations to user interactions.
+-   [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote#react-server-components-rsc--nextjs-app-directory-support): Rendering MDX content in Next.js applications.
+-   [Highlight.js](https://highlightjs.org/): Syntax highlighting for code blocks.
+-   [Zustand](https://zustand-demo.pmnd.rs/): A small, fast, and scalable state management library.
 
 ## Community
 
