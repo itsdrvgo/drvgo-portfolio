@@ -25,7 +25,7 @@ export function TechStack({ className, ...props }: GenericProps) {
             {...props}
         >
             <div className="sticky top-0 flex w-full max-w-[100rem] flex-col items-center gap-10 overflow-hidden md:h-screen md:flex-row md:gap-0">
-                <h4 className="z-10 flex items-center justify-center rounded-lg bg-background text-center text-4xl md:h-full md:flex-col md:gap-4 md:pl-5 md:pr-10 md:text-7xl">
+                <h4 className="z-10 flex items-center justify-center rounded-lg bg-background text-center text-3xl md:h-full md:flex-col md:gap-4 md:pl-5 md:pr-10 md:text-5xl 2xl:text-7xl">
                     <span>T</span>
                     <span>E</span>
                     <span>C</span>
