@@ -9,10 +9,7 @@ export function MdxLink(
 
     if (isInternalLink) {
         return (
-            <Link
-                className="text-sm text-primary no-underline md:text-base lg:my-0 lg:text-lg"
-                {...props}
-            >
+            <Link className="text-primary no-underline lg:my-0" {...props}>
                 {props.children}
             </Link>
         );
@@ -20,7 +17,7 @@ export function MdxLink(
 
     return (
         <Link
-            className="text-sm text-primary no-underline md:text-base lg:my-0 lg:text-lg"
+            className="text-primary no-underline lg:my-0"
             target="_blank"
             {...props}
         />
