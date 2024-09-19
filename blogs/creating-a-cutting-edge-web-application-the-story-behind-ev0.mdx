@@ -1,0 +1,148 @@
+---
+title: Creating a Cutting-Edge Web Application - The Story Behind EV0
+description: Behind the scenes of a cutting-edge web app - Discover how we built Create Ev0 from scratch and what makes it innovative.
+tags:
+    [
+        "nextjs",
+        "typescript",
+        "react",
+        "tutorial",
+        "javascript",
+        "ev0",
+        "create-ev0-app",
+        "t3-stack",
+        "ev0-stack",
+    ]
+authors: [{ "name": "DRVGO", "url": "https://x.com/itsdrvgo" }]
+date: 2024-09-18
+---
+
+<YouTube id="He-O7tuVD3zzi4" />
+
+## Introduction
+
+As developers, we're constantly pushing the boundaries of what's possible with code. But have you ever wondered what goes into building a truly cutting-edge web application? In this article, we'll take a deep dive into the making of Create EV0 App, a project that showcases the latest technologies and innovative approaches in web development.
+
+Whether you're a fellow developer looking to learn from our experiences or a curious reader interested in the behind-the-scenes story of a modern web app, this is the perfect read for you. So let's get started on an exciting journey through the world of code!
+
+In this article, I'll show you what problems we faced while building any web application, and how we solved them using our own tech-stack, which we call the **EV0 Stack**.
+
+<Image type="local" location="/images/ev0_home_page.png" />
+
+## What is the EV0 Stack?
+
+The **EV0 Stack** is a full-stack TypeScript framework that helps you build fast, robust, and maintainable web applications using the latest technologies. It is built on top of the following technologies:
+
+-   <Link href="https://nextjs.org/">Next.js</Link>: A React framework that enables server-side rendering and static site generation.
+-   <Link href="https://www.typescriptlang.org/">TypeScript</Link>: A superset of JavaScript that adds static types to the language.
+-   <Link href="https://tailwindcss.com/">Tailwind CSS</Link>: A utility-first CSS framework for rapidly building custom designs.
+-   <Link href="https://ui.shadcn.com/">ShadCN UI</Link>: A collection of accessible, reusable, and customizable UI components.
+-   <Link href="https://trpc.io/">tRPC</Link>: A TypeScript-first framework for building scalable and type-safe APIs.
+-   <Link href="https://supabase.com/">Supabase</Link>: An open-source alternative to Firebase that provides a real-time database and authentication system.
+-   <Link href="https://clerk.com/">Clerk</Link>: A user authentication and authorization service that provides a secure and customizable login experience.
+-   <Link href="https://www.mongodb.com/">MongoDB</Link>: A NoSQL database that provides a flexible and scalable data storage solution.
+-   <Link href="https://orm.drizzle.team/">Drizzle</Link>: A TypeScript-first ORM that provides a type-safe and efficient way to interact with databases.
+-   <Link href="https://www.prisma.io/">Prisma</Link>: A modern database toolkit that provides a type-safe and efficient way to interact with databases.
+-   <Link href="https://uploadthing.com/">UploadThing</Link>: A file upload service that provides a secure and efficient way to upload files to the cloud.
+
+<Image type="local" location="/images/ev0_tech_stack_grid.png" />
+
+## Challenges We Faced
+
+Building a web application is never a walk in the park. I am pretty sure, if you've been in the industry for a while, you're already familiar with <Link href="https://www.youtube.com/@t3dotgg">Theo</Link>'s <Link href="https://create.t3.gg/">T3 Stack</Link>. The T3 Stack is a great starting point for building full-stack applications, but we wanted to take it a step further. Here are some of the challenges we faced while building EV0:
+
+1. **Lack of Flexibility**: There is no doubt that the T3 Stack is one of the best stacks for building full-stack applications, but currently it lacks a lot of features that we wanted to implement in our application. For example, T3 Stack only gives you technologies like <Highlight content="Next.js" />, <Highlight content="TypeScript" />, <Highlight content="Tailwind CSS" />, <Highlight content="Prisma" />, <Highlight content="tRPC" />, and <Highlight content="NextAuth.js" />. On the other hand, we use <Highlight content="Supabase" />, <Highlight content="Clerk" />, <Highlight content="MongoDB" />, <Highlight content="Drizzle" />, and a lot more in our daily development.
+
+2. **UI Components**: The T3 Stack does not provide any UI components out of the box. We had to spend a lot of time building our own components or integrating third-party libraries like <Highlight content="ShadCN UI" />.
+
+3. **Authentication**: While <Highlight content="NextAuth.js" /> is a great authentication solution, we found it to be a bit limiting for our use case. We wanted a more customizable and secure authentication solution, which is why we decided to use <Highlight content="Clerk" /> and/or <Highlight content="Supabase" />.
+
+4. **Database Management**: Managing multiple databases can be a hassle, especially when you have to deal with different ORMs. <Highlight content="Prisma" /> is great, but we never liked the way it handles migrations and schema changes. That's why we decided to use <Highlight content="Drizzle" /> to handle SQL connections, but we still use <Highlight content="Prisma" /> for MongoDB.
+
+5. **File Uploads**: Handling file uploads can be a pain, especially when you have to deal with different file types and sizes. Fun fact, <Highlight content="UploadThing" /> is a service that was created by <Highlight content="Theo" /> and his team, but we never figured out why they didn't include it in the <Highlight content="T3 Stack" />.
+
+<Image type="local" location="/images/ev0_stack_comparison.jpg" />
+
+## Solving the Challenges
+
+To tackle these challenges, we had to come up with our own solutions. At first, we created a simple **boilerplate** that included all the technologies we wanted to use and just published it on **GitHub**. Hurrah! We had our own stack. But we quickly realized that we needed to make it more **robust** and **maintainable**. For example, it's unlikely that we'll always be using all the technologies in the stack, so we had to make something, by which we could easily **add** or **remove** technologies from the stack while setting up a new project.
+
+### Architecture
+
+We decided to create a **monorepo** that would contain all the packages we needed for building web applications. Each package would be responsible for a specific part of the application, such as **frontend**, **backend**, **database**, **authentication**, etc. This way, we could easily manage the dependencies between the packages and ensure that they work well together. Here's the link to the **EV0 Stack** monorepo: <Link href="https://github.com/itsdrvgo/create-ev0-app">Create EV0 App</Link>. Feel free to check it out while reading this article.
+
+> We used <Link href="https://turbo.build/repo/docs">Turbo Repo</Link> to manage our monorepo. Turbo Repo is a tool made by <Link href="https://vercel.com/">Vercel</Link> that helps you manage monorepos with ease.
+
+If you're already in the **EV0 Stack** monorepo, you'll see that we have a folder called **apps**. Going inside that folder, you'll see a folder called **www** and another called **cli**. The **www** folder contains the UI and docs for the application, while the **cli** folder contains the command-line interface for creating new projects using the **EV0 Stack**.
+
+### CLI
+
+The **CLI** is a crucial part of our stack. It allows developers to quickly scaffold new projects using the **EV0 Stack**. We wanted to make it as easy as possible for developers to get started with our stack, so we created a simple command that allows you to create a new project with just one line of code:
+
+```
+---
+name: Terminal
+language: bash
+---
+npx create-ev0-app@latest init
+```
+
+This command will prompt you to choose the technologies you want to include in your new project, and it will automatically set everything up for you. You can choose from a variety of options, including:
+
+```
+---
+name: Terminal
+language: bash
+---
+? Project name: (ev0-app)
+? Choose your authentication provider: (Use arrow keys)
+> Clerk
+  Supabase
+  None
+? Choose your database provider: (Use arrow keys)
+> Supabase (Postgres)
+  MongoDB
+  None
+? Select additional features: (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
+> ◯ tRPC
+  ◯ UploadThing (File Uploads)
+? Initialize a Git repository? (Y/n)
+? Install dependencies? (Y/n)
+```
+
+This way, developers can easily customize their projects according to their needs without having to manually configure everything. No more boilerplate code!
+
+## How it Works?
+
+- The **CLI** internally uses a combination of templates and scripts to generate the project structure. When you run the command, it will:
+
+    1. Create a new directory for your project.
+    2. Copy the necessary files and folders from the templates.
+    3. Install the required dependencies using your package manager (bun > pnpm > yarn > npm).
+    4. Set up the configuration files based on your choices.
+
+    This approach allows us to maintain a clean and organized codebase with best practices while providing flexibility for developers to customize their projects. We also include some of our own UI components, functions, and utilities to help developers get started quickly. For example, <Link href="/blogs/cfetch-and-cresponse-the-ultimate-fetch-api-combo-for-nextjs">cFetch and CResponse</Link> are two utility functions that we created to simplify API calls and responses.
+
+<Image type="local" location="/images/ev0_step_diagram.jpg" />
+
+- But, how we managed to create a CLI? We used <Link href="https://github.com/tj/commander.js#readme">Commander.js</Link> to build our command-line interface. Commander.js is a popular library for building CLI applications in Node.js. It provides a simple and intuitive way to define commands, options, and arguments, making it easy to create a powerful CLI for our stack.
+    1. We take all the user inputs and we go through a series of checks to ensure that the user has provided valid options. If everything is valid, we proceed to create the project.
+    2. We already have all possible templates in the **template** folder. The <Highlight content="base" /> template is the default template that includes all the necessary files and folders for a basic project. The other templates are specific to certain configurations, such as using Supabase or Clerk for authentication.
+    3. For example, there's a folder called **supabase-mongo-trpc** that contains all the necessary files for a project that uses **Supabase** as the <Highlight content="Authentication" /> provider, **MongoDB** as the <Highlight content="Database" /> provider and **tRPC** for API calls. Similarly, we check for all possible cross-combinations of the technologies and create a template for each one of them.
+
+- But, that is not all! We're done with setting up the project, but what about type-safe environment variables? We use <Link href="https://env.t3.gg/">t3-env</Link> to manage our environment variables in a type-safe way. This library allows us to define our environment variables in a single file and automatically generates TypeScript types for them. So, based on the user's input, we append the necessary environment variables to the **.env.local** and **env.mjs** files.
+
+- Finally, we also include a **README.md** file, a pre-built welcome page, and a few other files to help developers get started quickly.
+
+## Conclusion
+
+Building a cutting-edge web application is no small feat, but with the right tools and technologies, it can be a rewarding experience. The **EV0 Stack** is designed to provide developers with the flexibility and power they need to create modern web applications that meet their unique requirements. Feel free to check out the <Link href="https://ev0.vercel.app/">Create EV0 App</Link> website to learn more about our stack and how to get started.
+
+Here is a list of some projects that were built using the **EV0 Stack**:
+
+-   <Link href="https://ev0.vercel.app/">Create EV0 App</Link>: The official website for the EV0 Stack.
+-   <Link href="https://post-it-itsdrvgo.vercel.app/">Post It</Link>:A rip-off of popular social media apps.
+-   <Link href="https://github.com/itsdrvgo/hirehaven-mern">HireHaven</Link>: A cutting-edge job platform designed to connect innovative startups with talented professionals.
+-   <Link href="https://cryptor-itsdrvgo.vercel.app/">Cryptor</Link>: A simple and secure encryption and decryption tool built with Next.js and Tailwind CSS.
+
+Thanks for reading this article. I hope you found it helpful. If you have any questions, feel free to ask me on <Link href="https://x.com/itsdrvgo">X</Link>. I'll try my best to answer them. You can join our <Link href="https://dsc.gg/drvgo">Discord Server</Link> to get help from the community.
