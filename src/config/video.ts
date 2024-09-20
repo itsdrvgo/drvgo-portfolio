@@ -4,6 +4,7 @@ export interface ProgrammingVideo {
 }
 
 export const programmingVideos: ProgrammingVideo[] = [
+    { id: "O7tuVD3zzi4", name: "Introducing EV0 Stack..." },
     { id: "8bmsOOy8lbI", name: "Will Project IDX really replace VS Code?" },
     { id: "chvmiw9OAAs", name: "tRPC needs to document this ASAP!!" },
     {
