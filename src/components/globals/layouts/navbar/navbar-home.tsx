@@ -2,7 +2,7 @@
 
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/config/site";
-import { useNavbarStore } from "@/lib/store/navbar";
+import { useNavbarStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { DRVGO } from "../../svgs";
 
-export function NavbarHome() {
+export function NavbarHome({ className }: GenericProps) {
     const pathname = usePathname();
 
     const [isMenuHidden, setIsMenuHidden] = useState(false);
@@ -44,7 +44,8 @@ export function NavbarHome() {
             }}
             className={cn(
                 "fixed inset-x-0 top-0 z-50 flex h-auto w-full items-center justify-center p-4 px-3",
-                pathname !== "/" && "sticky"
+                pathname !== "/" && "sticky",
+                className
             )}
             data-menu-open={isMenuOpen}
         >

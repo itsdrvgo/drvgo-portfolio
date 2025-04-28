@@ -2,12 +2,12 @@
 
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/config/site";
-import { useNavbarStore } from "@/lib/store/navbar";
+import { useNavbarStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
-export function NavbarMob() {
+export function NavbarMob({ className }: GenericProps) {
     const isMenuOpen = useNavbarStore((state) => state.isOpen);
     const setIsMenuOpen = useNavbarStore((state) => state.setIsOpen);
 
@@ -47,7 +47,8 @@ export function NavbarMob() {
                 "transition-all duration-500 ease-in-out",
                 "h-0 data-[menu-open=true]:h-screen",
                 "-top-1/2 bottom-0 data-[menu-open=true]:top-0",
-                "md:hidden"
+                "md:hidden",
+                className
             )}
             ref={navContainerRef}
         >

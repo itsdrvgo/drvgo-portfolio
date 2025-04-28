@@ -1,22 +1,25 @@
-import { Footer, Navbar, NavbarMob } from "@/components/globals/layouts";
-import { SLACKEY_FONT } from "@/config/fonts";
-import { LayoutProps } from "@/types";
+import { slackey } from "@/app/fonts";
+import { Footer, NavbarHome, NavbarMob } from "@/components/globals/layouts";
+import { cn } from "@/lib/utils";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Blogs",
-    description: "Read blogs I write about latest technologies",
+    description: "Read about my thoughts and experiences",
 };
 
-function Layout({ children }: LayoutProps) {
+export default function Layout({ children }: LayoutProps) {
     return (
-        <div className="relative flex min-h-screen flex-col">
-            <Navbar className={SLACKEY_FONT.className} />
-            <main className="flex-1">{children}</main>
-            <Footer className={SLACKEY_FONT.className} />
-            <NavbarMob className={SLACKEY_FONT.className} />
+        <div
+            className={cn(
+                "relative flex min-h-screen flex-col",
+                slackey.className
+            )}
+        >
+            <NavbarHome />
+            <main className="flex flex-1 flex-col">{children}</main>
+            <Footer />
+            <NavbarMob />
         </div>
     );
 }
-
-export default Layout;

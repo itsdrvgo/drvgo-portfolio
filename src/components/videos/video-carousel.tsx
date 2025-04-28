@@ -19,7 +19,6 @@ export function VideoCarousel({
     className,
     videos,
     options,
-    ...props
 }: VideoCarouselProps) {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [emblaMainRef, emblaMainApi] = useEmblaCarousel(options);
