@@ -1,8 +1,8 @@
+import { slackey } from "@/app/fonts";
 import { Footer, NavbarHome, NavbarMob } from "@/components/globals/layouts";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { Metadata } from "next";
-import { slackey } from "../fonts";
 
 export const metadata: Metadata = {
     title: {

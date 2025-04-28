@@ -2,9 +2,9 @@
 
 import { ProgrammingVideo } from "@/config/video";
 import { cn } from "@/lib/utils";
-import { GenericProps } from "@/types";
 import { EmblaOptionsType } from "embla-carousel";
 import useEmblaCarousel from "embla-carousel-react";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
@@ -50,11 +50,21 @@ export function VideoCarousel({
     }, [emblaMainApi, onSelect]);
 
     return (
-        <div className={cn("", className)} {...props}>
-            <div className="overflow-hidden" ref={emblaMainRef}>
+        <motion.div
+            className={cn("", className)}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+        >
+            <motion.div
+                className="overflow-hidden rounded-xl"
+                ref={emblaMainRef}
+                whileHover={{ boxShadow: "0 15px 30px rgba(0, 0, 0, 0.1)" }}
+                transition={{ duration: 0.3 }}
+            >
                 <div className="embla__container flex">
                     {videos.map((video) => (
-                        <div
+                        <motion.div
                             key={video.id}
                             className="embla__slide min-w-0 p-1"
                         >
@@ -63,18 +73,28 @@ export function VideoCarousel({
                                     id={video.id}
                                     title={video.name}
                                 />
-                                <div className="absolute bottom-0 left-0 w-full bg-white/30 p-5 text-background">
+                                <motion.div
+                                    className="absolute bottom-0 left-0 w-full bg-white/30 p-5 text-background"
+                                    initial={{ y: "100%" }}
+                                    animate={{ y: 0 }}
+                                    transition={{ duration: 0.3, delay: 0.2 }}
+                                >
                                     <p className="drop-shadow">{video.name}</p>
-                                </div>
+                                </motion.div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
-            </div>
+            </motion.div>
 
-            <div className="embla-thumbs relative px-1">
-                <div className="absolute left-0 top-1/2 z-10 h-full w-10 -translate-y-1/2 bg-gradient-to-r from-background to-transparent" />
-                <div className="absolute right-0 top-1/2 z-10 h-full w-10 -translate-y-1/2 bg-gradient-to-l from-background to-transparent" />
+            <motion.div
+                className="embla-thumbs relative mt-4 px-1"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+            >
+                <div className="absolute top-1/2 left-0 z-10 h-full w-10 -translate-y-1/2 bg-gradient-to-r from-background to-transparent" />
+                <div className="absolute top-1/2 right-0 z-10 h-full w-10 -translate-y-1/2 bg-gradient-to-l from-background to-transparent" />
 
                 <div className="overflow-hidden" ref={emblaThumbsRef}>
                     <div className="flex">
@@ -83,14 +103,21 @@ export function VideoCarousel({
                                 key={video.id}
                                 className="embla-thumbs__slide aspect-video min-w-0 p-1"
                             >
-                                <button
+                                <motion.button
                                     onClick={() => onThumbClick(i)}
                                     type="button"
                                     className={cn(
                                         "size-full overflow-hidden rounded-lg",
                                         i === selectedIndex &&
-                                            "outline-double outline-foreground"
+                                            "outline-foreground outline-double"
                                     )}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    transition={{ duration: 0.2 }}
+                                    animate={{
+                                        opacity: i === selectedIndex ? 1 : 0.7,
+                                        scale: i === selectedIndex ? 1 : 0.95,
+                                    }}
                                 >
                                     <Image
                                         src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`}
@@ -99,12 +126,12 @@ export function VideoCarousel({
                                         height={720}
                                         className="size-full object-cover"
                                     />
-                                </button>
+                                </motion.button>
                             </div>
                         ))}
                     </div>
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }
