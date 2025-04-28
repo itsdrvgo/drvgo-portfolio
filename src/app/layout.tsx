@@ -1,10 +1,21 @@
 import { ClientProvider } from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
-import { getAbsoluteURL } from "@/lib/utils";
-import { LayoutProps } from "@/types";
-import { Metadata } from "next";
+import { cn, getAbsoluteURL } from "@/lib/utils";
+import { Metadata, Viewport } from "next";
 import "./globals.css";
+import { roboto, slackey } from "./fonts";
+
+export const viewport: Viewport = {
+    themeColor: [
+        { media: "(prefers-color-scheme: light)", color: "white" },
+        { media: "(prefers-color-scheme: dark)", color: "black" },
+    ],
+    colorScheme: "light",
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+};
 
 export const metadata: Metadata = {
     title: {
@@ -13,50 +24,69 @@ export const metadata: Metadata = {
     },
     description: siteConfig.description,
     keywords: siteConfig.keywords,
-    authors: [
-        {
-            name: siteConfig.name,
-            url: getAbsoluteURL(),
-        },
-    ],
+    authors: [siteConfig.developer],
+    publisher: `${siteConfig.name} Team`,
+    formatDetection: {
+        email: false,
+        address: false,
+        telephone: false,
+    },
+    referrer: "origin-when-cross-origin",
+    category: siteConfig.category,
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "black-translucent",
+        title: siteConfig.name,
+    },
     creator: siteConfig.name,
     openGraph: {
-        type: "website",
-        locale: "en_US",
-        url: getAbsoluteURL(),
         title: siteConfig.name,
         description: siteConfig.description,
+        url: getAbsoluteURL(),
         siteName: siteConfig.name,
         images: [
             {
-                url: siteConfig.ogImage,
-                width: 1200,
-                height: 630,
+                ...siteConfig.og,
                 alt: siteConfig.name,
             },
         ],
+        locale: "en_US",
+        type: "website",
     },
     twitter: {
         card: "summary_large_image",
         title: siteConfig.name,
         description: siteConfig.description,
-        images: [siteConfig.ogImage],
+        images: [siteConfig.og.url],
         creator: "@itsdrvgo",
     },
     icons: {
-        icon: "/favicon.ico",
-        shortcut: "/favicon-16x16.png",
+        icon: [
+            {
+                url: "/favicon.ico",
+                sizes: "32x32",
+                type: "image/x-icon",
+            },
+            {
+                url: "/favicon-96x96.png",
+                sizes: "96x96",
+                type: "image/png",
+            },
+        ],
         apple: "/apple-touch-icon.png",
     },
-    manifest: getAbsoluteURL("/site.webmanifest"),
+    manifest: "/site.webmanifest",
     metadataBase: new URL(getAbsoluteURL()),
 };
 
-function RootLayout({ children }: LayoutProps) {
+export default function RootLayout({ children }: LayoutProps) {
     return (
-        <html lang="en" suppressHydrationWarning>
-            <head />
-            <body className="min-h-screen overflow-x-hidden antialiased">
+        <html
+            lang="en"
+            suppressHydrationWarning
+            className={cn(slackey.variable, roboto.variable)}
+        >
+            <body className={cn("min-h-screen overflow-x-hidden antialiased")}>
                 <ClientProvider>
                     {children}
                     <Toaster />
@@ -65,5 +95,3 @@ function RootLayout({ children }: LayoutProps) {
         </html>
     );
 }
-
-export default RootLayout;

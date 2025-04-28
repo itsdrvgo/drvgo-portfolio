@@ -6,7 +6,7 @@ import {
     getReadTime,
     getRelatedBlogs,
 } from "@/components/blogs/utils";
-import { CopyButton } from "@/components/global/buttons";
+import { CopyButton } from "@/components/globals/buttons";
 import {
     MdxCode,
     MdxGallery,
@@ -132,7 +132,7 @@ function Page(props: PageProps) {
 
                     <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-4">
-                            <Avatar className="outline outline-1 outline-primary">
+                            <Avatar className="outline-primary outline outline-1">
                                 <AvatarImage
                                     src={getAuthorAvatar(
                                         blogAuthors.map((author) =>
@@ -183,7 +183,7 @@ function Page(props: PageProps) {
                                     )}
                                 </p>
 
-                                <p className="my-0 text-sm text-muted-foreground">
+                                <p className="text-muted-foreground my-0 text-sm">
                                     {format(
                                         new Date(blog.frontMatter.date),
                                         "do MMMM, yyyy"
@@ -197,7 +197,7 @@ function Page(props: PageProps) {
                         </p>
                     </div>
 
-                    <div className="my-10 rounded-lg bg-card p-6 md:px-10">
+                    <div className="bg-card my-10 rounded-lg p-6 md:px-10">
                         <h2 className="my-0 mb-5 lg:my-0 lg:mb-5">
                             Table of Contents
                         </h2>
@@ -303,8 +303,8 @@ function Page(props: PageProps) {
 
                                 return (
                                     <div>
-                                        <div className="flex items-center justify-between gap-5 rounded-md rounded-b-none bg-foreground p-2">
-                                            <p className="my-0 space-x-1 pl-1 text-background/60">
+                                        <div className="bg-foreground flex items-center justify-between gap-5 rounded-md rounded-b-none p-2">
+                                            <p className="text-background/60 my-0 space-x-1 pl-1">
                                                 <span className="text-accent">
                                                     &gt;
                                                 </span>{" "}

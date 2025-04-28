@@ -1,4 +1,4 @@
-import { Footer, Navbar, NavbarMob } from "@/components/global/layouts";
+import { Footer, Navbar, NavbarMob } from "@/components/globals/layouts";
 import { SLACKEY_FONT } from "@/config/fonts";
 import { LayoutProps } from "@/types";
 import { Metadata } from "next";

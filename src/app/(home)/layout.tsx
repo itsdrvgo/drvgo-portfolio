@@ -1,27 +1,28 @@
-import { Footer, Navbar, NavbarMob } from "@/components/global/layouts";
-import { SLACKEY_FONT } from "@/config/fonts";
+import { Footer, NavbarHome, NavbarMob } from "@/components/globals/layouts";
+import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import { LayoutProps } from "@/types";
 import { Metadata } from "next";
+import { slackey } from "../fonts";
 
 export const metadata: Metadata = {
-    title: "Home",
+    title: {
+        default: siteConfig.description + " - " + siteConfig.name,
+        template: "%s - " + siteConfig.name,
+    },
 };
 
-function Layout({ children }: LayoutProps) {
+export default function Layout({ children }: LayoutProps) {
     return (
         <div
             className={cn(
-                SLACKEY_FONT.className,
-                "relative flex min-h-screen flex-col"
+                "relative flex min-h-screen flex-col",
+                slackey.className
             )}
         >
-            <Navbar />
-            <main className="flex-1">{children}</main>
+            <NavbarHome />
+            <main className="flex flex-1 flex-col">{children}</main>
             <Footer />
             <NavbarMob />
         </div>
     );
 }
-
-export default Layout;

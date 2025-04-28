@@ -1,11 +1,11 @@
 "use client";
 
-import { About, Cutout, Hero, Showcase, TechStack } from "@/components/home";
+import { About, Cutout, Landing, Showcase, TechStack } from "@/components/home";
 
 function Page() {
     return (
         <>
-            <Hero />
+            <Landing />
             <About />
             <Cutout isReversed />
             <Showcase />

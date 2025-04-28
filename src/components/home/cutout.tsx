@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { GenericProps } from "@/types";
 
 interface CutoutProps extends GenericProps {
     isReversed?: boolean;

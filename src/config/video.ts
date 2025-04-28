@@ -17,7 +17,7 @@ export const programmingVideos: ProgrammingVideo[] = [
         name: "I found a way to handle Pagination in Drizzle",
     },
     { id: "FYo-GR_utko", name: "No more app.use() from now on... Nexpress??" },
-    { id: "KC1oC3ZdFPA", name: 'I made a rip off - "Post It"' },
+    { id: "KC1oC3ZdFPA", name: "I made a rip off - 'Post It'" },
     { id: "Tonu_bAUhy0", name: "The Survey is here..." },
     {
         id: "Wb107eho0a4",

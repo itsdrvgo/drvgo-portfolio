@@ -1,19 +1,19 @@
+"use client";
+
 import { SVGProps } from "react";
 
-interface DRVGOSVGProps extends SVGProps<SVGSVGElement> {
+interface DRVGOProps extends SVGProps<SVGSVGElement> {
     isDark?: boolean;
-    fill?: string;
 }
 
 export function DRVGO({
     width,
     height,
-    isDark,
-    fill = "#abcff9",
     className,
+    isDark = false,
     ...props
-}: DRVGOSVGProps) {
-    const color = isDark ? "#000" : fill;
+}: DRVGOProps) {
+    const color = isDark ? "#000" : "#abcff9";
 
     return (
         <svg
@@ -26,7 +26,6 @@ export function DRVGO({
             className={className}
             {...props}
         >
-            <defs></defs>
             <path
                 fill={color}
                 d="M527.38,876.77,736,695.5c51.23-44.52,51.23-124.06,0-168.58L527.38,345.65c-72.28-62.81-184.91-11.47-184.91,84.29V792.48C342.47,888.24,455.1,939.58,527.38,876.77Z"

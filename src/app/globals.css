@@ -1,125 +1,195 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:is(.dark *));
 
-@layer base {
-    :root {
-        --background: 270 80% 98%;
-        --foreground: 267 77% 5%;
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
 
-        --card: 0 0% 75%;
-        --card-foreground: 222.2 84% 4.9%;
+    --animate-spin-box-1: spin-box 6s linear infinite;
+    --animate-spin-box-2: spin-box-rev 8s linear infinite 0.5s;
+    --animate-spin-box-3: spin-box 10s linear infinite 1s;
 
-        --popover: 0 0% 100%;
-        --popover-foreground: 222.2 84% 4.9%;
-
-        --primary: 265 63% 47%;
-        --primary-foreground: 210 40% 98%;
-
-        --secondary: 96 71% 53%;
-        --secondary-foreground: 222.2 47.4% 11.2%;
-
-        --muted: 210 40% 96.1%;
-        --muted-foreground: 215.4 16.3% 46.9%;
-
-        --accent: 212 85% 82%;
-        --accent-foreground: 222.2 47.4% 11.2%;
-
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 210 40% 98%;
-
-        --border: 214.3 31.8% 91.4%;
-        --input: 214.3 31.8% 91.4%;
-        --ring: 222.2 84% 4.9%;
-
-        --radius: 0.5rem;
-    }
-
-    .dark {
-        --background: 222.2 84% 4.9%;
-        --foreground: 210 40% 98%;
-
-        --card: 222.2 84% 4.9%;
-        --card-foreground: 210 40% 98%;
-
-        --popover: 222.2 84% 4.9%;
-        --popover-foreground: 210 40% 98%;
-
-        --primary: 210 40% 98%;
-        --primary-foreground: 222.2 47.4% 11.2%;
-
-        --secondary: 217.2 32.6% 17.5%;
-        --secondary-foreground: 210 40% 98%;
-
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
-
-        --accent: 217.2 32.6% 17.5%;
-        --accent-foreground: 210 40% 98%;
-
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 210 40% 98%;
-
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
-        --ring: 212.7 26.8% 83.9%;
-    }
-
-    .spin_box_1 {
-        animation: spin_box 6s linear infinite;
-    }
-
-    .spin_box_2 {
-        animation: spin_box_rev 8s linear infinite 0.5s;
-    }
-
-    .spin_box_3 {
-        animation: spin_box 10s linear infinite 1s;
-    }
-
-    @keyframes spin_box {
+    @keyframes spin {
         to {
             transform: rotate(360deg);
         }
     }
 
-    @keyframes spin_box_rev {
+    @keyframes reverse {
         to {
             transform: rotate(-360deg);
         }
     }
+}
 
+button {
+    cursor: pointer;
+}
+
+:root {
+    --background: oklch(0.979 0.019 270);
+    --foreground: oklch(0.13 0.0474 304.18);
+
+    --card: oklch(0.651 0.011 0);
+    --card-foreground: oklch(0.119 0.134 222.2);
+
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.119 0.134 222.2);
+
+    --primary: oklch(0.47 0.2153 295.84);
+    --primary-foreground: oklch(0.979 0.017 210);
+
+    --secondary: oklch(0.8 0.2194 136.07);
+    --secondary-foreground: oklch(0.175 0.054 222.2);
+
+    --muted: oklch(0.97 0.0068 247.9);
+    --muted-foreground: oklch(0.479 0.043 215.4);
+
+    --accent: oklch(0.84 0.070319 252.0385);
+    --accent-foreground: oklch(0.175 0.054 222.2);
+
+    --destructive: oklch(0.64 0.2078 25.33);
+    --destructive-foreground: oklch(0.979 0.017 210);
+
+    --border: oklch(0 0 0);
+    --input: oklch(0.931 0.012 214.3);
+    --ring: oklch(0.119 0.134 222.2);
+
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+
+    --radius: 0.5rem;
+
+    --sidebar: oklch(15.72 0.0039 229.1);
+    --sidebar-foreground: oklch(0.984 0.003 247.858);
+
+    --sidebar-primary: oklch(0.208 0.042 265.755);
+    --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+
+    --sidebar-accent: oklch(0.968 0.007 247.896);
+    --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+
+    --sidebar-border: oklch(0.929 0.013 255.508);
+    --sidebar-ring: oklch(0.704 0.04 256.788);
+}
+
+.dark {
+    --background: oklch(0.119 0.134 222.2);
+    --foreground: oklch(0.979 0.017 210);
+
+    --card: oklch(0.119 0.134 222.2);
+    --card-foreground: oklch(0.979 0.017 210);
+
+    --popover: oklch(0.119 0.134 222.2);
+    --popover-foreground: oklch(0.979 0.017 210);
+
+    --primary: oklch(0.979 0.017 210);
+    --primary-foreground: oklch(0.175 0.054 222.2);
+
+    --secondary: oklch(0.202 0.042 217.2);
+    --secondary-foreground: oklch(0.979 0.017 210);
+
+    --muted: oklch(0.202 0.042 217.2);
+    --muted-foreground: oklch(0.597 0.066 215);
+
+    --accent: oklch(0.202 0.042 217.2);
+    --accent-foreground: oklch(0.979 0.017 210);
+
+    --destructive: oklch(0.361 0.097 0);
+    --destructive-foreground: oklch(0.979 0.017 210);
+
+    --border: oklch(0.202 0.042 217.2);
+    --input: oklch(0.202 0.042 217.2);
+    --ring: oklch(0.85 0.023 212.7);
+
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+
+    --sidebar: oklch(20.72 0.0039 229.1);
+    --sidebar-foreground: oklch(0.984 0.003 247.858);
+
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+
+    --sidebar-accent: oklch(0.279 0.041 260.031);
+    --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+
+    --sidebar-border: oklch(0.279 0.041 260.031);
+    --sidebar-ring: oklch(0.446 0.043 257.281);
+}
+
+.embla__container {
+    backface-visibility: hidden;
+    touch-action: pan-y pinch-zoom;
+}
+
+.embla__slide {
+    flex: 0 0 100%;
+}
+
+.embla-thumbs__slide {
+    flex: 0 0 22%;
+}
+
+@layer base {
     * {
         @apply border-border;
     }
-
     body {
         @apply bg-background text-foreground;
     }
+}
 
-    ::-webkit-scrollbar {
-        @apply size-[7px] rounded-full bg-background;
-    }
+::-webkit-scrollbar {
+    @apply size-[7px] rounded-full bg-background;
+}
 
-    ::-webkit-scrollbar-thumb {
-        @apply rounded-md bg-primary;
-    }
+::-webkit-scrollbar-thumb {
+    @apply rounded-md bg-primary;
+}
 
-    ::-webkit-scrollbar-thumb:hover {
-        @apply bg-primary/80;
-    }
-
-    /* Embla */
-    .embla__container {
-        backface-visibility: hidden;
-        touch-action: pan-y pinch-zoom;
-    }
-
-    .embla__slide {
-        flex: 0 0 100%;
-    }
-
-    .embla-thumbs__slide {
-        flex: 0 0 22%;
-    }
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/80;
 }

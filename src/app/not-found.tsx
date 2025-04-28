@@ -1,26 +1,13 @@
-import { GoBackButton } from "@/components/global/buttons";
-import { buttonVariants } from "@/components/ui/button";
-import { EmptyPlaceholder } from "@/components/ui/empty-placeholder";
+import { NotFoundPage } from "@/components/globals/404";
 
-function Page() {
+export default function NotFound() {
     return (
-        <div
-            className="flex h-screen items-center justify-center bg-background p-5"
-            style={{
-                backgroundImage: "url(/noise-light.png)",
-            }}
-        >
-            <EmptyPlaceholder
-                className="max-w-md"
-                icon="construction"
-                title="Page not found"
-                description="Either this page is under maintenance or the page does not exist. Come back later."
-                endContent={
-                    <GoBackButton className={buttonVariants({ size: "sm" })} />
-                }
-            />
+        <div className="relative flex h-screen flex-col">
+            <main className="flex flex-1 items-center justify-center">
+                <div className="w-full max-w-xl space-y-6">
+                    <NotFoundPage />
+                </div>
+            </main>
         </div>
     );
 }
-
-export default Page;

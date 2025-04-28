@@ -1,23 +1,24 @@
 "use client";
 
 import { Icons } from "@/components/icons";
-import { menu } from "@/config/menu";
+import { siteConfig } from "@/config/site";
 import { useNavbarStore } from "@/lib/store/navbar";
 import { cn } from "@/lib/utils";
-import { GenericProps } from "@/types";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { DRVGO } from "../../svgs";
 
-export function Navbar({ className }: GenericProps) {
+export function NavbarHome() {
+    const pathname = usePathname();
+
     const [isMenuHidden, setIsMenuHidden] = useState(false);
+
     const isMenuOpen = useNavbarStore((state) => state.isOpen);
     const setIsMenuOpen = useNavbarStore((state) => state.setIsOpen);
 
     const { scrollY } = useScroll();
-    const pathname = usePathname();
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         const previous = scrollY.getPrevious() ?? 0;
@@ -43,8 +44,7 @@ export function Navbar({ className }: GenericProps) {
             }}
             className={cn(
                 "fixed inset-x-0 top-0 z-50 flex h-auto w-full items-center justify-center p-4 px-3",
-                pathname !== "/" && "sticky",
-                className
+                pathname !== "/" && "sticky"
             )}
             data-menu-open={isMenuOpen}
         >
@@ -58,7 +58,7 @@ export function Navbar({ className }: GenericProps) {
                     className="rounded-full bg-foreground p-1 text-background md:hidden"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
-                    <Icons.chevronLeft
+                    <Icons.ChevronLeft
                         className={cn(
                             "transition-all ease-in-out",
                             isMenuOpen && "-rotate-90"
@@ -67,22 +67,22 @@ export function Navbar({ className }: GenericProps) {
                 </button>
 
                 <div className="hidden items-center gap-5 p-8 px-10 md:flex">
-                    {menu.map((item, index) => (
+                    {siteConfig.menu.map((item, index) => (
                         <Link
                             className="text-2xl font-bold uppercase"
                             href={item.href}
                             target={item.isExternal ? "_blank" : "_self"}
                             key={index}
                         >
-                            {item.title}
+                            {item.name}
                         </Link>
                     ))}
                 </div>
 
-                <div className="hidden bg-accent p-6 px-8 md:inline-block">
+                <div className="hidden border-l bg-accent p-6 px-8 md:inline-block">
                     <Link href="/support">
                         <div className="rounded-full bg-black p-2">
-                            <Icons.discord className="size-8 text-white" />
+                            <Icons.Discord className="size-8 text-white" />
                         </div>
                     </Link>
                 </div>
