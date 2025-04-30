@@ -1,6 +1,5 @@
 import { skills } from "@/config/tech-stack";
 import { cn } from "@/lib/utils";
-import { Skill } from "@/types";
 import { motion, useScroll, useTransform } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -97,7 +96,13 @@ export function TechStack({ className, ...props }: GenericProps) {
     );
 }
 
-function SkillCard({ skill, index }: { skill: Skill; index: number }) {
+function SkillCard({
+    skill,
+    index,
+}: {
+    skill: (typeof skills)[number];
+    index: number;
+}) {
     return (
         <motion.div
             key={skill.name}
@@ -149,16 +154,16 @@ function SkillCard({ skill, index }: { skill: Skill; index: number }) {
                 />
 
                 <motion.div
-                    className="relative z-10 aspect-video overflow-hidden rounded-md border shadow-md"
+                    className="relative z-10 flex aspect-video items-center justify-center overflow-hidden rounded-md border bg-gradient-to-br from-gray-900 via-blue-950 to-yellow-950 shadow-md"
                     whileHover={{
                         scale: 1.05,
                         transition: { duration: 0.3 },
                     }}
                 >
                     <Image
-                        src={skill.image}
+                        src={skill.icon}
                         alt={skill.name}
-                        className="size-full object-cover"
+                        className="size-32"
                         width={500}
                         height={500}
                     />

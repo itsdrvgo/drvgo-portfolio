@@ -1,14 +1,5 @@
 import { Icons } from "@/components/icons";
-import { StaticImageData } from "next/image";
 import { HTMLAttributes, ReactNode } from "react";
-
-export type Skill = {
-    name: string;
-    description: string;
-    image: StaticImageData;
-    icon: string;
-    href: string;
-};
 
 declare global {
     type GenericProps = HTMLAttributes<HTMLElement>;

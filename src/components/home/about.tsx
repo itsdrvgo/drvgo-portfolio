@@ -1,4 +1,3 @@
-import AboutGrid from "@/../public/about_grid.webp";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import Image from "next/image";
@@ -119,9 +118,10 @@ export function About({ className, ...props }: GenericProps) {
                             transition={{ duration: 0.3 }}
                         >
                             <Image
-                                src={AboutGrid}
+                                src="https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPebMUomgUrQCwfcRyvk6Vs1No34xYu5Pa8gIEd"
                                 alt="About Grid"
                                 width={500}
+                                height={500}
                             />
                         </motion.div>
                     </motion.div>
