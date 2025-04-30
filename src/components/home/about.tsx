@@ -101,7 +101,9 @@ export function About({ className, ...props }: GenericProps) {
                                 asChild
                                 className="rounded-full border p-5 py-6 text-lg transition-transform hover:scale-105 md:p-6 md:py-7 md:text-xl"
                             >
-                                <Link href="#">Download CV</Link>
+                                <Link href="https://drive.google.com/file/d/18iKi3CcC4g82lFDoCfc3ZWBo9iqCiHNU/view?usp=sharing">
+                                    Download CV
+                                </Link>
                             </Button>
                         </motion.div>
                     </motion.div>
