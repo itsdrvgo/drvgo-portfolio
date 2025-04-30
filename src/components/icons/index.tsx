@@ -9,8 +9,10 @@ import {
     Home,
     Instagram,
     LucideProps,
+    Search,
     Twitter,
     Video,
+    X,
     Youtube,
     type IconNode as LucideIcon,
 } from "lucide-react";
@@ -18,6 +20,8 @@ import {
 export type Icon = LucideIcon;
 
 export const Icons = {
+    X,
+    Search,
     Download,
     ChevronRight,
     ChevronLeft,

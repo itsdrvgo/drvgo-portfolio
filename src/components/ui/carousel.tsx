@@ -13,7 +13,7 @@ type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
 type CarouselOptions = UseCarouselParameters[0];
 type CarouselPlugin = UseCarouselParameters[1];
 
-type CarouselProps = {
+export type CarouselProps = {
     opts?: CarouselOptions;
     plugins?: CarouselPlugin;
     orientation?: "horizontal" | "vertical";

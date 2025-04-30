@@ -1,7 +1,8 @@
 ---
 title: Creating a Cutting-Edge Web Application - The Story Behind EV0
 description: Behind the scenes of a cutting-edge web app - Discover how we built Create Ev0 from scratch and what makes it innovative.
-tags:
+tags: ["nextjs", "story"]
+keywords:
     [
         "nextjs",
         "typescript",
@@ -13,7 +14,8 @@ tags:
         "t3-stack",
         "ev0-stack",
     ]
-authors: [{ "name": "DRVGO", "url": "https://x.com/itsdrvgo" }]
+authors: [{ "name": "DRVGO", "url": "https://x.com/itsdrvgo", "image": "https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPeUXA671PVbT4SRsgqLfouprvM7XwytkGdA5cV" }]
+thumbnail: https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPetiEhn17aDhPeBAW3cortMyuz0gkv1Kq2dC5l
 date: 2024-09-18
 ---
 
@@ -27,7 +29,7 @@ Whether you're a fellow developer looking to learn from our experiences or a cur
 
 In this article, I'll show you what problems we faced while building any web application, and how we solved them using our own tech-stack, which we call the **EV0 Stack**.
 
-<Image type="local" location="/images/ev0_home_page.png" />
+<Image url="https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPegD9sjiSS7FPCR4yire1sU65vd2NQDhtX8aG9" />
 
 ## What is the EV0 Stack?
 
@@ -45,7 +47,7 @@ The **EV0 Stack** is a full-stack TypeScript framework that helps you build fast
 -   <Link href="https://www.prisma.io/">Prisma</Link>: A modern database toolkit that provides a type-safe and efficient way to interact with databases.
 -   <Link href="https://uploadthing.com/">UploadThing</Link>: A file upload service that provides a secure and efficient way to upload files to the cloud.
 
-<Image type="local" location="/images/ev0_tech_stack_grid.png" />
+<Image url="https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPe7MXtBoKikAujgx5TKvRGZ41Vzq7IYE3Sym9s" />
 
 ## Challenges We Faced
 
@@ -61,7 +63,7 @@ Building a web application is never a walk in the park. I am pretty sure, if you
 
 5. **File Uploads**: Handling file uploads can be a pain, especially when you have to deal with different file types and sizes. Fun fact, <Highlight content="UploadThing" /> is a service that was created by <Highlight content="Theo" /> and his team, but we never figured out why they didn't include it in the <Highlight content="T3 Stack" />.
 
-<Image type="local" location="/images/ev0_stack_comparison.jpg" />
+<Image url="https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPeLx89pR60pBCRt9geSjm4zYDoVswixbU7fPWZ" />
 
 ## Solving the Challenges
 
@@ -123,7 +125,7 @@ This way, developers can easily customize their projects according to their need
 
     This approach allows us to maintain a clean and organized codebase with best practices while providing flexibility for developers to customize their projects. We also include some of our own UI components, functions, and utilities to help developers get started quickly. For example, <Link href="/blogs/cfetch-and-cresponse-the-ultimate-fetch-api-combo-for-nextjs">cFetch and CResponse</Link> are two utility functions that we created to simplify API calls and responses.
 
-<Image type="local" location="/images/ev0_step_diagram.jpg" />
+<Image url="https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPedeeQuviKpTuImeE32nP8dyYcJawsDbUF1VQ7" />
 
 - But, how we managed to create a CLI? We used <Link href="https://github.com/tj/commander.js#readme">Commander.js</Link> to build our command-line interface. Commander.js is a popular library for building CLI applications in Node.js. It provides a simple and intuitive way to define commands, options, and arguments, making it easy to create a powerful CLI for our stack.
     1. We take all the user inputs and we go through a series of checks to ensure that the user has provided valid options. If everything is valid, we proceed to create the project.

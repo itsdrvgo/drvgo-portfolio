@@ -66,7 +66,7 @@ button {
     --background: oklch(0.979 0.019 270);
     --foreground: oklch(0.13 0.0474 304.18);
 
-    --card: oklch(0.651 0.011 0);
+    --card: oklch(0.86 0.011 0);
     --card-foreground: oklch(0.119 0.134 222.2);
 
     --popover: oklch(1 0 0);
@@ -78,7 +78,7 @@ button {
     --secondary: oklch(0.8 0.2194 136.07);
     --secondary-foreground: oklch(0.175 0.054 222.2);
 
-    --muted: oklch(0.97 0.0068 247.9);
+    --muted: oklch(0.94 0.0068 247.9);
     --muted-foreground: oklch(0.479 0.043 215.4);
 
     --accent: oklch(0.84 0.070319 252.0385);
