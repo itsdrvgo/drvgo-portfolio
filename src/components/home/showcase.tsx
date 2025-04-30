@@ -1,88 +1,12 @@
 "use client";
 
-import CreateEV0App from "@/../public/projects/create_ev0_app.jpeg";
-import Cryptor from "@/../public/projects/cryptor.jpeg";
-import PeerAmpFS from "@/../public/projects/peeramp_fs.jpeg";
-import PostItBG from "@/../public/projects/post_it.jpeg";
-import PrimeBot from "@/../public/projects/prime_bot.jpeg";
-import Routez from "@/../public/projects/routez.jpeg";
-import XarOSBG from "@/../public/projects/xar_os.jpeg";
-import { GITHUB_BASE_URL } from "@/config/const";
+import { projects } from "@/config/projects";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Icons } from "../icons";
-
-interface Project {
-    name: string;
-    description: string;
-    source: string;
-    demo?: string;
-    thumbnail: StaticImageData;
-    isActive?: boolean;
-}
-
-const projects: Project[] = [
-    {
-        name: "Post It",
-        description:
-            "A simple rip-off of social media apps like Twitter, Facebook, Instagram, etc.",
-        source: GITHUB_BASE_URL + "itsdrvgo/post-it",
-        demo: "https://post-it-itsdrvgo.vercel.app/",
-        thumbnail: PostItBG,
-        isActive: true,
-    },
-    {
-        name: "Routez",
-        description: "Next.JS like file-based routing for Express.js",
-        source: GITHUB_BASE_URL + "itsdrvgo/routez",
-        thumbnail: Routez,
-        isActive: true,
-    },
-    {
-        name: "PeerAmp File Server",
-        description: "The official server of PeerAmp to handle files",
-        source: GITHUB_BASE_URL + "itsdrvgo/peeramp-file-server",
-        thumbnail: PeerAmpFS,
-        isActive: true,
-    },
-    {
-        name: "Cryptor",
-        description:
-            "A simple, secure, and fast encryption and decryption tool",
-        source: GITHUB_BASE_URL + "itsdrvgo/cryptor",
-        demo: "https://cryptor-itsdrvgo.vercel.app/",
-        thumbnail: Cryptor,
-        isActive: true,
-    },
-    {
-        name: "Create EV0 App",
-        description:
-            "The best way to start your next Next.js project in a type-safe environment.",
-        source: GITHUB_BASE_URL + "itsdrvgo/create-ev0-app",
-        demo: "https://ev0.vercel.app/",
-        thumbnail: CreateEV0App,
-        isActive: true,
-    },
-    {
-        name: "XAR OS",
-        description:
-            "A stunning and feature-rich MacOS clone created using Next.JS.",
-        source: GITHUB_BASE_URL + "itsdrvgo/xar-os",
-        demo: "https://xar-os.vercel.app/",
-        thumbnail: XarOSBG,
-        isActive: true,
-    },
-    {
-        name: "Prime (Discord Bot)",
-        description:
-            "PayPal integrated Discord bot for managing orders, payments, etc.",
-        source: GITHUB_BASE_URL + "itsdrvgo/prime-bot",
-        thumbnail: PrimeBot,
-    },
-];
 
 export function Showcase({ className }: GenericProps) {
     const showcaseLetters = "SHOWCASE".split("");
@@ -105,22 +29,20 @@ export function Showcase({ className }: GenericProps) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: 0.3 }}
                 >
-                    {projects
-                        .filter((project) => project.isActive)
-                        .map((project, i) => (
-                            <ProjectCard
-                                project={project}
-                                index={i}
-                                key={project.name}
-                                colSpan={
-                                    i === 0 || i === 3 || i === 4 ? true : false
-                                }
-                                lastItem={
-                                    projects.length % 2 !== 0 &&
-                                    i === projects.length - 1
-                                }
-                            />
-                        ))}
+                    {projects.map((project, i) => (
+                        <ProjectCard
+                            project={project}
+                            index={i}
+                            key={project.name}
+                            colSpan={
+                                i === 0 || i === 3 || i === 4 ? true : false
+                            }
+                            lastItem={
+                                projects.length % 2 !== 0 &&
+                                i === projects.length - 1
+                            }
+                        />
+                    ))}
                 </motion.div>
 
                 <motion.h3
@@ -162,7 +84,7 @@ function ProjectCard({
     colSpan,
     lastItem,
 }: {
-    project: Project;
+    project: (typeof projects)[number];
     index: number;
     colSpan: boolean;
     lastItem: boolean;
@@ -193,6 +115,8 @@ function ProjectCard({
             <Image
                 src={project.thumbnail}
                 alt={project.name}
+                width={500}
+                height={500}
                 className="size-full object-cover"
             />
 
