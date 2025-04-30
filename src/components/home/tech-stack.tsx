@@ -271,7 +271,6 @@ function GlobeRotation() {
                 }}
             />
 
-            {/* First orbit */}
             <motion.div
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                 animate={{ rotate: 360 }}
@@ -315,7 +314,6 @@ function GlobeRotation() {
                 </motion.div>
             </motion.div>
 
-            {/* Second orbit */}
             <motion.div
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                 animate={{ rotate: -360 }}
@@ -382,7 +380,6 @@ function GlobeRotation() {
                 </motion.div>
             </motion.div>
 
-            {/* Third orbit */}
             <motion.div
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                 animate={{ rotate: 360 }}
