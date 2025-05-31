@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { siteConfig } from "./config/site";
 
 export function middleware(req: NextRequest) {
-    if (req.nextUrl.pathname === "/support")
-        return NextResponse.redirect(siteConfig.links!.Discord!);
-    else return NextResponse.next();
+    switch (req.nextUrl.pathname) {
+        case "/support":
+            return NextResponse.redirect(siteConfig.links!.Discord!);
+        case "/cv":
+            return NextResponse.redirect(process.env.CV_URL!);
+    }
+
+    return NextResponse.next();
 }
