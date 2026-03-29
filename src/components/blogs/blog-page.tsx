@@ -37,6 +37,7 @@ interface PageProps extends GenericProps {
 }
 
 const options: MDXRemoteProps["options"] = {
+    blockJS: false,
     mdxOptions: {
         remarkPlugins: [remarkGfm],
         rehypePlugins: [
