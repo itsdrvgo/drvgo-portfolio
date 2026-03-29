@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
                 hostname: "6kyfi4ef87.ufs.sh",
                 pathname: "/f/**",
             },
+            { protocol: "https", hostname: "picsum.photos" },
         ],
     },
 };

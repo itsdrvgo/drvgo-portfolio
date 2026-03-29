@@ -32,7 +32,7 @@ export function MaintenancePage() {
 
                     <EmptyPlaceholderFooter>
                         <Button size="sm" asChild>
-                            <Link href="/dashboard">Go Back</Link>
+                            <Link href="/">Go Home</Link>
                         </Button>
                     </EmptyPlaceholderFooter>
                 </EmptyPlaceholderContent>

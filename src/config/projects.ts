@@ -2,6 +2,14 @@ import { GITHUB_BASE_URL } from "./const";
 
 export const projects = [
     {
+        name: "Checkout Kit",
+        description:
+            "Production-ready Next.js e-commerce starter with payments, inventory, and API-first architecture.",
+        demo: "https://core-checkout.peune.com/",
+        thumbnail:
+            "https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPek7WT6TesZzQ1bF2tOKosw6vRdD8JEpf7TI0A",
+    },
+    {
         name: "Renivet Marketplace",
         description:
             "Multi-vendor platform with payments, shipping, and webhook integrations.",

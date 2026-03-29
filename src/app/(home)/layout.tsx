@@ -1,4 +1,4 @@
-import { slackey } from "@/app/fonts";
+import { spaceGrotesk } from "@/app/fonts";
 import { Footer, NavbarHome, NavbarMob } from "@/components/globals/layouts";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -11,12 +11,12 @@ export const metadata: Metadata = {
     },
 };
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children }: ChildrenProps) {
     return (
         <div
             className={cn(
                 "relative flex min-h-screen flex-col",
-                slackey.className
+                spaceGrotesk.className
             )}
         >
             <NavbarHome />

@@ -7,15 +7,13 @@ interface CutoutProps extends GenericProps {
 export function Cutout({ className, isReversed, ...props }: CutoutProps) {
     return (
         <div
-            className={cn("h-[5px] bg-background", className)}
-            style={{
-                backgroundImage: isReversed
-                    ? "url(./waves_reversed.png)"
-                    : "url(./waves_normal.png)",
-                backgroundRepeat: "repeat-x",
-                backgroundPosition: "center",
-                backgroundSize: "contain",
-            }}
+            className={cn(
+                "h-px w-full",
+                isReversed
+                    ? "bg-gradient-to-r from-transparent via-primary/30 to-transparent"
+                    : "bg-gradient-to-r from-transparent via-secondary/30 to-transparent",
+                className
+            )}
             {...props}
         />
     );

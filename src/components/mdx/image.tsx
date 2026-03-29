@@ -18,15 +18,17 @@ export function MdxImage({
     ...props
 }: Props) {
     return (
-        <div className="aspect-video overflow-hidden">
-            <Image
-                src={url}
-                alt={alt}
-                height={height}
-                width={width}
-                className={cn("size-full object-cover", className)}
-                {...props}
-            />
+        <div className="overflow-hidden rounded-xl border">
+            <div className="aspect-video">
+                <Image
+                    src={url}
+                    alt={alt}
+                    height={height}
+                    width={width}
+                    className={cn("size-full object-cover", className)}
+                    {...props}
+                />
+            </div>
         </div>
     );
 }

@@ -1,15 +1,22 @@
-import { Roboto, Slackey } from "next/font/google";
+import { Inter, Space_Grotesk, Syne } from "next/font/google";
 
-export const slackey = Slackey({
+export const syne = Syne({
     subsets: ["latin"],
-    weight: ["400"],
+    weight: ["400", "500", "600", "700", "800"],
     display: "swap",
-    variable: "--font-slackey",
+    variable: "--font-syne",
 });
 
-export const roboto = Roboto({
+export const spaceGrotesk = Space_Grotesk({
     subsets: ["latin"],
-    weight: ["100", "300", "400", "500", "700", "900"],
+    weight: ["300", "400", "500", "600", "700"],
     display: "swap",
-    variable: "--font-roboto",
+    variable: "--font-space-grotesk",
+});
+
+export const inter = Inter({
+    subsets: ["latin"],
+    weight: ["100", "300", "400", "500", "600", "700", "900"],
+    display: "swap",
+    variable: "--font-inter",
 });

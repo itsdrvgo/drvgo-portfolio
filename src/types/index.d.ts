@@ -3,7 +3,7 @@ import { HTMLAttributes, ReactNode } from "react";
 
 declare global {
     type GenericProps = HTMLAttributes<HTMLElement>;
-    type LayoutProps = {
+    type ChildrenProps = {
         children: ReactNode;
     };
 

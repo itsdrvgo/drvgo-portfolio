@@ -1,18 +1,10 @@
-import { z } from "zod";
+import z from "zod";
 
 export const snippetMetaSchema = z.object({
-    name: z
-        .string({
-            required_error: "Name is required",
-            invalid_type_error: "Name must be a string",
-        })
-        .min(1, "Name must be at least 1 character long"),
+    name: z.string("Name is required").min(1, "Name cannot be empty"),
     language: z
-        .string({
-            required_error: "Language is required",
-            invalid_type_error: "Language must be a string",
-        })
-        .min(1, "Language must be at least 1 character long"),
+        .string("Language is required")
+        .min(1, "Language cannot be empty"),
 });
 
 export type SnippetMeta = z.infer<typeof snippetMetaSchema>;

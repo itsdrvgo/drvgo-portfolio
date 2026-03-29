@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { siteConfig } from "./config/site";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
     switch (req.nextUrl.pathname) {
         case "/support":
             return NextResponse.redirect(siteConfig.links!.Discord!);

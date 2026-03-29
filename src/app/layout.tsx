@@ -4,7 +4,7 @@ import { siteConfig } from "@/config/site";
 import { cn, getAbsoluteURL } from "@/lib/utils";
 import { Metadata, Viewport } from "next";
 import "./globals.css";
-import { roboto, slackey } from "./fonts";
+import { inter, spaceGrotesk, syne } from "./fonts";
 
 export const viewport: Viewport = {
     themeColor: [
@@ -79,14 +79,18 @@ export const metadata: Metadata = {
     metadataBase: new URL(getAbsoluteURL()),
 };
 
-export default function RootLayout({ children }: LayoutProps) {
+export default function RootLayout({ children }: ChildrenProps) {
     return (
         <html
             lang="en"
             suppressHydrationWarning
-            className={cn(slackey.variable, roboto.variable)}
+            className={cn(syne.variable, spaceGrotesk.variable, inter.variable)}
         >
-            <body className={cn("min-h-screen overflow-x-hidden antialiased")}>
+            <body
+                className={cn(
+                    "grain-overlay min-h-screen overflow-x-hidden antialiased"
+                )}
+            >
                 <ClientProvider>
                     {children}
                     <Toaster />

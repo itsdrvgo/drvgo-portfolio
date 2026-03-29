@@ -36,8 +36,8 @@ export function MdxGallery({
                 ))}
             </CarouselContent>
 
-            <CarouselPrevious className="left-0 h-full rounded-none border-none bg-gradient-to-r from-foreground p-5 text-background/60 hover:bg-transparent hover:text-background" />
-            <CarouselNext className="right-0 h-full rounded-none border-none bg-gradient-to-l from-foreground p-5 text-background/60 hover:bg-transparent hover:text-background" />
+            <CarouselPrevious className="left-0 h-full rounded-none border-none bg-gradient-to-r from-black/40 p-5 text-white/70 hover:bg-transparent hover:text-white" />
+            <CarouselNext className="right-0 h-full rounded-none border-none bg-gradient-to-l from-black/40 p-5 text-white/70 hover:bg-transparent hover:text-white" />
         </Carousel>
     );
 }

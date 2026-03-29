@@ -36,15 +36,15 @@ Hey there, I'm [DRVGO](https://itsdrvgo.me/), a passionate Full Stack Developer,
 
 The portfolio website is built with the following technologies:
 
--   [Next.JS 14 (App Router)](https://nextjs.org/): A powerful framework for building performant and SEO-friendly web applications.
--   [TypeScript](https://www.typescriptlang.org/): Ensuring robust and type-safe code for enhanced development.
--   [React.JS](https://react.dev/): Creating dynamic and interactive user interfaces for seamless navigation.
--   [ShadCN UI](https://ui.shadcn.com/): The best library of manipulate the UI.
--   [Tailwind CSS](https://tailwindcss.com/): Designing responsive layouts with ease and speed.
--   [Framer Motion](https://www.framer.com/motion/): Adding delightful animations to user interactions.
--   [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote#react-server-components-rsc--nextjs-app-directory-support): Rendering MDX content in Next.js applications.
--   [Highlight.js](https://highlightjs.org/): Syntax highlighting for code blocks.
--   [Zustand](https://zustand-demo.pmnd.rs/): A small, fast, and scalable state management library.
+- [Next.JS 14 (App Router)](https://nextjs.org/): A powerful framework for building performant and SEO-friendly web applications.
+- [TypeScript](https://www.typescriptlang.org/): Ensuring robust and type-safe code for enhanced development.
+- [React.JS](https://react.dev/): Creating dynamic and interactive user interfaces for seamless navigation.
+- [ShadCN UI](https://ui.shadcn.com/): The best library of manipulate the UI.
+- [Tailwind CSS](https://tailwindcss.com/): Designing responsive layouts with ease and speed.
+- [Framer Motion](https://www.framer.com/motion/): Adding delightful animations to user interactions.
+- [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote#react-server-components-rsc--nextjs-app-directory-support): Rendering MDX content in Next.js applications.
+- [Highlight.js](https://highlightjs.org/): Syntax highlighting for code blocks.
+- [Zustand](https://zustand-demo.pmnd.rs/): A small, fast, and scalable state management library.
 
 ## Community
 

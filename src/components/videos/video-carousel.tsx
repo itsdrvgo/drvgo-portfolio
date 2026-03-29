@@ -2,135 +2,145 @@
 
 import { ProgrammingVideo } from "@/config/video";
 import { cn } from "@/lib/utils";
-import { EmblaOptionsType } from "embla-carousel";
-import useEmblaCarousel from "embla-carousel-react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
 import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 
 interface VideoCarouselProps extends GenericProps {
     videos: ProgrammingVideo[];
-    options?: EmblaOptionsType;
 }
 
-export function VideoCarousel({
-    className,
-    videos,
-    options,
-}: VideoCarouselProps) {
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const [emblaMainRef, emblaMainApi] = useEmblaCarousel(options);
-    const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
-        containScroll: "keepSnaps",
-        dragFree: true,
-    });
-
-    const onThumbClick = useCallback(
-        (index: number) => {
-            if (!emblaMainApi || !emblaThumbsApi) return;
-            emblaMainApi.scrollTo(index);
-        },
-        [emblaMainApi, emblaThumbsApi]
-    );
-
-    const onSelect = useCallback(() => {
-        if (!emblaMainApi || !emblaThumbsApi) return;
-        setSelectedIndex(emblaMainApi.selectedScrollSnap());
-        emblaThumbsApi.scrollTo(emblaMainApi.selectedScrollSnap());
-    }, [emblaMainApi, emblaThumbsApi, setSelectedIndex]);
-
-    useEffect(() => {
-        if (!emblaMainApi) return;
-        onSelect();
-
-        emblaMainApi.on("select", onSelect).on("reInit", onSelect);
-    }, [emblaMainApi, onSelect]);
+export function VideoCarousel({ className, videos }: VideoCarouselProps) {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const activeVideo = videos[activeIndex];
 
     return (
-        <motion.div
-            className={cn("", className)}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-        >
+        <div className={cn("space-y-8", className)}>
+            {/* Featured player */}
             <motion.div
-                className="overflow-hidden rounded-xl"
-                ref={emblaMainRef}
-                whileHover={{ boxShadow: "0 15px 30px rgba(0, 0, 0, 0.1)" }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
             >
-                <div className="embla__container flex">
-                    {videos.map((video) => (
+                <div className="overflow-hidden rounded-2xl border shadow-lg shadow-primary/5">
+                    <AnimatePresence mode="wait">
                         <motion.div
-                            key={video.id}
-                            className="embla__slide min-w-0 p-1"
+                            key={activeVideo.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.25 }}
                         >
-                            <div className="relative overflow-hidden rounded-xl drop-shadow-md">
-                                <LiteYouTubeEmbed
-                                    id={video.id}
-                                    title={video.name}
-                                />
-                                <motion.div
-                                    className="absolute bottom-0 left-0 w-full bg-white/30 p-5 text-background"
-                                    initial={{ y: "100%" }}
-                                    animate={{ y: 0 }}
-                                    transition={{ duration: 0.3, delay: 0.2 }}
-                                >
-                                    <p className="drop-shadow">{video.name}</p>
-                                </motion.div>
-                            </div>
+                            <LiteYouTubeEmbed
+                                id={activeVideo.id}
+                                title={activeVideo.name}
+                            />
                         </motion.div>
-                    ))}
+                    </AnimatePresence>
                 </div>
+
+                <AnimatePresence mode="wait">
+                    <motion.h3
+                        key={activeIndex}
+                        className="mt-4 text-center text-lg font-semibold tracking-tight"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        {activeVideo.name}
+                    </motion.h3>
+                </AnimatePresence>
             </motion.div>
 
+            {/* Thumbnail grid */}
             <motion.div
-                className="embla-thumbs relative mt-4 px-1"
+                className="grid grid-cols-2 gap-3 lg:grid-cols-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.35 }}
             >
-                <div className="absolute top-1/2 left-0 z-10 h-full w-10 -translate-y-1/2 bg-gradient-to-r from-background to-transparent" />
-                <div className="absolute top-1/2 right-0 z-10 h-full w-10 -translate-y-1/2 bg-gradient-to-l from-background to-transparent" />
+                {videos.map((video, i) => (
+                    <motion.button
+                        key={video.id}
+                        type="button"
+                        onClick={() => setActiveIndex(i)}
+                        className={cn(
+                            "group relative overflow-hidden rounded-xl border-2 text-left transition-all duration-200",
+                            i === activeIndex
+                                ? "border-primary shadow-md shadow-primary/10"
+                                : "border-transparent hover:border-border"
+                        )}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 120,
+                            damping: 18,
+                            delay: 0.04 * i,
+                        }}
+                    >
+                        {/* Thumbnail */}
+                        <div className="relative aspect-video overflow-hidden">
+                            <Image
+                                src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`}
+                                alt={video.name}
+                                width={320}
+                                height={180}
+                                className={cn(
+                                    "size-full object-cover transition-all duration-300",
+                                    i === activeIndex
+                                        ? "brightness-100"
+                                        : "brightness-90 group-hover:brightness-100"
+                                )}
+                            />
 
-                <div className="overflow-hidden" ref={emblaThumbsRef}>
-                    <div className="flex">
-                        {videos.map((video, i) => (
-                            <div
-                                key={video.id}
-                                className="embla-thumbs__slide aspect-video min-w-0 p-1"
+                            {/* Dark gradient at bottom for text readability */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+                            {/* Play icon overlay (not active) */}
+                            {i !== activeIndex && (
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+                                    <div className="flex size-8 items-center justify-center rounded-full bg-white/90 shadow-md">
+                                        <svg
+                                            viewBox="0 0 16 16"
+                                            fill="currentColor"
+                                            className="ml-0.5 size-3.5 text-foreground"
+                                        >
+                                            <path d="M4 2l10 6-10 6V2z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Now playing indicator */}
+                            {i === activeIndex && (
+                                <div className="absolute top-2 left-2">
+                                    <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                                        Playing
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Title */}
+                        <div className="bg-card/80 px-3 py-2.5">
+                            <p
+                                className={cn(
+                                    "line-clamp-2 text-xs leading-snug font-medium transition-colors",
+                                    i === activeIndex
+                                        ? "text-primary"
+                                        : "text-muted-foreground group-hover:text-foreground"
+                                )}
                             >
-                                <motion.button
-                                    onClick={() => onThumbClick(i)}
-                                    type="button"
-                                    className={cn(
-                                        "size-full overflow-hidden rounded-lg",
-                                        i === selectedIndex &&
-                                            "outline-foreground outline-double"
-                                    )}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    transition={{ duration: 0.2 }}
-                                    animate={{
-                                        opacity: i === selectedIndex ? 1 : 0.7,
-                                        scale: i === selectedIndex ? 1 : 0.95,
-                                    }}
-                                >
-                                    <Image
-                                        src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`}
-                                        alt={video.name}
-                                        width={1280}
-                                        height={720}
-                                        className="size-full object-cover"
-                                    />
-                                </motion.button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                                {video.name}
+                            </p>
+                        </div>
+                    </motion.button>
+                ))}
             </motion.div>
-        </motion.div>
+        </div>
     );
 }

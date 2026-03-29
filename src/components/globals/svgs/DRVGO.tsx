@@ -13,7 +13,7 @@ export function DRVGO({
     isDark = false,
     ...props
 }: DRVGOProps) {
-    const color = isDark ? "#000" : "#abcff9";
+    const color = isDark ? "#1a1a2e" : "currentColor";
 
     return (
         <svg

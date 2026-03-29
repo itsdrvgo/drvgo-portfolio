@@ -13,7 +13,7 @@ const EmptyPlaceholder = React.forwardRef<
     <div
         ref={ref}
         className={cn(
-            "space-y-5 rounded-xl border bg-muted p-10 text-center text-foreground shadow",
+            "space-y-5 rounded-2xl border bg-card/50 p-10 text-center text-foreground backdrop-blur-sm",
             !isBackgroundVisible && "bg-transparent shadow-none",
             fullWidth ? "w-full" : "max-w-md",
             className
@@ -31,7 +31,7 @@ const EmptyPlaceholderIcon = React.forwardRef<
         <div
             ref={ref}
             className={cn(
-                "flex size-12 items-center justify-center rounded-full border bg-accent",
+                "flex size-12 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary",
                 className
             )}
             {...props}
@@ -56,7 +56,7 @@ const EmptyPlaceholderDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <p
         ref={ref}
-        className={cn("max-w-xs text-sm text-foreground", className)}
+        className={cn("max-w-xs text-sm text-muted-foreground", className)}
         {...props}
     />
 ));

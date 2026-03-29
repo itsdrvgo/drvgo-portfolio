@@ -1,25 +1,18 @@
 import fs from "fs/promises";
 import path from "path";
-import { slackey } from "@/app/fonts";
 import { BlogsPage, BlogTitle } from "@/components/blogs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BLOGS_DIR } from "@/config/const";
-import { cn } from "@/lib/utils";
 import { Blog, blogMetaSchema } from "@/lib/validations";
 import matter from "gray-matter";
 import { Suspense } from "react";
 
 export default function Page() {
     return (
-        <section
-            className={cn(
-                slackey.className,
-                "flex min-h-screen justify-center p-5 py-10"
-            )}
-        >
-            <div className="w-full max-w-4xl space-y-8 2xl:max-w-6xl">
-                <BlogTitle />
+        <section className="min-h-screen">
+            <BlogTitle />
 
+            <div className="mx-auto w-full max-w-5xl px-5 pb-16">
                 <Suspense fallback={<BlogsSkeleton />}>
                     <BlogsFetch />
                 </Suspense>

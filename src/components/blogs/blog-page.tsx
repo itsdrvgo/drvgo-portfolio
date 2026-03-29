@@ -1,4 +1,4 @@
-import { roboto } from "@/app/fonts";
+import { inter } from "@/app/fonts";
 import {
     MdxGallery,
     MdxHighlight,
@@ -20,7 +20,9 @@ import langPy from "highlight.js/lib/languages/python";
 import langRust from "highlight.js/lib/languages/rust";
 import langTs from "highlight.js/lib/languages/typescript";
 import langHtml from "highlight.js/lib/languages/xml";
+import { ChevronLeft } from "lucide-react";
 import { MDXRemote, MDXRemoteProps } from "next-mdx-remote/rsc";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import rehypeHighlight from "rehype-highlight";
@@ -63,78 +65,120 @@ export function BlogPage({ className, blog, ...props }: PageProps) {
 
     return (
         <section
-            className={cn(
-                roboto.className,
-                "flex min-h-screen justify-center p-5 py-10",
-                className
-            )}
+            className={cn(inter.className, "min-h-screen", className)}
             {...props}
         >
-            <div className="w-full max-w-4xl space-y-8 2xl:max-w-6xl">
-                <article className="prose max-w-full prose-sky">
-                    <h1>{blog.meta.title}</h1>
+            {/* Hero banner */}
+            <div className="relative h-64 w-full overflow-hidden md:h-80 lg:h-96">
+                <Image
+                    src={blog.meta.thumbnail}
+                    alt={blog.meta.title}
+                    fill
+                    sizes="100vw"
+                    className="object-cover"
+                    priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-black/30 to-black/10" />
 
-                    <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-4">
-                            <Avatar className="outline-1 outline-primary">
-                                <AvatarImage
-                                    src={getAvatar(blog.meta.authors)}
-                                    alt={blog.meta.authors
-                                        .map((a) => a.name)
-                                        .join(", ")}
-                                    className="my-0!"
-                                />
-                                <AvatarFallback>A</AvatarFallback>
-                            </Avatar>
+                {/* Back link */}
+                <div className="absolute top-6 left-6 z-10">
+                    <Link
+                        href="/blogs"
+                        className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-black/30 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md transition-colors hover:bg-black/50"
+                    >
+                        <ChevronLeft className="size-3.5" />
+                        Back
+                    </Link>
+                </div>
+            </div>
 
-                            <div className="space-y-0">
-                                <p className="my-0! text-base">
-                                    {blog.meta.authors.map((author, i) =>
-                                        author.url ? (
-                                            <span key={author.name}>
-                                                <Link
-                                                    href={author.url}
-                                                    target="_blank"
-                                                    className="no-underline"
-                                                >
-                                                    {author.name}
-                                                </Link>
-                                                {i ===
-                                                blog.meta.authors.length - 1
-                                                    ? ""
-                                                    : ", "}
-                                            </span>
-                                        ) : (
-                                            <span key={author.name}>
-                                                {author.name}
-                                                {i ===
-                                                blog.meta.authors.length - 1
-                                                    ? ""
-                                                    : ", "}
-                                            </span>
-                                        )
-                                    )}
-                                </p>
-
-                                <p className="my-0! text-sm text-muted-foreground">
-                                    {format(
-                                        new Date(blog.meta.date),
-                                        "do MMMM, yyyy"
-                                    )}
-                                </p>
-                            </div>
+            {/* Article container — overlaps the banner slightly */}
+            <div className="relative mx-auto -mt-20 max-w-3xl px-5 pb-16 2xl:max-w-4xl">
+                <article className="prose max-w-full prose-neutral dark:prose-invert prose-headings:font-[family-name:var(--font-space-grotesk)] prose-headings:tracking-tight prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
+                    {/* Title + meta */}
+                    <div className="mb-8 rounded-2xl border bg-card/80 p-6 shadow-sm backdrop-blur-md md:p-8">
+                        <div className="mb-4 flex flex-wrap gap-2">
+                            {blog.meta.tags.slice(0, 4).map((tag) => (
+                                <span
+                                    key={tag}
+                                    className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                                >
+                                    {tag}
+                                </span>
+                            ))}
                         </div>
 
-                        <p className="text-sm text-white/60">
-                            {readTime} min read
-                        </p>
+                        <h1 className="text-gradient my-0! mb-5! text-2xl font-bold tracking-tight md:text-4xl">
+                            {blog.meta.title}
+                        </h1>
+
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                                <Avatar className="size-10 ring-2 ring-primary/20 ring-offset-2 ring-offset-card">
+                                    <AvatarImage
+                                        src={getAvatar(blog.meta.authors)}
+                                        alt={blog.meta.authors
+                                            .map((a) => a.name)
+                                            .join(", ")}
+                                        className="my-0!"
+                                    />
+                                    <AvatarFallback>A</AvatarFallback>
+                                </Avatar>
+
+                                <div className="space-y-0">
+                                    <p className="my-0! text-sm font-medium">
+                                        {blog.meta.authors.map((author, i) =>
+                                            author.url ? (
+                                                <span key={author.name}>
+                                                    <Link
+                                                        href={author.url}
+                                                        target="_blank"
+                                                        className="text-foreground no-underline transition-colors hover:text-primary"
+                                                    >
+                                                        {author.name}
+                                                    </Link>
+                                                    {i ===
+                                                    blog.meta.authors.length - 1
+                                                        ? ""
+                                                        : ", "}
+                                                </span>
+                                            ) : (
+                                                <span key={author.name}>
+                                                    {author.name}
+                                                    {i ===
+                                                    blog.meta.authors.length - 1
+                                                        ? ""
+                                                        : ", "}
+                                                </span>
+                                            )
+                                        )}
+                                    </p>
+
+                                    <p className="my-0! text-xs text-muted-foreground">
+                                        {format(
+                                            new Date(blog.meta.date),
+                                            "do MMMM, yyyy"
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                                {readTime} min read
+                            </span>
+                        </div>
                     </div>
 
-                    <div className="my-10! rounded-lg bg-card p-6 md:px-10">
-                        <h2 className="my-0! mb-5 lg:my-0! lg:mb-5!">
-                            Table of Contents
-                        </h2>
-                        <TableOfContents content={blog.content} />
+                    {/* Table of Contents */}
+                    <div className="my-8! overflow-hidden rounded-2xl border bg-card/50 backdrop-blur-sm">
+                        <div className="border-b bg-muted/40 px-6 py-3 md:px-8">
+                            <h2 className="my-0! text-sm font-semibold tracking-wide text-muted-foreground uppercase lg:my-0!">
+                                Table of Contents
+                            </h2>
+                        </div>
+                        <div className="p-6 md:px-8">
+                            <TableOfContents content={blog.content} />
+                        </div>
                     </div>
 
                     <MDXRemote
@@ -236,21 +280,25 @@ export function BlogPage({ className, blog, ...props }: PageProps) {
                                 if (!parsedSnippetData.success) return null;
 
                                 return (
-                                    <div>
-                                        <div className="flex items-center justify-between gap-5 rounded-md rounded-b-none bg-foreground p-2">
-                                            <p className="my-0! space-x-1 pl-1 text-background/60">
-                                                <span className="text-accent">
-                                                    &gt;
-                                                </span>{" "}
-                                                {parsedSnippetData.data.name
-                                                    ? parsedSnippetData.data
-                                                          .name
-                                                    : "Code Block"}
-                                            </p>
+                                    <div className="my-6 overflow-hidden rounded-xl border">
+                                        <div className="flex items-center justify-between gap-4 border-b border-border/60 bg-foreground/[0.06] px-4 py-2.5">
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex gap-1.5">
+                                                    <span className="size-2.5 rounded-full bg-red-400/60" />
+                                                    <span className="size-2.5 rounded-full bg-yellow-400/60" />
+                                                    <span className="size-2.5 rounded-full bg-green-400/60" />
+                                                </div>
+                                                <p className="my-0! text-xs font-medium text-muted-foreground">
+                                                    {parsedSnippetData.data.name
+                                                        ? parsedSnippetData.data
+                                                              .name
+                                                        : "Code Block"}
+                                                </p>
+                                            </div>
                                             <CopyButton content={content} />
                                         </div>
                                         <pre
-                                            className="mt-0 rounded-t-none"
+                                            className="mt-0! rounded-t-none! border-0!"
                                             {...props}
                                         />
                                     </div>
@@ -277,7 +325,7 @@ export function BlogPage({ className, blog, ...props }: PageProps) {
                                 return (
                                     <blockquote
                                         className={cn(
-                                            "bg-default-50 rounded-r-md py-2 pr-4",
+                                            "rounded-r-xl border-l-primary/60 bg-primary/5 py-2 pr-4",
                                             className
                                         )}
                                         {...props}
@@ -292,6 +340,17 @@ export function BlogPage({ className, blog, ...props }: PageProps) {
                         }}
                     />
                 </article>
+
+                {/* Bottom navigation */}
+                <div className="mt-12 border-t pt-8">
+                    <Link
+                        href="/blogs"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                    >
+                        <ChevronLeft className="size-4" />
+                        All blogs
+                    </Link>
+                </div>
             </div>
         </section>
     );
@@ -315,15 +374,15 @@ function TableOfContents({ content }: { content: string }) {
     });
 
     return (
-        <ul className="mb-0! lg:mb-0!">
+        <ul className="mb-0! list-none pl-0! lg:mb-0!">
             {headingsWithId.map((heading) => (
                 <li
                     key={heading.text}
-                    className="marker:text-foreground lg:my-0!"
+                    className="my-0! border-l-2 border-border/60 py-1 pl-4 transition-colors hover:border-primary lg:my-0!"
                 >
                     <Link
                         href={"#" + heading.id}
-                        className="text-muted-foreground no-underline transition-all ease-in-out hover:text-foreground"
+                        className="text-sm text-muted-foreground no-underline transition-colors ease-in-out hover:text-primary"
                     >
                         {heading.text}
                     </Link>

@@ -1,62 +1,89 @@
 "use client";
 
+import { DRVGO } from "@/components/globals/svgs";
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
+import { motion } from "motion/react";
 import Link from "next/link";
-import { DRVGO } from "../../svgs";
 
 export function Footer({ className, ...props }: GenericProps) {
     return (
         <footer
             className={cn(
-                "relative flex w-full flex-col items-center justify-center gap-20 bg-primary py-20 text-primary-foreground selection:bg-background selection:text-foreground",
+                "relative flex w-full flex-col items-center gap-12 border-t px-5 py-16",
                 className
             )}
-            style={{
-                backgroundImage: "url(/noise-light.png)",
-            }}
             {...props}
         >
-            <div className="flex flex-col items-center justify-center gap-7">
-                <DRVGO width={100} height={100} />
-
-                <p className="w-60 text-center">
+            {/* Brand */}
+            <motion.div
+                className="flex flex-col items-center gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+            >
+                <DRVGO width={48} height={48} className="text-[#5b9fd6]" />
+                <h3 className="text-gradient text-3xl font-bold">DRVGO</h3>
+                <p className="max-w-xs text-center text-sm text-muted-foreground">
                     Learning, Coding & Bringing the best out of me.
                 </p>
+            </motion.div>
 
-                {siteConfig.links && (
-                    <div className="flex gap-5">
-                        {Object.entries(siteConfig.links)?.map(
-                            ([key, value], i) => {
-                                const Icon = Icons[key as keyof typeof Icons];
+            {/* Social links */}
+            {siteConfig.links && (
+                <motion.div
+                    className="flex gap-3"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                >
+                    {Object.entries(siteConfig.links).map(([key, value], i) => {
+                        const Icon = Icons[key as keyof typeof Icons];
 
-                                return (
-                                    <Link
-                                        key={i}
-                                        href={value}
-                                        className="rounded-full border border-primary/20 bg-background p-2 text-foreground transition-all ease-in-out hover:bg-background/70"
-                                        target="_blank"
-                                    >
-                                        <Icon className="size-4" />
-                                    </Link>
-                                );
-                            }
-                        )}
-                    </div>
-                )}
+                        return (
+                            <motion.div
+                                key={i}
+                                whileHover={{ y: -3, scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                                transition={{
+                                    type: "spring",
+                                    stiffness: 300,
+                                    damping: 15,
+                                }}
+                            >
+                                <Link
+                                    href={value}
+                                    className="flex size-10 items-center justify-center rounded-full border bg-card text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                                    target="_blank"
+                                >
+                                    <Icon className="size-4" />
+                                </Link>
+                            </motion.div>
+                        );
+                    })}
+                </motion.div>
+            )}
 
-                <p className="text-sm">
-                    © {new Date().getFullYear()}{" "}
-                    <Link
-                        href="/"
-                        className="text-sm font-semibold text-accent underline"
-                    >
-                        DRVGO
-                    </Link>
-                    . All rights reserved.
-                </p>
-            </div>
+            {/* Copyright */}
+            <motion.p
+                className="text-xs text-muted-foreground"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+            >
+                &copy; {new Date().getFullYear()}{" "}
+                <Link
+                    href="/"
+                    className="font-medium text-primary hover:underline"
+                >
+                    DRVGO
+                </Link>
+                . All rights reserved.
+            </motion.p>
         </footer>
     );
 }

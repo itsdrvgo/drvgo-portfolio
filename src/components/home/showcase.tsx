@@ -9,70 +9,44 @@ import { useState } from "react";
 import { Icons } from "../icons";
 
 export function Showcase({ className }: GenericProps) {
-    const showcaseLetters = "SHOWCASE".split("");
-
     return (
         <section
             className={cn(
-                "flex min-h-screen items-center justify-center bg-primary p-5 py-20",
+                "relative overflow-hidden px-5 py-28 md:py-36",
                 className
             )}
-            style={{
-                backgroundImage: "url(/noise-light.png)",
-            }}
         >
-            <div className="flex w-full max-w-7xl flex-col-reverse items-center gap-10 md:flex-row md:gap-24">
+            {/* Background accent */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.03] to-transparent" />
+
+            <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-12">
+                {/* Header */}
                 <motion.div
-                    className="grid w-full gap-5 md:grid-cols-3 md:gap-10"
-                    initial={{ opacity: 0, y: 20 }}
+                    className="flex flex-col items-center gap-3"
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.6 }}
                 >
+                    <p className="text-sm font-medium tracking-widest text-primary uppercase">
+                        Selected Work
+                    </p>
+                    <h2 className="text-gradient text-4xl font-bold md:text-6xl">
+                        Showcase
+                    </h2>
+                </motion.div>
+
+                {/* Grid — 2 rows, uniform height per row */}
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     {projects.map((project, i) => (
                         <ProjectCard
                             project={project}
                             index={i}
                             key={project.name}
-                            colSpan={
-                                i === 0 || i === 3 || i === 4 ? true : false
-                            }
-                            lastItem={
-                                projects.length % 2 !== 0 &&
-                                i === projects.length - 1
-                            }
+                            isWide={i === 0 || i === 3}
                         />
                     ))}
-                </motion.div>
-
-                <motion.h3
-                    className="flex text-center text-4xl text-background uppercase selection:bg-white selection:text-foreground md:flex-col md:gap-4 md:text-7xl"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
-                >
-                    {showcaseLetters.map((letter, index) => (
-                        <motion.span
-                            key={index}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{
-                                duration: 0.4,
-                                delay: index * 0.1,
-                                ease: "easeOut",
-                            }}
-                            whileHover={{
-                                scale: 1.1,
-                                color: "#ffffff",
-                                transition: { duration: 0.2 },
-                            }}
-                        >
-                            {letter}
-                        </motion.span>
-                    ))}
-                </motion.h3>
+                </div>
             </div>
         </section>
     );
@@ -81,100 +55,94 @@ export function Showcase({ className }: GenericProps) {
 function ProjectCard({
     project,
     index,
-    colSpan,
-    lastItem,
+    isWide,
 }: {
     project: (typeof projects)[number];
     index: number;
-    colSpan: boolean;
-    lastItem: boolean;
+    isWide: boolean;
 }) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
         <motion.div
             className={cn(
-                "group relative h-52 w-full overflow-hidden rounded-2xl border shadow-lg",
-                colSpan && "md:col-span-2",
-                lastItem && "md:col-span-3"
+                "group relative h-64 overflow-hidden rounded-2xl border bg-card",
+                isWide ? "md:col-span-2" : "md:col-span-1"
             )}
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-50px" }}
             transition={{
-                duration: 0.5,
-                delay: 0.1 + index * 0.1,
-            }}
-            whileHover={{
-                scale: 1.03,
-                transition: { duration: 0.2 },
+                type: "spring",
+                stiffness: 100,
+                damping: 20,
+                delay: 0.08 * index,
             }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
         >
-            <Image
-                src={project.thumbnail}
-                alt={project.name}
-                width={500}
-                height={500}
-                className="size-full object-cover"
+            {/* Image */}
+            <motion.div
+                className="absolute inset-0"
+                animate={{ scale: isHovered ? 1.06 : 1 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+                <Image
+                    src={project.thumbnail}
+                    alt={project.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover"
+                />
+            </motion.div>
+
+            {/* Gradient overlay */}
+            <motion.div
+                className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"
+                animate={{ opacity: isHovered ? 1 : 0.6 }}
+                transition={{ duration: 0.3 }}
             />
 
-            <motion.div
-                className="absolute top-0 left-0 flex size-full flex-col justify-end gap-2 p-5 text-balance text-background"
-                initial={{ backgroundColor: "rgba(15, 15, 15, 0.4)" }}
-                animate={{
-                    backgroundColor: isHovered
-                        ? "rgba(15, 15, 15, 0.8)"
-                        : "rgba(15, 15, 15, 0.4)",
-                }}
-                transition={{ duration: 0.2 }}
-            >
+            {/* Content */}
+            <div className="relative flex size-full flex-col justify-end gap-2 p-5 text-white">
                 <AnimatePresence>
                     {isHovered && (
-                        <motion.div
-                            className="space-y-1"
-                            initial={{ opacity: 0, y: -20 }}
+                        <motion.p
+                            className="text-sm text-white/70"
+                            initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.2 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{ duration: 0.25 }}
                         >
-                            <Link
-                                href={project.demo ?? project.source}
-                                className="group/link flex w-fit items-center gap-1 font-medium hover:underline"
-                                target="_blank"
-                            >
-                                {project.demo ? "View Demo" : "View Source"}
-                                <motion.div
-                                    initial={{ width: 0 }}
-                                    animate={{ width: "auto" }}
-                                    transition={{ duration: 0.2 }}
-                                >
-                                    <Icons.ChevronRight className="size-5" />
-                                </motion.div>
-                            </Link>
-                            <motion.p
-                                className="text-background/60"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.3, delay: 0.1 }}
-                            >
-                                {project.description}
-                            </motion.p>
-                        </motion.div>
+                            {project.description}
+                        </motion.p>
                     )}
                 </AnimatePresence>
 
-                <motion.h4
-                    className="text-xl"
-                    animate={{
-                        y: isHovered ? 0 : 0,
-                        transition: { duration: 0.2 },
-                    }}
-                >
-                    {project.name}
-                </motion.h4>
-            </motion.div>
+                <div className="flex items-end justify-between">
+                    <h4 className="text-lg font-semibold md:text-xl">
+                        {project.name}
+                    </h4>
+
+                    <motion.div
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{
+                            opacity: isHovered ? 1 : 0,
+                            x: isHovered ? 0 : -10,
+                        }}
+                        transition={{ duration: 0.25 }}
+                    >
+                        <Link
+                            href={project.demo ?? project.source}
+                            target="_blank"
+                            className="flex items-center gap-1 rounded-full bg-white/20 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                        >
+                            {project.demo ? "Live" : "Source"}
+                            <Icons.ChevronRight className="size-3" />
+                        </Link>
+                    </motion.div>
+                </div>
+            </div>
         </motion.div>
     );
 }

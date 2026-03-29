@@ -76,4 +76,11 @@ export const skills = [
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg",
         href: "https://tailwindcss.com/",
     },
+    {
+        name: "Redis",
+        description:
+            "An open-source, in-memory data structure store, used as a database, cache, and message broker.",
+        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg",
+        href: "https://redis.io/",
+    },
 ];

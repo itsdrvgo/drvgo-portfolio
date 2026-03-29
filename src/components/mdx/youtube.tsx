@@ -10,7 +10,7 @@ interface Props {
 
 export function YouTube({ id, title = "YouTube Video Player" }: Props) {
     return (
-        <div className="overflow-hidden rounded-md">
+        <div className="overflow-hidden rounded-xl border">
             <LiteYouTubeEmbed id={id} title={title} />
         </div>
     );

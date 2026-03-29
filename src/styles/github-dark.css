@@ -12,7 +12,7 @@
 pre:has(.hljs),
 .hljs {
     color: #c9d1d9;
-    background: #222225;
+    background: oklch(0.14 0.015 270);
 }
 
 .hljs-doctag,
