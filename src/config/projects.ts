@@ -2,6 +2,23 @@ import { GITHUB_BASE_URL } from "./const";
 
 export const projects = [
     {
+        name: "Artist Inspiration Academy",
+        description:
+            "Full-stack learning platform with course management, student bookings, teacher profiles, media handling, and admin analytics.",
+        source: "https://github.com/artistinspirationacademy/artist-inspiration-acedemy",
+        demo: "https://artistinspiration.academy/",
+        thumbnail:
+            "https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPeRNy9UtnFAXBDJC26fkvY0ShUi9eMbnuwOpgd",
+    },
+    {
+        name: "SubTrack",
+        description:
+            "Track subscriptions, EMIs, and savings with budgets, reminders, spending insights, and multi-currency support in one dashboard.",
+        source: GITHUB_BASE_URL + "itsdrvgo/subscription-tracker",
+        thumbnail:
+            "https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPet9Fbp37aDhPeBAW3cortMyuz0gkv1Kq2dC5l",
+    },
+    {
         name: "Checkout Kit",
         description:
             "Production-ready Next.js e-commerce starter with payments, inventory, and API-first architecture.",
@@ -23,7 +40,6 @@ export const projects = [
         description:
             "A simple rip-off of social media apps like Twitter, Facebook, Instagram, etc.",
         source: GITHUB_BASE_URL + "itsdrvgo/post-it",
-        demo: "https://post-it-itsdrvgo.vercel.app/",
         thumbnail:
             "https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPeOFrY0QRNch4wR1tFqLB63EpD7rSxfWGYKI0M",
     },
@@ -42,23 +58,5 @@ export const projects = [
         source: GITHUB_BASE_URL + "itsdrvgo/hirehaven-mern",
         thumbnail:
             "https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPenI4tXpVUdWat0EnImqivNhRZrgjOMf6S1KLY",
-    },
-    {
-        name: "Next.js 15 Store",
-        description:
-            "Modern e-commerce site with filters, search, and CSV product uploads.",
-        source: GITHUB_BASE_URL + "itsdrvgo/next-15-store",
-        demo: "https://next-15-store.vercel.app/",
-        thumbnail:
-            "https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPemim6kLgTAJH3de9jIR5mMcrOnaSbo8wK6utY",
-    },
-    {
-        name: "Oakira Group",
-        description:
-            "Company landing page with contact backend and animated UI using Motion and Tailwind.",
-        source: GITHUB_BASE_URL + "hcgimportexport/oakira",
-        demo: "https://oakiragroup.com/",
-        thumbnail:
-            "https://6kyfi4ef87.ufs.sh/f/tgjx8p7aDhPeEmgsKyV0akHWlmT8cA2edp1Sw75I0gqhK9YV",
     },
 ];
